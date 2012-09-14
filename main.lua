@@ -10,14 +10,18 @@ function love.load()
 	love.graphics.setBackgroundColor(0,0,0,50)
 	print("Loading...")
 	
-	local fileName = "fileToRun.lua"
-
-	--ok, msg = pcall(ai.new, fileName)
+	ok, msg = pcall(ai.new, "AI/fileToRun.lua")
+	if not ok then print("Err: " .. msg) end
+	
+	--ok, msg = pcall(ai.new, "AI/fileToRun2.lua")
 	--if not ok then print("Err: " .. msg) end
 	--debug.sethook()
+	
+	
 end
 
 function love.update()
+	-- ai.run()
 	button.clacMouseHover()
 end
 

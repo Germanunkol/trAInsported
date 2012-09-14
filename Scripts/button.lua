@@ -7,7 +7,6 @@ local buttonList = {}
 function button:new(x, y, imageOff, imageOver, event)
 	for i=1,#buttonList+1,1 do
 		if not buttonList[i] then
-			print(type(imageOff))
 			if type(imageOff) == "string" then
 				imageOff = love.graphics.newImage("Images/" .. imageOff)
 			end

@@ -37,7 +37,7 @@ function newMap()
 	mapImage = map.renderImage()
 	
 	firstFound = false
-	for i = 1, 1 do
+	for i = 1, 3 do
 		firstFound = false
 		for i = 1, curMap.height do
 			for j = 1, curMap.width do

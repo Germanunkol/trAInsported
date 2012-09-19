@@ -4,16 +4,33 @@ local button_mt = { __index = button }
 
 local buttonList = {}
 
-function button:new(x, y, imageOff, imageOver, event)
+local buttonLevel = 1
+
+function button.getPriority()
+	return buttonLevel
+end
+
+function button.setButtonLevel()
+	local highest = 1
+	for i=1,#buttonList,1 do
+		if buttonList[i] then
+			if buttonList[i].priority > highest then
+				highest = buttonList[i].priority
+			end
+			buttonList[i].mouseHover = false
+		end
+	end
+	buttonLevel = highest
+end
+
+function button:new(x, y, width, height, label, event, eventArgs, priority)
+	priority = priority or 1
 	for i=1,#buttonList+1,1 do
 		if not buttonList[i] then
-			if type(imageOff) == "string" then
-				imageOff = love.graphics.newImage("Images/" .. imageOff)
-			end
-			if type(imageOver) == "string" then
-				imageOver = love.graphics.newImage("Images/" .. imageOver)
-			end
-			buttonList[i] = setmetatable({x=x, y=y, imageOff=imageOff, imageOver=imageOver, event=event, index = i}, button_mt)
+			local imageOff = createButtonOff(width, height, label)
+			local imageOver = createButtonOver(width, height, label)
+			buttonList[i] = setmetatable({x=x, y=y, imageOff=imageOff, imageOver=imageOver, event=event, index = i, w=width, h=height, l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+			button.setButtonLevel()
 			return buttonList[i]
 		end
 	end
@@ -21,37 +38,47 @@ end
 
 function button:remove()
 	buttonList[self.index] = nil
+	button.setButtonLevel()
 	return nil
+end
+
+function button:setInvisible(bool)
+	self.invisible = bool
 end
 
 function rectangularCollision(xPos, yPos, width, height, xPos2, yPos2)
 	return (xPos < xPos2 and xPos+width > xPos2 and yPos < yPos2 and yPos+height > yPos2)
 end
 
-function button.clacMouseHover()
+function button.calcMouseHover()
 	mX, mY = love.mouse.getPosition()
 	for k, b in pairs(buttonList) do
-		b.mouseHover = rectangularCollision(b.x, b.y, b.imageOff:getWidth(), b.imageOff:getHeight(), mX, mY)
-	end
-end
-
-function button.handleClick()
-	for k, b in pairs(buttonList) do
-		print("button found")
-		if b.mouseHover and b.event then
-			print("button over found")
-			b.event()
+		if b.priority == buttonLevel then
+			b.mouseHover = rectangularCollision(b.x, b.y, b.w, b.h, mX, mY)
 		end
 	end
 end
 
+function button.handleClick()
+	local hit = false
+	for k, b in pairs(buttonList) do
+		if b.mouseHover and b.event and not b.invisible then
+			b.event(b.eventArgs)
+			hit = true
+		end
+	end
+	return hit
+end
+
 function button.show()
-	love.graphics.setColor(255,255,255,255)
 	for k, b in pairs(buttonList) do
 		if not b.invisible then
 			if b.mouseHover then
+				love.graphics.setColor(255,255,255,255)
 				love.graphics.draw(b.imageOver, b.x, b.y)
 			else
+				if b.priority == buttonLevel then love.graphics.setColor(255,255,255,255)
+				else love.graphics.setColor(255,255,255,150) end
 				love.graphics.draw(b.imageOff, b.x, b.y)
 			end
 		end

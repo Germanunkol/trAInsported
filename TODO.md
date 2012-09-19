@@ -9,5 +9,8 @@ To do for trAInsported:
 **Server**
 
 **Security**
-- Before download, add a line that won't allow the scripts to be run without the game.
+- Before download/upload, add a line that won't allow the scripts to be run without the game.
 - Automatically replace windows line endings with unix line breaks.
+
+**Misc**
+- 

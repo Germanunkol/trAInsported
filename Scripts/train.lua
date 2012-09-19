@@ -16,7 +16,8 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-local TRAIN_SPEED = 30
+local TRAIN_SPEED = 1030
+local TRAIN_TURNSPEED = TRAIN_SPEED/20
 
 trainImage = love.image.newImageData("Images/Train1.png")
 --[[
@@ -30,8 +31,6 @@ function tint(col)
 	local bright = 0
 	return function (x,y,r,g,b,a)
 		bright = (r+g+b)/3	--calc brightness (average) of pixel
-		print("in:", x,y,r,g,b,a)
-		print(bright,bright*col.r/255, bright*col.g/255, bright*col.b/255, a)
 		return bright*col.r/255, bright*col.g/255, bright*col.b/255, a
 	end
 end
@@ -48,9 +47,6 @@ function train.init(col1, col2, col3, col4)
 	trainImagePlayer3d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	trainImagePlayer4d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	
-	f = tint(col1)
-	f(10,10,10,10,10,10)
-	
 	--[[trainImagePlayer1d:mapPixel(tint(col1))
 	trainImagePlayer2d:mapPixel(tint(col2))
 	trainImagePlayer3d:mapPixel(tint(col3))
@@ -61,7 +57,7 @@ function train.init(col1, col2, col3, col4)
 	for i=0,trainImage:getWidth()-1 do
 		for j=0,trainImage:getHeight()-1 do
 			r,g,b,a = trainImage:getPixel(i, j)
-			bright = (r+g+b)/3	--calc brightness (average) of pixel
+			bright = 0.2126 *r + 0.7152 *g + 0.0722 *b--(r+g+b)/3	--calc brightness (average) of pixel
 			trainImagePlayer1d:setPixel(i, j, bright*col1.r/255, bright*col1.g/255, bright*col1.b/255, a)
 			trainImagePlayer2d:setPixel(i, j, bright*col2.r/255, bright*col2.g/255, bright*col2.b/255, a)
 			trainImagePlayer3d:setPixel(i, j, bright*col3.r/255, bright*col3.g/255, bright*col3.b/255, a)
@@ -94,6 +90,9 @@ function train:new( aiID, x, y, dir )
 			local image = getTrainImage( aiID )
 			trainList[aiID][i] = setmetatable({image=image}, button_mt)
 			
+			print("Placing new train at:", x, y)
+			print("\tHeading:", dir)
+			
 			if dir == "N" then
 				path = train.getRailPath(x, y, dir)
 			elseif dir == "S" then
@@ -109,20 +108,19 @@ function train:new( aiID, x, y, dir )
 			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
-				print("curPathNode:", curPathNode)
-				print("y, x", x, y)
-				print("curPathNode coords:", path[curPathNode].x, path[curPathNode].y)
-				print("curPathNode+1 coords:", path[curPathNode+1].x, path[curPathNode+1].y)
 				--local position:
 				trainList[aiID][i].x = (path[curPathNode+1].x - path[curPathNode].x)/2 + path[curPathNode].x
 				trainList[aiID][i].y = (path[curPathNode+1].y - path[curPathNode].y)/2 + path[curPathNode].y
-				print("local:", trainList[aiID][i].x, trainList[aiID][i].y)
-				--global position
-				--trainList[aiID][i].x = trainList[aiID][i].x + trainList[aiID][i].tileX*TILE_SIZE
-				--trainList[aiID][i].y = trainList[aiID][i].y + trainList[aiID][i].tileY*TILE_SIZE
-				--print("global:", trainList[aiID][i].x, trainList[aiID][i].y)
 				
-				trainList[aiID][i].angle = math.atan((path[curPathNode+1].y - path[curPathNode].y)/(path[curPathNode+1].x - path[curPathNode].x))
+				dx = (path[curPathNode+1].x - trainList[aiID][i].x)
+				dy = (path[curPathNode+1].y - trainList[aiID][i].y)
+				if dx >= 0 then
+					trainList[aiID][i].angle = math.atan(dy/dx)
+				else
+					trainList[aiID][i].angle = math.atan(dy/dx) + math.pi
+				end
+				
+				trainList[aiID][i].smoothAngle = trainList[aiID][i].angle
 				trainList[aiID][i].path = path
 				trainList[aiID][i].curNode = curPathNode
 				trainList[aiID][i].dir = dir
@@ -165,38 +163,34 @@ function train.move()
 						--normalize:
 						d = math.sqrt(dx ^ 2 + dy ^ 2)
 					else
-						print("Reached path end")
+						--print("Reached path end")
 						tr.stop = true
 						possibleDirs = train.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
 						nextDir = possibleDirs[math.random(#possibleDirs)]
-						print("possible dirs:")
-						for k, d in pairs(possibleDirs) do
-							print("\t" .. d)
-						end
+						--print("possible dirs:")
+						--for k, d in pairs(possibleDirs) do
+						--	print("\t" .. d)
+						--end
 						
 						if tr.dir == "N" then
 							tr.tileY = tr.tileY - 1
-							print("moved north")
+							--print("moved north")
 						end
 						if tr.dir == "S" then
 							tr.tileY = tr.tileY + 1
-							print("moved south")
+							--print("moved south")
 						end
 						if tr.dir == "W" then
 							tr.tileX = tr.tileX - 1
-							print("moved west")
+							--print("moved west")
 						end
 						if tr.dir == "E" then
 							tr.tileX = tr.tileX + 1
-							print("moved east")
+							--print("moved east")
 						end
 						tr.path = train.getRailPath(tr.tileX, tr.tileY ,nextDir, tr.dir)
 						tr.dir = nextDir
 						
-						print("new path:")
-						for k, point in pairs(tr.path) do
-							print(point.x, point.y)
-						end
 						
 						if tr.path then
 							tr.stop = false
@@ -212,8 +206,6 @@ function train.move()
 							d = math.sqrt(dx ^ 2 + dy ^ 2)
 						end
 						a, b = tr.tileX, tr.tileY
-						print(a, b)
-						print(curMapRailTypes[a][b])
 					end
 				end
 				
@@ -223,6 +215,22 @@ function train.move()
 				
 				dx = dx/d
 				dy = dy/d
+				
+				if dx >= 0 then
+					tr.angle = math.atan(dy/dx)
+				else
+					tr.angle = math.atan(dy/dx) + math.pi
+				end
+				
+				if (tr.angle - tr.smoothAngle) > math.pi then
+					tr.smoothAngle = tr.smoothAngle + math.pi*2
+				end
+				if (tr.angle - tr.smoothAngle) < -math.pi then
+					tr.smoothAngle = tr.smoothAngle - math.pi*2
+				end
+				tr.smoothAngle = tr.smoothAngle + (tr.angle - tr.smoothAngle)*t*TRAIN_TURNSPEED
+				
+				
 				tr.x = tr.x + t*dx*TRAIN_SPEED
 				tr.y = tr.y + t*dy*TRAIN_SPEED
 			end
@@ -243,21 +251,16 @@ function train.getNextPossibleDirs(curTileX, curTileY , curDir)
 	local nextTileX, nextTileY = curTileX, curTileY
 	
 	if curDir == "N" then
-		print("currently going North")
 		nextTileY = nextTileY - 1
 	elseif curDir == "S" then
-		print("currently going South")
 		nextTileY = nextTileY + 1
 	elseif curDir == "E" then
-		print("currently going East")
 		nextTileX = nextTileX + 1
 	elseif curDir == "W" then
-		print("currently going West")
 		nextTileX = nextTileX - 1
 	end
 	
 	railType = getRailType( nextTileX, nextTileY )
-	print("type of next rail:", railType)
 	if railType == 1 or railType == 2 then		-- straight rail: can only keep moving in same dir
 		return {curDir}
 	end
@@ -321,8 +324,6 @@ function train.getNextPossibleDirs(curTileX, curTileY , curDir)
 end
 
 function train.getRailPath(tileX, tileY, dir, prevDir)
-	print("getting next path:", tileX, tileY, dir, prevDir)
-	print("rail type:",curMapRailTypes[tileX][tileY])	
 
 	if curMapRailTypes[tileX][tileY] == 1 then
 		if dir == "S" then
@@ -475,13 +476,13 @@ function train.getRailPath(tileX, tileY, dir, prevDir)
 			end
 		end
 	elseif curMapRailTypes[tileX][tileY] == 12 then	-- W
-		return pathEW, "W"
+		return pathWW, "W"
 	elseif curMapRailTypes[tileX][tileY] == 13 then	-- E
-		return pathWE, "E"
+		return pathEE, "E"
 	elseif curMapRailTypes[tileX][tileY] == 14 then	-- N
-		return pathSN, "N"
+		return pathNN, "N"
 	elseif curMapRailTypes[tileX][tileY] == 15 then	-- S
-		return pathNS, "S"
+		return pathSS, "S"
 	end
 	print("Path not found", tileX, tileY)
 	return pathNS, "S"		--fallback, should never happen!
@@ -490,21 +491,23 @@ end
 function train.show()
 	for k, list in pairs(trainList) do
 		for k, tr in pairs(list) do
-			--love.graphics.draw( tr.image, tr.x-tr.image:getWidth()/2, tr.y-tr.image:getHeight()/2 , tr.angle, 1, 1, tr.image:getWidth()/2, tr.image:getHeight()/2 )--, tr.angle)
+			--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
 			
-			for i = 1,#tr.path do
-				brightness = 1-(#tr.path-i)/#path
-				love.graphics.setColor(255,0,0,255)
-				love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, brightness*4+3)
+			if DEBUG_OVERLAY then
+				for i = 1,#tr.path do
+					brightness = 1-(#tr.path-i)/#tr.path
+					love.graphics.setColor(255,0,0,255)
+					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, brightness*4+3)
+				end
+			
+				love.graphics.setColor(255,255,0,255)
+				love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
+				love.graphics.setColor(128,255,0,255)
+				love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE+tr.y, 5)
 			end
 			
-			love.graphics.setColor(255,255,0,255)
-			love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
-			love.graphics.setColor(128,255,0,255)
-			love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE+tr.y, 5)
-			
-			
-			
+			love.graphics.setColor(255,255,255,255)
+			love.graphics.draw( tr.image, tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE + tr.y, tr.smoothAngle, 1, 1, tr.image:getWidth()/2, tr.image:getHeight()/2 )
 		end
 	end
 end

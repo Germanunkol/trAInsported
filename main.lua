@@ -5,14 +5,24 @@ button = require("Scripts/button")
 msgBox = require("Scripts/msgBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
+numTrains = 0
 
 FONT_BUTTON = love.graphics.newFont( 18 )
 FONT_STANDARD = love.graphics.newFont( 12 )
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
-PLAYERCOLOUR2 = {r=64,g=128,b=255}
+PLAYERCOLOUR2 = {r=64,g=64,b=250}
 PLAYERCOLOUR3 = {r=255,g=200,b=64}
 PLAYERCOLOUR4 = {r=64,g=255,b=64}
+
+
+time = 0
+local mouseLastX = 0
+local mouseLastY = 0
+local MAX_PAN = 500
+local camX, camY = 0,0
+camZ = 0.5
+
 
 function closeGame()
 	msgBox:new(love.graphics.getWidth()/2-200,love.graphics.getHeight()/2-200,2, "Sure you want to quit?", {name="Yes",event=love.event.quit, args=nil},"remove")
@@ -20,34 +30,39 @@ end
 
 function newMap()
 --	math.randomseed(1)
+	numTrains = 0
 	train.clear()
-	map.generate(15,15)
-	print("Finished Map:")
-	map.print()
+	map.generate(35,35)
+	map.print("Finished Map:")
 	mapImage = map.renderImage()
 	
 	firstFound = false
-	for i = 1, curMap.height do
-		for j = 1, curMap.width do
-			if curMap[i][j] == "C" then
-				if math.random(3) == 1 then
-				--if not firstFound then
-					firstFound = true
-					if curMap[i-1][j] == "C" then
-						train:new( math.random(4), i, j, "W" )
-					elseif curMap[i+1][j] == "C" then
-						train:new( math.random(4), i, j, "E" )
-					elseif curMap[i][j-1] == "C" then
-						train:new( math.random(4), i, j, "N" )
-					else
-						train:new( math.random(4), i, j, "S" )
+	for i = 1, 1 do
+		firstFound = false
+		for i = 1, curMap.height do
+			for j = 1, curMap.width do
+				if curMap[i][j] == "C" then
+					if math.random(3) == 1 then
+					--if not firstFound then
+						firstFound = true
+						if curMap[i-1][j] == "C" then
+							train:new( math.random(4), i, j, "W" )
+						elseif curMap[i+1][j] == "C" then
+							train:new( math.random(4), i, j, "E" )
+						elseif curMap[i][j-1] == "C" then
+							train:new( math.random(4), i, j, "N" )
+						else
+							train:new( math.random(4), i, j, "S" )
+						end
 					end
+					numTrains = numTrains+1
 				end
-				
 			end
 		end
 	end
-	
+	if curMap then
+		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
+	end
 end
 
 function love.load()
@@ -75,10 +90,6 @@ function love.load()
 end
 
 
-time = 0
-local mouseLastX = 0
-local mouseLastY = 0
-local camX, camY = 0,0
 
 function love.update()
 	-- ai.run()
@@ -86,8 +97,8 @@ function love.update()
 	button.calcMouseHover()
 	if panningView and mapImage then
 		x, y = love.mouse.getPosition()
-		camX = clamp(camX - (mouseLastX-x)/camZ, 500-mapImage:getWidth(), 500)
-		camY = clamp(camY - (mouseLastY-y)/camZ, 500-mapImage:getHeight(), 500)
+		camX = clamp(camX - (mouseLastX-x)*0.75/camZ, -MAX_PAN, MAX_PAN)
+		camY = clamp(camY - (mouseLastY-y)*0.75/camZ, -MAX_PAN, MAX_PAN)
 		mouseLastX = x
 		mouseLastY = y
 	end
@@ -99,18 +110,19 @@ function clamp(x, min, max)
 	return math.max(math.min(x, max), min)
 end
 
-camX, camY = 0,0
-camZ = 0.5
-
 function love.draw()
 	-- love.graphics.rectangle("fill",50,50,300,300)
 	if mapImage then
 		love.graphics.push()
-		--love.graphics.rotate(-0.25)
+		love.graphics.rotate(-0.25)
 		love.graphics.scale(camZ)
 		
-		love.graphics.translate(camX, camY)
-		love.graphics.draw(mapImage, 0, 0)
+		love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
+		love.graphics.setColor(34,10,10, 105)
+		--love.graphics.rectangle("fill", -100,-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+		love.graphics.setColor(255,255,255, 255)
+		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
+		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		train.show()
 	
 		love.graphics.pop()
@@ -127,6 +139,7 @@ function love.draw()
 	love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-100,20)
 	love.graphics.print('X: ' .. camX, love.graphics.getWidth()-100,35)
 	love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-100,50)
+	love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-100,65)
 	
 	-- love.graphics.draw(box1, 100, 100)
 	-- love.graphics.draw(box2, 200, 100)
@@ -136,10 +149,14 @@ end
 function love.mousepressed(x, y, b)
 	if b == "wd" then
 		camZ = clamp(camZ - 0.05, 0.1, 1)
+		camX = clamp(camX, -MAX_PAN, MAX_PAN)
+		camY = clamp(camY, -MAX_PAN, MAX_PAN)
 		return
 	end
 	if b == "wu" then
 		camZ = clamp(camZ + 0.05, 0.1, 1)
+		camX = clamp(camX, -MAX_PAN, MAX_PAN)
+		camY = clamp(camY, -MAX_PAN, MAX_PAN)
 		return
 	end
 	if panningView then return end

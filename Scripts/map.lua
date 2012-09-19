@@ -2,7 +2,7 @@ local map = {}
 
 curMap = nil
 
-TILE_SIZE = 128
+TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 
 local occupied = {}
 
@@ -31,16 +31,6 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 
 --Environment/Misc:
 IMAGE_HOUSE1 = love.image.newImageData("Images/House1.png")
-
--- paths:
---pathNS = {}
---pathEW = {}
---pathWE = {}
---pathSN = {}
---pathNS = {}
---pathNS = {}
-
-
 
 
 function markConnected(i, j, level)
@@ -282,6 +272,15 @@ function calculateRailTypes()
 end
 
 function map.generate(width, height)
+	if width < 4 then
+		print("Minimum width is 4!")
+		width = 4
+	end
+	if height < 4 then
+		print("Minimum height is 4!")
+		height = 4
+	end
+	
 	curMap = setmetatable({width=width, height=height}, map_mt)
 	--occupied = {}
 	curMapRailTypes = {}
@@ -296,8 +295,7 @@ function map.generate(width, height)
 	end
 	
 	generateRailRectangles()
-	print("Raw map:")
-	map.print()
+	map.print("Raw map:")
 	clearLargeJunctions()
 	
 	connectLooseEnds()
@@ -358,11 +356,72 @@ function map.init()
 	pathNW[1] = {x=48,y=0}
 	pathNW[2] = {x=35,y=34}
 	pathNW[3] = {x=0,y=48}
+	
+	pathSS = {}
+	pathSS[1] = {x=79, y=128}
+	pathSS[2] = {x=86, y=106}
+	pathSS[3] = {x=102, y=90}
+	pathSS[4] = {x=111, y=72}
+	pathSS[5] = {x=110, y=47}
+	pathSS[6] = {x=88, y=22}
+	pathSS[7] = {x=63, y=15}
+	pathSS[8] = {x=39, y=22}
+	pathSS[9] = {x=17, y=47}
+	pathSS[10] = {x=16, y=72}
+	pathSS[11] = {x=25, y=90}
+	pathSS[12] = {x=41, y=106}
+	pathSS[13] = {x=48, y=128}
+	
+	pathWW = {}
+	pathWW[1] = {x=0, y=79}
+	pathWW[2] = {x=21, y=86}
+	pathWW[3] = {x=37, y=102}
+	pathWW[4] = {x=55, y=111}
+	pathWW[5] = {x=80, y=110}
+	pathWW[6] = {x=105, y=88}
+	pathWW[7] = {x=112, y=63}
+	pathWW[8] = {x=105, y=39}
+	pathWW[9] = {x=80, y=17}
+	pathWW[10] = {x=55, y=16}
+	pathWW[11] = {x=37, y=25}
+	pathWW[12] = {x=21, y=41}
+	pathWW[13] = {x=0, y=48}
+	
+	pathNN = {}
+	pathNN[1] = {x=48, y=0}
+	pathNN[2] = {x=41, y=21}
+	pathNN[3] = {x=25, y=37}
+	pathNN[4] = {x=16, y=55}
+	pathNN[5] = {x=17, y=80}
+	pathNN[6] = {x=39, y=105}
+	pathNN[7] = {x=64, y=112}
+	pathNN[8] = {x=88, y=105}
+	pathNN[9] = {x=110, y=80}
+	pathNN[10] = {x=111, y=55}
+	pathNN[11] = {x=102, y=37}
+	pathNN[12] = {x=86, y=21}
+	pathNN[13] = {x=79, y=0}
+	
+	pathEE = {}
+	pathEE[1] = {x=128, y=48}
+	pathEE[2] = {x=106, y=41}
+	pathEE[3] = {x=90, y=25}
+	pathEE[4] = {x=72, y=16}
+	pathEE[5] = {x=47, y=17}
+	pathEE[6] = {x=22, y=39}
+	pathEE[7] = {x=15, y=64}
+	pathEE[8] = {x=22, y=88}
+	pathEE[9] = {x=47, y=110}
+	pathEE[10] = {x=72, y=111}
+	pathEE[11] = {x=90, y=102}
+	pathEE[12] = {x=106, y=86}
+	pathEE[13] = {x=128, y=79}
 end
 
-function map.print()
+function map.print(title)
+	title = title or "Current map:"
 	if curMap then
-		print("Current map:")
+		print(title)
 		local str = ""
 		for j = 0,curMap.height+1,1 do
 			str = ""

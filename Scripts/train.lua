@@ -16,7 +16,7 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-local TRAIN_SPEED = 1030
+local TRAIN_SPEED = 20
 local TRAIN_TURNSPEED = TRAIN_SPEED/20
 
 trainImage = love.image.newImageData("Images/Train1.png")
@@ -57,11 +57,11 @@ function train.init(col1, col2, col3, col4)
 	for i=0,trainImage:getWidth()-1 do
 		for j=0,trainImage:getHeight()-1 do
 			r,g,b,a = trainImage:getPixel(i, j)
-			bright = 0.2126 *r + 0.7152 *g + 0.0722 *b--(r+g+b)/3	--calc brightness (average) of pixel
-			trainImagePlayer1d:setPixel(i, j, bright*col1.r/255, bright*col1.g/255, bright*col1.b/255, a)
-			trainImagePlayer2d:setPixel(i, j, bright*col2.r/255, bright*col2.g/255, bright*col2.b/255, a)
-			trainImagePlayer3d:setPixel(i, j, bright*col3.r/255, bright*col3.g/255, bright*col3.b/255, a)
-			trainImagePlayer4d:setPixel(i, j, bright*col4.r/255, bright*col4.g/255, bright*col4.b/255, a)
+			bright = 2*(0.2126 *r + 0.7152 *g + 0.0722 *b)/3--(r+g+b)/3	--calc brightness (average) of pixel
+			trainImagePlayer1d:setPixel(i, j, bright*col1.r/255+r/3, bright*col1.g/255+g/3, bright*col1.b/255+b/3, a)
+			trainImagePlayer2d:setPixel(i, j, bright*col2.r/255+r/3, bright*col2.g/255+g/3, bright*col2.b/255+b/3, a)
+			trainImagePlayer3d:setPixel(i, j, bright*col3.r/255+r/3, bright*col3.g/255+g/3, bright*col3.b/255+b/3, a)
+			trainImagePlayer4d:setPixel(i, j, bright*col4.r/255+r/3, bright*col4.g/255+g/3, bright*col4.b/255+b/3, a)
 		end
 	end
 	trainImagePlayer1 = love.graphics.newImage(trainImagePlayer1d)
@@ -88,7 +88,7 @@ function train:new( aiID, x, y, dir )
 			--local imageOff = createButtonOff(width, height, label)
 			--local imageOver = createButtonOver(width, height, label)
 			local image = getTrainImage( aiID )
-			trainList[aiID][i] = setmetatable({image=image}, button_mt)
+			trainList[aiID][i] = setmetatable({image = image, ID = i}, button_mt)
 			
 			print("Placing new train at:", x, y)
 			print("\tHeading:", dir)
@@ -105,6 +105,7 @@ function train:new( aiID, x, y, dir )
 			
 			trainList[aiID][i].tileX = x
 			trainList[aiID][i].tileY = y
+			map.setTileOccupied(x, y, nil, dir)
 			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
@@ -142,109 +143,178 @@ end
 
 -- function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end
 
-function train.move()
-	t = love.timer.getDelta()
-	for k, list in pairs(trainList) do
-		for k, tr in pairs(list) do
-			if tr.path and not tr.stop then
+local blockedTrains = {}
+
+function addBlockedTrain(tr)
+	blockedTrains[#blockedTrains+1] = tr
+end
+
+function removeBlockedTrain(tr)
+	local removedID = false
+	for k, v in ipairs(blockedTrains) do
+		print(v, tr)
+		if v == tr then
+			removedID = k
+		elseif removedID then
+			blockedTrains[k-1] = blockedTrains[k]
+		end
+	end
+	if removedID then blockedTrains[#blockedTrains] = nil
+	end
+end
+
+function moveSingleTrain(tr, t)
+	if tr.path then
+		dx = (tr.path[tr.curNode+1].x - tr.x)
+		dy = (tr.path[tr.curNode+1].y - tr.y)
+		--normalize:
+		d = math.sqrt(dx ^ 2 + dy ^ 2)
+		
+		-- if distance is small, or sign of dx or dy has changed, go to next node:
+		if d < 1 or (dx < 0) ~= (tr.dxPrevSign) or (dy < 0) ~= (tr.dyPrevSign) then
+			if tr.path[tr.curNode+2] then
+				tr.curNode = tr.curNode + 1
 				dx = (tr.path[tr.curNode+1].x - tr.x)
 				dy = (tr.path[tr.curNode+1].y - tr.y)
-				dx1,dy1 = dx,dy
 				--normalize:
 				d = math.sqrt(dx ^ 2 + dy ^ 2)
+				if not tr.path[tr.curNode+2] and not tr.freedTileOccupation then
+					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
+				end
+			else
 				
-				-- if distance is small, or sign of dx or dy has changed, go to next node:
-				if d < 1 or (dx < 0) ~= (tr.dxPrevSign) or (dy < 0) ~= (tr.dyPrevSign) then
-					if tr.path[tr.curNode+2] then
-						tr.curNode = tr.curNode + 1
-						dx = (tr.path[tr.curNode+1].x - tr.x)
-						dy = (tr.path[tr.curNode+1].y - tr.y)
-						dx1,dy1 = dx,dy
-						--normalize:
-						d = math.sqrt(dx ^ 2 + dy ^ 2)
-					else
-						--print("Reached path end")
-						tr.stop = true
-						possibleDirs = train.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
-						nextDir = possibleDirs[math.random(#possibleDirs)]
-						--print("possible dirs:")
-						--for k, d in pairs(possibleDirs) do
-						--	print("\t" .. d)
-						--end
-						
-						if tr.dir == "N" then
-							tr.tileY = tr.tileY - 1
-							--print("moved north")
-						end
-						if tr.dir == "S" then
-							tr.tileY = tr.tileY + 1
-							--print("moved south")
-						end
-						if tr.dir == "W" then
-							tr.tileX = tr.tileX - 1
-							--print("moved west")
-						end
-						if tr.dir == "E" then
-							tr.tileX = tr.tileX + 1
-							--print("moved east")
-						end
-						tr.path = train.getRailPath(tr.tileX, tr.tileY ,nextDir, tr.dir)
-						tr.dir = nextDir
-						
-						
-						if tr.path then
-							tr.stop = false
-							tr.curNode = 1
-							
-							tr.x = tr.path[tr.curNode].x
-							tr.y = tr.path[tr.curNode].y
-							
-							dx = (tr.path[tr.curNode+1].x - tr.x)
-							dy = (tr.path[tr.curNode+1].y - tr.y)
-							dx1,dy1 = dx,dy
-							--normalize:
-							d = math.sqrt(dx ^ 2 + dy ^ 2)
-						end
-						a, b = tr.tileX, tr.tileY
+				local nextX, nextY = tr.tileX, tr.tileY
+				local cameFromDir = ""
+				
+				if not tr.blocked then
+					possibleDirs = train.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
+				
+					tr.nextDir = possibleDirs[math.random(#possibleDirs)]
+					
+					if not tr.freedTileOccupation then
+						map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
 					end
 				end
 				
-				tr.dxPrevSign = (dx < 0)
-				tr.dyPrevSign = (dy < 0)
+				if tr.dir == "N" then
+					nextY = nextY - 1
+					cameFromDir = "S"
+					--print("moved north")
+				end
+				if tr.dir == "S" then
+					nextY = nextY + 1
+					cameFromDir = "N"
+					--print("moved south")
+				end
+				if tr.dir == "W" then
+					nextX = nextX - 1
+					cameFromDir = "E"
+					--print("moved west")
+				end
+				if tr.dir == "E" then
+					nextX = nextX + 1
+					cameFromDir = "W"
+					--print("moved east")
+				end
 				
+				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
+					
+					if tr.blocked then removeBlockedTrain(tr) end
+					
+					tr.blocked = false
+					
+					--print("reset:", tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)
+					
+					--print("set:", nextX, nextY, cameFromDir, tr.nextDir)
+					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
+					tr.freedTileOccupation = false
+					
+					tr.cameFromDir = cameFromDir
+					
+					tr.tileX, tr.tileY = nextX, nextY
 				
-				dx = dx/d
-				dy = dy/d
+					tr.path = train.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
+					tr.dir = tr.nextDir
 				
-				if dx >= 0 then
-					tr.angle = math.atan(dy/dx)
+					if tr.path then
+					
+						for k, v in pairs(path) do
+							print(k, "x:" .. v.x, "y:" .. v.y)
+						end
+					
+						tr.curNode = 1
+					
+						tr.x = tr.path[tr.curNode].x
+						tr.y = tr.path[tr.curNode].y
+					
+						dx = (tr.path[tr.curNode+1].x - tr.x)
+						dy = (tr.path[tr.curNode+1].y - tr.y)
+						--normalize:
+						d = math.sqrt(dx ^ 2 + dy ^ 2)
+					end
 				else
-					tr.angle = math.atan(dy/dx) + math.pi
+					if not tr.blocked then
+						addBlockedTrain(tr)
+						tr.blocked = true
+					end
 				end
-				
-				if (tr.angle - tr.smoothAngle) > math.pi then
-					tr.smoothAngle = tr.smoothAngle + math.pi*2
-				end
-				if (tr.angle - tr.smoothAngle) < -math.pi then
-					tr.smoothAngle = tr.smoothAngle - math.pi*2
-				end
-				tr.smoothAngle = tr.smoothAngle + (tr.angle - tr.smoothAngle)*t*TRAIN_TURNSPEED
-				
-				
-				tr.x = tr.x + t*dx*TRAIN_SPEED
-				tr.y = tr.y + t*dy*TRAIN_SPEED
 			end
+		end
+		
+		if not tr.blocked then
+			tr.dxPrevSign = (dx < 0)
+			tr.dyPrevSign = (dy < 0)
+		
+		
+			dx = dx/d
+			dy = dy/d
+		
+			if dx >= 0 then
+				tr.angle = math.atan(dy/dx)
+			else
+				tr.angle = math.atan(dy/dx) + math.pi
+			end
+		
+			if (tr.angle - tr.smoothAngle) > math.pi then
+				tr.smoothAngle = tr.smoothAngle + math.pi*2
+			end
+			if (tr.angle - tr.smoothAngle) < -math.pi then
+				tr.smoothAngle = tr.smoothAngle - math.pi*2
+			end
+			tr.smoothAngle = tr.smoothAngle + (tr.angle - tr.smoothAngle)*t*TRAIN_TURNSPEED
+		
+		
+			tr.x = tr.x + t*dx*TRAIN_SPEED
+			tr.y = tr.y + t*dy*TRAIN_SPEED
 		end
 	end
 end
 
+function train.moveAll()
+	t = love.timer.getDelta()*timeFactor
+	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
+		moveSingleTrain(tr, t)
+		tr.hasMoved = true
+	end
+	
+	for k, list in pairs(trainList) do	-- TO DO move through train lists in random order!
+		for k, tr in pairs(list) do
+			if tr.hasMoved == false then
+				moveSingleTrain(tr, t)
+			end
+			tr.hasMoved = false	-- reset for next round!
+		end
+	end
+end
+
+
 function train.clear()
+	blockedTrains = {}
 	trainList[1] = {}
 	trainList[2] = {}
 	trainList[3] = {}
 	trainList[4] = {}
 end
-
 
 -- if I keep moving into the same direction, which direction can I move in on the next tile?
 function train.getNextPossibleDirs(curTileX, curTileY , curDir)

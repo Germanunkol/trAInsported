@@ -20,9 +20,12 @@ time = 0
 local mouseLastX = 0
 local mouseLastY = 0
 local MAX_PAN = 500
-local camX, camY = 0,0
-camZ = 0.5
+local camX, camY = -500,0
+camZ = 0.3
 
+timeFactor = 1
+local timeFactorIndex = 3
+local timeFactorList = {0.2, 0.5, 1, 2, 5, 10, 40}
 
 function closeGame()
 	msgBox:new(love.graphics.getWidth()/2-200,love.graphics.getHeight()/2-200,2, "Sure you want to quit?", {name="Yes",event=love.event.quit, args=nil},"remove")
@@ -32,17 +35,17 @@ function newMap()
 --	math.randomseed(1)
 	numTrains = 0
 	train.clear()
-	map.generate(35,35)
+	map.generate(15,15)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
 	
 	firstFound = false
-	for i = 1, 3 do
+	for i = 1, 5 do
 		firstFound = false
 		for i = 1, curMap.height do
 			for j = 1, curMap.width do
-				if curMap[i][j] == "C" then
-					if math.random(3) == 1 then
+				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
+					if math.random(6) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -72,8 +75,8 @@ function love.load()
 	
 	button1 = button:new(10, 30, 90, 45, "Exit", closeGame, nil)
 	button2 = button:new(10, 85, 90, 45, "New", newMap, nil)
-	button3 = button:new(10, 140, 90, 45, "", love.event.quit, nil)
-	button4 = button:new(10, 195, 90, 45, "", love.event.quit, nil)
+	--button3 = button:new(10, 140, 90, 45, "", love.event.quit, nil)
+	--button4 = button:new(10, 195, 90, 45, "", love.event.quit, nil)
 
 	love.graphics.setBackgroundColor(90,60,40,255)
 	print("Loading...")
@@ -103,7 +106,7 @@ function love.update()
 		mouseLastY = y
 	end
 	
-	train.move()
+	train.moveAll()
 end
 
 function clamp(x, min, max)
@@ -114,12 +117,12 @@ function love.draw()
 	-- love.graphics.rectangle("fill",50,50,300,300)
 	if mapImage then
 		love.graphics.push()
-		love.graphics.rotate(-0.25)
+		love.graphics.rotate(-0.1)
 		love.graphics.scale(camZ)
 		
 		love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 		love.graphics.setColor(34,10,10, 105)
-		--love.graphics.rectangle("fill", -100,-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
@@ -140,6 +143,7 @@ function love.draw()
 	love.graphics.print('X: ' .. camX, love.graphics.getWidth()-100,35)
 	love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-100,50)
 	love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-100,65)
+	love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-100,80)
 	
 	-- love.graphics.draw(box1, 100, 100)
 	-- love.graphics.draw(box2, 200, 100)
@@ -176,6 +180,12 @@ function love.keypressed(key, unicode)
 		debug.debug()
 	elseif key == "s" then
 		getScreenshot()
+	elseif key == "+" then
+		timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
+		timeFactor = timeFactorList[timeFactorIndex]
+	elseif key == "-" then
+		timeFactorIndex = math.max(timeFactorIndex - 1, 1)
+		timeFactor = timeFactorList[timeFactorIndex]
 	end
 end
 

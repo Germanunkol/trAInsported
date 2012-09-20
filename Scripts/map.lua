@@ -4,7 +4,7 @@ curMap = nil
 
 TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 
-local occupied = {}
+local curMapOccupiedTiles = {}
 
 -- RAIL Pieces:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
@@ -282,16 +282,20 @@ function map.generate(width, height)
 	end
 	
 	curMap = setmetatable({width=width, height=height}, map_mt)
-	--occupied = {}
+	curMapOccupiedTiles = {}
 	curMapRailTypes = {}
 	
-	for i = 0,height+1 do
+	for i = 0,width+1 do
 		curMap[i] = {}
-		--occupied[i] = {}
 		curMapRailTypes[i] = {}
-		--for j=1,width do
-			--occupied[i][j] = {}
-		--end
+		if i >= 1 and i <= width then 
+			curMapOccupiedTiles[i] = {}
+			for j = 1, height do
+				curMapOccupiedTiles[i][j] = {}
+				curMapOccupiedTiles[i][j].from = {}
+				curMapOccupiedTiles[i][j].to = {}
+			end
+		end
 	end
 	
 	generateRailRectangles()
@@ -305,6 +309,32 @@ function map.generate(width, height)
 	placeHouses()
 end
 
+function map.getIsTileOccupied(x, y, f, t)
+	if not f and not t then		-- if f and t are left out, the function returns whether ANYTHING is on the rail.
+		print(x, y, curMapOccupiedTiles[x])
+		for k, v in pairs(curMapOccupiedTiles[x][y].from) do
+			if v == true then return true end
+		end
+		for k, v in pairs(curMapOccupiedTiles[x][y].to) do
+			if v == true then return true end
+		end
+	else
+		-- otherwise, it checks if the given entry/exit points are occupied.
+		if curMapOccupiedTiles[x][y].from[f] == true then return true end
+		if curMapOccupiedTiles[x][y].to[t] == true then return true end
+	end
+	return false
+end
+
+function map.setTileOccupied(x, y, f, t)
+	if f then curMapOccupiedTiles[x][y].from[f] = true end
+	if t then curMapOccupiedTiles[x][y].to[t] = true end
+end
+
+function map.resetTileOccupied(x, y, f, t)
+	if f then curMapOccupiedTiles[x][y].from[f] = false end
+	if t then curMapOccupiedTiles[x][y].to[t] = false end
+end
 
 function map.init()
 	pathNS = {}

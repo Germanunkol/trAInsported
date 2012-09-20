@@ -32,6 +32,22 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 --Environment/Misc:
 IMAGE_HOUSE1 = love.image.newImageData("Images/House1.png")
 
+-- possible directions on a tile:
+NS = 1
+EW = 2
+NW = 3
+SW = 4
+NE = 5
+ES = 6
+NEW = 7
+NES = 8
+ESW = 9
+NSW = 10
+NESW = 11
+WW = 12
+EE = 13
+NN = 14
+SS = 15
 
 function markConnected(i, j, level)
 level = level or 0
@@ -310,8 +326,91 @@ function map.generate(width, height)
 end
 
 function map.getIsTileOccupied(x, y, f, t)
+	if not f or not t then
+		return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+	end
+	directionStr = f .. t
+	railType = getRailType(x,y)
+	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
+		return false
+	elseif railType == NES then
+		if directionStr == "NS" then
+			return curMapOccupiedTiles[x][y]["ES"]	-- straight line
+		elseif directionStr == "SN" then
+			return curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"]
+		elseif directionStr == "SE" then
+			return curMapOccupiedTiles[x][y]["NE"]
+		elseif directionStr == "ES" then
+			return curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["NE"]
+		elseif directionStr == "EN" then
+			return curMapOccupiedTiles[x][y]["SN"]
+		elseif directionStr == "NE" then
+			return curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"]
+		end
+		
+	elseif railType == ESW then
+		if directionStr == "EW" then
+			return curMapOccupiedTiles[x][y]["SW"]	-- straight line
+		elseif directionStr == "WE" then
+			return curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"]
+		elseif directionStr == "SE" then
+			return curMapOccupiedTiles[x][y]["WE"]
+		elseif directionStr == "ES" then
+			return curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["SW"]
+		elseif directionStr == "SW" then
+			return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["WE"]
+		elseif directionStr == "WS" then
+			return curMapOccupiedTiles[x][y]["ES"]
+		end
+		
+	elseif railType == NSW then
+		if directionStr == "SN" then
+			return curMapOccupiedTiles[x][y]["WN"]
+		elseif directionStr == "NS" then
+			return curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"]
+		elseif directionStr == "WS" then
+			return curMapOccupiedTiles[x][y]["NS"]
+		elseif directionStr == "SW" then
+			return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "NW" then
+			return curMapOccupiedTiles[x][y]["SW"]
+		elseif directionStr == "WN" then
+			return curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SW"]
+		end
+	elseif railType == NEW then
+		if directionStr == "WE" then
+			return curMapOccupiedTiles[x][y]["NE"]
+		elseif directionStr == "EW" then
+			return curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["NW"] or curMapOccupiedTiles[x][y]["WN"]
+		elseif directionStr == "NE" then
+			return curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["EW"]
+		elseif directionStr == "EN" then
+			return curMapOccupiedTiles[x][y]["WN"]
+		elseif directionStr == "WN" then
+			return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"]
+		elseif directionStr == "NW" then
+			return curMapOccupiedTiles[x][y]["EW"]
+		end
+	elseif railType == NESW then
+		if directionStr == "NS" then return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "SN" then return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "EW" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "WE" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "NE" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "EN" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "ES" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "SE" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "SW" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "WS" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		elseif directionStr == "NW" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"]
+		elseif directionStr == "WN" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"]
+		end
+	end
+	
+
+	
+	--[[--old
 	if not f and not t then		-- if f and t are left out, the function returns whether ANYTHING is on the rail.
-		print(x, y, curMapOccupiedTiles[x])
 		for k, v in pairs(curMapOccupiedTiles[x][y].from) do
 			if v == true then return true end
 		end
@@ -323,17 +422,32 @@ function map.getIsTileOccupied(x, y, f, t)
 		if curMapOccupiedTiles[x][y].from[f] == true then return true end
 		if curMapOccupiedTiles[x][y].to[t] == true then return true end
 	end
+	--]]
 	return false
 end
 
 function map.setTileOccupied(x, y, f, t)
-	if f then curMapOccupiedTiles[x][y].from[f] = true end
-	if t then curMapOccupiedTiles[x][y].to[t] = true end
+	--print("Occupying: ", f, t)
+	if not f or not t then return end
+	if not curMapOccupiedTiles[x][y][f..t] then
+		curMapOccupiedTiles[x][y][f..t] = 1
+	else
+		curMapOccupiedTiles[x][y][f..t] = curMapOccupiedTiles[x][y][f..t]  + 1
+	end
+	-- if f then curMapOccupiedTiles[x][y].from[f] = true end
+	-- if t then curMapOccupiedTiles[x][y].to[t] = true end
 end
 
 function map.resetTileOccupied(x, y, f, t)
-	if f then curMapOccupiedTiles[x][y].from[f] = false end
-	if t then curMapOccupiedTiles[x][y].to[t] = false end
+	--print("Freeing: ", f , t)
+	if f and t then
+		if not curMapOccupiedTiles[x][y][f..t] then 
+			error("Trying to free invalid occupation!: " .. f .. "," .. t)
+		else
+			curMapOccupiedTiles[x][y][f..t] = curMapOccupiedTiles[x][y][f..t]  - 1
+			if curMapOccupiedTiles[x][y][f..t] == 0 then curMapOccupiedTiles[x][y][f..t] = nil end
+		end
+	end
 end
 
 function map.init()
@@ -353,39 +467,79 @@ function map.init()
 	
 	pathNE = {}
 	pathNE[1] = {x=48,y=0}
-	pathNE[2] = {x=72,y=56}
-	pathNE[3] = {x=128,y=79}
+	pathNE[2] = {x=49,y=15}
+	pathNE[3] = {x=54,y=31}
+	pathNE[4] = {x=61,y=44}
+	pathNE[5] = {x=72,y=56}
+	pathNE[6] = {x=84,y=66}
+	pathNE[7] = {x=97,y=73}
+	pathNE[8] = {x=113,y=78}
+	pathNE[9] = {x=128,y=79}
 	pathEN = {}
 	pathEN[1] = {x=128,y=48}
-	pathEN[2] = {x=93,y=35}
-	pathEN[3] = {x=79,y=0}
+	pathEN[2] = {x=117,y=48}
+	pathEN[3] = {x=103,y=42}
+	pathEN[4] = {x=93,y=35}
+	pathEN[5] = {x=85,y=24}
+	pathEN[6] = {x=79,y=9}
+	pathEN[7] = {x=79,y=0}
 	
 	pathES = {}
 	pathES[1] = {x=128,y=48}
-	pathES[2] = {x=71,y=72}
-	pathES[3] = {x=48,y=128}
+	pathES[2] = {x=113,y=49}
+	pathES[3] = {x=96,y=54}
+	pathES[4] = {x=83,y=61}
+	pathES[5] = {x=71,y=72}
+	pathES[6] = {x=61,y=84}
+	pathES[7] = {x=54,y=97}
+	pathES[8] = {x=49,y=113}
+	pathES[9] = {x=48,y=128}
 	pathSE = {}
 	pathSE[1] = {x=79,y=128}
-	pathSE[2] = {x=92,y=93}
-	pathSE[3] = {x=128,y=79}
+	pathSE[2] = {x=79,y=117}
+	pathSE[3] = {x=85,y=103}
+	pathSE[4] = {x=92,y=93}
+	pathSE[5] = {x=103,y=85}
+	pathSE[6] = {x=117,y=79}
+	pathSE[7] = {x=128,y=79}
 	
 	pathSW = {}
 	pathSW[1] = {x=79,y=128}
-	pathSW[2] = {x=55,y=71}
-	pathSW[3] = {x=0,y=48}
+	pathSW[2] = {x=78,y=113}
+	pathSW[3] = {x=73,y=96}
+	pathSW[4] = {x=66,y=83}
+	pathSW[5] = {x=55,y=71}
+	pathSW[6] = {x=43,y=61}
+	pathSW[7] = {x=30,y=54}
+	pathSW[8] = {x=14,y=49}
+	pathSW[9] = {x=0,y=48}
 	pathWS = {}
 	pathWS[1] = {x=0,y=79}
-	pathWS[2] = {x=34,y=92}
-	pathWS[3] = {x=48,y=128}
+	pathWS[2] = {x=10,y=79}
+	pathWS[3] = {x=24,y=85}
+	pathWS[4] = {x=34,y=92}
+	pathWS[5] = {x=42,y=103}
+	pathWS[6] = {x=48,y=118}
+	pathWS[7] = {x=48,y=128}
 	
 	pathWN = {}
 	pathWN[1] = {x=0,y=79}
-	pathWN[2] = {x=55,y=55}
-	pathWN[3] = {x=79,y=0}
+	pathWN[2] = {x=14,y=78}
+	pathWN[3] = {x=31,y=73}
+	pathWN[4] = {x=44,y=66}
+	pathWN[5] = {x=55,y=55}
+	pathWN[6] = {x=66,y=43}
+	pathWN[7] = {x=73,y=30}
+	pathWN[8] = {x=78,y=14}
+	pathWN[9] = {x=79,y=0}
 	pathNW = {}
 	pathNW[1] = {x=48,y=0}
-	pathNW[2] = {x=35,y=34}
-	pathNW[3] = {x=0,y=48}
+	pathNW[2] = {x=48,y=10}
+	pathNW[3] = {x=42,y=24}
+	pathNW[4] = {x=35,y=34}
+	pathNW[5] = {x=24,y=42}
+	pathNW[6] = {x=10,y=48}
+	pathNW[7] = {x=0,y=48}
 	
 	pathSS = {}
 	pathSS[1] = {x=79, y=128}
@@ -467,58 +621,60 @@ function map.print(title)
 	end
 end
 
+
+
 function getRailType(i, j)
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
-		return 1	-- NS
+		return NS
 	end
 	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
-		return 2	-- EW
+		return EW
 	end
 	
 	--curves
 	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
-		return 3	-- NW
+		return NW
 	end
 	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
-		return 4	-- SW
+		return SW
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
-		return 5	-- NE
+		return NE
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
-		return 6	-- ES
+		return ES
 	end
 	
 	--junctions
 	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
-		return 7	-- NEW
+		return NEW
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
-		return 8	-- NES
+		return NES	-- NES
 	end
 	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
-		return 9	-- ESW
+		return ESW	-- ESW
 	end
 	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
-		return 10	-- NSW
+		return NSW	-- NSW
 	end
 	
 	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
-		return 11	-- NESW
+		return NESW	-- NESW
 	end
 	
 	--turn around
 	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
-		return 12	-- W
+		return WW	-- W
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
-		return 13	-- E
+		return EE	-- E
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
-		return 14	-- N
+		return NN	-- N
 	end
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
-		return 15	-- S
+		return SS	-- S
 	end
 end
 

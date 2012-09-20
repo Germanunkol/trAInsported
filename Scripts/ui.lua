@@ -1,6 +1,33 @@
 STND_BUTTON_WIDTH = 90
 STND_BUTTON_HEIGHT = 45
 
+function blurAlpha( img )
+	local alpha,a
+	local dest = love.image.newImageData(img:getWidth()+10, img:getHeight()+10)
+	for i = 1, dest:getWidth()-1 do
+		for j = 1, dest:getHeight()-1 do
+			alpha = 0
+			for x = -2, 2 do
+				for y = -2, 2 do
+					if i+x >= 1 and j+y >= 1 and i+x < img:getWidth()-1 and j+y < img:getHeight()-1 then
+						_,_,_,a = img:getPixel(i+x, j+y)
+						alpha = alpha + a
+					end
+				end
+			end
+			alpha = alpha/25		--average of alpha
+			
+			if alpha ~= 0 then print(alpha) end
+			r,g,b = 0,0,0
+			if i>5 and j>5 and i-5 < img:getWidth() and j-5 < img:getHeight() then
+				r,g,b = img:getPixel(i-5, j-5)
+			end
+			dest:setPixel(i, j, r,g,b, alpha)
+		end
+	end
+	return dest
+end
+
 function createMsgBoxBG(width, height, text)
 	local ang = 0
 	local verts = {}
@@ -25,19 +52,36 @@ function createMsgBoxBG(width, height, text)
 	local shadowVerts = {}
 	for i = 1, #verts, 2 do
 		shadowVerts[i] = verts[i] --+ 7
-		shadowVerts[i+1] = verts[i+1] + 10
+		shadowVerts[i+1] = verts[i+1]
+		verts[i] = verts[i]+5
+		--verts[i+1] = verts[i+1]
 	end
 	
 	c = love.graphics.newCanvas()
 	love.graphics.setCanvas(c)
 	
-	love.graphics.setColor(0,0,0,120)
+	love.graphics.setColor(0,0,0,200)
 	love.graphics.polygon( "fill", shadowVerts)
 	
-	love.graphics.setColor(55,78,125,240)
+	local shadow = love.image.newImageData(width, height)
+	shadow:paste(c:getImageData(), 0, 0, 0, 0, width, height)
+	--shadow = blurAlpha(shadow)
+	--shadow = blurAlpha(shadow)
+	--shadow = blurAlpha(shadow)
+	
+	local shadowImg = love.graphics.newImage(shadow)
+	
+	c = love.graphics.newCanvas()
+	love.graphics.setCanvas(c)
+	
+	
+	love.graphics.setColor(255,255,255,255)
+	love.graphics.draw(shadowImg,0,10)
+	
+	love.graphics.setColor(55,78,125,255)
 	love.graphics.polygon( "fill", verts)
-	--love.graphics.setColor(120,140,170,255)
-	love.graphics.setColor(30,60,100,240)
+	
+	love.graphics.setColor(30,60,100,255)
 	love.graphics.setLine(1, "smooth")
 	love.graphics.polygon( "line", verts)
 	love.graphics.setFont(FONT_BUTTON)

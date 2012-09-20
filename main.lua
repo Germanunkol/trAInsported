@@ -13,7 +13,7 @@ FONT_STANDARD = love.graphics.newFont( 12 )
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
 PLAYERCOLOUR3 = {r=255,g=200,b=64}
-PLAYERCOLOUR4 = {r=64,g=255,b=64}
+PLAYERCOLOUR4 = {r=0,g=255,b=0}
 
 
 time = 0
@@ -25,7 +25,7 @@ camZ = 0.3
 
 timeFactor = 1
 local timeFactorIndex = 3
-local timeFactorList = {0.2, 0.5, 1, 2, 5, 10, 40}
+local timeFactorList = {0.2, 0.5, 1, 2, 5, 10, 20, 40}
 
 function closeGame()
 	msgBox:new(love.graphics.getWidth()/2-200,love.graphics.getHeight()/2-200,2, "Sure you want to quit?", {name="Yes",event=love.event.quit, args=nil},"remove")
@@ -35,17 +35,30 @@ function newMap()
 --	math.randomseed(1)
 	numTrains = 0
 	train.clear()
-	map.generate(15,15)
+	map.generate(20,20)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
 	
-	firstFound = false
-	for i = 1, 5 do
-		firstFound = false
+	
+	if curMap then
+		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
+	end
+	
+	populateMap()
+	ai.init()
+	
+end
+
+function populateMap()
+	if not curMap then return end
+	
+	local firstFound = false
+	for i = 1, 3 do
+		--firstFound = false
 		for i = 1, curMap.height do
 			for j = 1, curMap.width do
 				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(6) == 1 then
+					if math.random(2) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -63,15 +76,23 @@ function newMap()
 			end
 		end
 	end
-	if curMap then
-		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
-	end
 end
 
 function love.load()
+
+	ok, msg = pcall(ai.new, "AI/ai1.lua")
+	if not ok then print("Err: " .. msg) end
+	ok, msg = pcall(ai.new, "AI/ai2.lua")
+	if not ok then print("Err: " .. msg) end
+	ok, msg = pcall(ai.new, "AI/ai3.lua")
+	if not ok then print("Err: " .. msg) end
+	ok, msg = pcall(ai.new, "AI/ai4.lua")
+	if not ok then print("Err: " .. msg) end
+
 	train.init(PLAYERCOLOUR1, PLAYERCOLOUR2, PLAYERCOLOUR3, PLAYERCOLOUR4)
 	map.init()
 	newMap()
+	
 	
 	button1 = button:new(10, 30, 90, 45, "Exit", closeGame, nil)
 	button2 = button:new(10, 85, 90, 45, "New", newMap, nil)
@@ -81,8 +102,6 @@ function love.load()
 	love.graphics.setBackgroundColor(90,60,40,255)
 	print("Loading...")
 	
-	--ok, msg = pcall(ai.new, "AI/fileToRun.lua")
-	--if not ok then print("Err: " .. msg) end
 	
 	--ok, msg = pcall(ai.new, "AI/fileToRun2.lua")
 	--if not ok then print("Err: " .. msg) end
@@ -198,9 +217,6 @@ function getScreenshot()
 	else
 		fileName = math.random(99999)
 	end
-
-	--love.filesystem.setIdentity("trAInsported")
-	print("")
 
 	print( "Screenshot: " .. love.filesystem.getSaveDirectory() )
 	screen = love.graphics.newScreenshot()

@@ -4,7 +4,7 @@ function restrictAITable(table)
    return setmetatable({}, {
      __index = table,
      __newindex = function(t, key, value)
-     	if (key == "init" or key == "run") then
+     	if (key == "init" or key == "chooseDirection") then
      		if type(value) == "function" then
 	     		rawset(t, key, value )
 	     	else
@@ -23,11 +23,15 @@ function sandbox.print(...)
 	for k, v in ipairs(arg) do
 		if not v then print("trying to print nil value!")
 		else
-			str = str .. "\t".. v
+			str = str .. "\t".. tostring(v)
 		end
 	end
 	str = str .. "\t]"
 	print(str)
 end
+
+sandbox.pairs = pairs
+
+sandbox.random = math.random
 
 return sandbox

@@ -2,12 +2,11 @@ local ai = {}
 
 local aiList = {}		-- holds all the ai functions/events
 
-
 local aiUserData = {		--default fallbacks in case a function is not created by the User's AI script.
 	init = function () print("default init") end,
 	run = function () print("default run")end,
+	chooseDirection = function () print("No valid chooseDirection function found. Using fallback.")end,
 }
-
 
 local sandbox = require("Scripts/sandbox")
 
@@ -60,18 +59,52 @@ local function safelyLoadAI(chunk, scriptName)
 	print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_LOADING)
 end
 	
-function runAiFunctionCoroutine(f)
+function runAiFunctionCoroutine(f, ... )
 --	f = setfenv(f, sandbox)
 	debug.sethook(newLineCountHook(MAX_LINES_EXECUTING), "l")
-	local ok, err = pcall(f)
+	local ok, msg = pcall(f, ...)
 	debug.sethook()
 	if not ok then
-		print(err)
+		print("\tError found in your function!", err)
 		coroutine.yield()
 	end	 -- throw up to next level
-	print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_EXECUTING)
+	-- print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_EXECUTING)
+	return msg
 end
 
+function ai.chooseDirection(train, possibleDirs)
+	--print("choosing dir:", train.aiID)
+	local result = nil
+	if aiList[train.aiID] then
+		if aiList[train.aiID].chooseDirection then
+			local cr = coroutine.create(runAiFunctionCoroutine)
+			--print("--> ai.chooseDirection")
+			ok, result = coroutine.resume(cr, aiList[train.aiID].chooseDirection, train, possibleDirs)
+			if not ok or coroutine.status(cr) ~= "dead" then
+				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".run()")
+			end
+		end
+	end
+	
+	--print("ai chose:", result)
+	if (result == "N" and possibleDirs["N"]) or (result == "S" and possibleDirs["S"]) or (result == "E" and possibleDirs["E"]) or (result == "W" and possibleDirs["W"]) then
+		return result
+	else
+		return nil
+	end
+end
+
+function copyTable(tbl)
+	local newTbl = {}
+	for k, v in pairs(tbl) do
+		if type(v) == "tbl" then
+			newTbl[k] = copyTable(v)
+		else
+			newTbl[k] = v
+		end
+	end
+	return newTbl
+end
 
 function ai.new(scriptName)
 	print("Opening: " .. scriptName)
@@ -84,7 +117,7 @@ function ai.new(scriptName)
 	
 	for i = 1,#aiList+1,1 do
 		if aiList[i] == nil then
-			aiList[i] =	aiUserData
+			aiList[i] =	copyTable(aiUserData)
 			aiList[i].name = scriptName
 			aiID = i
 			break
@@ -99,44 +132,32 @@ function ai.new(scriptName)
 	local ok, err = pcall(coroutine.resume, crLoad, chunk, scriptName)
 	if coroutine.status(crLoad) ~= "dead" then
 		crLoad = nil
-		error("Coroutine stopped prematurely: " .. aiList[aiID].name)
+		error("\tCoroutine stopped prematurely: " .. aiList[aiID].name)
 	end
 	crLoad = nil
 	print("\tAI loaded.")
 	
 	aiList[aiID].init = sandbox.ai.init		-- if it all went right, now we can set the table.
 	aiList[aiID].run = sandbox.ai.run
-	
-	--the second coroutine loads the ai.init() function in the user's AI script:
-	print("\tInitializing AI:")
-	print("ID: ", aiID)
-	print("ai: ", aiList[aiID])
-	print("name: ", aiList[aiID].name)
-	if type(aiList[aiID].init) ~= "function" then
-		print("\t\tError: No init function found")
-		return
-	end
-	local crInit = coroutine.create(runAiFunctionCoroutine)
-	coroutine.resume(crInit, aiList[aiID].init)
-	if coroutine.status(crInit) ~= "dead" then
-		crInit = nil
-		print("Coroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
-	end
-	print("name", aiList[aiID].name)
-	crInit = nil
-	
+	aiList[aiID].chooseDirection = sandbox.ai.chooseDirection
 end
 
-function ai.run()
-	for k, userAI in pairs(aiList) do
-		if userAI.run then
-			local cr = coroutine.create(runAiFunctionCoroutine)
-			coroutine.resume(cr, userAI.run)
-			if coroutine.status(cr) ~= "dead" then
-				print("Coroutine stopped prematurely: " .. userAI.name .. ".run()")
-			end
-			cr = nil
+function ai.init()
+	for aiID = 1, #aiList do
+		--the second coroutine loads the ai.init() function in the user's AI script:
+		print("Initializing AI:", aiID)
+		if type(aiList[aiID].init) ~= "function" then
+			print("\t\tError: No init function found")
+			return
 		end
+		local crInit = coroutine.create(runAiFunctionCoroutine)
+		print("--> ai.init")
+		coroutine.resume(crInit, aiList[aiID].init)
+		if coroutine.status(crInit) ~= "dead" then
+			crInit = nil
+			print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
+		end
+		crInit = nil
 	end
 end
 	

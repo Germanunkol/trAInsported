@@ -64,12 +64,15 @@ end
 function runAiFunctionCoroutine(f, ... )
 --	f = setfenv(f, sandbox)
 	debug.sethook(newLineCountHook(MAX_LINES_EXECUTING), "l")
+--	local ok, msg = pcall(f, ...)
+
 	local ok, msg = pcall(f, ...)
-	debug.sethook()
 	if not ok then
-		print("\tError found in your function!", err)
+		print("\tError found in your function!", msg, c)
 		coroutine.yield()
-	end	 -- throw up to next level
+	end
+	debug.sethook()
+		 -- throw up to next level
 	-- print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_EXECUTING)
 	return msg
 end
@@ -101,7 +104,6 @@ function ai.new(scriptName)
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
 			aiList[i].name = scriptName
-			aiList[i].dropPassenger = train.dropPassenger(aiID)
 			break
 		end
 	end
@@ -111,7 +113,7 @@ function ai.new(scriptName)
 	sb.ai = {}
 	--sb.ai = restrictAITable(aiList[aiID])
 	print("first print", aiID)
-	printTable(sb)
+	--printTable(sb)
 	
 	--this first coroutine compiles and runs the source code of the user's AI script:
 	local crLoad = coroutine.create(safelyLoadAI)
@@ -123,22 +125,24 @@ function ai.new(scriptName)
 	crLoad = nil
 	print("\tAI loaded.")
 	
-	aiList[aiID].init = sb.ai.init		-- if it all went right, now we can set the table.
+	--aiList[aiID].init = sb.ai.init		-- if it all went right, now we can set the table.
 	aiList[aiID].chooseDirection = sb.ai.chooseDirection
 	aiList[aiID].blocked = sb.ai.blocked
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	
-	printTable(aiList[aiID])
+	--printTable(aiList[aiID])
 end
 
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
 		print("Initializing AI:", aiID)
-		local crInit = coroutine.create(runAiFunctionCoroutine)
+		
 		print("--> ai.init")
-		coroutine.resume(crInit, aiList[aiID].init)
+		local crInit = coroutine.create(runAiFunctionCoroutine)
+		ok, msg = coroutine.resume(crInit, aiList[aiID].init)
+		if not ok then print("NEW ERROR:", msg) end
 		if coroutine.status(crInit) ~= "dead" then
 			crInit = nil
 			print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
@@ -213,13 +217,12 @@ function ai.newPassenger()
 end
 
 function ai.foundPassengers(train, p)		-- called when the train enters a tile which holds passengers.
-	print("wanna get on?")
 	local result = nil
 	if aiList[train.aiID] then
 		if aiList[train.aiID].foundPassengers then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.passenger}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.curPassenger}		-- don't give the original data to the ai!
 			local pCopy = copyTable(p)				-- don't let the ai change the original list of passengers!
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundPassengers, tr, pCopy)

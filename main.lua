@@ -9,6 +9,7 @@ map = require("Scripts/map")
 train = require("Scripts/train")
 functionQueue = require("Scripts/functionQueue")
 passenger = require("Scripts/passenger")
+stats = require("Scripts/statistics")
 numTrains = 0
 
 FONT_BUTTON = love.graphics.newFont( 18 )
@@ -38,10 +39,15 @@ function newMap()
 	numTrains = 0
 	train.clear()
 	
-	map.generate(25,25, love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(35,35, love.timer.getDelta()*os.time()*math.random()*100000)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
 	
+	stats.init(4)
+	stats.setAIName(1, "Ai1")
+	stats.setAIName(2, "Ai2")
+	stats.setAIName(3, "Ai3")
+	stats.setAIName(4, "Ai4")
 	
 	if curMap then
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
@@ -50,7 +56,6 @@ function newMap()
 		populateMap()
 		ai.init()
 	end
-	
 end
 
 function populateMap()
@@ -62,7 +67,7 @@ function populateMap()
 		for i = 1, curMap.width do
 			for j = 1, curMap.height do
 				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(3) == 1 then
+					if math.random(5) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -74,8 +79,8 @@ function populateMap()
 						else
 							train:new( math.random(4), i, j, "S" )
 						end
-					end
 					numTrains = numTrains+1
+					end
 				end
 			end
 		end
@@ -96,7 +101,6 @@ function love.load()
 	train.init(PLAYERCOLOUR1, PLAYERCOLOUR2, PLAYERCOLOUR3, PLAYERCOLOUR4)
 	map.init()
 	newMap()
-	
 	
 	button1 = button:new(10, 30, 90, 45, "Exit", closeGame, nil)
 	button2 = button:new(10, 85, 90, 45, "New", newMap, nil)
@@ -158,7 +162,9 @@ function love.update(dt)
 		end
 	end
 	
-	train.moveAll()
+	if not roundEnded then
+		train.moveAll()
+	end
 end
 
 
@@ -189,12 +195,13 @@ function love.draw()
 	
 	love.graphics.setFont(FONT_STANDARD)
 	love.graphics.setColor(255,255,255,255)
-	love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-100, 5)
-	love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-100,20)
-	love.graphics.print('X: ' .. camX, love.graphics.getWidth()-100,35)
-	love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-100,50)
-	love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-100,65)
-	love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-100,80)
+	love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-150, 5)
+	love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
+	love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
+	love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)
+	love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,65)
+	love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,80)
+	love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,95)
 	
 	-- love.graphics.draw(box1, 100, 100)
 	-- love.graphics.draw(box2, 200, 100)

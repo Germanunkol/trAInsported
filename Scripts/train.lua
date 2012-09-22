@@ -143,11 +143,22 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].y = math.random(100)
 			end
 			
+			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
+			
 			return trainList[aiID][i]
 		end
 	end
 end
 
+
+function train.getByID( aiID, trainID)
+	if trainList[aiID] then
+		for k, tr in pairs(trainList[aiID]) do
+			if tr.ID == trainID then return tr end
+		end
+	end
+	return nil
+end
 -- function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end
 
 local blockedTrains = {}
@@ -166,6 +177,7 @@ function removeBlockedTrain(tr)
 			blockedTrains[k-1] = blockedTrains[k]
 		end
 	end
+	
 	if removedID then blockedTrains[#blockedTrains] = nil
 	end
 end
@@ -329,7 +341,6 @@ function moveSingleTrain(tr, t)
 					
 					if tr.curPassenger then
 						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering passenger's destination!
-							print("passenger would like to get off")
 							ai.foundDestination(tr)
 						end
 					end
@@ -433,28 +444,6 @@ function train.clear()
 	trainList[4] = {}
 end
 
--- The ai will pass a pseudo-train (trunced down version which is visible to the ai) of the train which should dropp off a passenger.
--- This function then searches for the corresponding train and lets the passenger get off.
-function train.dropPassenger(id)
-	local saveaiID = id
-	return function (pseudoTrain)
-		if trainList[saveaiID] then
-			for k, tr in pairs(trainList[saveaiID]) do
-				if tr.ID == pseudoTrain.ID then
-					tr.curPassenger.train = nil
-					tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY
-					
-					-- check if I have reached my destination
-					if tr.curPassenger.tileX == tr.curPassenger.destX and tr.curPassenger.tileY == tr.curPassenger.destY then
-						tr.curPassenger.reachedDestination = true
-					end
-					
-					tr.curPassenger = nil
-				end
-			end
-		end
-	end
-end
 
 function train.showAll()
 	for k, list in pairs(trainList) do

@@ -1,4 +1,8 @@
 
+function ai.lol()
+	a = math.random()
+end
+
 function printTable(table, lvl)
 	if not type(table) == "table" then
 		print("not a table!")
@@ -18,6 +22,7 @@ function printTable(table, lvl)
 		end
 	end
 end
+
 
 function ai.init()
 	print("Initialized! one one eleven")

@@ -38,10 +38,12 @@ function sandbox.createNew(aiID)
 	sb.table = table
 	sb.type = type
 	
-	sb.print = safeprint 
+	sb.print = safeprint
+	sb.error = error
+	sb.pcall = pcall
 
 	sb.random = math.random
-	sb.dropPassenger = train.dropPassenger(aiID)
+	sb.dropPassenger = passenger.leaveTrain(aiID)
 	return sb
 end
 

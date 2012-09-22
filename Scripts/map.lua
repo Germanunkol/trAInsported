@@ -1,6 +1,7 @@
 local map = {}
 
 curMap = nil
+roundEnded = false
 
 TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 
@@ -335,6 +336,7 @@ function map.generate(width, height, seed)
 		height = 4
 	end
 	
+	roundEnded = false
 	math.randomseed(seed)
 	
 	curMap = setmetatable({width=width, height=height}, map_mt)
@@ -1115,6 +1117,10 @@ function map.handleEvents(dt)
 	end
 end
 
+function map.endRound()
+	roundEnded = true
+	stats.print()
+end
 
 
 return map

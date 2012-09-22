@@ -1,10 +1,14 @@
 ai = require("Scripts/ai")
 console = require("Scripts/console")
 require("Scripts/ui")
+require("Scripts/misc")
+require("Scripts/input")
 button = require("Scripts/button")
 msgBox = require("Scripts/msgBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
+functionQueue = require("Scripts/functionQueue")
+passenger = require("Scripts/passenger")
 numTrains = 0
 
 FONT_BUTTON = love.graphics.newFont( 18 )
@@ -17,15 +21,13 @@ PLAYERCOLOUR4 = {r=0,g=255,b=0}
 
 
 time = 0
-local mouseLastX = 0
-local mouseLastY = 0
-local MAX_PAN = 500
-local camX, camY = -500,0
+mouseLastX = 0
+mouseLastY = 0
+MAX_PAN = 500
+camX, camY = -500,0
 camZ = 0.3
 
 timeFactor = 1
-local timeFactorIndex = 3
-local timeFactorList = {0.2, 0.5, 1, 2, 5, 10, 20, 40}
 
 function closeGame()
 	msgBox:new(love.graphics.getWidth()/2-200,love.graphics.getHeight()/2-200,2, "Sure you want to quit?", {name="Yes",event=love.event.quit, args=nil},"remove")
@@ -35,17 +37,19 @@ function newMap()
 --	math.randomseed(1)
 	numTrains = 0
 	train.clear()
-	map.generate(20,20)
+	
+	map.generate(25,25, love.timer.getDelta()*os.time()*math.random()*100000)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
 	
 	
 	if curMap then
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
+		
+		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		populateMap()
+		ai.init()
 	end
-	
-	populateMap()
-	ai.init()
 	
 end
 
@@ -53,12 +57,12 @@ function populateMap()
 	if not curMap then return end
 	
 	local firstFound = false
-	for i = 1, 3 do
+	for i = 1, 1 do
 		--firstFound = false
-		for i = 1, curMap.height do
-			for j = 1, curMap.width do
+		for i = 1, curMap.width do
+			for j = 1, curMap.height do
 				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(2) == 1 then
+					if math.random(3) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -113,27 +117,54 @@ end
 
 
 
-function love.update()
+function love.update(dt)
 	-- ai.run()
-	time = time + love.timer.getDelta()
+	time = time + dt
+	functionQueue.run()
+	
+	map.handleEvents(dt)
+	
 	button.calcMouseHover()
-	if panningView and mapImage then
-		x, y = love.mouse.getPosition()
-		camX = clamp(camX - (mouseLastX-x)*0.75/camZ, -MAX_PAN, MAX_PAN)
-		camY = clamp(camY - (mouseLastY-y)*0.75/camZ, -MAX_PAN, MAX_PAN)
-		mouseLastX = x
-		mouseLastY = y
+	if mapImage then
+		if panningView then
+			x, y = love.mouse.getPosition()
+			camX = clamp(camX - (mouseLastX-x)*0.75/camZ, -MAX_PAN, MAX_PAN)
+			camY = clamp(camY - (mouseLastY-y)*0.75/camZ, -MAX_PAN, MAX_PAN)
+			mouseLastX = x
+			mouseLastY = y
+		else
+			if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+				camX = clamp(camX + 150*dt/camZ, -MAX_PAN, MAX_PAN)
+			end
+			if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+				camX = clamp(camX - 150*dt/camZ, -MAX_PAN, MAX_PAN)
+			end 
+			if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
+				camY = clamp(camY + 150*dt/camZ, -MAX_PAN, MAX_PAN)
+			end
+			if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
+				camY = clamp(camY - 150*dt/camZ, -MAX_PAN, MAX_PAN)
+			end
+			if love.keyboard.isDown("q") then
+				camZ = clamp(camZ + dt*0.25, 0.1, 1)
+				camX = clamp(camX, -MAX_PAN, MAX_PAN)
+				camY = clamp(camY, -MAX_PAN, MAX_PAN)
+			end
+			if love.keyboard.isDown("e") then
+				camZ = clamp(camZ - dt*0.25, 0.1, 1)
+				camX = clamp(camX, -MAX_PAN, MAX_PAN)
+				camY = clamp(camY, -MAX_PAN, MAX_PAN)
+			end
+		end
 	end
 	
 	train.moveAll()
 end
 
-function clamp(x, min, max)
-	return math.max(math.min(x, max), min)
-end
 
 function love.draw()
 	-- love.graphics.rectangle("fill",50,50,300,300)
+	dt = love.timer.getDelta()
 	if mapImage then
 		love.graphics.push()
 		love.graphics.rotate(-0.1)
@@ -145,7 +176,8 @@ function love.draw()
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-		train.show()
+		train.showAll()
+		passenger.showAll(dt)
 	
 		love.graphics.pop()
 	end
@@ -166,61 +198,6 @@ function love.draw()
 	
 	-- love.graphics.draw(box1, 100, 100)
 	-- love.graphics.draw(box2, 200, 100)
-end
-
-
-function love.mousepressed(x, y, b)
-	if b == "wd" then
-		camZ = clamp(camZ - 0.05, 0.1, 1)
-		camX = clamp(camX, -MAX_PAN, MAX_PAN)
-		camY = clamp(camY, -MAX_PAN, MAX_PAN)
-		return
-	end
-	if b == "wu" then
-		camZ = clamp(camZ + 0.05, 0.1, 1)
-		camX = clamp(camX, -MAX_PAN, MAX_PAN)
-		camY = clamp(camY, -MAX_PAN, MAX_PAN)
-		return
-	end
-	if panningView then return end
-	local hit = button.handleClick()
-	if not hit then
-		panningView = true
-		mouseLastX, mouseLastY = love.mouse.getPosition()
-	end
-end
-
-function love.mousereleased()
-	panningView = false
-end
-
-function love.keypressed(key, unicode)
-	if key == "d" then
-		debug.debug()
-	elseif key == "s" then
-		getScreenshot()
-	elseif key == "+" then
-		timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
-		timeFactor = timeFactorList[timeFactorIndex]
-	elseif key == "-" then
-		timeFactorIndex = math.max(timeFactorIndex - 1, 1)
-		timeFactor = timeFactorList[timeFactorIndex]
-	end
-end
-
-
-function getScreenshot()
-	local curTime = os.date("*t")
-	local fileName
-	if curTime then
-		fileName = curTime.year .."-".. curTime.month .."-".. curTime.day .. "_" .. curTime.hour .."-".. curTime.min .."-".. curTime.sec .. ".png"
-	else
-		fileName = math.random(99999)
-	end
-
-	print( "Screenshot: " .. love.filesystem.getSaveDirectory() )
-	screen = love.graphics.newScreenshot()
-	screen:encode(fileName)
 end
 
 function love.quit()

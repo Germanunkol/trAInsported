@@ -4,7 +4,8 @@ curMap = nil
 
 TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 
-local curMapOccupiedTiles = {}
+local curMapOccupiedTiles = {}	-- stores if a certain path on a tile is already being used by another train
+local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is already being used by another train
 
 -- RAIL Pieces:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
@@ -32,7 +33,7 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 --Environment/Misc:
 IMAGE_HOUSE1 = love.image.newImageData("Images/House1.png")
 
--- possible directions on a tile:
+-- possible tile types:
 NS = 1
 EW = 2
 NW = 3
@@ -49,8 +50,14 @@ EE = 13
 NN = 14
 SS = 15
 
+--------------------------------------------------------------
+--		MAP GENERATION:
+--------------------------------------------------------------
+
+
+-- this function iterates through the map and marks all tiles that are connected to tile i,j (by changing them to "C")
 function markConnected(i, j, level)
-level = level or 0
+	level = level or 0
 	str = ""
 	for i=1,level do str = str .. "-" end
 	curMap[i][j] = "C"
@@ -60,6 +67,8 @@ level = level or 0
 	if j < curMap.width and (curMap[i][j+1] == "R" or curMap[i][j+1] == "T") then markConnected(i, j+1, level+1) end
 end
 
+
+-- starts the markConnected functions on the first tile marked "R" on the map.
 function findConnections()
 	for i = 1,curMap.height,1 do		-- reset
 		for j = 1,curMap.width,1 do
@@ -79,6 +88,8 @@ function findConnections()
 	end
 end
 
+-- resets tiles marked "T". 
+-- When a tile is marked "T" that means it was part of a Test trying to connect a non-connected part of the rail to an already connected part.
 function removeTs()
 	for i = 1,curMap.height,1 do
 		for j = 1,curMap.width,1 do
@@ -89,6 +100,10 @@ function removeTs()
 	end
 end
 
+
+-- Moves into a random direction starting at tile i,j and tries to connect it by placing "T" s on tiles it passes. When it reaches the map's side,
+-- it tries out another direction.
+-- If all 4 directions have been tested, then it places down a rail across the entiry map. This makes sure that the next try succeeds.
 function connectPiece(i, j)
 	print("attempt to connect:", i, j)
 	startI, startJ = i,j
@@ -176,6 +191,7 @@ function connectPiece(i, j)
 		
 end
 
+-- generates random rectangles of rail on the map.
 function generateRailRectangles()
 
 	local num = 3 + math.random(10)+ math.ceil(curMap.height/2)
@@ -216,6 +232,31 @@ function generateRailRectangles()
 	end
 end
 
+
+
+-- Looks for unconnected pieces of rail. If some pieces are not connected, tries to connect them.
+function connectLooseEnds()
+	-- find all unconnected pieces:
+	local allConnected = false
+	local k = 0
+	while allConnected == false and k < 50 do		--give it a max of 50 tries, which is plenty.
+		findConnections()
+		allConnected = true
+		for i = 1,curMap.width do
+			for j = 1,curMap.height do
+				if curMap[i][j] == "R" then
+					allConnected = false
+					connectPiece(i,j)
+					break
+				end
+			end
+			if allConnected == false then break end
+		end
+		k = k+1
+	end
+end
+
+-- checks for places where there are 6 junctions right next to each other and removes some of them at random (because they look horrible).
 function clearLargeJunctions()
 	toRemove = {}
 	for i = 1,curMap.width-1,1 do
@@ -244,26 +285,6 @@ function clearLargeJunctions()
 	end
 end
 
-function connectLooseEnds()
-	-- find all unconnected pieces:
-	local allConnected = false
-	local k = 0
-	while allConnected == false and k < 50 do		--give it a max of 50 tries, which is plenty.
-		findConnections()
-		allConnected = true
-		for i = 1,curMap.width do
-			for j = 1,curMap.height do
-				if curMap[i][j] == "R" then
-					allConnected = false
-					connectPiece(i,j)
-					break
-				end
-			end
-			if allConnected == false then break end
-		end
-		k = k+1
-	end
-end
 
 function placeHouses()
 	for i = 1, curMap.width do
@@ -277,6 +298,9 @@ function placeHouses()
 	end
 end
 
+
+-- This function iterates over the whole map and calculates the rail type for each tile.
+-- That's important for placing correct images on the map and for calculating movement later on.
 function calculateRailTypes()
 	if curMap then
 		for i = 1,curMap.width do
@@ -287,7 +311,21 @@ function calculateRailTypes()
 	end
 end
 
-function map.generate(width, height)
+-- generate a list that holds the map in a different form: not by coordinates. This way a random piece of rail can be more easily be chosen.
+function generateRailList()
+	curMap.railList = {}
+	curMap.houseList = {}
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == "C" then table.insert(curMap.railList, {x=i, y=j})
+			elseif curMap[i][j] == "H" then table.insert(curMap.houseList, {x=i, y=j})
+			end
+		end
+	end
+end
+
+-- Generates a new map. Any old map is dropped.
+function map.generate(width, height, seed)
 	if width < 4 then
 		print("Minimum width is 4!")
 		width = 4
@@ -297,8 +335,11 @@ function map.generate(width, height)
 		height = 4
 	end
 	
+	math.randomseed(seed)
+	
 	curMap = setmetatable({width=width, height=height}, map_mt)
 	curMapOccupiedTiles = {}
+	curMapOccupiedExits = {}
 	curMapRailTypes = {}
 	
 	for i = 0,width+1 do
@@ -306,10 +347,13 @@ function map.generate(width, height)
 		curMapRailTypes[i] = {}
 		if i >= 1 and i <= width then 
 			curMapOccupiedTiles[i] = {}
+			curMapOccupiedExits[i] = {}
 			for j = 1, height do
 				curMapOccupiedTiles[i][j] = {}
 				curMapOccupiedTiles[i][j].from = {}
 				curMapOccupiedTiles[i][j].to = {}
+				
+				curMapOccupiedExits[i][j] = {}
 			end
 		end
 	end
@@ -323,7 +367,16 @@ function map.generate(width, height)
 	calculateRailTypes()
 	
 	placeHouses()
+	
+	generateRailList()
 end
+
+
+
+--------------------------------------------------------------
+--		MAP TILE OCCUPATION:
+--------------------------------------------------------------
+
 
 function map.getIsTileOccupied(x, y, f, t)
 	if not f or not t then
@@ -331,8 +384,36 @@ function map.getIsTileOccupied(x, y, f, t)
 	end
 	directionStr = f .. t
 	railType = getRailType(x,y)
-	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
-		return false
+--	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
+	--	return false
+	if curMapOccupiedTiles[x][y][directionStr] then		-- if someone's moving in the direction that I've been meaning to move,block.
+		return true
+	elseif curMapOccupiedExits[x][y][t] then			-- if someone's standing at the exit I was wanting to take, block.
+		return true
+	--[[
+	if railType == NS then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == EW then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == NW then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == WS then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == SE then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == NE then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == NN then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == SS then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == EE then
+		return curMapOccupiedTiles[x][y][directionStr]
+	elseif railType == WW then
+		return curMapOccupiedTiles[x][y][directionStr]
+	]]--
+	
+		
 	elseif railType == NES then
 		if directionStr == "NS" then
 			return curMapOccupiedTiles[x][y]["ES"]	-- straight line
@@ -434,6 +515,9 @@ function map.setTileOccupied(x, y, f, t)
 	else
 		curMapOccupiedTiles[x][y][f..t] = curMapOccupiedTiles[x][y][f..t]  + 1
 	end
+	
+	curMapOccupiedExits[x][y][t] = true
+	
 	-- if f then curMapOccupiedTiles[x][y].from[f] = true end
 	-- if t then curMapOccupiedTiles[x][y].to[t] = true end
 end
@@ -449,6 +533,15 @@ function map.resetTileOccupied(x, y, f, t)
 		end
 	end
 end
+
+function map.resetTileExitOccupied(x, y, to)
+	curMapOccupiedExits[x][y][to] = false
+end
+
+
+--------------------------------------------------------------
+--		HANDLE THE PATHS ON THE TILES:
+--------------------------------------------------------------
 
 function map.init()
 	pathNS = {}
@@ -602,6 +695,253 @@ function map.init()
 	pathEE[13] = {x=128, y=79}
 end
 
+function map.getRailPath(tileX, tileY, dir, prevDir)
+
+	if curMapRailTypes[tileX][tileY] == 1 then
+		if dir == "S" then
+			return pathNS, dir
+		else
+			return pathSN, "N"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 2 then
+		if dir == "W" then
+			return pathEW, dir
+		else
+			return pathWE, "E"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 3 then
+		if dir == "N" then
+			return pathWN, dir
+		else
+			return pathNW, "W"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 4 then
+		if dir == "W" then
+			return pathSW, dir
+		else
+			return pathWS, "S"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 5 then
+		if dir == "N" then
+			return pathEN, dir
+		else
+			return pathNE, "E"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 6 then
+		if dir == "E" then
+			return pathSE, dir
+		else
+			return pathES, "S"
+		end
+	elseif curMapRailTypes[tileX][tileY] == 7 then	-- NEW
+		if dir == "E" then
+			if prevDir == "E" then
+				return pathWE, dir
+			else
+				return pathNE, "E"
+			end
+		elseif dir == "W" then
+			if prevDir == "W" then
+				return pathEW, dir
+			else
+				return pathNW, "W"
+			end
+		else
+			if prevDir == "W" then
+				return pathEN, dir
+			else
+				return pathWN, "N"
+			end
+		end
+	elseif curMapRailTypes[tileX][tileY] == 8 then	-- NES
+		if dir == "N" then
+			if prevDir == "N" then
+				return pathSN, dir
+			else
+				return pathEN, "N"
+			end
+		elseif dir == "S" then
+			if prevDir == "S" then
+				return pathNS, dir
+			else
+				return pathES, "S"
+			end
+		else
+			if prevDir == "N" then
+				return pathSE, dir
+			else
+				return pathNE, "E"
+			end
+		end
+	elseif curMapRailTypes[tileX][tileY] == 9 then	-- ESW
+		if dir == "E" then
+			if prevDir == "E" then
+				return pathWE, dir
+			else
+				return pathSE
+			end
+		elseif dir == "W" then
+			if prevDir == "W" then
+				return pathEW, dir
+			else
+				return pathSW, "W"
+			end
+		else
+			if prevDir == "W" then
+				return pathES, dir
+			else
+				return pathWS, "S"
+			end
+		end
+	elseif curMapRailTypes[tileX][tileY] == 10 then	-- NSW
+		if dir == "N" then
+			if prevDir == "N" then
+				return pathSN, dir
+			else
+				return pathWN, "N"
+			end
+		elseif dir == "S" then
+			if prevDir == "S" then
+				return pathNS, dir
+			else
+				return pathWS, "S"
+			end
+		else
+			if prevDir == "S" then
+				return pathNW, dir
+			else
+				return pathSW, "W"
+			end
+		end
+	elseif curMapRailTypes[tileX][tileY] == 11 then	-- NESW
+		if dir == "N" then
+			if prevDir == "N" then
+				return pathSN
+			elseif prevDir == "E" then
+				return pathWN, dir
+			else
+				return pathEN, "N"
+			end
+		elseif dir == "S" then
+			if prevDir == "S" then
+				return pathNS, dir
+			elseif prevDir == "E" then
+				return pathWS, dir
+			else
+				return pathES, "S"
+			end
+		elseif dir == "E" then
+			if prevDir == "E" then
+				return pathWE, dir
+			elseif prevDir == "N" then
+				return pathSE, dir
+			else
+				return pathNE, "E"
+			end
+		else
+			if prevDir == "W" then
+				return pathEW, dir
+			elseif prevDir == "S" then
+				return pathNW, dir
+			else
+				return pathSW, "W"
+			end
+		end
+	elseif curMapRailTypes[tileX][tileY] == 12 then	-- W
+		return pathWW, "W"
+	elseif curMapRailTypes[tileX][tileY] == 13 then	-- E
+		return pathEE, "E"
+	elseif curMapRailTypes[tileX][tileY] == 14 then	-- N
+		return pathNN, "N"
+	elseif curMapRailTypes[tileX][tileY] == 15 then	-- S
+		return pathSS, "S"
+	end
+	print("Path not found", tileX, tileY)
+	return pathNS, "S"		--fallback, should never happen!
+end
+
+-- if I keep moving into the same direction, which direction can I move in on the next tile?
+function map.getNextPossibleDirs(curTileX, curTileY , curDir)
+	local nextTileX, nextTileY = curTileX, curTileY
+	
+	if curDir == "N" then
+		nextTileY = nextTileY - 1
+	elseif curDir == "S" then
+		nextTileY = nextTileY + 1
+	elseif curDir == "E" then
+		nextTileX = nextTileX + 1
+	elseif curDir == "W" then
+		nextTileX = nextTileX - 1
+	end
+	
+	railType = getRailType( nextTileX, nextTileY )
+	if railType == 1 then	-- straight rail: can only keep moving in same dir
+		if curDir == "N" then return {N=true}, 1
+		else return {S=true}, 1 end
+	end
+	if railType == 2 then	-- straight rail: can only keep moving in same dir
+		if curDir == "E" then return {E=true}, 1
+		else return {W=true}, 1 end
+	end
+	--curves:
+	if railType == 3 then
+		if curDir == "E" then return {N=true}, 1
+		else return {W=true}, 1 end
+	end
+	if railType == 4 then
+		if curDir == "E" then return {S=true}, 1
+		else return {W=true}, 1 end
+	end
+	if railType == 5 then
+		if curDir == "W" then return {N=true}, 1
+		else return {E=true}, 1 end
+	end
+	if railType == 6 then
+		if curDir == "W" then return {S=true}, 1
+		else return {E=true}, 1 end
+	end
+	--junctions
+	if railType == 7 then
+		if curDir == "S" then return {E=true, W=true}, 2
+		elseif curDir == "W" then return {W=true, N=true}, 2
+		else return {N=true, E=true}, 2 end
+	end
+	if railType == 8 then
+		if curDir == "S" then return {E=true, S=true}, 2
+		elseif curDir == "W" then return {S=true, N=true}, 2
+		else return {N=true, E=true}, 2 end
+	end
+	if railType == 9 then
+		if curDir == "E" then return {E=true, S=true}, 2
+		elseif curDir == "W" then return {W=true, S=true}, 2
+		else return {W=true, E=true}, 2 end
+	end
+	if railType == 10 then
+		if curDir == "S" then return {S=true, W=true}, 2
+		elseif curDir == "E" then return {N=true, S=true}, 2
+		else return {W=true, N=true}, 2 end
+	end
+	if railType == 11 then
+		if curDir == "E" then return {E=true, S=true, N=true}, 3
+		elseif curDir == "W" then return {W=true, S=true, N=true}, 3
+		elseif curDir == "S" then return {S=true, E=true, W=true}, 3
+		else return {N=true, E=true, W=true}, 3 end
+	end
+	
+	if railType == 12 then
+		return {W=true}, 1
+	end
+	if railType == 13 then
+		return {E=true}, 1
+	end
+	if railType == 14 then
+		return {N=true}, 1
+	end
+	if railType == 15 then
+		return {S=true}, 1
+	end
+end
+
 function map.print(title)
 	title = title or "Current map:"
 	if curMap then
@@ -620,8 +960,6 @@ function map.print(title)
 		end
 	end
 end
-
-
 
 function getRailType(i, j)
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
@@ -734,31 +1072,6 @@ function getRailImage( railType )
 	return nil
 end
 
-
-
-function addBackground(x, y, r, g, b, a)
-	return r*a+50,g*a+90,b*a+50,255
-end
-
-function transparentPaste(dest, source, destX, destY)
-	--print(destX, destY, dest:getPointer(), source:getPointer())
-	local rs,gs,bs,as,rd,gd,bd,ad
-	for x = 1,source:getWidth()-1 do 
-		for y = 1,source:getHeight()-1 do
-			rs,gs,bs,as = source:getPixel(x,y)
-			rd,gd,bd,ad = dest:getPixel(destX+x, destY+y)
-			if as == 0 then
-				dest:setPixel(destX+x, destY+y, rd, gd, bd, 255)
-			else
-				r = rs*as/255 + rd*ad/255*(255-as)/255
-				g = gs*as/255 + gd*ad/255*(255-as)/255
-				b = bs*as/255 + bd*ad/255*(255-as)/255
-				dest:setPixel(destX+x, destY+y, r,g,b, 255)
-			end
-		end
-	end
-end
-
 function map.renderImage()
 	print("rendering image")
 	local data = nil
@@ -785,30 +1098,23 @@ function map.renderImage()
 	return love.graphics.newImage(data)
 end
 
---[[
-function map.setOccupied( i, j, dir )
-	if occupied[i][j][dir] then
-		error("Error: Map tile allready occupied!", i, j, dir)
-	else
-		occupied[i][j][dir] = true
-	end
-end
-function map.getOccupied( i, j, dir )
-	return occupied[i][j][dir]
-end]]--
 
-function map.setPaths()
-	curMapPaths = {}
-	for i = 1,curMap.height do
-		curMapPaths[i] = {}
-	end
-	for i = 1,curMap.height do
-		for j = 1, curMap.width do
-			if curMap[i][j] == "C" then
-				curMapPaths[i] = createPath(curMapRailTypes[i][j])
-			end
-		end
+--------------------------------------------------------------
+--		MAP EVENTS:
+--		- new passenger
+--		- passenger lost
+--------------------------------------------------------------
+
+local passengerTimePassed = 10
+
+function map.handleEvents(dt)
+	passengerTimePassed = passengerTimePassed + dt*timeFactor
+	if passengerTimePassed >= 2 then
+		passenger.new()
+		passengerTimePassed = passengerTimePassed - 2	-- to make sure it's the same on all platforms
 	end
 end
+
+
 
 return map

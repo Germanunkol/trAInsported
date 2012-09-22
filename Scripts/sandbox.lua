@@ -1,10 +1,10 @@
 local sandbox = {}
-
+--[[
 function restrictAITable(table)
    return setmetatable({}, {
      __index = table,
      __newindex = function(t, key, value)
-     	if (key == "init" or key == "chooseDirection") then
+     	if (key == "init" or key == "chooseDirection" or key == "blocked" or key == "foundPassengers" or key == "foundDestination") then
      		if type(value) == "function" then
 	     		rawset(t, key, value )
 	     	else
@@ -17,8 +17,8 @@ function restrictAITable(table)
      __metatable = false
    });
 end
-
-function sandbox.print(...)
+]]--
+local function safeprint(...)
 	str = "\t["
 	for k, v in ipairs(arg) do
 		if not v then print("trying to print nil value!")
@@ -30,8 +30,19 @@ function sandbox.print(...)
 	print(str)
 end
 
-sandbox.pairs = pairs
 
-sandbox.random = math.random
+function sandbox.createNew(aiID)
+	sb = {}
+	sb.pairs = pairs
+	sb.ipairs = ipairs
+	sb.table = table
+	sb.type = type
+	
+	sb.print = safeprint 
+
+	sb.random = math.random
+	sb.dropPassenger = train.dropPassenger(aiID)
+	return sb
+end
 
 return sandbox

@@ -9,13 +9,13 @@ To do for trAInsported:
 **Sandbox**
 - Events:
 	- "Init"
-	- "At Junction"
+	-[x] "chooseDirection"
 	- "New Passenger"	-- special argument if the passenger's a VIP.
 	- "Arrived at Passenger's tile"
 	- "Arrived at Passenger's destination"
 - Functions:
-	- "Place Passenger"		-- removes passenger from train
-	- "Random"
+	- "Remove Passenger"		-- removes passenger from train
+	-[x] "Random"
 	- ""
 	- 
 
@@ -37,3 +37,4 @@ To do for trAInsported:
 
 **Misc**
 - Add tipps
+- No guarantee that game's outcome is always the same...

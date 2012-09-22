@@ -16,7 +16,8 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-local TRAIN_SPEED = 20
+local TRAIN_SPEED = 40
+local MAX_BLOCK_TIME = 3
 
 trainImage = love.image.newImageData("Images/Train1.png")
 --[[
@@ -77,7 +78,6 @@ function getTrainImage( aiID )
 	end
 end
 
-
 function train:new( aiID, x, y, dir )
 	if curMap[x][y] ~= "C" then
 		error("Trying to place train on non-valid tile")
@@ -89,17 +89,17 @@ function train:new( aiID, x, y, dir )
 			local image = getTrainImage( aiID )
 			trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, button_mt)
 			
-			print("Placing new train at:", x, y)
-			print("\tHeading:", dir)
+			--print("Placing new train at:", x, y)
+			--print("\tHeading:", dir)
 			
 			if dir == "N" then
-				path = train.getRailPath(x, y, dir)
+				path = map.getRailPath(x, y, dir)
 			elseif dir == "S" then
-				path = train.getRailPath(x, y, dir)
+				path = map.getRailPath(x, y, dir)
 			elseif dir == "E" then
-				path = train.getRailPath(x, y, dir)
+				path = map.getRailPath(x, y, dir)
 			else
-				path = train.getRailPath(x, y, dir)
+				path = map.getRailPath(x, y, dir)
 			end
 			
 			trainList[aiID][i].tileX = x
@@ -107,6 +107,7 @@ function train:new( aiID, x, y, dir )
 			-- map.setTileOccupied(x, y, nil, dir)
 			
 			trainList[aiID][i].name = "train" .. i
+			trainList[aiID][i].timeBlocked = 0
 			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
@@ -153,6 +154,7 @@ local blockedTrains = {}
 
 function addBlockedTrain(tr)
 	blockedTrains[#blockedTrains+1] = tr
+	tr.timeBlocked = 0
 end
 
 function removeBlockedTrain(tr)
@@ -210,48 +212,45 @@ function moveSingleTrain(tr, t)
 				else
 					tr.angle = getAngleByDir(tr.dir)
 				end
-				print("newAngles2:", tr.angle, tr.prevAngle)
 				if tr.prevAngle - tr.angle < -math.pi then
 					tr.prevAngle = tr.prevAngle + 2*math.pi
-					print("corrected prev angle:", tr.prevAngle)
 				end
 				if tr.prevAngle - tr.angle > math.pi then
 					tr.prevAngle = tr.prevAngle - 2*math.pi
-					print("corrected prev angle:", tr.prevAngle)
-				end
-				
-				if not tr.path[tr.curNode+2] and not tr.freedTileOccupation then
-					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
-					tr.freedTileOccupation = true
 				end
 			else
 				
 				local nextX, nextY = tr.tileX, tr.tileY
 				local cameFromDir = ""
 				
-				if not tr.blocked then
+				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 					
-					possibleDirs, num = train.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
+					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
 					
 					tr.nextDir = nil
-					--tr.nextDir = possibleDirs[math.random(#possibleDirs)]
-					if num > 1 then
-						tr.nextDir = ai.chooseDirection(tr, possibleDirs)
+					
+					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
+						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
 					end
 					
-					if tr.nextDir == nil then	-- if choosing the next dir went wrong of there's only one direction to go in:
-						if possibleDirs["N"] then tr.nextDir = "N"
-						elseif possibleDirs["S"] then tr.nextDir = "S"
-						elseif possibleDirs["E"] then tr.nextDir = "E"
+					if tr.nextDir == nil then	-- fallback: if choosing the next dir went wrong or if there's only one direction to go in:
+						if tr.possibleDirs["N"] then tr.nextDir = "N"
+						elseif tr.possibleDirs["S"] then tr.nextDir = "S"
+						elseif tr.possibleDirs["E"] then tr.nextDir = "E"
 						else tr.nextDir = "W"
 						end
 					end
 					
-					--print("chose: ", tr.nextDir)
+					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
 					
-					if not tr.freedTileOccupation then
-						map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
-						tr.freedTileOccupation = true
+				else
+					if tr.timeBlocked > MAX_BLOCK_TIME then
+						
+						tr.timeBlocked = 0
+						
+						if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
+							tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
+						end
 					end
 				end
 				
@@ -279,7 +278,9 @@ function moveSingleTrain(tr, t)
 				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
 					
 					if tr.blocked then removeBlockedTrain(tr) end
+					map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
 					
+					tr.timeBlocked = 0
 					tr.blocked = false
 					
 					--print("reset:", tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)
@@ -292,7 +293,7 @@ function moveSingleTrain(tr, t)
 					
 					tr.tileX, tr.tileY = nextX, nextY
 				
-					tr.path = train.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
+					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
 					
 					tr.dir = tr.nextDir
 				
@@ -310,14 +311,11 @@ function moveSingleTrain(tr, t)
 						else
 							tr.angle = getAngleByDir(tr.dir)
 						end
-						print("newAngles1:", tr.angle, tr.prevAngle)
 						if tr.prevAngle - tr.angle < -math.pi then
 							tr.prevAngle = tr.prevAngle + 2*math.pi
-							print("corrected prev angle:", tr.prevAngle)
 						end
 						if tr.prevAngle - tr.angle > math.pi then
 							tr.prevAngle = tr.prevAngle - 2*math.pi
-							print("corrected prev angle:", tr.prevAngle)
 						end
 					
 						tr.x = tr.path[tr.curNode].x
@@ -328,6 +326,19 @@ function moveSingleTrain(tr, t)
 						--normalize:
 						d = math.sqrt(dx ^ 2 + dy ^ 2)
 					end
+					
+					if tr.curPassenger then
+						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering passenger's destination!
+							print("passenger would like to get off")
+							ai.foundDestination(tr)
+						end
+					end
+									
+					p = passenger.find(tr.tileX, tr.tileY)
+					if p then
+						ai.foundPassengers(tr, p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
+					end
+					
 				else
 					if not tr.blocked then
 						addBlockedTrain(tr)
@@ -398,6 +409,9 @@ function train.moveAll()
 	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
 		moveSingleTrain(tr, t)
 		tr.hasMoved = true
+		if tr.blocked then
+			tr.timeBlocked = tr.timeBlocked + t*timeFactor
+		end
 	end
 	
 	for k, list in pairs(trainList) do	-- TO DO move through train lists in random order!
@@ -419,254 +433,30 @@ function train.clear()
 	trainList[4] = {}
 end
 
--- if I keep moving into the same direction, which direction can I move in on the next tile?
-function train.getNextPossibleDirs(curTileX, curTileY , curDir)
-	local nextTileX, nextTileY = curTileX, curTileY
-	
-	if curDir == "N" then
-		nextTileY = nextTileY - 1
-	elseif curDir == "S" then
-		nextTileY = nextTileY + 1
-	elseif curDir == "E" then
-		nextTileX = nextTileX + 1
-	elseif curDir == "W" then
-		nextTileX = nextTileX - 1
-	end
-	
-	railType = getRailType( nextTileX, nextTileY )
-	if railType == 1 then	-- straight rail: can only keep moving in same dir
-		if curDir == "N" then return {N=true}, 1
-		else return {S=true}, 1 end
-	end
-	if railType == 2 then	-- straight rail: can only keep moving in same dir
-		if curDir == "E" then return {E=true}, 1
-		else return {W=true}, 1 end
-	end
-	--curves:
-	if railType == 3 then
-		if curDir == "E" then return {N=true}, 1
-		else return {W=true}, 1 end
-	end
-	if railType == 4 then
-		if curDir == "E" then return {S=true}, 1
-		else return {W=true}, 1 end
-	end
-	if railType == 5 then
-		if curDir == "W" then return {N=true}, 1
-		else return {E=true}, 1 end
-	end
-	if railType == 6 then
-		if curDir == "W" then return {S=true}, 1
-		else return {E=true}, 1 end
-	end
-	--junctions
-	if railType == 7 then
-		if curDir == "S" then return {E=true, W=true}, 2
-		elseif curDir == "W" then return {W=true, N=true}, 2
-		else return {N=true, E=true}, 2 end
-	end
-	if railType == 8 then
-		if curDir == "S" then return {E=true, S=true}, 2
-		elseif curDir == "W" then return {S=true, N=true}, 2
-		else return {N=true, E=true}, 2 end
-	end
-	if railType == 9 then
-		if curDir == "E" then return {E=true, S=true}, 2
-		elseif curDir == "W" then return {W=true, S=true}, 2
-		else return {W=true, E=true}, 2 end
-	end
-	if railType == 10 then
-		if curDir == "S" then return {S=true, W=true}, 2
-		elseif curDir == "E" then return {N=true, S=true}, 2
-		else return {W=true, N=true}, 2 end
-	end
-	if railType == 11 then
-		if curDir == "E" then return {E=true, S=true, N=true}, 3
-		elseif curDir == "W" then return {W=true, S=true, N=true}, 3
-		elseif curDir == "S" then return {S=true, E=true, W=true}, 3
-		else return {N=true, E=true, W=true}, 3 end
-	end
-	
-	if railType == 12 then
-		return {W=true}, 1
-	end
-	if railType == 13 then
-		return {E=true}, 1
-	end
-	if railType == 14 then
-		return {N=true}, 1
-	end
-	if railType == 15 then
-		return {S=true}, 1
+-- The ai will pass a pseudo-train (trunced down version which is visible to the ai) of the train which should dropp off a passenger.
+-- This function then searches for the corresponding train and lets the passenger get off.
+function train.dropPassenger(id)
+	local saveaiID = id
+	return function (pseudoTrain)
+		if trainList[saveaiID] then
+			for k, tr in pairs(trainList[saveaiID]) do
+				if tr.ID == pseudoTrain.ID then
+					tr.curPassenger.train = nil
+					tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY
+					
+					-- check if I have reached my destination
+					if tr.curPassenger.tileX == tr.curPassenger.destX and tr.curPassenger.tileY == tr.curPassenger.destY then
+						tr.curPassenger.reachedDestination = true
+					end
+					
+					tr.curPassenger = nil
+				end
+			end
+		end
 	end
 end
 
-function train.getRailPath(tileX, tileY, dir, prevDir)
-
-	if curMapRailTypes[tileX][tileY] == 1 then
-		if dir == "S" then
-			return pathNS, dir
-		else
-			return pathSN, "N"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 2 then
-		if dir == "W" then
-			return pathEW, dir
-		else
-			return pathWE, "E"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 3 then
-		if dir == "N" then
-			return pathWN, dir
-		else
-			return pathNW, "W"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 4 then
-		if dir == "W" then
-			return pathSW, dir
-		else
-			return pathWS, "S"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 5 then
-		if dir == "N" then
-			return pathEN, dir
-		else
-			return pathNE, "E"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 6 then
-		if dir == "E" then
-			return pathSE, dir
-		else
-			return pathES, "S"
-		end
-	elseif curMapRailTypes[tileX][tileY] == 7 then	-- NEW
-		if dir == "E" then
-			if prevDir == "E" then
-				return pathWE, dir
-			else
-				return pathNE, "E"
-			end
-		elseif dir == "W" then
-			if prevDir == "W" then
-				return pathEW, dir
-			else
-				return pathNW, "W"
-			end
-		else
-			if prevDir == "W" then
-				return pathEN, dir
-			else
-				return pathWN, "N"
-			end
-		end
-	elseif curMapRailTypes[tileX][tileY] == 8 then	-- NES
-		if dir == "N" then
-			if prevDir == "N" then
-				return pathSN, dir
-			else
-				return pathEN, "N"
-			end
-		elseif dir == "S" then
-			if prevDir == "S" then
-				return pathNS, dir
-			else
-				return pathES, "S"
-			end
-		else
-			if prevDir == "N" then
-				return pathSE, dir
-			else
-				return pathNE, "E"
-			end
-		end
-	elseif curMapRailTypes[tileX][tileY] == 9 then	-- ESW
-		if dir == "E" then
-			if prevDir == "E" then
-				return pathWE, dir
-			else
-				return pathSE
-			end
-		elseif dir == "W" then
-			if prevDir == "W" then
-				return pathEW, dir
-			else
-				return pathSW, "W"
-			end
-		else
-			if prevDir == "W" then
-				return pathES, dir
-			else
-				return pathWS, "S"
-			end
-		end
-	elseif curMapRailTypes[tileX][tileY] == 10 then	-- NSW
-		if dir == "N" then
-			if prevDir == "N" then
-				return pathSN, dir
-			else
-				return pathWN, "N"
-			end
-		elseif dir == "S" then
-			if prevDir == "S" then
-				return pathNS, dir
-			else
-				return pathWS, "S"
-			end
-		else
-			if prevDir == "S" then
-				return pathNW, dir
-			else
-				return pathSW, "W"
-			end
-		end
-	elseif curMapRailTypes[tileX][tileY] == 11 then	-- NESW
-		if dir == "N" then
-			if prevDir == "N" then
-				return pathSN
-			elseif prevDir == "E" then
-				return pathWN, dir
-			else
-				return pathEN, "N"
-			end
-		elseif dir == "S" then
-			if prevDir == "S" then
-				return pathNS, dir
-			elseif prevDir == "E" then
-				return pathWS, dir
-			else
-				return pathES, "S"
-			end
-		elseif dir == "E" then
-			if prevDir == "E" then
-				return pathWE, dir
-			elseif prevDir == "N" then
-				return pathSE, dir
-			else
-				return pathNE, "E"
-			end
-		else
-			if prevDir == "W" then
-				return pathEW, dir
-			elseif prevDir == "S" then
-				return pathNW, dir
-			else
-				return pathSW, "W"
-			end
-		end
-	elseif curMapRailTypes[tileX][tileY] == 12 then	-- W
-		return pathWW, "W"
-	elseif curMapRailTypes[tileX][tileY] == 13 then	-- E
-		return pathEE, "E"
-	elseif curMapRailTypes[tileX][tileY] == 14 then	-- N
-		return pathNN, "N"
-	elseif curMapRailTypes[tileX][tileY] == 15 then	-- S
-		return pathSS, "S"
-	end
-	print("Path not found", tileX, tileY)
-	return pathNS, "S"		--fallback, should never happen!
-end
-
-function train.show()
+function train.showAll()
 	for k, list in pairs(trainList) do
 		for k, tr in pairs(list) do
 			--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
@@ -694,6 +484,9 @@ function train.show()
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.draw( tr.image, x, y, tr.smoothAngle, 1, 1, tr.image:getWidth()/2, tr.image:getHeight()/2 )
 			--love.graphics.print( tr.name, x, y+30)
+			if tr.timeBlocked > 0 then
+				love.graphics.print( tr.timeBlocked, x, y+30)
+			end
 		end
 	end
 end

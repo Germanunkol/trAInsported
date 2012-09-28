@@ -23,13 +23,15 @@ function button.setButtonLevel()
 	buttonLevel = highest
 end
 
-function button:new(x, y, width, height, label, event, eventArgs, priority)
+local buttnOff, buttnOver
+
+function button:new(x, y, label, event, eventArgs, priority)
 	priority = priority or 1
 	for i=1,#buttonList+1,1 do
 		if not buttonList[i] then
-			local imageOff = createButtonOff(width, height, label)
-			local imageOver = createButtonOver(width, height, label)
-			buttonList[i] = setmetatable({x=x, y=y, imageOff=imageOff, imageOver=imageOver, event=event, index = i, w=width, h=height, l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+			-- local imageOff = createButtonOff(width, height, label)
+			-- local imageOver = createButtonOver(width, height, label)
+			buttonList[i] = setmetatable({x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
 			button.setButtonLevel()
 			return buttonList[i]
 		end
@@ -71,18 +73,28 @@ function button.handleClick()
 end
 
 function button.show()
+	love.graphics.setFont(FONT_BUTTON)
+	w = buttonOver:getWidth()
 	for k, b in pairs(buttonList) do
 		if not b.invisible then
 			if b.mouseHover then
 				love.graphics.setColor(255,255,255,255)
 				love.graphics.draw(b.imageOver, b.x, b.y)
+				love.graphics.print(b.l, b.x + (w-FONT_BUTTON:getWidth(b.l))/2, b.y + 8)
 			else
 				if b.priority == buttonLevel then love.graphics.setColor(255,255,255,255)
 				else love.graphics.setColor(255,255,255,150) end
 				love.graphics.draw(b.imageOff, b.x, b.y)
+				love.graphics.print(b.l, b.x + (w-FONT_BUTTON:getWidth(b.l))/2, b.y + 10)
 			end
 		end
 	end
+end
+
+
+function button.init()
+	buttonOff = createBoxImage(120, 35, true, 5,2)
+	buttonOver = createBoxImage(120, 35, true, 6,1)
 end
 
 return button

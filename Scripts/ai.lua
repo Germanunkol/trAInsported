@@ -3,7 +3,7 @@ local ai = {}
 local aiList = {}		-- holds all the ai functions/events
 
 local aiUserData = {		--default fallbacks in case a function is not created by the User's AI script.
-	init = function () print("default init") end,
+	init = function () print("No ai.init() function found.") end,
 	chooseDirection = function () print("No valid \"ai.chooseDirection\" function found. Using fallback.") end,
 	blocked = function () print("No valid \"ai.blocked\" function found. Using fallback.") end,
 	foundPassengers = function () print("Implement a function \"ai.foundPassengers\" if you want to pick up passengers!") end,
@@ -14,7 +14,7 @@ local sandbox = require("Scripts/sandbox")
 
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 10000
-local MAX_LINES_EXECUTING = 1000
+local MAX_LINES_EXECUTING = 10000
 
 local coLoad = nil
 linesUsed = 0
@@ -68,7 +68,8 @@ function runAiFunctionCoroutine(f, ... )
 
 	local ok, msg = pcall(f, ...)
 	if not ok then
-		print("\tError found in your function!", msg, c)
+		print("\tError found in your function!", msg)
+		if msg then console.add("Error found in your function: " .. msg, {r=255,g=50,b=50}) end
 		coroutine.yield()
 	end
 	debug.sethook()
@@ -88,6 +89,28 @@ function copyTable(tbl)
 		end
 	end
 	return newTbl
+end
+
+function generateColour(name, brightness)
+	brightness = brightness or 1
+	print("name: ", name)
+	sum = 0
+	for i = 1,#name do
+		sum = sum + name:byte(i,i)
+		print(sum)
+	end
+	_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
+	__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
+	___ = vonNeumannRandom(__)		--discard first number, it's usually too similar.
+	red = vonNeumannRandom(___)
+	green = vonNeumannRandom(red)
+	blue = vonNeumannRandom(green)
+	print("col1:", red, green, blue)
+	red = cycle(red, 0, 255)
+	blue = cycle(blue, 0, 255)
+	green = cycle(green, 0, 255)
+	print("col2:", red, green, blue)
+	return {r=clamp(red*brightness, 0, 255), g=clamp(green*brightness, 0, 255), b=clamp(blue*brightness, 0, 255)}
 end
 
 function ai.new(scriptName)
@@ -125,13 +148,21 @@ function ai.new(scriptName)
 	crLoad = nil
 	print("\tAI loaded.")
 	
-	--aiList[aiID].init = sb.ai.init		-- if it all went right, now we can set the table.
+	aiList[aiID].init = sb.ai.init		-- if it all went right, now we can set the table.
 	aiList[aiID].chooseDirection = sb.ai.chooseDirection
 	aiList[aiID].blocked = sb.ai.blocked
+	aiList[aiID].newPassenger = sb.ai.newPassenger
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	
+	s = scriptName:find("/")
+	aiList[aiID].colour = generateColour(scriptName:sub(s+1, #scriptName-4), 1)
+	print("colour", aiList[aiID].colour.r,aiList[aiID].colour.g,aiList[aiID].colour.b)
 	--printTable(aiList[aiID])
+end
+
+function ai.getColour(aiID)
+	return aiList[aiID].colour
 end
 
 function ai.init()
@@ -145,6 +176,7 @@ function ai.init()
 		if not ok then print("NEW ERROR:", msg) end
 		if coroutine.status(crInit) ~= "dead" then
 			crInit = nil
+			console.add(aiList[aiID].name .. ": Stopped function: ai.init()", {r = 255,g=50,b=50})
 			print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
 		end
 		crInit = nil
@@ -169,11 +201,15 @@ function ai.chooseDirection(train, possibleDirs)
 		if aiList[train.aiID].chooseDirection then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.passenger}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			if train.curPassenger then
+				tr.passenger = train.curPassenger.name
+			end
 			dirs = copyTable(possibleDirs)
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].chooseDirection, tr, dirs)
 			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".chooseDirection()")
 			end
 		end
@@ -194,11 +230,15 @@ function ai.blocked(train, possibleDirs, lastDir)
 		if aiList[train.aiID].blocked then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.passenger}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			if train.curPassenger then
+				tr.passenger = train.curPassenger.name
+			end
 			dirs = copyTable(possibleDirs)
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].blocked, tr, dirs, lastDir)
 			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[train.aiID].name .. ": Stopped function: ai.blocked()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".blocked()")
 			end
 		end
@@ -212,8 +252,20 @@ function ai.blocked(train, possibleDirs, lastDir)
 	end
 end
 
-function ai.newPassenger()
-
+function ai.newPassenger(p)
+	for aiID = 1, #aiList do
+		
+		if aiList[aiID].newPassenger then		-- if the function has been defined by the player
+		
+			local cr = coroutine.create(runAiFunctionCoroutine)
+			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, p.name, p.tileX, p.tileY, p.destX, p.destY)
+			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[aiID].name .. ": Stopped function: ai.newPassenger()", {r = 255,g=50,b=50})
+				print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".newPassenger()")
+			end
+			cr = nil
+		end
+	end
 end
 
 function ai.foundPassengers(train, p)		-- called when the train enters a tile which holds passengers.
@@ -222,11 +274,15 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 		if aiList[train.aiID].foundPassengers then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.curPassenger}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			if train.curPassenger then
+				tr.passenger = train.curPassenger.name
+			end
 			local pCopy = copyTable(p)				-- don't let the ai change the original list of passengers!
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundPassengers, tr, pCopy)
 			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundPassenger()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundPassengers()")
 			end
 		end
@@ -249,12 +305,28 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 		if aiList[train.aiID].foundDestination then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=tr.tileX, y=tr.tileY, passenger=tr.passenger}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			if train.curPassenger then
+				tr.passenger = train.curPassenger.name
+			end
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundDestination, tr)
-			if not ok or coroutine.status(cr) ~= "dead" then
+			if not ok or coroutine.status(cr) ~= "dead" then		
+				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
 			end
+		end
+	end
+end
+
+function ai.findAvailableAIs()
+	local files = love.filesystem.enumerate("AI")		-- load AI subdirector
+	for k, file in ipairs(files) do
+		s, e = file:find(".lua")
+		if e == #file then
+			print(k .. ". " .. file)
+		else
+			files[k] = nil
 		end
 	end
 end

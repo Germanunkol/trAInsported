@@ -3,9 +3,35 @@ function clamp(x, min, max)
 	return math.max(math.min(x, max), min)
 end
 
+function cycle(x, min, max)
+	y = math.floor(x/(max-min))-1
+	print("before", x, min, may)
+	if y > 1 then
+		x = x - y*(max-min)
+	end
+	print("after", x, min, may)
+	while x > max do
+		x = x - (max-min)
+	end
+	while x < min do
+		x = x + (max-min)
+	end
+	return x
+end
 
 function dropAlpha(x,y,r,g,b,a)
 	return r,g,b,255
+end
+
+function vonNeumannRandom(seed)		-- generates a random number using the von Neumann method.
+	print("neumann:")
+	str = tostring(seed^2)
+	print(str)
+	while #str < 7 do
+		str = "0" .. str
+	end
+	print(tonumber(str:sub(2,6)))
+	return tonumber(str:sub(2,6))
 end
 
 function getScreenshot()
@@ -29,7 +55,7 @@ function printTable(table, lvl)
 	lvl = lvl or 0
 	for k, v in pairs(table) do
 		if type(v) == "table" then
-			--printTable(table, lvl + 1)
+			printTable(v, lvl + 1)
 		else
 			str = ""
 			for i = 1,lvl do

@@ -16,9 +16,12 @@ local passengerVIPImage = love.graphics.newImage("Images/VIP.png")
 function passenger.new()
 	if curMap and #passengerList < MAX_NUM_PASSENGERS then
 		local sIndex = math.random(#curMap.railList)
-		local dIndex = math.random(#curMap.railList-1)
-		if dIndex == sIndex then
+		local dIndex = math.random(#curMap.railList)
+		
+		while curMap.railList[dIndex].x == curMap.railList[sIndex].x and curMap.railList[dIndex].y == curMap.railList[sIndex].y do
 			dIndex = dIndex + 1		-- don't allow destination to be the same as the origin.
+			sIndex = math.random(#curMap.railList)
+			dIndex = math.random(#curMap.railList)
 		end
 		
 		local x, y = 0,0
@@ -43,7 +46,7 @@ function passenger.new()
 		for i = 1,#passengerList+1 do
 			if passengerList[i] == nil then
 				passengerList[i] = {
-						name = "Passenger" .. numPassengersTotal,
+						name = "P" .. numPassengersTotal,
 						tileX = curMap.railList[sIndex].x,
 						tileY = curMap.railList[sIndex].y,		-- holds the tile position when not riding a train
 						destX = curMap.railList[dIndex].x,
@@ -53,16 +56,23 @@ function passenger.new()
 						curX = x,
 						curY = y,
 						image = passengerImage,
-						angle = math.random()*math.pi*2
+						angle = math.random()*math.pi*2,
 						}
 				if vip then
-					passengerList[i].image = passengerVIPImage
+					--passengerList[i].image = passengerVIPImage
 					passengerList[i].vip = true
 					passengerList[i].name = passengerList[i].name .. "[VIP]"
+					passengerList[i].markZ = love.timer.getDelta()
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
 				numPassengersTotal = numPassengersTotal + 1
+				
+				stats.newPassenger(passengerList[i], curMap.roundTime)
+				
+				ai.newPassenger(passengerList[i])
+				
+				
 				break
 			end
 		end
@@ -86,12 +96,14 @@ function passenger.boardTrain(train, name)		-- try to board the train
 	print("boarding:", name)
 	for k, p in pairs(passengerList) do
 		if p.name == name then	-- found the passenger in the list!
-			for k, v in pairs(passengerPositions[p.tileX][p.tileY]) do		-- remove me from the field so that I can't be picked up again:
+			for k, v in pairs(passengerPositions[p.tileX][p.tileY]) do		-- remove me from the field so that I can't be picked up twice:
 				if v == p then
 					passengerPositions[p.tileX][p.tileY][k] = nil
 					break
 				end
 			end
+			
+			stats.passengerPickedUp(p)
 			train.curPassenger = p
 			p.train = train
 			stats.passengersPickedUp( train.aiID, train.ID )
@@ -105,20 +117,21 @@ end
 function passenger.leaveTrain(aiID)
 
 	return function (pseudoTrain)
-	
 		tr = train.getByID(aiID, pseudoTrain.ID)
 		if tr then
 			tr.curPassenger.train = nil
-			tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY
+			tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY		-- place passenger onto the tile the train's currently on
 			
 			stats.droppedOff( aiID, tr.ID )
+			
+			print("dropped off: " .. tr.curPassenger.name)
+			stats.passengerDroppedOff( tr.curPassenger )
 			
 			-- check if I have reached my destination
 			if tr.curPassenger.tileX == tr.curPassenger.destX and tr.curPassenger.tileY == tr.curPassenger.destY then
 				tr.curPassenger.reachedDestination = true
 				
 				stats.broughtToDestination( aiID, tr.ID )
-				print(tr.curPassenger.vip)
 				if tr.curPassenger.vip == true then
 					stats.addCash( aiID, MONEY_VIP )
 				else
@@ -129,6 +142,8 @@ function passenger.leaveTrain(aiID)
 				if numPassengersDroppedOff >= MAX_NUM_PASSENGERS then
 					map.endRound()
 				end
+			else		-- put them back into the list to make sure they can be picked up again!
+				table.insert( passengerPositions[tr.curPassenger.tileX][tr.curPassenger.tileY], tr.curPassenger )
 			end
 			
 			tr.curPassenger = nil
@@ -164,6 +179,8 @@ function passenger.showAll(dt)
 			y = p.tileY*TILE_SIZE + p.y
 		end
 		
+		
+		
 		-- draw passenger:
 		if not p.reachedDestination then
 			if p.train then
@@ -179,18 +196,25 @@ function passenger.showAll(dt)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
 				love.graphics.setColor(0,0,0,120)
-				love.graphics.draw(passengerImage, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+				love.graphics.draw(p.image, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 				love.graphics.setColor(64,128,255,255)
+				
+				love.graphics.draw(p.image, x, y, 0, p.scale, p.scale)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 			end
 		else
 			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw(passengerImage, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+			love.graphics.draw(p.image, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 			love.graphics.setColor(64,255,128,255)	-- draw passenger green if he's reached his destination.
+			love.graphics.draw(p.image, x, y, 0, p.scale, p.scale)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 		end
 		
-		love.graphics.draw(p.image, x, y)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+		if p.vip then
+			love.graphics.setColor(255,255,255,255)
+			p.markZ = p.markZ + dt*timeFactor*5
+			love.graphics.draw(passengerVIPImage, x + 3, y -10 - 10*math.sin(p.markZ)^2)
+		end
 			
-		love.graphics.setColor(255,255,255,255)
+		love.graphics.setColor(255,255,255,100)
 		love.graphics.print(p.name, x, y + 20)
 	end
 end

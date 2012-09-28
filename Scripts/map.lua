@@ -32,7 +32,8 @@ IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
 IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 
 --Environment/Misc:
-IMAGE_HOUSE1 = love.image.newImageData("Images/House1.png")
+IMAGE_HOUSE = love.image.newImageData("Images/House2.png")
+IMAGE_HOTSPOT1 = love.image.newImageData("Images/HotSpot1.png")
 
 -- possible tile types:
 NS = 1
@@ -299,6 +300,18 @@ function placeHouses()
 	end
 end
 
+function placeHotspots()		-- at random, place hotspots.
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == nil then
+				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if math.random(15) == 1 then curMap[i][j] = "S" end		-- make hotspot
+				end
+			end
+		end
+	end
+end
+
 
 -- This function iterates over the whole map and calculates the rail type for each tile.
 -- That's important for placing correct images on the map and for calculating movement later on.
@@ -318,11 +331,32 @@ function generateRailList()
 	curMap.houseList = {}
 	for i = 1, curMap.width do
 		for j = 1, curMap.height do
-			if curMap[i][j] == "C" then table.insert(curMap.railList, {x=i, y=j})
-			elseif curMap[i][j] == "H" then table.insert(curMap.houseList, {x=i, y=j})
+			if curMap[i][j] == "C" then 
+				table.insert(curMap.railList, {x=i, y=j})
+			elseif curMap[i][j] == "H" then
+				table.insert(curMap.houseList, {x=i, y=j})
+			elseif curMap[i][j] == "S" then
+				if curMap[i+1][j] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i+1, y=j})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i-1][j] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i-1, y=j})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i][j+1] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i, y=j+1})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i][j-1] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i, y=j-1})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				end
 			end
 		end
 	end
+	
 end
 
 -- Generates a new map. Any old map is dropped.
@@ -339,7 +373,7 @@ function map.generate(width, height, seed)
 	roundEnded = false
 	math.randomseed(seed)
 	
-	curMap = setmetatable({width=width, height=height}, map_mt)
+	curMap = setmetatable({width=width, height=height, time=0}, map_mt)
 	curMapOccupiedTiles = {}
 	curMapOccupiedExits = {}
 	curMapRailTypes = {}
@@ -370,6 +404,8 @@ function map.generate(width, height, seed)
 	
 	placeHouses()
 	
+	placeHotspots()
+	
 	generateRailList()
 end
 
@@ -379,6 +415,26 @@ end
 --		MAP TILE OCCUPATION:
 --------------------------------------------------------------
 
+
+function map.drawOccupation()
+	love.graphics.setColor(255,128,128,255)
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMapOccupiedExits[i][j]["N"] then
+				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+20, 5)
+			end
+			if curMapOccupiedExits[i][j]["S"] then
+				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+TILE_SIZE-20, 5)
+			end
+			if curMapOccupiedExits[i][j]["W"] then
+				love.graphics.circle("fill", i*TILE_SIZE+20, j*TILE_SIZE+TILE_SIZE/2, 5)
+			end
+			if curMapOccupiedExits[i][j]["E"] then
+				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE-20, j*TILE_SIZE+TILE_SIZE/2, 5)
+			end
+		end
+	end
+end
 
 function map.getIsTileOccupied(x, y, f, t)
 	if not f or not t then
@@ -549,17 +605,42 @@ function map.init()
 	pathNS = {}
 	pathNS[1] = {x=48,y=0}
 	pathNS[2] = {x=48,y=128}
+	pathNS.length = 0
+	pathNS[1].length = 0
+	for i = 2, #pathNS do
+		pathNS.length = pathNS.length + math.sqrt((pathNS[i-1].x - pathNS[i].x)^2 + (pathNS[i-1].y - pathNS[i].y)^2)
+		pathNS[i].length = pathNS.length
+	end
 	pathSN = {}
-	pathSN[1] = {x=79,y=128}
-	pathSN[2] = {x=79,y=0}
+	pathSN[1] = {x=80,y=128}
+	pathSN[2] = {x=80,y=0}
+	pathSN.length = 0
+	pathSN[1].length = 0
+	for i = 2, #pathSN do
+		pathSN.length = pathSN.length + math.sqrt((pathSN[i-1].x - pathSN[i].x)^2 + (pathSN[i-1].y - pathSN[i].y)^2)
+		pathSN[i].length = pathSN.length
+	end
 	
 	pathEW = {}
 	pathEW[1] = {x=128,y=48}
 	pathEW[2] = {x=0,y=48}
+	pathEW.length = 0
+	pathEW[1].length = 0
+	for i = 2, #pathEW do
+		pathEW.length = pathEW.length + math.sqrt((pathEW[i-1].x - pathEW[i].x)^2 + (pathEW[i-1].y - pathEW[i].y)^2)
+		pathEW[i].length = pathEW.length
+	end
 	pathWE = {}
-	pathWE[1] = {x=0,y=79}
-	pathWE[2] = {x=128,y=79}
+	pathWE[1] = {x=0,y=80}
+	pathWE[2] = {x=128,y=80}
+	pathWE.length = 0
+	pathWE[1].length = 0
+	for i = 2, #pathWE do
+		pathWE.length = pathWE.length + math.sqrt((pathWE[i-1].x - pathWE[i].x)^2 + (pathWE[i-1].y - pathWE[i].y)^2)
+		pathWE[i].length = pathWE.length
+	end
 	
+	--[[
 	pathNE = {}
 	pathNE[1] = {x=48,y=0}
 	pathNE[2] = {x=49,y=15}
@@ -635,6 +716,119 @@ function map.init()
 	pathNW[5] = {x=24,y=42}
 	pathNW[6] = {x=10,y=48}
 	pathNW[7] = {x=0,y=48}
+	]]--
+	
+	radiusSmall = 48
+	radiusLarge = 80
+	
+	pathNE = {}
+	for i = 0,10 do
+		angDeg = 180 + i*9
+		x = TILE_SIZE + radiusLarge*math.cos(angDeg*math.pi/180)
+		y = -radiusLarge*math.sin(angDeg*math.pi/180)
+		pathNE[i+1] = {x=x, y=y}
+	end
+	pathNE.length = 0
+	pathNE[1].length = 0
+	for i = 2, #pathNE do
+		pathNE.length = pathNE.length + math.sqrt((pathNE[i-1].x - pathNE[i].x)^2 + (pathNE[i-1].y - pathNE[i].y)^2)
+		pathNE[i].length = pathNE.length
+	end
+	pathEN = {}
+	for i = 0,10 do
+		angDeg = 270 - i*9
+		x = TILE_SIZE + radiusSmall*math.cos(angDeg*math.pi/180)
+		y = -radiusSmall*math.sin(angDeg*math.pi/180)
+		pathEN[i+1] = {x=x, y=y}
+	end
+	pathEN.length = 0
+	pathEN[1].length = 0
+	for i = 2, #pathEN do
+		pathEN.length = pathEN.length + math.sqrt((pathEN[i-1].x - pathEN[i].x)^2 + (pathEN[i-1].y - pathEN[i].y)^2)
+		pathEN[i].length = pathEN.length
+	end
+	
+	pathES = {}
+	for i = 0,10 do
+		angDeg = 90 + i*9
+		x = TILE_SIZE + radiusLarge*math.cos(angDeg*math.pi/180)
+		y = TILE_SIZE - radiusLarge*math.sin(angDeg*math.pi/180)
+		pathES[i+1] = {x=x, y=y}
+	end
+	pathES.length = 0
+	pathES[1].length = 0
+	for i = 2, #pathES do
+		pathES.length = pathES.length + math.sqrt((pathES[i-1].x - pathES[i].x)^2 + (pathES[i-1].y - pathES[i].y)^2)
+		pathES[i].length = pathES.length
+	end
+	pathSE = {}
+	for i = 0,10 do
+		angDeg = 180 - i*9
+		x = TILE_SIZE + radiusSmall*math.cos(angDeg*math.pi/180)
+		y = TILE_SIZE - radiusSmall*math.sin(angDeg*math.pi/180)
+		pathSE[i+1] = {x=x, y=y}
+	end
+	pathSE.length = 0
+	pathSE[1].length = 0
+	for i = 2, #pathSE do
+		pathSE.length = pathSE.length + math.sqrt((pathSE[i-1].x - pathSE[i].x)^2 + (pathSE[i-1].y - pathSE[i].y)^2)
+		pathSE[i].length = pathSE.length
+	end
+	
+	pathSW = {}
+	for i = 0,10 do
+		angDeg = i*9
+		x = radiusLarge*math.cos(angDeg*math.pi/180)
+		y = TILE_SIZE - radiusLarge*math.sin(angDeg*math.pi/180)
+		pathSW[i+1] = {x=x, y=y}
+	end
+	pathSW.length = 0
+	pathSW[1].length = 0
+	for i = 2, #pathSW do
+		pathSW.length = pathSW.length + math.sqrt((pathSW[i-1].x - pathSW[i].x)^2 + (pathSW[i-1].y - pathSW[i].y)^2)
+		pathSW[i].length = pathSW.length
+	end
+	pathWS = {}
+	for i = 0,10 do
+		angDeg = 90 - i*9
+		x = radiusSmall*math.cos(angDeg*math.pi/180)
+		y = TILE_SIZE - radiusSmall*math.sin(angDeg*math.pi/180)
+		pathWS[i+1] = {x=x, y=y}
+	end
+	pathWS.length = 0
+	pathWS[1].length = 0
+	for i = 2, #pathWS do
+		pathWS.length = pathWS.length + math.sqrt((pathWS[i-1].x - pathWS[i].x)^2 + (pathWS[i-1].y - pathWS[i].y)^2)
+		pathWS[i].length = pathWS.length
+	end
+	
+	pathWN = {}
+	for i = 0,10 do
+		angDeg = -90 + i*9
+		x = radiusLarge*math.cos(angDeg*math.pi/180)
+		y = - radiusLarge*math.sin(angDeg*math.pi/180)
+		pathWN[i+1] = {x=x, y=y}
+	end
+	pathWN.length = 0
+	pathWN[1].length = 0
+	for i = 2, #pathWN do
+		pathWN.length = pathWN.length + math.sqrt((pathWN[i-1].x - pathWN[i].x)^2 + (pathWN[i-1].y - pathWN[i].y)^2)
+		pathWN[i].length = pathWN.length
+	end
+	pathNW = {}
+	for i = 0,10 do
+		angDeg = - i*9
+		x = radiusSmall*math.cos(angDeg*math.pi/180)
+		y = - radiusSmall*math.sin(angDeg*math.pi/180)
+		pathNW[i+1] = {x=x, y=y}
+	end
+	pathNW.length = 0
+	pathNW[1].length = 0
+	for i = 2, #pathNW do
+		pathNW.length = pathNW.length + math.sqrt((pathNW[i-1].x - pathNW[i].x)^2 + (pathNW[i-1].y - pathNW[i].y)^2)
+		pathNW[i].length = pathNW.length
+	end
+	
 	
 	pathSS = {}
 	pathSS[1] = {x=79, y=128}
@@ -650,6 +844,12 @@ function map.init()
 	pathSS[11] = {x=25, y=90}
 	pathSS[12] = {x=41, y=106}
 	pathSS[13] = {x=48, y=128}
+	pathSS.length = 0
+	pathSS[1].length = 0
+	for i = 2, #pathSS do
+		pathSS.length = pathSS.length + math.sqrt((pathSS[i-1].x - pathSS[i].x)^2 + (pathSS[i-1].y - pathSS[i].y)^2)
+		pathSS[i].length = pathSS.length
+	end
 	
 	pathWW = {}
 	pathWW[1] = {x=0, y=79}
@@ -665,6 +865,12 @@ function map.init()
 	pathWW[11] = {x=37, y=25}
 	pathWW[12] = {x=21, y=41}
 	pathWW[13] = {x=0, y=48}
+	pathWW.length = 0
+	pathWW[1].length = 0
+	for i = 2, #pathWW do
+		pathWW.length = pathWW.length + math.sqrt((pathWW[i-1].x - pathWW[i].x)^2 + (pathWW[i-1].y - pathWW[i].y)^2)
+		pathWW[i].length = pathWW.length
+	end
 	
 	pathNN = {}
 	pathNN[1] = {x=48, y=0}
@@ -680,6 +886,12 @@ function map.init()
 	pathNN[11] = {x=102, y=37}
 	pathNN[12] = {x=86, y=21}
 	pathNN[13] = {x=79, y=0}
+	pathNN.length = 0
+	pathNN[1].length = 0
+	for i = 2, #pathNN do
+		pathNN.length = pathNN.length + math.sqrt((pathNN[i-1].x - pathNN[i].x)^2 + (pathNN[i-1].y - pathNN[i].y)^2)
+		pathNN[i].length = pathNN.length
+	end
 	
 	pathEE = {}
 	pathEE[1] = {x=128, y=48}
@@ -695,6 +907,12 @@ function map.init()
 	pathEE[11] = {x=90, y=102}
 	pathEE[12] = {x=106, y=86}
 	pathEE[13] = {x=128, y=79}
+	pathEE.length = 0
+	pathEE[1].length = 0
+	for i = 2, #pathEE do
+		pathEE.length = pathEE.length + math.sqrt((pathEE[i-1].x - pathEE[i].x)^2 + (pathEE[i-1].y - pathEE[i].y)^2)
+		pathEE[i].length = pathEE.length
+	end
 end
 
 function map.getRailPath(tileX, tileY, dir, prevDir)
@@ -1084,7 +1302,9 @@ function map.renderImage()
 		for i = 0,curMap.height+1,1 do
 			for j = 0,curMap.width+1,1 do
 				if curMap[i][j] == "H" then
-					data:paste( IMAGE_HOUSE1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif curMap[i][j] == "S" then
+					data:paste( IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
 				else
 					data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
 					if curMap[i][j] == "C" then
@@ -1092,6 +1312,17 @@ function map.renderImage()
 						if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
 						--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
 						--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
+					--[[else
+						if math.random(5) == 1 then
+							treeType = math.random(3)
+							if treeType == 1 then
+								data:paste( IMAGE_TREE1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+							elseif treeType == 2 then 
+								data:paste( IMAGE_TREE2, (i)*TILE_SIZE, (j)*TILE_SIZE )
+							else
+								data:paste( IMAGE_TREE3, (i)*TILE_SIZE, (j)*TILE_SIZE )
+							end
+						end]]--
 					end
 				end
 			end
@@ -1110,10 +1341,11 @@ end
 local passengerTimePassed = 10
 
 function map.handleEvents(dt)
+
 	passengerTimePassed = passengerTimePassed + dt*timeFactor
-	if passengerTimePassed >= 2 then
+	if passengerTimePassed >= .1 then
 		passenger.new()
-		passengerTimePassed = passengerTimePassed - 2	-- to make sure it's the same on all platforms
+		passengerTimePassed = passengerTimePassed - .1	-- to make sure it's the same on all platforms
 	end
 end
 

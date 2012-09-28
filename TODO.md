@@ -8,16 +8,16 @@ To do for trAInsported:
 
 **Sandbox**
 - Events:
-	- "Init"
+	-[x] "Init"
 	-[x] "chooseDirection"
-	- "New Passenger"	-- special argument if the passenger's a VIP.
-	- "Arrived at Passenger's tile"
-	- "Arrived at Passenger's destination"
+	-[x] "New Passenger"	-- special argument if the passenger's a VIP.
+	-[x] "Arrived at Passenger's tile"
+	-[x] "Arrived at Passenger's destination"
 - Functions:
-	- "Remove Passenger"		-- removes passenger from train
+	-[x] "drop off passenger"		-- removes passenger from train
+	-[x] "pick up passenger"
 	-[x] "Random"
-	- ""
-	- 
+	-[x] "Print"
 
 **Server**
 
@@ -31,9 +31,11 @@ To do for trAInsported:
 - Randomize order in which players get to move
 - Beautify rails	(shadows?), increase # of waypoints
 - buy new trains
+- rework train movement: make it pixel-independet and make it work with percentages.
 
 **Visual**
 - clouds, trees, water
+- rework all visuals
 
 **Misc**
 - Add tipps

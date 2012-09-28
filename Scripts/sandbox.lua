@@ -18,16 +18,23 @@ function restrictAITable(table)
    });
 end
 ]]--
-local function safeprint(...)
-	str = "\t["
-	for k, v in ipairs(arg) do
-		if not v then print("trying to print nil value!")
-		else
-			str = str .. "\t".. tostring(v)
+local function safeprint(aiID)
+	return function (...)
+		str = "["
+		for k, v in ipairs(arg) do
+			if not v then print("trying to print nil value!")
+			else
+				str = str .. "\t".. tostring(v)
+			end
+		end
+		str = str .. "\t]"
+		if aiID == 1 then console.add(str, PLAYERCOLOUR1_CONSOLE)
+		elseif aiID == 2 then console.add(str, PLAYERCOLOUR2_CONSOLE)
+		elseif aiID == 3 then console.add(str, PLAYERCOLOUR3_CONSOLE)
+		elseif aiID == 4 then console.add(str, PLAYERCOLOUR4_CONSOLE)
+		else console.add(str)
 		end
 	end
-	str = str .. "\t]"
-	print(str)
 end
 
 
@@ -38,7 +45,7 @@ function sandbox.createNew(aiID)
 	sb.table = table
 	sb.type = type
 	
-	sb.print = safeprint
+	sb.print = safeprint(aiID)
 	sb.error = error
 	sb.pcall = pcall
 

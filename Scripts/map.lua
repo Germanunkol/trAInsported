@@ -1299,7 +1299,27 @@ function map.renderImage()
 	
 	if curMap then
 		data = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)
+		
 		for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			end
+		end
+		for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				if curMap[i][j] == "H" then
+					transparentPaste( data, IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif curMap[i][j] == "S" then
+					transparentPaste( data, IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				else
+					if curMap[i][j] == "C" then
+						img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+						if img then transparentPaste( data, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+					end
+				end
+			end
+		end
+		--[[for i = 0,curMap.height+1,1 do
 			for j = 0,curMap.width+1,1 do
 				if curMap[i][j] == "H" then
 					data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
@@ -1312,21 +1332,10 @@ function map.renderImage()
 						if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
 						--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
 						--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
-					--[[else
-						if math.random(5) == 1 then
-							treeType = math.random(3)
-							if treeType == 1 then
-								data:paste( IMAGE_TREE1, (i)*TILE_SIZE, (j)*TILE_SIZE )
-							elseif treeType == 2 then 
-								data:paste( IMAGE_TREE2, (i)*TILE_SIZE, (j)*TILE_SIZE )
-							else
-								data:paste( IMAGE_TREE3, (i)*TILE_SIZE, (j)*TILE_SIZE )
-							end
-						end]]--
 					end
 				end
 			end
-		end
+		end]]--
 	end
 	return love.graphics.newImage(data)
 end

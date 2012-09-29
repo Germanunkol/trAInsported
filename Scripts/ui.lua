@@ -228,42 +228,43 @@ function transparentPaste(imgDataDest, imgDataSource, posX, posY)
 	posX = posX or 0
 	posY = posY or 0
 	--imgDataResult = love.image.newImageData(imgDataDest:getWidth(), imgDataDest:getHeight())
-	for x = posX,imgDataDest:getWidth()-1 do
-		for y = posY,imgDataDest:getHeight()-1 do
+	maxX = math.min(imgDataDest:getWidth()-1, imgDataSource:getWidth()-1+posX)
+	maxY = math.min(imgDataDest:getHeight()-1, imgDataSource:getHeight()-1+posY)
+	for x = posX,maxX do
+		for y = posY,maxY do
 			rDest,gDest,bDest,aDest = imgDataDest:getPixel(x,y)
-			if x >= posX and x-posX < imgDataSource:getWidth() and y >= posY and y-posY < imgDataSource:getHeight() then
-				rSource,gSource,bSource,aSource = imgDataSource:getPixel(x-posX,y-posY)
+			--if x >= posX and x-posX < imgDataSource:getWidth() and y >= posY and y-posY < imgDataSource:getHeight() then
+			rSource,gSource,bSource,aSource = imgDataSource:getPixel(x-posX,y-posY)
+			if aSource > 0 then
 				rSource,gSource,bSource,aSource = rSource/255,gSource/255,bSource/255,aSource/255
-			else
-				rSource,gSource,bSource,aSource = 0,0,0,0
+				--r = rDest/255*aDest + rSource/255*aSource
+				--g = gDest/255*aDest + gSource/255*aSource
+				--b = bDest/255*aDest + bSource/255*aSource
+			
+			
+				rDest,gDest,bDest,aDest = rDest/255,gDest/255,bDest/255,aDest/255
+			
+				--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
+				--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
+				--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
+				--a = math.min(1, aSource + aDest)
+			
+				--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
+				--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
+				--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
+				a = aSource + aDest*(1-aSource)
+				if a > 0 then
+					r = (rSource*aSource+rDest*aDest*(1-aSource))/a
+					g = (gSource*aSource+gDest*aDest*(1-aSource))/a
+					b = (bSource*aSource+bDest*aDest*(1-aSource))/a
+				else
+					r,g,b = 0,0,0
+				end
+			
+				r,g,b,a = r*255,g*255,b*255,a*255
+			
+				imgDataDest:setPixel(x, y, r, g, b, a)
 			end
-			--r = rDest/255*aDest + rSource/255*aSource
-			--g = gDest/255*aDest + gSource/255*aSource
-			--b = bDest/255*aDest + bSource/255*aSource
-			
-			
-			rDest,gDest,bDest,aDest = rDest/255,gDest/255,bDest/255,aDest/255
-			
-			--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
-			--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
-			--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
-			--a = math.min(1, aSource + aDest)
-			
-			--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
-			--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
-			--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
-			a = aSource + aDest*(1-aSource)
-			if a > 0 then
-				r = (rSource*aSource+rDest*aDest*(1-aSource))/a
-				g = (gSource*aSource+gDest*aDest*(1-aSource))/a
-				b = (bSource*aSource+bDest*aDest*(1-aSource))/a
-			else
-				r,g,b = 0,0,0
-			end
-			
-			r,g,b,a = r*255,g*255,b*255,a*255
-			
-			imgDataDest:setPixel(x, y, r, g, b, a)
 		end
 	end
 	return imgDataDest

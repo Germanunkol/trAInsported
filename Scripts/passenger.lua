@@ -211,7 +211,8 @@ function passenger.showAll(dt)
 		if p.vip then
 			love.graphics.setColor(255,255,255,255)
 			p.markZ = p.markZ + dt*timeFactor*5
-			love.graphics.draw(passengerVIPImage, x + 3, y -10 - 10*math.sin(p.markZ)^2)
+			c = math.sin(p.markZ)^2
+			love.graphics.draw(passengerVIPImage, x + 4, y - 15 - 10*c, 0, 1+c/10, 1+c/10)
 		end
 			
 		love.graphics.setColor(255,255,255,100)

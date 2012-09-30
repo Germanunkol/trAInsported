@@ -5,11 +5,9 @@ end
 
 function cycle(x, min, max)
 	y = math.floor(x/(max-min))-1
-	print("before", x, min, may)
 	if y > 1 then
 		x = x - y*(max-min)
 	end
-	print("after", x, min, may)
 	while x > max do
 		x = x - (max-min)
 	end
@@ -24,13 +22,10 @@ function dropAlpha(x,y,r,g,b,a)
 end
 
 function vonNeumannRandom(seed)		-- generates a random number using the von Neumann method.
-	print("neumann:")
 	str = tostring(seed^2)
-	print(str)
 	while #str < 7 do
 		str = "0" .. str
 	end
-	print(tonumber(str:sub(2,6)))
 	return tonumber(str:sub(2,6))
 end
 

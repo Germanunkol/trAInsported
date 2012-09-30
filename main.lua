@@ -102,7 +102,7 @@ function love.load()
 	--testImg = createBoxImage(120,60)
 
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-	ok, msg = pcall(ai.new, "AI/ai5.lua")
+	ok, msg = pcall(ai.new, "AI/ai1.lua")
 	if not ok then print("Err: " .. msg) end
 	ok, msg = pcall(ai.new, "AI/ai2.lua")
 	if not ok then print("Err: " .. msg) end

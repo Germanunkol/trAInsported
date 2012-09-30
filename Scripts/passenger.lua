@@ -6,12 +6,14 @@ passengerPositions = {}
 
 MAX_NUM_PASSENGERS = 50
 VIP_RATIO = 1/10
+MAX_VIP_TIME = 30
 
 local numPassengersTotal = 1
 local numPassengersDroppedOff = 0
 
 local passengerImage = love.graphics.newImage("Images/Passenger.png")
 local passengerVIPImage = love.graphics.newImage("Images/VIP.png")
+local passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
 
 function passenger.new()
 	if curMap and #passengerList < MAX_NUM_PASSENGERS then
@@ -63,6 +65,8 @@ function passenger.new()
 					passengerList[i].vip = true
 					passengerList[i].name = passengerList[i].name .. "[VIP]"
 					passengerList[i].markZ = love.timer.getDelta()
+					passengerList[i].vipTime = MAX_VIP_TIME
+					passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
@@ -132,7 +136,7 @@ function passenger.leaveTrain(aiID)
 				tr.curPassenger.reachedDestination = true
 				
 				stats.broughtToDestination( aiID, tr.ID )
-				if tr.curPassenger.vip == true then
+				if tr.curPassenger.vip == true and tr.curPassenger.vipTime > 0 then
 					stats.addCash( aiID, MONEY_VIP )
 				else
 					stats.addCash( aiID, MONEY_PASSENGER )
@@ -152,6 +156,12 @@ function passenger.leaveTrain(aiID)
 end
 
 function passenger.init( max )
+
+	vipClockImages = {}
+	for i = 1,11,1 do
+		vipClockImages[i] = love.graphics.newQuad( (i-1)*32,0, 32, 32, 352, 32 )
+	end
+
 	MAX_NUM_PASSENGERS = max
 	passengerList = {}
 	numPassengersTotal = 1
@@ -179,7 +189,15 @@ function passenger.showAll(dt)
 			y = p.tileY*TILE_SIZE + p.y
 		end
 		
-		
+		if p.vip then
+			love.graphics.setColor(255,255,255,200)
+			p.vipTime = clamp(p.vipTime - dt*timeFactor,-10,MAX_VIP_TIME)
+			num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
+			love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
+			if p.vipTime < -15 then
+				p.vip = false
+			end
+		end
 		
 		-- draw passenger:
 		if not p.reachedDestination then
@@ -209,6 +227,7 @@ function passenger.showAll(dt)
 		end
 		
 		if p.vip then
+			
 			love.graphics.setColor(255,255,255,255)
 			p.markZ = p.markZ + dt*timeFactor*5
 			c = math.sin(p.markZ)^2

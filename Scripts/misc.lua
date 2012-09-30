@@ -53,15 +53,18 @@ end
 
 function printTable(table, lvl)
 	lvl = lvl or 0
-	for k, v in pairs(table) do
-		if type(v) == "table" then
-			printTable(v, lvl + 1)
-		else
-			str = ""
-			for i = 1,lvl do
-				str = str .. "\t"
+	if lvl > 10 then print("Maximum Level Depth reached")
+	else
+		for k, v in pairs(table) do
+			if type(v) == "table" then
+				printTable(v, lvl + 1)
+			else
+				str = ""
+				for i = 1,lvl do
+					str = str .. "\t"
+				end
+				print(str, k, v)
 			end
-			print(str, k, v)
 		end
 	end
 end

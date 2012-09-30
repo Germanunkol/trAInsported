@@ -44,7 +44,7 @@ function newMap()
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	map.generate(5,5,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(25,25,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
@@ -75,7 +75,7 @@ function populateMap()
 		for i = 1, curMap.width do
 			for j = 1, curMap.height do
 				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(2) == 1 then
+					if math.random(5) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -249,6 +249,10 @@ function love.draw()
 	if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,110) end
 	
 	if testImg then love.graphics.draw(testImg, 100, 400) end
+	
+
+
+
 	
 end
 

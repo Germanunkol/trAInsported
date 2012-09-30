@@ -162,6 +162,7 @@ function ai.new(scriptName)
 end
 
 function ai.getColour(aiID)
+	if not aiList[aiID] then return end
 	return aiList[aiID].colour
 end
 

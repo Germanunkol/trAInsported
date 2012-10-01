@@ -1,46 +1,46 @@
 local statistics = {}
 
-local stats = {}
+local aiStats = {}
 
 MONEY_PASSENGER = 5
 MONEY_VIP = 15
 
-function statistics.init( ais )
+local statBoxImage = nil
 
-	--statBGImage = love.graphics.newImage()
-	stats = {}
-	stats.numAIs = ais
-	stats.passengers = {}
+function statistics.init( ais )
+	statBoxImage = createBoxImage(250, 125, true, 10, 0)
+	aiStats = {}
+	passengerStats = {}
 	print(ais)
 	for i = 1,ais do
-		stats[i] = {}
-		stats[i].money = 0
-		stats[i].pPickedUp = 0		-- number of passengers which were picked up
-		stats[i].pDroppedOff = 0	-- number of passengers dropped off
-		stats[i].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
-		stats[i].trains = {}
-		stats[i].name = "default"
+		aiStats[i] = {}
+		aiStats[i].money = 0
+		aiStats[i].pPickedUp = 0		-- number of passengers which were picked up
+		aiStats[i].pDroppedOff = 0	-- number of passengers dropped off
+		aiStats[i].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
+		aiStats[i].trains = {}
+		aiStats[i].name = "default"
 	end
 end
 
 function statistics.setAIName(aiID, name)
-	stats[aiID].name = name
+	aiStats[aiID].name = name
 end
 
 function statistics.addTrain( aiID, train )
-	stats[aiID].trains[train.ID] = train
-	stats[aiID].trains[train.ID].pPickedUp = 0		-- number of passengers which were picked up
-	stats[aiID].trains[train.ID].pDroppedOff = 0	-- number of passengers dropped off
-	stats[aiID].trains[train.ID].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
+	aiStats[aiID].trains[train.ID] = train
+	aiStats[aiID].trains[train.ID].pPickedUp = 0		-- number of passengers which were picked up
+	aiStats[aiID].trains[train.ID].pDroppedOff = 0	-- number of passengers dropped off
+	aiStats[aiID].trains[train.ID].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
 end
 
 function statistics.addCash( aiID, money )
-	stats[aiID].money = stats[aiID].money + money
+	aiStats[aiID].money = aiStats[aiID].money + money
 end
 
 function statistics.subCash( aiID, money )
-	if stats[aiID].money >= money then
-		stats[aiID].money = stats[aiID].money - money
+	if aiStats[aiID].money >= money then
+		aiStats[aiID].money = aiStats[aiID].money - money
 		return true
 	else
 		return false
@@ -48,18 +48,18 @@ function statistics.subCash( aiID, money )
 end
 
 function statistics.passengersPickedUp( aiID, trainID )
-	stats[aiID].pPickedUp = stats[aiID].pPickedUp + 1
-	stats[aiID].trains[trainID].pPickedUp = stats[aiID].trains[trainID].pPickedUp + 1
+	aiStats[aiID].pPickedUp = aiStats[aiID].pPickedUp + 1
+	aiStats[aiID].trains[trainID].pPickedUp = aiStats[aiID].trains[trainID].pPickedUp + 1
 end
 
 function statistics.droppedOff( aiID, trainID )
-	stats[aiID].pDroppedOff = stats[aiID].pDroppedOff + 1
-	stats[aiID].trains[trainID].pDroppedOff = stats[aiID].trains[trainID].pDroppedOff + 1
+	aiStats[aiID].pDroppedOff = aiStats[aiID].pDroppedOff + 1
+	aiStats[aiID].trains[trainID].pDroppedOff = aiStats[aiID].trains[trainID].pDroppedOff + 1
 end
 
 function statistics.broughtToDestination( aiID, trainID )
-	stats[aiID].pTransported = stats[aiID].pTransported + 1
-	stats[aiID].trains[trainID].pTransported = stats[aiID].trains[trainID].pTransported + 1
+	aiStats[aiID].pTransported = aiStats[aiID].pTransported + 1
+	aiStats[aiID].trains[trainID].pTransported = aiStats[aiID].trains[trainID].pTransported + 1
 end
 
 function secondsToReadableTime(time)		-- convert time given in seconds to a human readable time format (hours, mins, seconds)
@@ -74,12 +74,12 @@ function statistics.print()
 		
 		print("Time taken: " .. secondsToReadableTime(curMap.time))		-- print in readable format
 		
-		for i = 1,stats.numAIs do
-			print(stats[i].name .. ":")
-			print("\tPicked up " .. stats[i].pPickedUp .. " passengers.")
-			print("\tDropped off " .. stats[i].pDroppedOff .. " passengers.")
-			print("\tBrought " .. stats[i].pTransported .. " passengers to their destinations.")
-			print("\tCash: " .. stats[i].money)
+		for i = 1,#aiStats do
+			print(aiStats[i].name .. ":")
+			print("\tPicked up " .. aiStats[i].pPickedUp .. " passengers.")
+			print("\tDropped off " .. aiStats[i].pDroppedOff .. " passengers.")
+			print("\tBrought " .. aiStats[i].pTransported .. " passengers to their destinations.")
+			print("\tCash: " .. aiStats[i].money)
 			--[[for j = 1,#stats[i].trains do
 				print("\t" .. stats[i].trains[j].name .. ":")
 				print("\t\tPicked up " .. stats[i].trains[j].pPickedUp .. " passengers.")
@@ -89,7 +89,7 @@ function statistics.print()
 			]]--
 		end
 		
-		for k, p in pairs(stats.passengers) do
+		for k, p in pairs(passengerStats) do
 			print("\t" .. k)
 			printTable(p, 2)
 		end
@@ -97,44 +97,115 @@ function statistics.print()
 end
 
 
+
 --------------------------------------------------------------
 --		PASSENGER STATS:
 --------------------------------------------------------------
 
 function statistics.newPassenger( passenger )
-	stats.passengers[passenger.name] = {}
-	stats.passengers[passenger.name].timeSpawned = curMap.time		-- save the current time
-	stats.passengers[passenger.name].timeOnRails = 0
-	stats.passengers[passenger.name].timeWaited = 0
+	passengerStats[passenger.name] = {}
+	passengerStats[passenger.name].timeSpawned = curMap.time		-- save the current time
+	passengerStats[passenger.name].timeOnRails = 0
+	passengerStats[passenger.name].timeWaited = 0
 end
 
 
 function statistics.passengerPickedUp( passenger )
 
-	stats.passengers[passenger.name].timeWaited = stats.passengers[passenger.name].timeWaited + (curMap.time - (stats.passengers[passenger.name].timeLastDroppedOff or stats.passengers[passenger.name].timeSpawned))
-	if stats.passengers[passenger.name].timeFirstPickedUp == nil then		-- have I been picked up before?
-		stats.passengers[passenger.name].timeFirstPickedUp = curMap.time		-- save the current time
-		stats.passengers[passenger.name].timeUntilFirstPickup = curMap.time - stats.passengers[passenger.name].timeSpawned
+	passengerStats[passenger.name].timeWaited = passengerStats[passenger.name].timeWaited + (curMap.time - (passengerStats[passenger.name].timeLastDroppedOff or passengerStats[passenger.name].timeSpawned))
+	if passengerStats[passenger.name].timeFirstPickedUp == nil then		-- have I been picked up before?
+		passengerStats[passenger.name].timeFirstPickedUp = curMap.time		-- save the current time
+		passengerStats[passenger.name].timeUntilFirstPickup = curMap.time - passengerStats[passenger.name].timeSpawned
 	end
-	stats.passengers[passenger.name].timeLastPickup = curMap.time
+	passengerStats[passenger.name].timeLastPickup = curMap.time
 end
 
 function statistics.passengerDroppedOff( passenger )
-	stats.passengers[passenger.name].timeLastDroppedOff = curMap.time
-	stats.passengers[passenger.name].timeOnRails = stats.passengers[passenger.name].timeOnRails + (curMap.time - stats.passengers[passenger.name].timeLastPickup)
+	passengerStats[passenger.name].timeLastDroppedOff = curMap.time
+	passengerStats[passenger.name].timeOnRails = passengerStats[passenger.name].timeOnRails + (curMap.time - passengerStats[passenger.name].timeLastPickup)
 	if passenger.tileX == passenger.destX and passenger.tileY == passenger.destY then
-		stats.passengers[passenger.name].timeTotal = curMap.time - stats.passengers[passenger.name].timeSpawned
+		passengerStats[passenger.name].timeTotal = curMap.time - passengerStats[passenger.name].timeSpawned
 	end
 end
 
 
+--------------------------------------------------------------
+--		GENERATE STATS DISPLAY:
+--------------------------------------------------------------
+
+
+local statWindows = {}
+--	ai:
+--		most passengers picked up
+--	trains:
+--		most passengers picked up
+--		most passengers dropped off correctly
+--		most passengers dropped off wrongly 
+--	passengers:
+--		fastest travel
+--		longest time on rails
+--		longest wait
+--		most dropped off (?)
+
+
+function statistics.generateStatWindows()
+	statWindows = {}
+	
+	-- ai: most passengers picked up:
+	local mostPickedUp = 0
+	local mostPickedUpID = nil
+	-- ai: most passengers brought to their destination:
+	local mostTransported = 0
+	local mostTransportedID = nil
+	
+	for i = 1,#aiStats do
+		if aiStats[i].pPickedUp and aiStats[i].pPickedUp >= mostPickedUp then
+			mostPickedUpID = i
+			if mostPickedUp == aiStats[i].pPickedUp then
+				mostPickedUpID = nil
+			end
+			mostPickedUp = aiStats[i].pPickedUp
+		end
+		if aiStats[i].pTransported and aiStats[i].pTransported >= mostTransported then
+			mostTransportedID = i
+			if mostTransported == aiStats[i].pTransported then
+				mostTransportedID = nil
+			end
+			mostTransported = aiStats[i].pTransported
+		end
+	end
+	
+	if mostPickedUpID then
+		text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passengers."
+		table.insert(statWindows, {title="Most Picked Up", text=text, bg=statBoxImage, icon=getTrainImage(mostPickedUpID)})
+	end
+	if mostTransportedID then
+		text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
+		table.insert(statWindows, {title="Most transported", text=text, bg=statBoxImage, icon=getTrainImage(mostPickedUpID)})
+	end
+end
 
 --------------------------------------------------------------
---		PASSENGER STATS:
+--		SHOW STATS:
 --------------------------------------------------------------
 
-function statistics.display()
 
+function statistics.display(x, y)
+	love.graphics.setColor(255,255,255,255)
+	for k, s in pairs(statWindows) do
+		love.graphics.draw(s.bg, x, y)
+		love.graphics.setFont(FONT_STAT_HEADING)
+		love.graphics.printf(s.title, x, y+10, s.bg:getWidth(), "center")
+		
+		love.graphics.setFont(FONT_STANDARD)
+		if s.icon then 
+			love.graphics.draw(s.icon, x+30, y+35)
+		end
+		
+		love.graphics.printf(s.text, x+70, y+45, s.bg:getWidth()-50, "left")
+		
+		y = y + s.bg:getHeight() + 20
+	end
 end
 
 

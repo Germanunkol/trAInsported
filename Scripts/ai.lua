@@ -320,6 +320,10 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 	end
 end
 
+function ai.getName(ID)
+	if aiList[ID] then return aiList[ID].name end
+end
+
 function ai.findAvailableAIs()
 	local files = love.filesystem.enumerate("AI")		-- load AI subdirector
 	for k, file in ipairs(files) do

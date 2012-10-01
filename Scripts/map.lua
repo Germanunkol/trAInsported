@@ -1361,6 +1361,7 @@ end
 function map.endRound()
 	roundEnded = true
 	stats.print()
+	stats.generateStatWindows()
 end
 
 

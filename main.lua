@@ -14,6 +14,7 @@ numTrains = 0
 
 FONT_BUTTON = love.graphics.newFont( 18 )
 FONT_STANDARD = love.graphics.newFont( 12 )
+FONT_STAT_HEADING = love.graphics.newFont( 15 )
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
@@ -44,7 +45,7 @@ function newMap()
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	map.generate(25,25,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(10,10,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
 	mapImage = map.renderImage()
@@ -58,7 +59,9 @@ function newMap()
 	if curMap then
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
 		
-		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		passenger.init (math.ceil(curMap.width*curMap.height/20) )		-- start generating random passengers, set the maximum number of them.
+		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
 		populateMap()
 		ai.init()
 	end
@@ -232,7 +235,8 @@ function love.draw()
 		love.graphics.pop()
 	end
 	
-	if not roundEnded then console.show() end
+	if not roundEnded then console.show()
+	else stats.display(200, 20) end
 	msgBox.show()
 	button.show()
 	

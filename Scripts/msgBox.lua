@@ -68,7 +68,7 @@ function msgBox.show()
 end
 
 function msgBox.init()
-	msgBoxBG = createBoxImage(400,150,true, 10, 0)
+	msgBoxBG = createBoxImage(400,150,true, 10, 0,64,160,100)
 end
 
 return msgBox

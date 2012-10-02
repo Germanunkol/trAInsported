@@ -93,8 +93,8 @@ end
 
 
 function button.init()
-	buttonOff = createBoxImage(120, 35, true, 5,2)
-	buttonOver = createBoxImage(120, 35, true, 6,1)
+	buttonOff = createBoxImage(120, 35, true, 5,2, 64,160,100)
+	buttonOver = createBoxImage(120, 35, true, 6,1, 64,160,100)
 end
 
 return button

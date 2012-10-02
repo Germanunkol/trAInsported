@@ -60,7 +60,7 @@ function newMap()
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
 		
 		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		passenger.init (math.ceil(curMap.width*curMap.height/20) )		-- start generating random passengers, set the maximum number of them.
+		passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
 		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
 		populateMap()
 		ai.init()
@@ -236,7 +236,7 @@ function love.draw()
 	end
 	
 	if not roundEnded then console.show()
-	else stats.display(200, 20) end
+	else stats.display(200, 40) end
 	msgBox.show()
 	button.show()
 	

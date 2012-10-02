@@ -5,13 +5,18 @@ local aiStats = {}
 MONEY_PASSENGER = 5
 MONEY_VIP = 15
 
-local statBoxImage = nil
+local IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
+local IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
+local IMAGE_STATS_DROPOFF_WRONG = love.graphics.newImage("Images/StatsIconDropOffWrong.png")
+
+local statBoxImagePositive = nil
+local statBoxImageNegative = nil
 
 function statistics.init( ais )
-	statBoxImage = createBoxImage(250, 125, true, 10, 0)
+	statBoxImagePositive = createBoxImage(350, 95, true, 10, 0, 64,140,100)
+	statBoxImageNegative = createBoxImage(350, 95, true, 10, 0, 150,110,75)
 	aiStats = {}
 	passengerStats = {}
-	print(ais)
 	for i = 1,ais do
 		aiStats[i] = {}
 		aiStats[i].money = 0
@@ -157,6 +162,9 @@ function statistics.generateStatWindows()
 	-- ai: most passengers brought to their destination:
 	local mostTransported = 0
 	local mostTransportedID = nil
+	-- ai: most passengers dropped off at wrong position
+	local mostWrongDestination = 0
+	local mostWrongDestinationID = nil
 	
 	for i = 1,#aiStats do
 		if aiStats[i].pPickedUp and aiStats[i].pPickedUp >= mostPickedUp then
@@ -173,15 +181,43 @@ function statistics.generateStatWindows()
 			end
 			mostTransported = aiStats[i].pTransported
 		end
+		if aiStats[i].pTransported and aiStats[i].pPickedUp and aiStats[i].pPickedUp - aiStats[i].pTransported >= mostWrongDestination then
+			mostWrongDestinationID = i
+			if mostWrongDestination == aiStats[i].pPickedUp - aiStats[i].pTransported then
+				mostWrongDestinationID = nil
+			end
+			mostWrongDestination = aiStats[i].pPickedUp - aiStats[i].pTransported
+		end
 	end
 	
 	if mostPickedUpID then
 		text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passengers."
-		table.insert(statWindows, {title="Most Picked Up", text=text, bg=statBoxImage, icon=getTrainImage(mostPickedUpID)})
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+		table.insert(statWindows, {title="Most Picked Up", text=text, bg=statBoxImagePositive, icons=icons})
 	end
 	if mostTransportedID then
-		text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
-		table.insert(statWindows, {title="Most transported", text=text, bg=statBoxImage, icon=getTrainImage(mostPickedUpID)})
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+		if mostTransported ~= 1 then
+			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
+		else
+			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passenger to her/his destinations."
+		end
+		table.insert(statWindows, {title="Most transported", text=text, bg=statBoxImagePositive, icons=icons})
+	end
+	if mostWrongDestinationID then
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+		if mostWrongDestination ~= 1 then
+			text = "Player " .. ai.getName(mostTransportedID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
+		else
+			text = "Player " .. ai.getName(mostTransportedID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
+		end
+		table.insert(statWindows, {title="Most dropped off", text=text, bg=statBoxImageNegative, icons=icons})
 	end
 end
 
@@ -198,13 +234,20 @@ function statistics.display(x, y)
 		love.graphics.printf(s.title, x, y+10, s.bg:getWidth(), "center")
 		
 		love.graphics.setFont(FONT_STANDARD)
-		if s.icon then 
-			love.graphics.draw(s.icon, x+30, y+35)
+		if s.icons then
+			for k, icon in pairs(s.icons) do
+				if icon.shadow then
+					love.graphics.setColor(0,0,0,150)
+					love.graphics.draw(icon.img, x+icon.x-3, y+icon.y+7)
+					love.graphics.setColor(255,255,255,255)
+				end
+				love.graphics.draw(icon.img, x+icon.x, y+icon.y)
+			end
 		end
 		
-		love.graphics.printf(s.text, x+70, y+45, s.bg:getWidth()-50, "left")
+		love.graphics.printf(s.text, x+96, y+40, s.bg:getWidth()-110, "left")
 		
-		y = y + s.bg:getHeight() + 20
+		y = y + s.bg:getHeight() + 15
 	end
 end
 

@@ -52,19 +52,19 @@ function chooseSmart(train, possibleDirections)
 		print("train.passenger destination:", rememberPassengers[train.passenger].destX, rememberPassengers[train.passenger].destY)
 		printTable(rememberPassengers)
 		print("train.pos:", train.x, train.y)
-		if possibleDirections["N"] and rememberPassengers[train.passenger].destY < train.y and random() < .9 then
+		if possibleDirections["N"] and rememberPassengers[train.passenger].destY+1 < train.y and random() < .7 then
 			print("I think North is best")
 			return "N"
 		end
-		if possibleDirections["S"] and rememberPassengers[train.passenger].destY > train.y and random() < .9 then
+		if possibleDirections["S"] and rememberPassengers[train.passenger].destY-1 > train.y and random() < .7 then
 			print("I think South is best")
 			return "S"
 		end
-		if possibleDirections["E"] and rememberPassengers[train.passenger].destX > train.x and random() < .9 then
+		if possibleDirections["E"] and rememberPassengers[train.passenger].destX+1 > train.x and random() < .7 then
 			print("I think East is best")
 			return "E"
 		end
-		if possibleDirections["W"] and rememberPassengers[train.passenger].destX < train.x and random() < .9 then
+		if possibleDirections["W"] and rememberPassengers[train.passenger].destX-1 < train.x and random() < .7 then
 			print("I think West is best")
 			return "W"
 		end

@@ -5,7 +5,7 @@ local passengerList = {}
 passengerPositions = {}
 
 MAX_NUM_PASSENGERS = 50
-VIP_RATIO = 1/10
+VIP_RATIO = 1/2
 MAX_VIP_TIME = 30
 
 local numPassengersTotal = 1

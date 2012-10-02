@@ -378,9 +378,15 @@ function gradient(imgData, centerX, centerY, radius, brightness)
 	return imgData
 end
 
-function createBoxImage(width, height, shadow, shadowOffsetX, shadowOffsetY)
+function createBoxImage(width, height, shadow, shadowOffsetX, shadowOffsetY, colR, colG, colB)
+
+	-- set defaults
+	colR = colR or 0
+	colG = colG or 0
+	colB = colB or 0
 	shadowOffsetX = shadowOffsetX or 0
 	shadowOffsetY = shadowOffsetY or 0
+	
 	local ang = 0
 	local verts = {}
 	local r = 10 -- math.max(math.min(width, height)/6, 10)
@@ -410,13 +416,13 @@ function createBoxImage(width, height, shadow, shadowOffsetX, shadowOffsetY)
 		shadowVerts[i] = verts[i] -- 7
 		shadowVerts[i+1] = verts[i+1] + 9
 	end
-	
+--	64,160,100
+	--debug.debug()
 	local imgDataTopLayer = love.image.newImageData(width, height)
-	imgDataTopLayer = outline(imgDataTopLayer, verts, 64,160,100,150)
-	imgDataTopLayer = fill(imgDataTopLayer, 64,164,100,150)
+	--imgDataTopLayer = outline(imgDataTopLayer, verts, colR, colG, colB, 150)
+	imgDataTopLayer = outline(imgDataTopLayer, verts, 0,0,0, 255)
+	imgDataTopLayer = fill(imgDataTopLayer, colR, colG, colB, 150)
 	imgDataTopLayer = gradient(imgDataTopLayer, width, 0, width, 235)
-	
-	imgDataTopLayer:encode("toplayer.png")
 	
 	if shadow then
 	
@@ -428,10 +434,8 @@ function createBoxImage(width, height, shadow, shadowOffsetX, shadowOffsetY)
 	
 		imgDataShadow = blur(imgDataShadow, 2)
 		
-		imgDataShadow:encode("shadow.png")
 		
 		tmpData = transparentPaste(imgDataShadow, imgDataTopLayer, shadowOffsetX, shadowOffsetY)
-		tmpData:encode("full.png")
 		return love.graphics.newImage(tmpData)
 	end
 	

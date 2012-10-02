@@ -1,6 +1,6 @@
 
 timeFactorIndex = 5
-timeFactorList = {0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20,40}
+timeFactorList = {0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 40, 120}
 
 function love.mousepressed(x, y, b)
 	if b == "wd" then

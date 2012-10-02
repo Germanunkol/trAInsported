@@ -2,16 +2,15 @@ local console = {}
 
 local consoleLines = {}
 
-local consoleFont = love.graphics.newFont(12)
 
 local consoleStartLine = 1
 
 function console.show()
 	e = math.min(#consoleLines, consoleStartLine+console.numLines)
-	love.graphics.setFont(consoleFont)
+	love.graphics.setFont(FONT_CONSOLE)
 	for i = consoleStartLine,e do
 		love.graphics.setColor(consoleLines[i].colour.r,consoleLines[i].colour.g,consoleLines[i].colour.b, 255)
-		love.graphics.print(consoleLines[i].str, 20, console.y + (i-consoleStartLine)*consoleFont:getHeight() )
+		love.graphics.print(consoleLines[i].str, 20, console.y + (i-consoleStartLine)*FONT_CONSOLE:getHeight() )
 	end
 end
 
@@ -25,7 +24,7 @@ function console.add( text, colour )
 		else
 			str = str .. c
 		end
-		if consoleFont:getWidth(str) > console.width - 40 then
+		if FONT_CONSOLE:getWidth(str) > console.width - 40 then
 			consoleLines[#consoleLines+1] = {}
 			consoleLines[#consoleLines].str = str
 			consoleLines[#consoleLines].colour = colour
@@ -44,7 +43,7 @@ end
 function console.init(width, y)
 	console.y = y
 	console.width = width
-	console.numLines = (love.graphics.getHeight()-y)/consoleFont:getHeight()-1
+	console.numLines = (love.graphics.getHeight()-y)/FONT_CONSOLE:getHeight()-1
 	consoleStartLine = 1
 	consoleLines = {}
 end

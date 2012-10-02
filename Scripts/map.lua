@@ -1292,7 +1292,7 @@ function getRailImage( railType )
 	return nil
 end
 
-function map.renderImage()
+function map.render()
 	print("rendering image")
 	local data = nil
 	local img = nil
@@ -1337,6 +1337,9 @@ function map.renderImage()
 			end
 		end]]--
 	end
+	
+	clouds.restart()
+	
 	return love.graphics.newImage(data)
 end
 

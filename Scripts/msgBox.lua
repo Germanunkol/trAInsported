@@ -58,11 +58,11 @@ end
 
 function msgBox.show()
 	love.graphics.setColor(255,255,255,255)
-	love.graphics.setFont(FONT_BUTTON)
+	love.graphics.setFont(FONT_STAT_MSGBOX)
 	for k, m in pairs(msgBoxList) do
 		love.graphics.draw(m.bg, m.x, m.y)
 		for i=1, #m.text do
-			love.graphics.print(m.text[i], m.x + (m.width - FONT_BUTTON:getWidth(m.text[i]))/2, m.y + i*FONT_BUTTON:getHeight())
+			love.graphics.print(m.text[i], m.x + (m.width - FONT_STAT_MSGBOX:getWidth(m.text[i]))/2, m.y + i*FONT_STAT_MSGBOX:getHeight())
 		end
 	end
 end

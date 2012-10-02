@@ -166,6 +166,19 @@ function statistics.generateStatWindows()
 	local mostWrongDestination = 0
 	local mostWrongDestinationID = nil
 	
+	-- train: most passengers picked up:
+	local trMostPickedUp = 0
+	local trMostPickedUpID = nil
+	local trMostPickedUpName = nil
+	-- ai: most passengers brought to their destination:
+	local trMostTransported = 0
+	local trMostTransportedID = nil
+	local trMostTransportedName = nil
+	-- ai: most passengers dropped off at wrong position
+	local trMostWrongDestination = 0
+	local trMostWrongDestinationID = nil
+	local trMostWrongDestinationName = nil
+	
 	for i = 1,#aiStats do
 		if aiStats[i].pPickedUp and aiStats[i].pPickedUp >= mostPickedUp then
 			mostPickedUpID = i
@@ -188,14 +201,48 @@ function statistics.generateStatWindows()
 			end
 			mostWrongDestination = aiStats[i].pPickedUp - aiStats[i].pTransported
 		end
+		
+		for k, tr in pairs(aiStats[i].trains) do
+			if tr.pPickedUp and tr.pPickedUp >= trMostPickedUp then
+				trMostPickedUpID = i
+				trMostPickedUpName = tr.name
+				if trMostPickedUp == tr.pPickedUp then
+					trMostPickedUpID = nil
+					trMostPickedUpName = nil
+				end
+				trMostPickedUp = tr.pPickedUp
+			end
+			if tr.pTransported and tr.pTransported >= trMostTransported then
+				trMostTransportedID = i
+				trMostTransportedName = tr.name
+				if trMostTransported == tr.pTransported then
+					trMostTransportedID = nil
+					trMostTransportedName = nil
+				end
+				trMostTransported = tr.pTransported
+			end
+			if tr.pTransported and tr.pPickedUp and tr.pPickedUp - tr.pTransported >= trMostWrongDestination then
+				trMostWrongDestinationID = i
+				trMostWrongDestinationName = tr.name
+				if trMostWrongDestination == tr.pPickedUp - tr.pTransported then
+					trMostWrongDestinationID = nil
+					trMostWrongDestinationName = nil
+				end
+				trMostWrongDestination = tr.pPickedUp - tr.pTransported
+			end
+		end
 	end
 	
 	if mostPickedUpID then
-		text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passengers."
+		if mostPickedUp ~= 1 then
+			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passengers."
+		else
+			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passenger."
+		end
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		table.insert(statWindows, {title="Most Picked Up", text=text, bg=statBoxImagePositive, icons=icons})
+		table.insert(statWindows, {title="Hospitality", text=text, bg=statBoxImagePositive, icons=icons})
 	end
 	if mostTransportedID then
 		icons = {}
@@ -206,7 +253,7 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passenger to her/his destinations."
 		end
-		table.insert(statWindows, {title="Most transported", text=text, bg=statBoxImagePositive, icons=icons})
+		table.insert(statWindows, {title="Earned Your Pay", text=text, bg=statBoxImagePositive, icons=icons})
 	end
 	if mostWrongDestinationID then
 		icons = {}
@@ -217,7 +264,32 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. ai.getName(mostTransportedID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
-		table.insert(statWindows, {title="Most dropped off", text=text, bg=statBoxImageNegative, icons=icons})
+		table.insert(statWindows, {title="Get lost...", text=text, bg=statBoxImageNegative, icons=icons})
+	end
+	if trMostPickedUpID then
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+		text = "'" .. trMostPickedUpName .. "' (" .. ai.getName(trMostPickedUpID) .. ") " .. " picked up more passengers than any other train."
+		table.insert(statWindows, {title="Busy little Bee!", text=text, bg=statBoxImagePositive, icons=icons})
+	end
+	if trMostTransportedID then
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+		text = "'" .. trMostTransportedName .. "' (" .. ai.getName(trMostTransportedID) .. ") " .. " brought more passengers to their destination than any other train."
+		table.insert(statWindows, {title="Home sweet Home", text=text, bg=statBoxImagePositive, icons=icons})
+	end
+	if trMostWrongDestinationID then
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+		if trMostWrongDestination ~= 1 then
+			text = "'" .. trMostWrongDestinationName .. "' (" .. ai.getName(trMostWrongDestinationID) .. ") " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
+		else
+			text = "'" .. trMostWrongDestinationName .. "' (" .. ai.getName(trMostWrongDestinationID) .. ") " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
+		end
+		table.insert(statWindows, {title="Why don't you walk?", text=text, bg=statBoxImageNegative, icons=icons})
 	end
 end
 
@@ -231,7 +303,7 @@ function statistics.display(x, y)
 	for k, s in pairs(statWindows) do
 		love.graphics.draw(s.bg, x, y)
 		love.graphics.setFont(FONT_STAT_HEADING)
-		love.graphics.printf(s.title, x, y+10, s.bg:getWidth(), "center")
+		love.graphics.printf(s.title, x, y+8, s.bg:getWidth(), "center")
 		
 		love.graphics.setFont(FONT_STANDARD)
 		if s.icons then
@@ -245,7 +317,7 @@ function statistics.display(x, y)
 			end
 		end
 		
-		love.graphics.printf(s.text, x+96, y+40, s.bg:getWidth()-110, "left")
+		love.graphics.printf(s.text, x+96, y+37, s.bg:getWidth()-110, "left")
 		
 		y = y + s.bg:getHeight() + 15
 	end

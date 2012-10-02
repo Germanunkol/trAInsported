@@ -10,11 +10,14 @@ train = require("Scripts/train")
 functionQueue = require("Scripts/functionQueue")
 passenger = require("Scripts/passenger")
 stats = require("Scripts/statistics")
+clouds = require("Scripts/clouds")
 numTrains = 0
 
-FONT_BUTTON = love.graphics.newFont( 18 )
-FONT_STANDARD = love.graphics.newFont( 12 )
-FONT_STAT_HEADING = love.graphics.newFont( 15 )
+FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 20 )
+FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 14 )
+FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
+FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
+FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
@@ -45,10 +48,10 @@ function newMap()
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	map.generate(10,10,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(5,5,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
-	mapImage = map.renderImage()
+	mapImage = map.render()
 	
 	stats.init(4)
 	stats.setAIName(1, "Ai1")
@@ -102,6 +105,7 @@ function love.load()
 
 	button.init()
 	msgBox.init()
+	clouds.init()
 	--testImg = createBoxImage(120,60)
 
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
@@ -231,7 +235,10 @@ function love.draw()
 		train.showAll()
 		passenger.showAll(dt)
 	
-		map.drawOccupation()
+		--map.drawOccupation()
+		
+		clouds.showAll(dt)
+		
 		love.graphics.pop()
 	end
 	
@@ -241,7 +248,7 @@ function love.draw()
 	button.show()
 	
 	
-	love.graphics.setFont(FONT_STANDARD)
+	love.graphics.setFont(FONT_CONSOLE)
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-150, 5)
 	love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)

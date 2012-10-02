@@ -20,14 +20,13 @@ end
 ]]--
 local function safeprint(aiID)
 	return function (...)
-		str = "["
+		str = "[" .. ai.getName(aiID) .. "]"
 		for k, v in ipairs(arg) do
 			if not v then print("trying to print nil value!")
 			else
 				str = str .. "\t".. tostring(v)
 			end
 		end
-		str = str .. "\t]"
 		if aiID == 1 then console.add(str, PLAYERCOLOUR1_CONSOLE)
 		elseif aiID == 2 then console.add(str, PLAYERCOLOUR2_CONSOLE)
 		elseif aiID == 3 then console.add(str, PLAYERCOLOUR3_CONSOLE)

@@ -36,6 +36,8 @@ IMAGE_HOUSE = love.image.newImageData("Images/House2.png")
 IMAGE_HOTSPOT1 = love.image.newImageData("Images/HotSpot1.png")
 IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
 IMAGE_TREE01_SHADOW = love.image.newImageData("Images/Tree1_Shadow.png")
+IMAGE_TREE02 = love.image.newImageData("Images/Tree2.png")
+IMAGE_TREE02_SHADOW = love.image.newImageData("Images/Tree2_Shadow.png")
 
 -- possible tile types:
 NS = 1
@@ -1324,10 +1326,35 @@ function map.render()
 		
 		for i = 0,curMap.height+1,1 do		-- randomly place trees/bushes etc
 			for j = 0,curMap.width+1,1 do
-				if not curMap[i][j] and math.random(5) == 1 then
+				if not curMap[i][j] and math.random(3) == 1 then
 					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					if math.random(2) == 1 then
+						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					else
+						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					end
+				end
+				if not curMap[i][j] and math.random(3) == 1 then
+					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+					if math.random(2) == 1 then
+						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					else
+						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					end
+				end
+				if not curMap[i][j] and math.random(3) == 1 then
+					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+					if math.random(2) == 1 then
+						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					else
+						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					end
 				end
 			end
 		end

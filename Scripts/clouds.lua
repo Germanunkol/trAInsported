@@ -48,7 +48,7 @@ function clouds.renderShadows(dt)
 			numClouds = numClouds - 1
 		else
 			cl.alpha = math.min(0.8, 1+cl.x/(TILE_SIZE*2), 1+(curMap.width*TILE_SIZE-cl.x)/(TILE_SIZE*2))
-			love.graphics.setColor(0,0,0,55*cl.alpha)
+			love.graphics.setColor(0,0,0,35*cl.alpha)
 			love.graphics.draw(cl.imgShadow, cl.x-30-cl.height*30, cl.y+30+cl.height*30,  cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 		end
 	end

@@ -12,11 +12,11 @@ local numClouds = 0
 function clouds.restart()
 	cloudList = {}
 	numClouds = 0
-	MAX_NUM_CLOUDS = math.floor(curMap.width+curMap.height-3)
+	MAX_NUM_CLOUDS = 2*math.floor(curMap.width+curMap.height-3)
 	for i = 1, MAX_NUM_CLOUDS/2 do
 	
-		s = 2.5+math.random()*1.5
-		cloudList[i] = {alpha=0, r=math.random()*math.pi, x=math.random(-2, curMap.width+2)*TILE_SIZE, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=2.5+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
+		s = 2+math.random()*2
+		cloudList[i] = {a=0.5+math.random()*0.5, alpha=0, r=math.random()*math.pi, x=math.random(-2, curMap.width+2)*TILE_SIZE, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=2.5+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
 		numClouds = numClouds + 1
 	end
 end
@@ -26,12 +26,12 @@ function clouds.renderShadows(dt)
 	if not curMap then return end
 	
 	if nextCloudIn <= 0 then
-		if numClouds < MAX_NUM_CLOUDS then
-			nextCloudIn = math.random(25)
-			s = 2.5+math.random()*1.5
+		while numClouds < MAX_NUM_CLOUDS do
+			nextCloudIn = math.random(3)
+			s = 2+math.random()*2
 			for j = 1, MAX_NUM_CLOUDS do
 				if cloudList[j] == nil then
-					cloudList[j] = {alpha=0, r=math.random()*math.pi, x=-TILE_SIZE*2, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=s, height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
+					cloudList[j] = {a=0.5+math.random()*0.5, alpha=0, r=math.random()*math.pi, x=-TILE_SIZE*2, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=s, height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
 					numClouds = numClouds + 1
 					break
 				end
@@ -42,13 +42,13 @@ function clouds.renderShadows(dt)
 	end
 	
 	for k, cl in pairs(cloudList) do
-		cl.x = cl.x + dt*timeFactor*cl.height*5
+		cl.x = cl.x + dt*timeFactor*cl.height*15
 		if cl.x >= (curMap.width+2)*TILE_SIZE then
 			cloudList[k] = nil
 			numClouds = numClouds - 1
 		else
 			cl.alpha = math.min(0.8, 1+cl.x/(TILE_SIZE*2), 1+(curMap.width*TILE_SIZE-cl.x)/(TILE_SIZE*2))
-			love.graphics.setColor(0,0,0,35*cl.alpha)
+			love.graphics.setColor(0,0,0,35*cl.alpha*cl.a)
 			love.graphics.draw(cl.imgShadow, cl.x-30-cl.height*30, cl.y+30+cl.height*30,  cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 		end
 	end
@@ -57,9 +57,9 @@ end
 local fade = 0
 
 function clouds.render()
-	fade = math.max(0.8-camZ,0)
+	fade = math.max(0.6-camZ,0)
 	for k, cl in pairs(cloudList) do
-		love.graphics.setColor(255,255,255,135*cl.alpha*fade)
+		love.graphics.setColor(255,255,255,135*cl.alpha*fade*cl.a)
 		love.graphics.draw(cl.img, cl.x,cl.y, cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 	end
 end

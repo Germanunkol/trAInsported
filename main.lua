@@ -1,5 +1,8 @@
+
+require("Scripts/TSerial")
 ai = require("Scripts/ai")
 console = require("Scripts/console")
+require("Scripts/imageManipulation")
 require("Scripts/ui")
 require("Scripts/misc")
 require("Scripts/input")
@@ -34,7 +37,7 @@ mouseLastX = 0
 mouseLastY = 0
 MAX_PAN = 500
 camX, camY = 0,0
-camZ = 0.3
+camZ = 0.7
 
 timeFactor = 1
 
@@ -48,11 +51,15 @@ function newMap()
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	map.generate(7,7,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(10,10,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
-	mapImage, mapObjectImage = map.render()
 	
+	mapThread = nil
+	map.render()
+end
+
+function startMap()
 	stats.init(4)
 	stats.setAIName(1, "Ai1")
 	stats.setAIName(2, "Ai2")
@@ -69,6 +76,7 @@ function newMap()
 		ai.init()
 	end
 	
+	clouds.restart()
 	curMap.time = 0		-- start map timer.
 end
 
@@ -155,10 +163,12 @@ function love.update(dt)
 	
 	functionQueue.run()
 	
-	map.handleEvents(dt)
 	
 	button.calcMouseHover()
 	if mapImage then
+		
+		map.handleEvents(dt)
+	
 		prevX = camX
 		prevY = camY
 		if panningView then
@@ -206,6 +216,12 @@ function love.update(dt)
 			camX = clamp(camX + floatPanX*dt, -MAX_PAN, MAX_PAN)
 			camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
 		end
+	elseif mapThread then
+		err = mapThread:get("error")
+		if err then
+			print("Error in thread", err)
+		end
+		mapImage,mapShadowImage,mapObjectImage = map.render()
 	end
 	
 	if not roundEnded then
@@ -238,10 +254,12 @@ function love.draw()
 		passenger.showAll(dt)
 		
 		love.graphics.setColor(255,255,255,255)
+		love.graphics.draw(mapShadowImage, 0,0)	
 		love.graphics.draw(mapObjectImage, 0,0)	
 		
+		map.renderHighlights(dt)
 		
-		clouds.renderShadows(dt)
+		if not love.keyboard.isDown("i") then clouds.renderShadows(dt) end
 	
 		--map.drawOccupation()
 			
@@ -258,10 +276,14 @@ function love.draw()
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
-		clouds.render()
+		if not love.keyboard.isDown("i") then clouds.render() end
 		--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 		
 		love.graphics.pop()
+	elseif mapThread then
+		if mapThreadPercentage then
+			print("Generating map: " .. mapThreadPercentage .. "%")
+		end
 	end
 	
 	if not roundEnded then console.show()

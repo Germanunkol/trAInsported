@@ -8,36 +8,7 @@ TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 local curMapOccupiedTiles = {}	-- stores if a certain path on a tile is already being used by another train
 local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is already being used by another train
 
--- RAIL Pieces:
-IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
-
-IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS.png")
-IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW.png")
-
-IMAGE_RAIL_NE = love.image.newImageData("Images/Rail_NE.png")
-IMAGE_RAIL_ES = love.image.newImageData("Images/Rail_ES.png")
-IMAGE_RAIL_SW = love.image.newImageData("Images/Rail_SW.png")
-IMAGE_RAIL_NW = love.image.newImageData("Images/Rail_NW.png")
-
-IMAGE_RAIL_NEW = love.image.newImageData("Images/Rail_NEW.png")
-IMAGE_RAIL_NES = love.image.newImageData("Images/Rail_NES.png")
-IMAGE_RAIL_ESW = love.image.newImageData("Images/Rail_ESW.png")
-IMAGE_RAIL_NSW = love.image.newImageData("Images/Rail_NSW.png")
-
-IMAGE_RAIL_NESW = love.image.newImageData("Images/Rail_NESW.png")
-
-IMAGE_RAIL_N = love.image.newImageData("Images/Rail_N.png")
-IMAGE_RAIL_E = love.image.newImageData("Images/Rail_E.png")
-IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
-IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
-
---Environment/Misc:
-IMAGE_HOUSE = love.image.newImageData("Images/House2.png")
-IMAGE_HOTSPOT1 = love.image.newImageData("Images/HotSpot1.png")
-IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
-IMAGE_TREE01_SHADOW = love.image.newImageData("Images/Tree1_Shadow.png")
-IMAGE_TREE02 = love.image.newImageData("Images/Tree2.png")
-IMAGE_TREE02_SHADOW = love.image.newImageData("Images/Tree2_Shadow.png")
+IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
 
 -- possible tile types:
 NS = 1
@@ -1240,148 +1211,62 @@ function getRailType(i, j)
 	end
 end
 
-function getRailImage( railType )
-	--					N						S						W							E
 
-	if railType == 1 then
-		return IMAGE_RAIL_NS
-	end
-	if railType == 2 then
-		return IMAGE_RAIL_EW
-	end
-	
-	if railType == 3 then
-		return IMAGE_RAIL_NW
-	end
-	if railType == 4 then
-		return IMAGE_RAIL_SW
-	end
-	if railType == 5 then
-		return IMAGE_RAIL_NE
-	end
-	if railType == 6 then
-		return IMAGE_RAIL_ES
-	end
-	
-	if railType == 7 then
-		return IMAGE_RAIL_NEW
-	end
-	if railType == 8 then
-		return IMAGE_RAIL_NES
-	end
-	if railType == 9 then
-		return IMAGE_RAIL_ESW
-	end
-	if railType == 10 then
-		return IMAGE_RAIL_NSW
-	end
-	
-	if railType == 11 then
-		return IMAGE_RAIL_NESW
-	end
-	
-	if railType == 12 then
-		return IMAGE_RAIL_W
-	end
-	if railType == 13 then
-		return IMAGE_RAIL_E
-	end
-	if railType == 14 then
-		return IMAGE_RAIL_N
-	end
-	if railType == 15 then
-		return IMAGE_RAIL_S
-	end
-	
-	return nil
-end
+mapGenerationPercentage = 0
 
+local highlightList = {}
+local highlightListQuads = {}
+
+mapThread = nil
+mapThreadPercentage = 0
+
+--
 function map.render()
-	print("rendering image")
-	local groundData = nil
-	local objectData = nil
-	local img = nil
-	
-	if curMap then
-		groundData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- ground map
-		objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+
+	if not mapThread then
+		print("Rendering Map...")
+		-- mapImage, mapShadowImage, mapObjectImage = map.render()
+		mapThread = love.thread.newThread("mapThread", "Scripts/mapRender.lua")
+		mapThread:start()
+		mapThread:set("curMap", TSerial.pack(curMap) )
+		mapThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
+		mapThread:set("TILE_SIZE", TILE_SIZE)
+
 		
-		for i = 0,curMap.height+1,1 do
-			for j = 0,curMap.width+1,1 do
-				groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			end
-		end
-		for i = 0,curMap.height+1,1 do
-			for j = 0,curMap.width+1,1 do
-				if curMap[i][j] == "H" then
-					transparentPaste( groundData, IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				elseif curMap[i][j] == "S" then
-					transparentPaste( groundData, IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				elseif curMap[i][j] == "C" then
-					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-					if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
-				end
-			end
-		end
+	else
+		mapThreadPercentage = mapThread:get("percentage")
 		
-		for i = 0,curMap.height+1,1 do		-- randomly place trees/bushes etc
-			for j = 0,curMap.width+1,1 do
-				if not curMap[i][j] and math.random(3) == 1 then
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					if math.random(2) == 1 then
-						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					else
-						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					end
-				end
-				if not curMap[i][j] and math.random(3) == 1 then
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					if math.random(2) == 1 then
-						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					else
-						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					end
-				end
-				if not curMap[i][j] and math.random(3) == 1 then
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					if math.random(2) == 1 then
-						transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					else
-						transparentPaste( groundData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					end
-				end
+		if mapThread:get("status") == "done" then
+			print("Generating: done!")
+			
+			
+			local groundData = nil
+			local shadowData = nil
+			local objectData = nil
+			groundData = mapThread:get("groundData")
+			shadowData = mapThread:get("shadowData")
+			objectData = mapThread:get("objectData")
+
+			for i = 1,20 do
+				highlightListQuads[i] = love.graphics.newQuad( (i-1)*22, 0, 22, 21, 440, 21 )
 			end
+			mapThread = nil
+			startMap()
+			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
 		end
-		--[[for i = 0,curMap.height+1,1 do
-			for j = 0,curMap.width+1,1 do
-				if curMap[i][j] == "H" then
-					data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				elseif curMap[i][j] == "S" then
-					data:paste( IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				else
-					data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
-					if curMap[i][j] == "C" then
-						img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-						if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
-						--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
-						--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
-					end
-				end
-			end
-		end]]--
-	end
-	
-	clouds.restart()
-	
-	return love.graphics.newImage(groundData),love.graphics.newImage(objectData)
+	end	
 end
 
+
+function map.renderHighlights(dt)
+	for k, hl in pairs(highlightList) do
+		if math.ceil(hl.frame) >= 1 and math.ceil(hl.frame) <= #highlightListQuads then
+			love.graphics.drawq(IMAGE_HOTSPOT_HIGHLIGHT, highlightListQuads[math.ceil(hl.frame)], hl.x, hl.y)
+		end
+		hl.frame = hl.frame + dt*timeFactor*15
+		while hl.frame > #highlightListQuads do hl.frame = hl.frame - #highlightListQuads end
+	end
+end
 
 --------------------------------------------------------------
 --		MAP EVENTS:

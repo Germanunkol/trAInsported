@@ -15,8 +15,8 @@ local statBoxImagePositive = nil
 local statBoxImageNegative = nil
 
 function statistics.init( ais )
-	statBoxImagePositive = createBoxImage(350, 95, true, 10, 0, 64,140,100)
-	statBoxImageNegative = createBoxImage(350, 95, true, 10, 0, 150,110,75)
+	statBoxImagePositive = createBoxImage(350, 95, true, 10, 0, 64, 140, 100)
+	statBoxImageNegative = createBoxImage(350, 95, true, 10, 0, 150, 90, 65)
 	aiStats = {}
 	passengerStats = {}
 	for i = 1,ais do

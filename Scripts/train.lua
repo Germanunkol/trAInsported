@@ -213,10 +213,12 @@ function removeBlockedTrain(tr)
 			removedID = k
 		elseif removedID then
 			blockedTrains[k-1] = blockedTrains[k]
+			stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
 		end
 	end
 	
-	if removedID then blockedTrains[#blockedTrains] = nil
+	if removedID then
+		blockedTrains[#blockedTrains] = nil
 	end
 end
 
@@ -300,6 +302,7 @@ function moveSingleTrain(tr, t)
 				else
 					if tr.timeBlocked > MAX_BLOCK_TIME then
 						
+						stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
 						tr.timeBlocked = 0
 						
 						if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
@@ -609,7 +612,7 @@ function train.moveAll()
 		moveSingleTrain(tr, t)
 		tr.hasMoved = true
 		if tr.blocked then
-			tr.timeBlocked = tr.timeBlocked + t*timeFactor
+			tr.timeBlocked = tr.timeBlocked + t
 		end
 	end
 	

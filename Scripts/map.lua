@@ -34,6 +34,7 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 --Environment/Misc:
 IMAGE_HOUSE = love.image.newImageData("Images/House2.png")
 IMAGE_HOTSPOT1 = love.image.newImageData("Images/HotSpot1.png")
+IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
 
 -- possible tile types:
 NS = 1
@@ -1311,10 +1312,12 @@ function map.render()
 					transparentPaste( data, IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
 				elseif curMap[i][j] == "S" then
 					transparentPaste( data, IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif curMap[i][j] == "C" then
+					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+					if img then transparentPaste( data, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
 				else
-					if curMap[i][j] == "C" then
-						img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-						if img then transparentPaste( data, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+					if math.random(5) == 1 then
+					transparentPaste( data, IMAGE_TREE01, (i)*TILE_SIZE, (j)*TILE_SIZE )
 					end
 				end
 			end

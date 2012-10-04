@@ -135,7 +135,7 @@ function passenger.leaveTrain(aiID)
 			if tr.curPassenger.tileX == tr.curPassenger.destX and tr.curPassenger.tileY == tr.curPassenger.destY then
 				tr.curPassenger.reachedDestination = true
 				
-				stats.broughtToDestination( aiID, tr.ID )
+				stats.broughtToDestination( aiID, tr.ID, tr.curPassenger.vip )
 				if tr.curPassenger.vip == true and tr.curPassenger.vipTime > 0 then
 					stats.addCash( aiID, MONEY_VIP )
 				else

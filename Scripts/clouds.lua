@@ -7,28 +7,35 @@ local MAX_NUM_CLOUDS = 10
 
 local cloudList = {}
 local nextCloudIn = 0
-
-function clouds.init()
-	
-end
+local numClouds = 0
 
 function clouds.restart()
 	cloudList = {}
-	MAX_NUM_CLOUDS = math.floor(curMap.width+curMap.height)
-	
+	numClouds = 0
+	MAX_NUM_CLOUDS = math.floor(curMap.width+curMap.height-3)
 	for i = 1, MAX_NUM_CLOUDS/2 do
 	
-		table.insert(cloudList, {x=math.random(curMap.width)*TILE_SIZE, y=math.random(curMap.height)*TILE_SIZE, scale=1+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW})
+		s = 2.5+math.random()*1.5
+		cloudList[i] = {alpha=0, r=math.random()*math.pi, x=math.random(-2, curMap.width+2)*TILE_SIZE, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=2.5+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
+		numClouds = numClouds + 1
 	end
 end
 
-function clouds.showAll(dt)
+
+function clouds.renderShadows(dt)
 	if not curMap then return end
 	
 	if nextCloudIn <= 0 then
-		if #cloudList < MAX_NUM_CLOUDS/2 then
+		if numClouds < MAX_NUM_CLOUDS then
 			nextCloudIn = math.random(25)
-			table.insert(cloudList, {x=-TILE_SIZE*3, y=math.random(curMap.height)*TILE_SIZE, scale=1+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW})
+			s = 2.5+math.random()*1.5
+			for j = 1, MAX_NUM_CLOUDS do
+				if cloudList[j] == nil then
+					cloudList[j] = {alpha=0, r=math.random()*math.pi, x=-TILE_SIZE*2, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=s, height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
+					numClouds = numClouds + 1
+					break
+				end
+			end
 		end
 	else
 		nextCloudIn = nextCloudIn - dt*timeFactor
@@ -36,28 +43,22 @@ function clouds.showAll(dt)
 	
 	for k, cl in pairs(cloudList) do
 		cl.x = cl.x + dt*timeFactor*cl.height*5
-		if cl.x > (curMap.width+3)*TILE_SIZE then
-			table.remove(cloudList, k)
+		if cl.x >= (curMap.width+2)*TILE_SIZE then
+			cloudList[k] = nil
+			numClouds = numClouds - 1
 		else
-			if cl.x < 0 then
-				love.graphics.setColor(0,0,0,55+55*(cl.x)/(TILE_SIZE*3))
-			elseif cl.x > curMap.width*TILE_SIZE then
-				love.graphics.setColor(0,0,0,55-55*(cl.x-curMap.width*TILE_SIZE)/(TILE_SIZE*3))
-			else love.graphics.setColor(0,0,0,55)
-			end
-			
-			love.graphics.draw(cl.imgShadow, cl.x-30-cl.height*30, cl.y+30+cl.height*30, 0, cl.scale, cl.scale)
+			cl.alpha = math.min(0.8, 1+cl.x/(TILE_SIZE*2), 1+(curMap.width*TILE_SIZE-cl.x)/(TILE_SIZE*2))
+			love.graphics.setColor(0,0,0,55*cl.alpha)
+			love.graphics.draw(cl.imgShadow, cl.x-30-cl.height*30, cl.y+30+cl.height*30,  cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 		end
 	end
-	love.graphics.setColor(255,255,255,75)
+end
+
+function clouds.render()
+	print(camZ)
 	for k, cl in pairs(cloudList) do
-		if cl.x < 0 then
-			love.graphics.setColor(255,255,255,75+(cl.x)*75/(TILE_SIZE*3))
-		elseif cl.x > curMap.width*TILE_SIZE then
-			love.graphics.setColor(255,255,255,75-(cl.x-curMap.width*TILE_SIZE)*75/(TILE_SIZE*3))
-		else love.graphics.setColor(255,255,255,75)
-		end
-		love.graphics.draw(cl.img, cl.x, cl.y, 0, cl.scale, cl.scale)
+		love.graphics.setColor(255,255,255,135*cl.alpha*math.max(0.8-camZ,0))
+		love.graphics.draw(cl.img, cl.x,cl.y, cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 	end
 end
 

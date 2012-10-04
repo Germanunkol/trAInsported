@@ -48,7 +48,7 @@ function newMap()
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	map.generate(5,5,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(7,7,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
 	mapImage = map.render()
@@ -81,7 +81,7 @@ function populateMap()
 		for i = 1, curMap.width do
 			for j = 1, curMap.height do
 				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(5) == 1 then
+					if math.random(3) == 1 then
 					--if not firstFound then
 						firstFound = true
 						if curMap[i-1][j] == "C" then
@@ -105,7 +105,6 @@ function love.load()
 
 	button.init()
 	msgBox.init()
-	clouds.init()
 	--testImg = createBoxImage(120,60)
 
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
@@ -218,6 +217,8 @@ function love.update(dt)
 end
 
 
+local camAngle = -0.1
+
 function love.draw()
 	-- love.graphics.rectangle("fill",50,50,300,300)
 	dt = love.timer.getDelta()
@@ -225,25 +226,42 @@ function love.draw()
 		love.graphics.push()
 		love.graphics.scale(camZ)
 		
-		love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
-		love.graphics.rotate(-0.1)
+		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+		love.graphics.rotate(camAngle)
 		love.graphics.setColor(34,10,10, 105)
 		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
+		
+		
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		train.showAll()
 		passenger.showAll(dt)
+		clouds.renderShadows(dt)
 	
 		--map.drawOccupation()
+			
+		--love.graphics.setColor(255,255,255, 50)
+		--love.graphics.draw(cl, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
 		
-		clouds.showAll(dt)
+		love.graphics.pop()
+		love.graphics.push()
+		love.graphics.scale(camZ*1.5)
+		
+		love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
+		love.graphics.rotate(camAngle)
+		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+		
+		clouds.render()
+		--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 		
 		love.graphics.pop()
 	end
 	
 	if not roundEnded then console.show()
-	else stats.display(200, 40) end
+	else stats.display(200, 40, dt) end
 	msgBox.show()
 	button.show()
 	

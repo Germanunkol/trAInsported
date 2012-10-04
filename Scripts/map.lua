@@ -35,6 +35,7 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 IMAGE_HOUSE = love.image.newImageData("Images/House2.png")
 IMAGE_HOTSPOT1 = love.image.newImageData("Images/HotSpot1.png")
 IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
+IMAGE_TREE01_SHADOW = love.image.newImageData("Images/Tree1_Shadow.png")
 
 -- possible tile types:
 NS = 1
@@ -1295,30 +1296,38 @@ end
 
 function map.render()
 	print("rendering image")
-	local data = nil
+	local groundData = nil
+	local objectData = nil
 	local img = nil
 	
 	if curMap then
-		data = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)
+		groundData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- ground map
+		objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
 		
 		for i = 0,curMap.height+1,1 do
 			for j = 0,curMap.width+1,1 do
-				data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			end
 		end
 		for i = 0,curMap.height+1,1 do
 			for j = 0,curMap.width+1,1 do
 				if curMap[i][j] == "H" then
-					transparentPaste( data, IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					transparentPaste( groundData, IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
 				elseif curMap[i][j] == "S" then
-					transparentPaste( data, IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					transparentPaste( groundData, IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
 				elseif curMap[i][j] == "C" then
 					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-					if img then transparentPaste( data, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
-				else
-					if math.random(5) == 1 then
-					transparentPaste( data, IMAGE_TREE01, (i)*TILE_SIZE, (j)*TILE_SIZE )
-					end
+					if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+				end
+			end
+		end
+		
+		for i = 0,curMap.height+1,1 do		-- randomly place trees/bushes etc
+			for j = 0,curMap.width+1,1 do
+				if not curMap[i][j] and math.random(5) == 1 then
+					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+					transparentPaste( groundData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 				end
 			end
 		end
@@ -1343,7 +1352,7 @@ function map.render()
 	
 	clouds.restart()
 	
-	return love.graphics.newImage(data)
+	return love.graphics.newImage(groundData),love.graphics.newImage(objectData)
 end
 
 

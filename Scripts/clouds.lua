@@ -54,10 +54,12 @@ function clouds.renderShadows(dt)
 	end
 end
 
+local fade = 0
+
 function clouds.render()
-	print(camZ)
+	fade = math.max(0.8-camZ,0)
 	for k, cl in pairs(cloudList) do
-		love.graphics.setColor(255,255,255,135*cl.alpha*math.max(0.8-camZ,0))
+		love.graphics.setColor(255,255,255,135*cl.alpha*fade)
 		love.graphics.draw(cl.img, cl.x,cl.y, cl.r, cl.scale, cl.scale, cl.img:getWidth()/2, cl.img:getHeight()/2)
 	end
 end

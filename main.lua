@@ -51,7 +51,7 @@ function newMap()
 	map.generate(7,7,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	map.print("Finished Map:")
-	mapImage = map.render()
+	mapImage, mapObjectImage = map.render()
 	
 	stats.init(4)
 	stats.setAIName(1, "Ai1")
@@ -233,10 +233,14 @@ function love.draw()
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
 		
-		
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		train.showAll()
 		passenger.showAll(dt)
+		
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.draw(mapObjectImage, 0,0)	
+		
+		
 		clouds.renderShadows(dt)
 	
 		--map.drawOccupation()

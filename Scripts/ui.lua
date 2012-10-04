@@ -227,6 +227,8 @@ end
 function transparentPaste(imgDataDest, imgDataSource, posX, posY)
 	posX = posX or 0
 	posY = posY or 0
+	if posX < 0 then posX = 0 end
+	if posY < 0 then posY = 0 end
 	--imgDataResult = love.image.newImageData(imgDataDest:getWidth(), imgDataDest:getHeight())
 	maxX = math.min(imgDataDest:getWidth()-1, imgDataSource:getWidth()-1+posX)
 	maxY = math.min(imgDataDest:getHeight()-1, imgDataSource:getHeight()-1+posY)

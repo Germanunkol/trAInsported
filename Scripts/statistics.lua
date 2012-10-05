@@ -344,9 +344,9 @@ function statistics.generateStatWindows()
 		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if mostWrongDestination ~= 1 then
-			text = "Player " .. ai.getName(mostTransportedID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
+			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
 		else
-			text = "Player " .. ai.getName(mostTransportedID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
+			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
 		addStatWindow({title="Get lost...", text=text, bg=statBoxImageNegative, icons=icons})
 	end

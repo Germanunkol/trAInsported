@@ -6,7 +6,9 @@ require("Scripts/imageManipulation")
 require("Scripts/ui")
 require("Scripts/misc")
 require("Scripts/input")
+quickHelp = require("Scripts/quickHelp")
 button = require("Scripts/button")
+menu = require("Scripts/menu")
 msgBox = require("Scripts/msgBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
@@ -14,12 +16,13 @@ functionQueue = require("Scripts/functionQueue")
 passenger = require("Scripts/passenger")
 stats = require("Scripts/statistics")
 clouds = require("Scripts/clouds")
+loadingScreen = require("Scripts/loadingScreen")
 numTrains = 0
 
-FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 20 )
+FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 14 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
-FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
+FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
@@ -40,80 +43,16 @@ camX, camY = 0,0
 camZ = 0.7
 
 timeFactor = 1
-
-function closeGame()
-	msgBox:new(love.graphics.getWidth()/2-200,love.graphics.getHeight()/2-200, "Sure you want to quit?", {name="Yes",event=love.event.quit, args=nil},"remove")
-end
-
-function newMap()
---	math.randomseed(1)
-	numTrains = 0
-	train.clear()
-	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-	
-	map.generate(10,10,love.timer.getDelta()*os.time()*math.random()*100000)
-	--map.generate(5,5,2)
-	map.print("Finished Map:")
-	
-	mapThread = nil
-	map.render()
-end
-
-function startMap()
-	stats.init(4)
-	stats.setAIName(1, "Ai1")
-	stats.setAIName(2, "Ai2")
-	stats.setAIName(3, "Ai3")
-	stats.setAIName(4, "Ai4")
-	
-	if curMap then
-		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
-		
-		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
-		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
-		populateMap()
-		ai.init()
-	end
-	
-	clouds.restart()
-	curMap.time = 0		-- start map timer.
-end
-
-function populateMap()
-	if not curMap then return end
-	
-	local firstFound = false
-	for i = 1, 1 do
-		--firstFound = false
-		for i = 1, curMap.width do
-			for j = 1, curMap.height do
-				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(3) == 1 then
-					--if not firstFound then
-						firstFound = true
-						if curMap[i-1][j] == "C" then
-							train:new( math.random(4), i, j, "W" )
-						elseif curMap[i+1][j] == "C" then
-							train:new( math.random(4), i, j, "E" )
-						elseif curMap[i][j-1] == "C" then
-							train:new( math.random(4), i, j, "N" )
-						else
-							train:new( math.random(4), i, j, "S" )
-						end
-						numTrains = numTrains+1
-					end
-				end
-			end
-		end
-	end
-end
+curMap = false
+showQuickHelp = false
+showConsole = true
 
 function love.load()
 
 	button.init()
 	msgBox.init()
-	--testImg = createBoxImage(120,60)
+	loadingScreen.init()
+	quickHelp.init()
 
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	ok, msg = pcall(ai.new, "AI/ai1.lua")
@@ -132,25 +71,14 @@ function love.load()
 
 	train.init(PLAYERCOLOUR1, PLAYERCOLOUR2, PLAYERCOLOUR3, PLAYERCOLOUR4)
 	map.init()
-	newMap()
-	
-	button1 = button:new(10, 30, "Exit", closeGame, nil)
-	button2 = button:new(10, 70, "New", newMap, nil)
-	--button3 = button:new(10, 140, 90, 45, "", love.event.quit, nil)
-	--button4 = button:new(10, 195, 90, 45, "", love.event.quit, nil)
-
---	love.graphics.setBackgroundColor(90,60,40,255)
-	love.graphics.setBackgroundColor(60,40,30,255)
-
-	print("Loading...")
-	console.add("Loaded...")
 	
 	ai.findAvailableAIs()
-	--ok, msg = pcall(ai.new, "AI/fileToRun2.lua")
-	--if not ok then print("Err: " .. msg) end
-	--debug.sethook()
-	--box1 = createMsgBox(100, 50)
-	--box2 = createMsgBox(300, 200)
+	
+	love.graphics.setBackgroundColor(60,40,30,255)
+
+	console.add("Loaded...")
+	
+	menu.init()
 	
 end
 
@@ -216,8 +144,14 @@ function love.update(dt)
 			camX = clamp(camX + floatPanX*dt, -MAX_PAN, MAX_PAN)
 			camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
 		end
-	elseif mapThread then
-		err = mapThread:get("error")
+	elseif mapGenerateThread then
+		err = mapGenerateThread:get("error")
+		if err then
+			print("Error in thread", err)
+		end
+		curMap = map.generate()
+	elseif mapRenderThread then
+		err = mapRenderThread:get("error")
 		if err then
 			print("Error in thread", err)
 		end
@@ -247,7 +181,7 @@ function love.draw()
 		love.graphics.setColor(34,10,10, 105)
 		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		love.graphics.setColor(255,255,255, 255)
-		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
+		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		train.showAll()
@@ -280,14 +214,15 @@ function love.draw()
 		--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 		
 		love.graphics.pop()
-	elseif mapThread then
-		if mapThreadPercentage then
-			print("Generating map: " .. mapThreadPercentage .. "%")
-		end
+		
+		if showQuickHelp then quickHelp.show() end
+		if showConsole then console.show() end
+		
+	elseif mapGenerateThread or mapRenderThread then
+		loadingScreen.render()
 	end
 	
-	if not roundEnded then console.show()
-	else stats.display(200, 40, dt) end
+	if roundEnded and curMap and mapImage then stats.display(200, 40, dt) end
 	msgBox.show()
 	button.show()
 	
@@ -304,10 +239,6 @@ function love.draw()
 	if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,110) end
 	
 	if testImg then love.graphics.draw(testImg, 100, 400) end
-	
-
-
-
 	
 end
 

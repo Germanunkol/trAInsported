@@ -1,7 +1,6 @@
-require("Scripts/mapUtils")
-
 local map = {}
 
+curMap = nil
 roundEnded = false
 
 TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
@@ -9,153 +8,428 @@ TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 local curMapOccupiedTiles = {}	-- stores if a certain path on a tile is already being used by another train
 local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is already being used by another train
 
+-- RAIL Pieces:
+IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
+
+IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS.png")
+IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW.png")
+
+IMAGE_RAIL_NE = love.image.newImageData("Images/Rail_NE.png")
+IMAGE_RAIL_ES = love.image.newImageData("Images/Rail_ES.png")
+IMAGE_RAIL_SW = love.image.newImageData("Images/Rail_SW.png")
+IMAGE_RAIL_NW = love.image.newImageData("Images/Rail_NW.png")
+
+IMAGE_RAIL_NEW = love.image.newImageData("Images/Rail_NEW.png")
+IMAGE_RAIL_NES = love.image.newImageData("Images/Rail_NES.png")
+IMAGE_RAIL_ESW = love.image.newImageData("Images/Rail_ESW.png")
+IMAGE_RAIL_NSW = love.image.newImageData("Images/Rail_NSW.png")
+
+IMAGE_RAIL_NESW = love.image.newImageData("Images/Rail_NESW.png")
+
+IMAGE_RAIL_N = love.image.newImageData("Images/Rail_N.png")
+IMAGE_RAIL_E = love.image.newImageData("Images/Rail_E.png")
+IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
+IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
+
+
+
+IMAGE_HOTSPOT01 = love.image.newImageData("Images/HotSpot1.png")
+IMAGE_HOTSPOT01_SHADOW = love.image.newImageData("Images/HotSpot1_Shadow.png")
 IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
 
-local status = nil
+--Environment/Misc:
+IMAGE_HOUSE01 = love.image.newImageData("Images/House1.png")
+IMAGE_HOUSE01_SHADOW = love.image.newImageData("Images/House1_Shadow.png")
+IMAGE_HOUSE02 = love.image.newImageData("Images/House2.png")
+IMAGE_HOUSE02_SHADOW = love.image.newImageData("Images/House2_Shadow.png")
+IMAGE_HOUSE03 = love.image.newImageData("Images/House3.png")
+IMAGE_HOUSE03_SHADOW = love.image.newImageData("Images/House3_Shadow.png")
+IMAGE_HOUSE04 = love.image.newImageData("Images/House4.png")
+IMAGE_HOUSE04_SHADOW = love.image.newImageData("Images/House4_Shadow.png")
 
+IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
+IMAGE_TREE01_SHADOW = love.image.newImageData("Images/Tree1_Shadow.png")
+IMAGE_TREE02 = love.image.newImageData("Images/Tree2.png")
+IMAGE_TREE02_SHADOW = love.image.newImageData("Images/Tree2_Shadow.png")
+IMAGE_TREE03 = love.image.newImageData("Images/Tree3.png")
+IMAGE_TREE03_SHADOW = love.image.newImageData("Images/Tree3_Shadow.png")
+IMAGE_BUSH01 = love.image.newImageData("Images/Bush.png")
+IMAGE_BUSH01_SHADOW = love.image.newImageData("Images/Bush_Shadow.png")
+
+-- possible tile types:
+NS = 1
+EW = 2
+NW = 3
+SW = 4
+NE = 5
+ES = 6
+NEW = 7
+NES = 8
+ESW = 9
+NSW = 10
+NESW = 11
+WW = 12
+EE = 13
+NN = 14
+SS = 15
 
 --------------------------------------------------------------
---		INITIALISE MAP:
+--		MAP GENERATION:
 --------------------------------------------------------------
 
-function newMap(width, height, seed)
-	if mapRenderThread or mapGenerateThread then
-		print("Already generating new map!")
-		return
-	end
-	mapRenderPercent = nil
-	mapGeneratePercent = nil
---	math.randomseed(1)
-	numTrains = 0
-	train.clear()
-	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-	
-	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000)
-	--map.generate(5,5,2)
-	
+
+-- this function iterates through the map and marks all tiles that are connected to tile i,j (by changing them to "C")
+function markConnected(i, j, level)
+	level = level or 0
+	str = ""
+	for i=1,level do str = str .. "-" end
+	curMap[i][j] = "C"
+	if i > 1 and (curMap[i-1][j] == "R" or curMap[i-1][j] == "T") then markConnected(i-1, j, level+1) end
+	if j > 1 and (curMap[i][j-1] == "R" or curMap[i][j-1] == "T") then markConnected(i, j-1, level+1) end
+	if i < curMap.height and (curMap[i+1][j] == "R" or curMap[i+1][j] == "T") then markConnected(i+1, j, level+1) end
+	if j < curMap.width and (curMap[i][j+1] == "R" or curMap[i][j+1] == "T") then markConnected(i, j+1, level+1) end
 end
 
 
--- called when map has been generated and rendered
-function runMap()
-	stats.init(4)
-	stats.setAIName(1, "Ai1")
-	stats.setAIName(2, "Ai2")
-	stats.setAIName(3, "Ai3")
-	stats.setAIName(4, "Ai4")
+-- starts the markConnected functions on the first tile marked "R" on the map.
+function findConnections()
+	for i = 1,curMap.height,1 do		-- reset
+		for j = 1,curMap.width,1 do
+			if curMap[i][j] == "C" then
+				curMap[i][j] = "R"
+			end
+		end
+	end
 	
-	if curMap then
-		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
-		
-		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
-		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
-		populateMap()
-		ai.init()
-		
-		clouds.restart()
-		curMap.time = 0		-- start map timer.
-		
-		resetTimeFactor()		-- set back to 1.
-		
-		roundEnded = false
-		
-		menu.ingame()
-		
-	else
-		print("ERROR: NO MAP FOUND!")
+	for i = 1,curMap.height,1 do
+		for j = 1,curMap.width,1 do
+			if curMap[i][j] == "R" then
+				markConnected(i,j)
+				return
+			end
+		end
 	end
 end
 
-function populateMap()
-	if not curMap then return end
+-- resets tiles marked "T". 
+-- When a tile is marked "T" that means it was part of a Test trying to connect a non-connected part of the rail to an already connected part.
+function removeTs()
+	for i = 1,curMap.height,1 do
+		for j = 1,curMap.width,1 do
+			if curMap[i][j] == "T" then
+				curMap[i][j] = nil
+			end
+		end
+	end
+end
+
+
+-- Moves into a random direction starting at tile i,j and tries to connect it by placing "T" s on tiles it passes. When it reaches the map's side,
+-- it tries out another direction.
+-- If all 4 directions have been tested, then it places down a rail across the entiry map. This makes sure that the next try succeeds.
+function connectPiece(i, j)
+	print("attempt to connect:", i, j)
+	startI, startJ = i,j
+	dir = math.random(4)
+	local k = 0
+	local triedDir1,triedDir2,triedDir3,triedDir4 = false, false, false, false
+	while k < 2 do
+		print("attempt:", k, dir)
+		
+		if dir == 1 then
+			removeTs()
+			i, j = startI, startJ
+			while i > 1 and not triedDir1 do
+				if not curMap[i][j] then curMap[i][j] = "T" end
+				i = i - 1
+				if curMap[i][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if not curMap[i][j] then curMap[i][j] = "T" end
+					-- found a connection!
+					print("found connection!")
+					return
+				end
+			end
+			triedDir1 = true
+			dir = 2
+		end
+		if dir == 2 then
+			removeTs()
+			i, j = startI, startJ
+			while j > 1 and not triedDir2 do
+				if not curMap[i][j] then curMap[i][j] = "T" end
+				j = j - 1
+				if curMap[i-1][j] == "C" or curMap[i+1][j] == "C" or curMap[i][j-1] == "C" then
+					if not curMap[i][j] then curMap[i][j] = "T" end
+					-- found a connection!
+					print("found connection!")
+					return
+				end
+			end
+			triedDir2 = true
+			dir = 3
+		end
+		if dir == 3 then
+			removeTs()
+			i, j = startI, startJ
+			while i < curMap.height and not triedDir3 do
+				if not curMap[i][j] then curMap[i][j] = "T" end
+				i = i + 1
+				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if not curMap[i][j] then curMap[i][j] = "T" end
+					-- found a connection!
+					print("found connection!")
+					return
+				end
+			end
+			triedDir3 = true
+			dir = 4
+		end
+		if dir == 4 then
+			removeTs()
+			i, j = startI, startJ
+			while j < curMap.width and not triedDir4 do
+				if not curMap[i][j] then curMap[i][j] = "T" end
+				j = j + 1
+				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" then
+					if not curMap[i][j] then curMap[i][j] = "T" end
+					-- found a connection!
+					print("found connection!")
+					return
+				end
+			end
+			triedDir4 = true
+			dir = 1
+		end
+		k = k + 1
+	end
 	
-	local firstFound = false
-	for i = 1, 1 do
-		--firstFound = false
-		for i = 1, curMap.width do
-			for j = 1, curMap.height do
-				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(3) == 1 then
-					--if not firstFound then
-						firstFound = true
-						if curMap[i-1][j] == "C" then
-							train:new( math.random(4), i, j, "W" )
-						elseif curMap[i+1][j] == "C" then
-							train:new( math.random(4), i, j, "E" )
-						elseif curMap[i][j-1] == "C" then
-							train:new( math.random(4), i, j, "N" )
-						else
-							train:new( math.random(4), i, j, "S" )
-						end
-						numTrains = numTrains+1
+	-- if it ends up here, it failed to connect using just straight connections.
+	-- place straight line at random position, which will always be able to connect:
+	print("Couldn't connect pieces! Adding straight rail.")
+	yPos = math.random(curMap.height)
+	
+	for i = 1,curMap.width do
+		curMap[i][yPos] = "R"
+	end
+		
+end
+
+-- generates random rectangles of rail on the map.
+function generateRailRectangles()
+
+	local num = 3 + math.random(10)+ math.ceil(curMap.height/2)
+	local k = 0
+	while k < num do
+		local rectWidth = math.random(curMap.width/2)+2
+		local rectHeight = math.random(curMap.height/2)+2
+		local i = math.random(curMap.width-2)
+		local j = math.random(curMap.height-2)
+	
+		local x = 0
+		while x <= rectWidth do
+			if i+x <= curMap.width then
+				if curMap[i+x] then
+					curMap[i+x][j] = "R"
+					if j+rectHeight <= curMap.height then
+						curMap[i+x][j+rectHeight] = "R"
 					end
+				end
+			end
+			x = x + 1
+		end
+		
+		local y = 0
+		while y <= rectHeight do
+			if j+y <= curMap.height then
+				if curMap[i] then
+					curMap[i][j+y] = "R"
+					if i+rectWidth <= curMap.width then
+						curMap[i+rectWidth][j+y] = "R"
+					end
+				end
+			end
+			y = y + 1
+		end
+		
+		k = k+1
+	end
+end
+
+
+
+-- Looks for unconnected pieces of rail. If some pieces are not connected, tries to connect them.
+function connectLooseEnds()
+	-- find all unconnected pieces:
+	local allConnected = false
+	local k = 0
+	while allConnected == false and k < 50 do		--give it a max of 50 tries, which is plenty.
+		findConnections()
+		allConnected = true
+		for i = 1,curMap.width do
+			for j = 1,curMap.height do
+				if curMap[i][j] == "R" then
+					allConnected = false
+					connectPiece(i,j)
+					break
+				end
+			end
+			if allConnected == false then break end
+		end
+		k = k+1
+	end
+end
+
+-- checks for places where there are 6 junctions right next to each other and removes some of them at random (because they look horrible).
+function clearLargeJunctions()
+	toRemove = {}
+	for i = 1,curMap.width-1,1 do
+		for j = 1,curMap.height,1 do
+			if curMap[i][j] == "R" then
+				if curMap[i+1][j] == "R" and curMap[i-1][j] == "R" and			--neighbours are Rails
+				((curMap[i][j+1] == "R" and curMap[i+1][j+1] == "R" and curMap[i-1][j+1] == "R") or		-- either line below is filled with rails
+				(curMap[i][j-1] == "R" and curMap[i+1][j-1] == "R" and curMap[i-1][j-1] == "R"))		-- ... or line above is filled with rails
+				then
+					if math.random(5) ~= 1 then curMap[i][j] = nil end
+				end
+			end
+		end
+	end
+	for i = 1,curMap.width-1,1 do
+		for j = 1,curMap.height,1 do
+			if curMap[i][j] == "R" then
+				if curMap[i][j+1] == "R" and curMap[i][j-1] == "R" and			--neighbours are Rails
+				((curMap[i+1][j] == "R" and curMap[i+1][j+1] == "R" and curMap[i+1][j-1] == "R") or		-- either line East is filled with rails
+				(curMap[i-1][j] == "R" and curMap[i-1][j+1] == "R" and curMap[i-1][j-1] == "R"))		-- ... or line West is filles with rails
+				then
+					if math.random(5) ~= 1 then curMap[i][j] = nil end
 				end
 			end
 		end
 	end
 end
 
-local mapGenerateThreadNumber = 0
-local mapRenderThreadNumber = 0
--- Generates a new map. Any old map is dropped.
-function map.generate(width, height, seed)
-	if not mapGenerateThread then
-	
-		mapImage,mapShadowImage,mapObjectImage = nil,nil,nil
-		
-		if not width then width = 4 end
-		if not height then height = 4 end
-		if not seed then seed = 1 end
-		
-		if width < 4 then
-			print("Minimum width is 4!")
-			width = 4
-		end
-		if height < 4 then
-			print("Minimum height is 4!")
-			height = 4
-		end
 
-	
-		print("Generating Map...", width, height)
-		-- mapImage, mapShadowImage, mapObjectImage = map.render()
-		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
-		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
-		mapGenerateThread:start()
-		
-		mapGenerateThread:set("width", width )
-		mapGenerateThread:set("height", height )
-		mapGenerateThread:set("seed", seed )
-		
-		loadingScreen.addSection("Generating Map")
-		
-	else
-		percent = mapGenerateThread:get("percentage")
-		if percent then
-			loadingScreen.percentage("Generating Map", percent)
-		end
-		status = mapGenerateThread:get("status")
-		if status == "done" then
-			print("Generating done!")
-			
-			curMap = TSerial.unpack(mapGenerateThread:demand("curMap"))
-			curMapRailTypes = TSerial.unpack(mapGenerateThread:demand("curMapRailTypes"))
-			curMapOccupiedTiles = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedTiles"))
-			curMapOccupiedExits = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedExits"))
-			
-			loadingScreen.percentage("Generating Map", 100)
-			map.print("Finished Map:")
-			mapGenerateThread = nil
-			collectgarbage("collect")
-			map.render()
-			
-			return curMap
-		elseif status then
-			loadingScreen.addSubSection("Generating Map", status)
+function placeHouses()
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == nil then
+				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if math.random(3) == 1 then curMap[i][j] = "H" end
+				end
+			end
 		end
 	end
 end
+
+function placeHotspots()		-- at random, place hotspots.
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == nil then
+				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if math.random(15) == 1 then curMap[i][j] = "S" end		-- make hotspot
+				end
+			end
+		end
+	end
+end
+
+
+-- This function iterates over the whole map and calculates the rail type for each tile.
+-- That's important for placing correct images on the map and for calculating movement later on.
+function calculateRailTypes()
+	if curMap then
+		for i = 1,curMap.width do
+			for j = 1,curMap.height do
+				curMapRailTypes[i][j] = getRailType(i,j)
+			end
+		end
+	end
+end
+
+-- generate a list that holds the map in a different form: not by coordinates. This way a random piece of rail can be more easily be chosen.
+function generateRailList()
+	curMap.railList = {}
+	curMap.houseList = {}
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == "C" then 
+				table.insert(curMap.railList, {x=i, y=j})
+			elseif curMap[i][j] == "H" then
+				table.insert(curMap.houseList, {x=i, y=j})
+			elseif curMap[i][j] == "S" then
+				if curMap[i+1][j] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i+1, y=j})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i-1][j] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i-1, y=j})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i][j+1] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i, y=j+1})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				elseif curMap[i][j-1] == "C" then
+					for k = 1,25 do
+						table.insert(curMap.railList, {x=i, y=j-1})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.
+					end
+				end
+			end
+		end
+	end
+	
+end
+
+-- Generates a new map. Any old map is dropped.
+function map.generate(width, height, seed)
+	if width < 4 then
+		print("Minimum width is 4!")
+		width = 4
+	end
+	if height < 4 then
+		print("Minimum height is 4!")
+		height = 4
+	end
+	
+	roundEnded = false
+	math.randomseed(seed)
+	
+	curMap = setmetatable({width=width, height=height, time=0}, map_mt)
+	curMapOccupiedTiles = {}
+	curMapOccupiedExits = {}
+	curMapRailTypes = {}
+	
+	for i = 0,width+1 do
+		curMap[i] = {}
+		curMapRailTypes[i] = {}
+		if i >= 1 and i <= width then 
+			curMapOccupiedTiles[i] = {}
+			curMapOccupiedExits[i] = {}
+			for j = 1, height do
+				curMapOccupiedTiles[i][j] = {}
+				curMapOccupiedTiles[i][j].from = {}
+				curMapOccupiedTiles[i][j].to = {}
+				
+				curMapOccupiedExits[i][j] = {}
+			end
+		end
+	end
+	
+	generateRailRectangles()
+	map.print("Raw map:")
+	clearLargeJunctions()
+	
+	connectLooseEnds()
+	
+	calculateRailTypes()
+	
+	placeHouses()
+	
+	placeHotspots()
+	
+	generateRailList()
+end
+
 
 
 --------------------------------------------------------------
@@ -909,17 +1183,16 @@ function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	end
 end
 
-function map.print(title, m)
-	m = m or curMap
+function map.print(title)
 	title = title or "Current map:"
-	if m then
+	if curMap then
 		print(title)
 		local str = ""
-		for j = 0,m.height+1,1 do
+		for j = 0,curMap.height+1,1 do
 			str = ""
-			for i = 0,m.width+1,1 do
-				if m[i][j] then
-					str = str .. m[i][j] .. " "
+			for i = 0,curMap.width+1,1 do
+				if curMap[i][j] then
+					str = str .. curMap[i][j] .. " "
 				else
 					str = str .. "- "
 				end
@@ -929,59 +1202,235 @@ function map.print(title, m)
 	end
 end
 
+function getRailType(i, j)
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
+		return NS
+	end
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
+		return EW
+	end
+	
+	--curves
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
+		return NW
+	end
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
+		return SW
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
+		return NE
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
+		return ES
+	end
+	
+	--junctions
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
+		return NEW
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
+		return NES	-- NES
+	end
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
+		return ESW	-- ESW
+	end
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
+		return NSW	-- NSW
+	end
+	
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
+		return NESW	-- NESW
+	end
+	
+	--turn around
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
+		return WW	-- W
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
+		return EE	-- E
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
+		return NN	-- N
+	end
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
+		return SS	-- S
+	end
+end
+
+function getRailImage( railType )
+	--					N						S						W							E
+
+	if railType == 1 then
+		return IMAGE_RAIL_NS
+	end
+	if railType == 2 then
+		return IMAGE_RAIL_EW
+	end
+	
+	if railType == 3 then
+		return IMAGE_RAIL_NW
+	end
+	if railType == 4 then
+		return IMAGE_RAIL_SW
+	end
+	if railType == 5 then
+		return IMAGE_RAIL_NE
+	end
+	if railType == 6 then
+		return IMAGE_RAIL_ES
+	end
+	
+	if railType == 7 then
+		return IMAGE_RAIL_NEW
+	end
+	if railType == 8 then
+		return IMAGE_RAIL_NES
+	end
+	if railType == 9 then
+		return IMAGE_RAIL_ESW
+	end
+	if railType == 10 then
+		return IMAGE_RAIL_NSW
+	end
+	
+	if railType == 11 then
+		return IMAGE_RAIL_NESW
+	end
+	
+	if railType == 12 then
+		return IMAGE_RAIL_W
+	end
+	if railType == 13 then
+		return IMAGE_RAIL_E
+	end
+	if railType == 14 then
+		return IMAGE_RAIL_N
+	end
+	if railType == 15 then
+		return IMAGE_RAIL_S
+	end
+	
+	return nil
+end
 
 mapGenerationPercentage = 0
 
 local highlightList = {}
 local highlightListQuads = {}
 
-mapThread = nil
-mapThreadPercentage = 0
 
 --
 function map.render()
+	print("rendering image")
+	local groundData = nil
+	local shadowData = nil
+	local objectData = nil
+	local img = nil
+	highlightList = {}
+	for i = 1,20 do
+		highlightListQuads[i] = love.graphics.newQuad( (i-1)*22, 0, 22, 21, 440, 21 )
+	end
 
-	if not mapRenderThread then
-		print("Rendering Map...")
-		-- mapImage, mapShadowImage, mapObjectImage = map.render()
-		mapRenderThread = love.thread.newThread("mapRenderingThread" ..mapRenderThreadNumber, "Scripts/mapRender.lua")
-		mapRenderThreadNumber = mapRenderThreadNumber + 1
-		mapRenderThread:start()
-		mapRenderThread:set("curMap", TSerial.pack(curMap) )
-		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
-		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
-		loadingScreen.addSection("Rendering Map")
-	else
-		percent = mapRenderThread:get("percentage")
-		if percent then
-			loadingScreen.percentage("Rendering Map", percent)
+	if curMap then
+		groundData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- ground map
+		shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+		objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+		
+		for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			end
+		end
+		local houseType = 0
+		for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				if curMap[i][j] == "H" then
+					randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
+					houseType = math.random(4)
+					if houseType == 1 then
+						transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
+						transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					elseif houseType == 2 then
+						transparentPaste( shadowData, IMAGE_HOUSE02_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
+						transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					elseif houseType == 3 then
+						transparentPaste( shadowData, IMAGE_HOUSE03_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
+						transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					elseif houseType == 4 then
+						transparentPaste( shadowData, IMAGE_HOUSE04_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
+						transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					end
+				elseif curMap[i][j] == "S" then
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
+					transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 7, y = (j)*TILE_SIZE + 7})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 101, y = (j)*TILE_SIZE + 7})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 7, y = (j)*TILE_SIZE + 101})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 101, y = (j)*TILE_SIZE + 101})
+				elseif curMap[i][j] == "C" then
+					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+					if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+				end
+			end
 		end
 		
-		status = mapRenderThread:get("status")
-		if status == "done" then
-			print("Rendering done!")
-			
-			local groundData = nil
-			local shadowData = nil
-			local objectData = nil
-			groundData = mapRenderThread:get("groundData")
-			shadowData = mapRenderThread:get("shadowData")
-			objectData = mapRenderThread:get("objectData")
-
-			for i = 1,20 do
-				highlightListQuads[i] = love.graphics.newQuad( (i-1)*22, 0, 22, 21, 440, 21 )
+		for i = 0,curMap.height+1,1 do		-- randomly place trees/bushes etc
+			for j = 0,curMap.width+1,1 do
+				if not curMap[i][j] and math.random(7) == 1 then
+					numTries = math.random(3)+1
+					for k = 1, numTries do
+						randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					end
+				end
 			end
-			
-			loadingScreen.percentage("Rendering Map", 100)
-			
-			mapRenderThread = nil
-			collectgarbage("collect")
-			runMap()
-			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
-		elseif status then
-			loadingScreen.addSubSection("Rendering Map", status)
 		end
+		
+		local treetype = 0
+		for i = 0,curMap.height+1,1 do		-- randomly place trees/bushes etc
+			for j = 0,curMap.width+1,1 do
+				if not curMap[i][j] and math.random(3) == 1 then
+					numTries = math.random(5)+1
+					for k = 1, numTries do
+						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						treetype = math.random(3)
+						if treetype == 1 then
+							transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						elseif treetype == 2 then
+							transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						else
+							transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						end
+					end
+				end
+			end
+		end
+		--[[for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				if curMap[i][j] == "H" then
+					data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif curMap[i][j] == "S" then
+					data:paste( IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				else
+					data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					if curMap[i][j] == "C" then
+						img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+						if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+						--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
+						--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
+					end
+				end
+			end
+		end]]--
 	end
+	
+	clouds.restart()
+	
+	return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
 end
 
 
@@ -1016,7 +1465,6 @@ function map.endRound()
 	roundEnded = true
 	stats.print()
 	stats.generateStatWindows()
-	passengerTimePassed = 10
 end
 
 

@@ -2,6 +2,15 @@
 timeFactorIndex = 5
 timeFactorList = {0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 40, 120}
 
+function resetTimeFactor()
+	for k, v in pairs(timeFactorList) do
+		if v == 1 then
+			timeFactorIndex = k
+		end
+	end
+	timeFactor = timeFactorList[timeFactorIndex]
+end
+
 function love.mousepressed(x, y, b)
 	if b == "wd" then
 		camZ = clamp(camZ - 0.05, 0.1, 1)
@@ -28,10 +37,14 @@ function love.mousereleased()
 end
 
 function love.keypressed(key, unicode)
-	if key == "f1" then
+	if key == "f12" then
 		debug.debug()
 	elseif key == "f5" then
 		getScreenshot()
+	elseif key == "f1" then
+		quickHelp.toggle()
+	elseif key == "c" then
+		console.toggle()
 	elseif key == "+" then
 		timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
 		timeFactor = timeFactorList[timeFactorIndex]

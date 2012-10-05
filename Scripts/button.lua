@@ -1,5 +1,8 @@
 local button = {}
 
+BUTTON_WIDTH = 160
+BUTTON_HEIGHT = 35
+
 local button_mt = { __index = button }
 
 local buttonList = {}
@@ -93,8 +96,8 @@ end
 
 
 function button.init()
-	buttonOff = createBoxImage(120, 35, true, 5,2, 64,160,100)
-	buttonOver = createBoxImage(120, 35, true, 6,1, 64,160,100)
+	buttonOff = createBoxImage(STND_BUTTON_WIDTH , STND_BUTTON_HEIGHT, true, 5,2, 64,160,100)
+	buttonOver = createBoxImage(STND_BUTTON_WIDTH, STND_BUTTON_HEIGHT, true, 6,1, 64,160,100)
 end
 
 return button

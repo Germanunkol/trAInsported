@@ -23,6 +23,13 @@ function wrap(str, limit, font)
 	return tbl
 end
 
+-- remove message box before quitting!
+function msgBoxEvent(messageBox, eventToCall)
+	return function (args)
+		messageBox:remove()
+		eventToCall(args)
+	end
+end
 
 function msgBox:new(x, y, msg, ... )
 	text = wrap(msg, msgBoxBG:getWidth()-30, FONT_BUTTON)
@@ -34,9 +41,9 @@ function msgBox:new(x, y, msg, ... )
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
-					b = button:new(x + j*(msgBoxBG:getWidth()/(#arg+1)) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority)			
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority)			
 				else
-					b = button:new(x + j*(msgBoxBG:getWidth()/(#arg+1)) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority)
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority)
 				end
 				if b then
 					table.insert(msgBoxList[i].buttons, b)

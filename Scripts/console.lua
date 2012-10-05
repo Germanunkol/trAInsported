@@ -40,6 +40,15 @@ function console.add( text, colour )
 	consoleStartLine = math.floor(math.max(#consoleLines - console.numLines, 1))
 end
 
+
+function console.toggle()
+	if showConsole then
+		showConsole = false
+	else
+		showConsole = true
+	end
+end
+
 function console.init(width, y)
 	console.y = y
 	console.width = width

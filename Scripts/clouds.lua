@@ -13,8 +13,7 @@ function clouds.restart()
 	cloudList = {}
 	numClouds = 0
 	MAX_NUM_CLOUDS = 2*math.floor(curMap.width+curMap.height-3)
-	for i = 1, MAX_NUM_CLOUDS/2 do
-	
+	for i = 1, MAX_NUM_CLOUDS do
 		s = 2+math.random()*2
 		cloudList[i] = {a=0.5+math.random()*0.5, alpha=0, r=math.random()*math.pi, x=math.random(-2, curMap.width+2)*TILE_SIZE, y=math.random(-2, curMap.height+2)*TILE_SIZE, scale=2.5+math.random(), height=math.random()*3+1, img=IMAGE_CLOUD01, imgShadow=IMAGE_CLOUD01_SHADOW}
 		numClouds = numClouds + 1
@@ -42,7 +41,7 @@ function clouds.renderShadows(dt)
 	end
 	
 	for k, cl in pairs(cloudList) do
-		cl.x = cl.x + dt*timeFactor*cl.height*15
+		if not roundEnded then cl.x = cl.x + dt*timeFactor*cl.height*15 end
 		if cl.x >= (curMap.width+2)*TILE_SIZE then
 			cloudList[k] = nil
 			numClouds = numClouds - 1

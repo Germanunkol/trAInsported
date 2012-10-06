@@ -1,5 +1,4 @@
-STND_BUTTON_WIDTH = 160
-STND_BUTTON_HEIGHT = 35
+
 
 function blurAlpha( img )
 	local alpha,a

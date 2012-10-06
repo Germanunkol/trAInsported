@@ -5,15 +5,32 @@ local passengerList = {}
 passengerPositions = {}
 
 MAX_NUM_PASSENGERS = 50
-VIP_RATIO = 1/2
+VIP_RATIO = 1/7
 MAX_VIP_TIME = 30
 
 local numPassengersTotal = 1
-local numPassengersDroppedOff = 0
+numPassengersDroppedOff = 0
 
 local passengerImage = love.graphics.newImage("Images/Passenger.png")
 local passengerVIPImage = love.graphics.newImage("Images/VIP.png")
 local passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
+
+function randPassengerPos()
+	local x, y = 0,0
+	local randPos = math.random(2)
+	if randPos == 1 then
+		x, y = passengerImage:getWidth(), passengerImage:getHeight()
+	elseif randPos == 2 then
+		x, y = TILE_SIZE - passengerImage:getWidth(), passengerImage:getHeight()
+	elseif randPos == 3 then
+		x, y = passengerImage:getWidth(), TILE_SIZE - passengerImage:getHeight()
+	elseif randPos == 4 then
+		x, y = TILE_SIZE - passengerImage:getWidth(), TILE_SIZE - passengerImage:getHeight()
+	end
+	x = x + math.sin(os.time()+love.timer.getDelta())*15
+	y = y + math.cos(os.time()+love.timer.getDelta())*15
+	return x, y
+end
 
 function passenger.new()
 	if curMap and #passengerList < MAX_NUM_PASSENGERS then
@@ -26,20 +43,10 @@ function passenger.new()
 			dIndex = math.random(#curMap.railList)
 		end
 		
-		local x, y = 0,0
-		local randPos = math.random(2)
-		if randPos == 1 then
-			x, y = 0,0
-		elseif randPos == 2 then
-			x, y = TILE_SIZE - passengerImage:getWidth(), 0
-		elseif randPos == 3 then
-			x, y = 0, TILE_SIZE - passengerImage:getHeight()
-		elseif randPos == 4 then
-			x, y = TILE_SIZE - passengerImage:getWidth(), TILE_SIZE - passengerImage:getHeight()
-		end
+		local x, y = randPassengerPos()
+		local xEnd, yEnd = randPassengerPos()
 		
-		x = x + math.sin(os.time()+love.timer.getDelta())*15
-		y = y + math.cos(os.time()+love.timer.getDelta())*15
+		
 		local vip = false
 		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 then
 			vip = true
@@ -55,6 +62,8 @@ function passenger.new()
 						destY = curMap.railList[dIndex].y,		-- the tile the passenger wants to go to
 						x = x,	-- position on tile
 						y = y,
+						xEnd = xEnd,	-- dest position on tile
+						yEnd = yEnd,
 						curX = x,
 						curY = y,
 						image = passengerImage,
@@ -92,7 +101,6 @@ function passenger.find(x, y)
 	if #foundPassengers == 0 then
 		return nil
 	end
-	printTable(foundPassengers)
 	return foundPassengers
 end
 
@@ -109,6 +117,8 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			
 			stats.passengerPickedUp(p)
 			train.curPassenger = p
+			train.stop = train.stop + 1
+			train.passengerArrived = false
 			p.train = train
 			stats.passengersPickedUp( train.aiID, train.ID )
 			break
@@ -123,8 +133,11 @@ function passenger.leaveTrain(aiID)
 	return function (pseudoTrain)
 		tr = train.getByID(aiID, pseudoTrain.ID)
 		if tr then
-			tr.curPassenger.train = nil
+		
+			tr.stop = tr.stop + 1
 			tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY		-- place passenger onto the tile the train's currently on
+			
+			tr.curPassenger.gettingOff = true
 			
 			stats.droppedOff( aiID, tr.ID )
 			
@@ -143,11 +156,7 @@ function passenger.leaveTrain(aiID)
 				end
 				
 				numPassengersDroppedOff = numPassengersDroppedOff + 1
-				if numPassengersDroppedOff >= MAX_NUM_PASSENGERS then
-					map.endRound()
-				end
-			else		-- put them back into the list to make sure they can be picked up again!
-				table.insert( passengerPositions[tr.curPassenger.tileX][tr.curPassenger.tileY], tr.curPassenger )
+
 			end
 			
 			tr.curPassenger = nil
@@ -181,17 +190,58 @@ function passenger.showAll(dt)
 	local x, y = 0,0
 	love.graphics.setColor(255,255,255,255)
 	for k, p in pairs(passengerList) do
-		if p.train then		-- if I'm riding a train	
-			x = p.train.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
-			y =  p.train.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+		if p.train then		-- if I'm riding a train
+			if not p.onTrain then	-- getting on
+				if p.train.curSpeed == 0 then
+					d = vecDist(p.x, p.y, p.train.x, p.train.y)
+					dX = (p.train.x-p.x)/d
+					dY = (p.train.y-p.y)/d
+					p.x = p.x + dX*dt*PASSENGER_SPEED
+					p.y = p.y + dY*dt*PASSENGER_SPEED
+				
+					if d < vecDist(p.x, p.y, p.train.x, p.train.y) then
+						p.onTrain = true
+						p.train.stop = p.train.stop - 1
+					end
+				end
+				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+			elseif p.gettingOff and p.train.curSpeed == 0 then
+				d = vecDist(p.x, p.y, p.xEnd, p.yEnd)
+				dX = (p.xEnd-p.x)/d
+				dY = (p.yEnd-p.y)/d
+				p.x = p.x + dX*dt*PASSENGER_SPEED
+				p.y = p.y + dY*dt*PASSENGER_SPEED
+			
+				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+			
+				if d < vecDist(p.x, p.y, p.xEnd, p.yEnd) then
+					p.train.stop = p.train.stop - 1
+					p.onTrain = false
+					p.train = nil
+					p.gettingOff = false
+					
+					if p.reachedDestination then
+						passengerList[k] = nil
+					else		-- put them back into the list to make sure they can be picked up again!
+						table.insert( passengerPositions[p.tileX][p.tileY], p )
+					end
+				end
+			else	-- if I'm riding the train
+				p.x = p.train.x
+				p.y = p.train.y
+				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+			end
 		else	-- if I'm just standing around...
-			x = p.tileX*TILE_SIZE + p.x
-			y = p.tileY*TILE_SIZE + p.y
+			x = p.tileX*TILE_SIZE + p.x - p.image:getWidth()/2
+			y = p.tileY*TILE_SIZE + p.y - p.image:getHeight()/2
 		end
 		
 		if p.vip then
 			love.graphics.setColor(255,255,255,200)
-			p.vipTime = clamp(p.vipTime - dt*timeFactor,-10,MAX_VIP_TIME)
+			p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
 			num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
 			love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
 			if p.vipTime < -15 then
@@ -201,41 +251,39 @@ function passenger.showAll(dt)
 		
 		-- draw passenger:
 		if not p.reachedDestination then
-			if p.train then
+			if p.train and p.onTrain and not p.gettingOff then
 				if love.keyboard.isDown(" ") then 
 					love.graphics.setColor(255,255,128,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
-				
-				love.graphics.setColor(255,255,128,255)
 			else
 				if love.keyboard.isDown(" ") then 
 					love.graphics.setColor(64,128,255,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
 				love.graphics.setColor(0,0,0,120)
-				love.graphics.draw(p.image, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+				love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 				love.graphics.setColor(64,128,255,255)
 				
-				love.graphics.draw(p.image, x, y, 0, p.scale, p.scale)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+				love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 			end
 		else
 			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw(p.image, x-4, y+6)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
-			love.graphics.setColor(64,255,128,255)	-- draw passenger green if he's reached his destination.
-			love.graphics.draw(p.image, x, y, 0, p.scale, p.scale)--, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+			love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+			love.graphics.setColor(64,255,128,255) -- draw passenger green if he's reached his destination.
+			love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 		end
 		
 		if p.vip then
 			
 			love.graphics.setColor(255,255,255,255)
-			p.markZ = p.markZ + dt*timeFactor*5
+			p.markZ = p.markZ + dt*5
 			c = math.sin(p.markZ)^2
 			love.graphics.draw(passengerVIPImage, x + 4, y - 15 - 10*c, 0, 1+c/10, 1+c/10)
 		end
 			
-		love.graphics.setColor(255,255,255,100)
-		love.graphics.print(p.name, x, y + 20)
+		--love.graphics.setColor(255,255,255,100)
+		--love.graphics.print(p.name, x, y + 20)
 	end
 end
 

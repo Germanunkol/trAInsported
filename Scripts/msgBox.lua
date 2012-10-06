@@ -88,7 +88,6 @@ local msgBoxBGThread
 function msgBox.init()
 	
 	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Message Box")
 		msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/createImageBox.lua")
 		msgBoxBGThread:start()
@@ -98,9 +97,10 @@ function msgBox.init()
 		msgBoxBGThread:set("shadow", true )
 		msgBoxBGThread:set("shadowOffsetX", 10 )
 		msgBoxBGThread:set("shadowOffsetY", 0 )
-		msgBoxBGThread:set("colR", 64 )
-		msgBoxBGThread:set("colG", 160 )
-		msgBoxBGThread:set("colB", 100 )
+		msgBoxBGThread:set("colR", MSG_BOX_R )
+		msgBoxBGThread:set("colG", MSG_BOX_G )
+		msgBoxBGThread:set("colB", MSG_BOX_B )
+		
 	else
 		if not msgBoxBG then	-- if there's no button yet, that means the thread is still running...
 		

@@ -2,8 +2,8 @@ local loadingScreen = {}
 
 local sectionList = {}
 
-local bgBox = nil
-local bgBoxSmall = nil
+bgBox = nil
+bgBoxSmall = nil
 
 local BOX_WIDTH = 400
 local BOX_HEIGHT = 50
@@ -53,7 +53,7 @@ end
 function loadingScreen.render()
 	if initialising == false then
 		x = (love.graphics.getWidth()-bgBox:getWidth())/2
-		y = love.graphics.getHeight()/4 - 20
+		y = 40
 		for k,s in pairs(sectionList) do
 			y = y + 20
 			love.graphics.setFont(FONT_BUTTON)
@@ -115,7 +115,6 @@ local bgBoxThread
 
 function loadingScreen.init()
 	if not bgBoxThread and not bgBox then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Loading Box")
 		bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/createImageBox.lua")
 		bgBoxThread:start()
@@ -125,9 +124,9 @@ function loadingScreen.init()
 		bgBoxThread:set("shadow", true )
 		bgBoxThread:set("shadowOffsetX", 10 )
 		bgBoxThread:set("shadowOffsetY", 0 )
-		bgBoxThread:set("colR", 64 )
-		bgBoxThread:set("colG", 160 )
-		bgBoxThread:set("colB", 100 )
+		bgBoxThread:set("colR", LOAD_BOX_LARGE_R )
+		bgBoxThread:set("colG", LOAD_BOX_LARGE_G )
+		bgBoxThread:set("colB", LOAD_BOX_LARGE_B )
 	else
 		if not bgBox then	-- if there's no button yet, that means the thread is still running...
 		
@@ -150,7 +149,6 @@ function loadingScreen.init()
 	end
 	
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Loading Box (small)")
 		bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/createImageBox.lua")
 		bgBoxSmallThread:start()
@@ -160,9 +158,9 @@ function loadingScreen.init()
 		bgBoxSmallThread:set("shadow", true )
 		bgBoxSmallThread:set("shadowOffsetX", 10 )
 		bgBoxSmallThread:set("shadowOffsetY", 0 )
-		bgBoxSmallThread:set("colR", 64 )
-		bgBoxSmallThread:set("colG", 160 )
-		bgBoxSmallThread:set("colB", 100 )
+		bgBoxSmallThread:set("colR", LOAD_BOX_SMALL_R )
+		bgBoxSmallThread:set("colG", LOAD_BOX_SMALL_G )
+		bgBoxSmallThread:set("colB", LOAD_BOX_SMALL_B )
 	else
 		if not bgBoxSmall then	-- if there's no button yet, that means the thread is still running...
 		

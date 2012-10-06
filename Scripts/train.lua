@@ -18,8 +18,6 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-local TRAIN_SPEED = 40
-local MAX_BLOCK_TIME = 3
 
 trainImage = love.image.newImageData("Images/Train1.png")
 trainImageLower = love.image.newImageData("Images/Train1Lower.png")
@@ -181,6 +179,9 @@ function train:new( aiID, x, y, dir )
 	if curMap[x][y] ~= "C" then
 		error("Trying to place train on non-valid tile")
 	end
+	if #trainList[aiID] >= MAX_NUM_TRAINS then
+		return
+	end
 	for i=1,#trainList[aiID]+1,1 do
 		if not trainList[aiID][i] then
 			--local imageOff = createButtonOff(width, height, label)
@@ -230,10 +231,12 @@ function train:new( aiID, x, y, dir )
 			trainList[aiID][i].tileY = y
 			map.setTileOccupied(x, y, nil, dir)
 			
-			trainList[aiID][i].name = "train" .. i
+			trainList[aiID][i].name = "Train" .. i
 			trainList[aiID][i].timeBlocked = 0
 			
 			trainList[aiID][i].curDistTraveled = 0
+			trainList[aiID][i].curSpeed = 0
+			trainList[aiID][i].stop = 0
 			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
@@ -270,13 +273,14 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].dxPrevSign = (dx < 0)
 				trainList[aiID][i].dyPrevSign = (dy < 0)
 				
+				
 			else
 				trainList[aiID][i].x = 0
 				trainList[aiID][i].y = math.random(100)
 			end
 			
+			print("NEW TRAIN!!")
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
-			
 			return trainList[aiID][i]
 		end
 	end
@@ -334,7 +338,12 @@ function moveSingleTrain(tr, t)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:
 		--d = math.sqrt(dx ^ 2 + dy ^ 2)
-		tr.curDistTraveled = tr.curDistTraveled + t*TRAIN_SPEED
+		tr.curDistTraveled = tr.curDistTraveled + t*TRAIN_SPEED*tr.curSpeed
+		if tr.stop == 0 then	--accellerate
+			tr.curSpeed = math.min(tr.curSpeed+TRAIN_ACCEL*t, 1)
+		else
+			tr.curSpeed = math.max(tr.curSpeed-TRAIN_ACCEL*t, 0)
+		end
 		
 		--distToMove = math.sqrt(toMoveX^2+toMoveY^2)		-- length of way to travel
 		
@@ -374,15 +383,9 @@ function moveSingleTrain(tr, t)
 				
 				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 					
-					print("checking directions")
 					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
 					
 					tr.nextDir = nil
-					
-					print("num directions: ", tr.numDirections)
-					for k, v in pairs(tr.possibleDirs) do
-						print(k, v)
-					end
 					
 					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
 						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
@@ -447,7 +450,6 @@ function moveSingleTrain(tr, t)
 					tr.tileX, tr.tileY = nextX, nextY
 				
 					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
-					print("get path", tr.tileX, tr.tileY, tr.nextDir, tr.dir)
 					
 					
 					tr.dir = tr.nextDir
@@ -482,7 +484,7 @@ function moveSingleTrain(tr, t)
 						-- d = math.sqrt(dx ^ 2 + dy ^ 2)
 					end
 					
-					if tr.curPassenger then
+					if tr.curPassenger and tr.curPassenger.onTrain then
 						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
 							ai.foundDestination(tr)
 						end
@@ -768,7 +770,7 @@ function train.showAll()
 			
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-			if tr.curPassenger then
+			if tr.curPassenger and tr.curPassenger.onTrain and not tr.curPassenger.gettingOff then
 				love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
 			end
 			--love.graphics.print( tr.name, x, y+30)

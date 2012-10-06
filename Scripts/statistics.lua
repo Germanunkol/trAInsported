@@ -15,7 +15,9 @@ local statBoxPositive = nil
 local statBoxNegative = nil
 
 function statistics.setAIName(aiID, name)
-	aiStats[aiID].name = name
+	if aiStats[aiID] then
+		aiStats[aiID].name = name
+	end
 end
 
 function statistics.addTrain( aiID, train )
@@ -27,6 +29,7 @@ function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID].pNormal = 0
 	aiStats[aiID].trains[train.ID].pVIP = 0
 	aiStats[aiID].numTrains = aiStats[aiID].numTrains + 1
+	print("I now own", aiStats[aiID].numTrains, "trains")
 end
 
 function statistics.addMoney( aiID, money )
@@ -188,6 +191,7 @@ end
 
 function statistics.generateStatWindows()
 	statWindows = {}
+	allPossibleStats = {}
 	numStats = 0
 	-- ai: most passengers picked up:
 	local mostPickedUp = 0
@@ -318,18 +322,18 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		addStatWindow({title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTrainsID then
 		if mostTrains ~= 1 then
-			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostPickedUp .. " trains."
+			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " trains."
 		else
-			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostPickedUp .. " train."
+			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " train."
 		end
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
-		addStatWindow({title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTransportedID then
 		icons = {}
@@ -340,7 +344,7 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passenger to her/his destinations."
 		end
-		addStatWindow({title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostNormalTransportedID then
 		icons = {}
@@ -351,7 +355,7 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
 		end
-		addStatWindow({title="Kommunist", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Kommunist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostWrongDestinationID then
 		icons = {}
@@ -362,14 +366,14 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
-		addStatWindow({title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
+		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
 	end
 	if mostMoneyID then
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
 		text = "Player " .. ai.getName(mostMoneyID) .. " earned " .. mostMoney .. " credits."
-		addStatWindow({title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	
 	--trains:
@@ -377,33 +381,45 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		text = "'" .. trMostPickedUpName .. "' (" .. ai.getName(trMostPickedUpID) .. ") " .. " picked up more passengers than any other train."
-		addStatWindow({title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
+		text = trMostPickedUpName .. " [" .. ai.getName(trMostPickedUpID) .. "] " .. " picked up more passengers than any other train."
+		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostTransportedID then
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
-		text = "'" .. trMostTransportedName .. "' (" .. ai.getName(trMostTransportedID) .. ") " .. " brought more passengers to their destination than any other train."
-		addStatWindow({title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
+		text = trMostTransportedName .. " [" .. ai.getName(trMostTransportedID) .. "] " .. " brought more passengers to their destination than any other train."
+		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
 		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if trMostWrongDestination ~= 1 then
-			text = "'" .. trMostWrongDestinationName .. "' (" .. ai.getName(trMostWrongDestinationID) .. ") " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
+			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
 		else
-			text = "'" .. trMostWrongDestinationName .. "' (" .. ai.getName(trMostWrongDestinationID) .. ") " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
+			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
 		end
-		addStatWindow({title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
+		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
 	end
 	if trLongestBlockedID then
 		icons = {}
 		table.insert(icons, {img=getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
-		text = "'" .. trLongestBlockedName .. "' (" .. ai.getName(trLongestBlockedID) .. ") " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
-		addStatWindow({title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
+		text = trLongestBlockedName .. " [" .. ai.getName(trLongestBlockedID) .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
+		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
+	end
+	
+	--randomize:
+	randomizeTable(allPossibleStats)
+	
+	i = 0
+	for k, v in pairs(allPossibleStats) do
+		if i >= 4 then
+			break
+		end
+		addStatWindow(v)
+		i = i + 1
 	end
 end
 
@@ -467,7 +483,6 @@ end
 
 function statistics.init()
 	if not statBoxPositiveThread and not statBoxPositive then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Stat Box (green)")
 		statBoxPositiveThread = love.thread.newThread("statBoxPositiveThread", "Scripts/createImageBox.lua")
 		statBoxPositiveThread:start()
@@ -477,9 +492,9 @@ function statistics.init()
 		statBoxPositiveThread:set("shadow", true )
 		statBoxPositiveThread:set("shadowOffsetX", 10 )
 		statBoxPositiveThread:set("shadowOffsetY", 0 )
-		statBoxPositiveThread:set("colR", 64 )
-		statBoxPositiveThread:set("colG", 140 )
-		statBoxPositiveThread:set("colB", 100 )
+		statBoxPositiveThread:set("colR", STAT_BOX_POSITIVE_R )
+		statBoxPositiveThread:set("colG", STAT_BOX_POSITIVE_G )
+		statBoxPositiveThread:set("colB", STAT_BOX_POSITIVE_B )
 	else
 		if not statBoxPositive then	-- if there's no button yet, that means the thread is still running...
 		
@@ -502,7 +517,6 @@ function statistics.init()
 	end
 	
 	if not statBoxNegativeThread and not statBoxNegative then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Stat Box (red)")
 		statBoxNegativeThread = love.thread.newThread("statBoxNegativeThread", "Scripts/createImageBox.lua")
 		statBoxNegativeThread:start()
@@ -512,9 +526,9 @@ function statistics.init()
 		statBoxNegativeThread:set("shadow", true )
 		statBoxNegativeThread:set("shadowOffsetX", 10 )
 		statBoxNegativeThread:set("shadowOffsetY", 0 )
-		statBoxNegativeThread:set("colR", 150 )
-		statBoxNegativeThread:set("colG", 90 )
-		statBoxNegativeThread:set("colB", 64 )
+		statBoxNegativeThread:set("colR", STAT_BOX_NEGATIVE_R )
+		statBoxNegativeThread:set("colG", STAT_BOX_NEGATIVE_G )
+		statBoxNegativeThread:set("colB", STAT_BOX_NEGATIVE_B )
 	else
 		if not statBoxNegative then	-- if there's no button yet, that means the thread is still running...
 		

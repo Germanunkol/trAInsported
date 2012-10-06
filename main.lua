@@ -20,10 +20,9 @@ loadingScreen = require("Scripts/loadingScreen")
 require("Scripts/globals")
 numTrains = 0
 
-factor = 3.25
-
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
-FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 14 )
+FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
+FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 15 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
 FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
@@ -43,7 +42,7 @@ mouseLastX = 0
 mouseLastY = 0
 MAX_PAN = 500
 camX, camY = 0,0
-camZ = 1
+camZ = 0.7
 mapMouseX, mapMouseY = 0,0
 
 timeFactor = 1
@@ -56,6 +55,7 @@ function love.load()
 
 	initialising = true
 	loadingScreen.reset()
+	love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
 
 	button.init()
 	msgBox.init()
@@ -66,29 +66,9 @@ end
 
 function finishStartupProcess()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-	
-	ok, msg = pcall(ai.new, "AI/testAI1.lua")
-	if not ok then print("Err: " .. msg) end
-	--[[ok, msg = pcall(ai.new, "AI/testAI2.lua")
-	if not ok then print("Err: " .. msg) end
-	
-	ok, msg = pcall(ai.new, "AI/testAI3.lua")
-	if not ok then print("Err: " .. msg) end
-	ok, msg = pcall(ai.new, "AI/testAI4.lua")
-	if not ok then print("Err: " .. msg) end
-	]]--
 
-	PLAYERCOLOUR1 = ai.getColour(1)
-	PLAYERCOLOUR2 = ai.getColour(2)
-	PLAYERCOLOUR3 = ai.getColour(3)
-	PLAYERCOLOUR4 = ai.getColour(4)
 
-	train.init(PLAYERCOLOUR1, PLAYERCOLOUR2, PLAYERCOLOUR3, PLAYERCOLOUR4)
 	map.init()
-
-	ai.findAvailableAIs()
-
-	love.graphics.setBackgroundColor(60,40,30,255)
 
 	console.add("Loaded...")
 
@@ -121,7 +101,9 @@ function love.update(dt)
 		button.calcMouseHover()
 		if mapImage then
 			
-			map.handleEvents(dt)
+			if not roundEnded then
+				map.handleEvents(dt)
+			end
 	
 			prevX = camX
 			prevY = camY
@@ -203,14 +185,17 @@ function love.draw()
 
 	-- love.graphics.rectangle("fill",50,50,300,300)
 	dt = love.timer.getDelta()
+	passedTime = dt*timeFactor
 	if mapImage then
 		love.graphics.push()
 		love.graphics.scale(camZ)
 		
 		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 		love.graphics.rotate(CAM_ANGLE)
-		love.graphics.setColor(34,10,10, 105)
-		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+		love.graphics.setColor(30,10,5, 150)
+		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+		love.graphics.setColor(0,0,0, 100)
+		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
@@ -221,16 +206,16 @@ function love.draw()
 		--love.graphics.setColor(255,255,255,255)
 		--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
 		
+		passenger.showAll(passedTime)
 		train.showAll()
-		passenger.showAll(dt)
 		
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.draw(mapShadowImage, 0,0)	
 		love.graphics.draw(mapObjectImage, 0,0)	
 		
-		map.renderHighlights(dt)
+		map.renderHighlights(passedTime)
 		
-		if not love.keyboard.isDown("i") then clouds.renderShadows(dt) end
+		if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
 	
 		--map.drawOccupation()
 			
@@ -274,6 +259,7 @@ function love.draw()
 	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
 	msgBox.show()
 	button.show()
+	menu.render()
 	
 	if love.keyboard.isDown(" ") then
 		love.graphics.setFont(FONT_CONSOLE)
@@ -287,7 +273,6 @@ function love.draw()
 		love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,95)
 		love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,110)
 		if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,125) end
-		love.graphics.print('factor ' .. factor, love.graphics.getWidth()-150,140)
 	end
 	
 end

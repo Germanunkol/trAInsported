@@ -17,6 +17,8 @@ local sandbox = require("Scripts/sandbox")
 local MAX_LINES_LOADING = 10000
 local MAX_LINES_EXECUTING = 10000
 
+aisOnMap = 0
+
 local coLoad = nil
 linesUsed = 0
 
@@ -311,7 +313,7 @@ function ai.enoughMoney(aiID, cash)
 				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".enoughMoney()")
 			end
-		print("enough money 4")
+			print("enough money 4")
 		end
 	end
 end
@@ -330,6 +332,7 @@ function ai.findAvailableAIs()
 			files[k] = nil
 		end
 	end
+	return files
 end
 	
 return ai

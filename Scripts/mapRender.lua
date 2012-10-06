@@ -163,10 +163,10 @@ if curMap then
 			elseif curMap[i][j] == "S" then
 				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
 				transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 7, y = (j)*TILE_SIZE + 7})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 101, y = (j)*TILE_SIZE + 7})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 7, y = (j)*TILE_SIZE + 101})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 101, y = (j)*TILE_SIZE + 101})
+				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
+				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 2})
+				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
+				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
 			elseif curMap[i][j] == "C" then
 				img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
 				if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end

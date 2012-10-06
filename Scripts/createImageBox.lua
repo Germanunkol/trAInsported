@@ -15,6 +15,10 @@ shadowOffsetY = thisThread:demand("shadowOffsetY")
 colR = thisThread:demand("colR")
 colG = thisThread:demand("colG")
 colB = thisThread:demand("colB")
+brightness = thisThread:get("brightness")
+if not brightness then
+	brightness = 250
+end
 
 --function createBoxImage(width, height, shadow, shadowOffsetX, shadowOffsetY, colR, colG, colB)
 
@@ -63,8 +67,9 @@ imgDataTopLayer = outline(imgDataTopLayer, verts, 0,0,0, 255)
 thisThread:set("percentage", 20)
 imgDataTopLayer = fill(imgDataTopLayer, colR, colG, colB, 150)
 thisThread:set("percentage", 30)
-imgDataTopLayer = gradient(imgDataTopLayer, width, 0, width, 255)
+imgDataTopLayer = gradient(imgDataTopLayer, width, 0, width, brightness)
 thisThread:set("percentage", 40)
+
 if shadow then
 
 	imgDataShadow = love.image.newImageData(width+10, height+10)

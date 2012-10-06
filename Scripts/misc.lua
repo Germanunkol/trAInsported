@@ -89,6 +89,13 @@ function readOnlyTable(table)
    });
 end
 
+function randomizeTable(tbl)	
+	for i = 1,#tbl do
+		index1 = math.random(#tbl)
+		index2 = math.random(#tbl)
+		tbl[index1], tbl[index2] = tbl[index2], tbl[index1]
+	end
+end
 
 function matrixMultiply(mat, vec)
 	return mat.aa*vec.x + mat.ab*vec.y, mat.ba*vec.x + mat.bb*vec.y

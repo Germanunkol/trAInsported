@@ -13,7 +13,6 @@ IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
 
 local status = nil
 
-
 --------------------------------------------------------------
 --		INITIALISE MAP:
 --------------------------------------------------------------
@@ -39,17 +38,14 @@ end
 
 -- called when map has been generated and rendered
 function runMap()
-	stats.start(4)
-	stats.setAIName(1, "Ai1")
-	stats.setAIName(2, "Ai2")
-	stats.setAIName(3, "Ai3")
-	stats.setAIName(4, "Ai4")
 	
 	if curMap then
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
 		
-		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
+		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
+		
+		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		--passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
 		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
 		--populateMap()
 		ai.init()
@@ -149,14 +145,7 @@ function map.generate(width, height, seed)
 			map.print("Finished Map:")
 			mapGenerateThread = nil
 			collectgarbage("collect")
-			--map.render()
-			second = copyTable(curMap)
-			second.railList[3] = "lol"
-			print("original:")
-			printTable(curMap)
-			print("second:")
-			printTable(second)
-			
+			map.render()			
 			
 			return curMap
 		elseif status then
@@ -361,7 +350,6 @@ function map.resetTileOccupied(x, y, f, t)
 end
 
 function map.resetTileExitOccupied(x, y, to)
-	print(x, y, to)
 	curMapOccupiedExits[x][y][to] = false
 end
 
@@ -852,7 +840,6 @@ end
 -- if I keep moving into the same direction, which direction can I move in on the next tile?
 function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	local nextTileX, nextTileY = curTileX, curTileY
-	print(curTileX, curTileY , curDir)
 	if curDir == "N" then
 		nextTileY = nextTileY - 1
 	elseif curDir == "S" then
@@ -864,7 +851,6 @@ function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	end
 	
 	railType = getRailType( nextTileX, nextTileY )
-	print("rail Type", railType)
 	if railType == 1 then	-- straight rail: can only keep moving in same dir
 		if curDir == "N" then return {N=true}, 1
 		else return {S=true}, 1 end
@@ -993,13 +979,13 @@ function map.render()
 			highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
 
 			for i = 1,20 do
-				highlightListQuads[i] = love.graphics.newQuad( (i-1)*22, 0, 22, 21, 440, 21 )
+				highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
 			end
 			
 			loadingScreen.percentage("Rendering Map", 100)
 			
 			mapRenderThread = nil
-			collectgarbage("collect")
+			
 			runMap()
 			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
 		elseif status then
@@ -1014,7 +1000,7 @@ function map.renderHighlights(dt)
 		if math.ceil(hl.frame) >= 1 and math.ceil(hl.frame) <= #highlightListQuads then
 			love.graphics.drawq(IMAGE_HOTSPOT_HIGHLIGHT, highlightListQuads[math.ceil(hl.frame)], hl.x, hl.y)
 		end
-		hl.frame = hl.frame + dt*timeFactor*15
+		hl.frame = hl.frame + dt*15
 		while hl.frame > #highlightListQuads do hl.frame = hl.frame - #highlightListQuads end
 	end
 end
@@ -1026,21 +1012,29 @@ end
 --------------------------------------------------------------
 
 -- make sure to reset these at round end!
-local passengerTimePassed = 10
+local passengerTimePassed = 0
 local newTrainQueueTime = 0
 
 function map.handleEvents(dt)
 
-	passengerTimePassed = passengerTimePassed + dt*timeFactor
-	if passengerTimePassed >= .1 then
+	passengerTimePassed = passengerTimePassed - dt*timeFactor
+	if passengerTimePassed <= 0 then
 		passenger.new()
-		passengerTimePassed = passengerTimePassed - .1	-- to make sure it's the same on all platforms
+		passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
 	end
 	
 	newTrainQueueTime = newTrainQueueTime + dt*timeFactor
 	if newTrainQueueTime >= .1 then
 		train.handleNewTrains()
 		newTrainQueueTime = newTrainQueueTime - .1
+	end
+	
+	if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+		map.endRound()
+	end
+	 
+	if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
+		map.endRound()
 	end
 end
 

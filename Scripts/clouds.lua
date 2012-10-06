@@ -37,11 +37,11 @@ function clouds.renderShadows(dt)
 			end
 		end
 	else
-		nextCloudIn = nextCloudIn - dt*timeFactor
+		nextCloudIn = nextCloudIn - dt
 	end
 	
 	for k, cl in pairs(cloudList) do
-		if not roundEnded then cl.x = cl.x + dt*timeFactor*cl.height*15 end
+		if not roundEnded then cl.x = cl.x + dt*cl.height*15 end
 		if cl.x >= (curMap.width+2)*TILE_SIZE then
 			cloudList[k] = nil
 			numClouds = numClouds - 1

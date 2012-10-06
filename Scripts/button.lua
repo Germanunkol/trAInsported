@@ -1,7 +1,7 @@
 local button = {}
 
-BUTTON_WIDTH = 160
-BUTTON_HEIGHT = 35
+STANDARD = 1
+SMALL = 2
 
 local button_mt = { __index = button }
 
@@ -31,17 +31,26 @@ end
 
 local buttnOff, buttnOver
 
-function button:new(x, y, label, event, eventArgs, priority)
+function button:new(x, y, label, event, eventArgs, priority, size)
 	priority = priority or 1
+	size = size or STANDARD
 	for i=1,#buttonList+1,1 do
 		if not buttonList[i] then
 			-- local imageOff = createButtonOff(width, height, label)
 			-- local imageOver = createButtonOver(width, height, label)
-			buttonList[i] = setmetatable({x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+			if size == STANDARD then
+				buttonList[i] = setmetatable({size = STANDARD, x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+			elseif size == SMALL then
+				buttonList[i] = setmetatable({size = SMALL, x=x, y=y, imageOff=buttonOffSmall, imageOver=buttonOverSmall, event=event, index = i, w=buttonOverSmall:getWidth(), h=buttonOverSmall:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+			end
 			button.setButtonLevel()
 			return buttonList[i]
 		end
 	end
+end
+
+function button:newSmall(x, y, label, event, eventArgs, priority)
+	return button:new(x, y, label, event, eventArgs, priority, SMALL)
 end
 
 function button:remove()
@@ -79,19 +88,24 @@ function button.handleClick()
 end
 
 function button.show()
-	love.graphics.setFont(FONT_BUTTON)
 	w = buttonOver:getWidth()
 	for k, b in pairs(buttonList) do
 		if not b.invisible then
+			if b.size == SMALL then
+				f = FONT_BUTTON_SMALL
+			else
+				f = FONT_BUTTON
+			end
+			love.graphics.setFont(f)
 			if b.mouseHover then
 				love.graphics.setColor(255,255,255,255)
 				love.graphics.draw(b.imageOver, b.x, b.y)
-				love.graphics.print(b.l, b.x + (w-FONT_BUTTON:getWidth(b.l))/2, b.y + 8)
+				love.graphics.printf(b.l, b.x, b.y + 8, b.imageOver:getWidth(), "center")
 			else
 				if b.priority == buttonLevel then love.graphics.setColor(255,255,255,255)
 				else love.graphics.setColor(255,255,255,150) end
 				love.graphics.draw(b.imageOff, b.x, b.y)
-				love.graphics.print(b.l, b.x + (w-FONT_BUTTON:getWidth(b.l))/2, b.y + 10)
+				love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
 			end
 		end
 	end
@@ -103,7 +117,6 @@ local status = false
 
 function button.init()
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
-		print("starting thread:")
 		loadingScreen.addSection("Rendering Deactivated Button")
 		buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/createImageBox.lua")
 		buttonOffThread:start()
@@ -113,9 +126,9 @@ function button.init()
 		buttonOffThread:set("shadow", true )
 		buttonOffThread:set("shadowOffsetX", 5 )
 		buttonOffThread:set("shadowOffsetY", 2 )
-		buttonOffThread:set("colR", 64 )
-		buttonOffThread:set("colG", 160 )
-		buttonOffThread:set("colB", 100 )
+		buttonOffThread:set("colR", BUTTON_OFF_R )
+		buttonOffThread:set("colG", BUTTON_OFF_G )
+		buttonOffThread:set("colB", BUTTON_OFF_B )
 	else
 		if not buttonOff then	-- if there's no button yet, that means the thread is still running...
 		
@@ -148,9 +161,9 @@ function button.init()
 		buttonOverThread:set("shadow", true )
 		buttonOverThread:set("shadowOffsetX", 6 )
 		buttonOverThread:set("shadowOffsetY", 1 )
-		buttonOverThread:set("colR", 84 )
-		buttonOverThread:set("colG", 180 )
-		buttonOverThread:set("colB", 120 )
+		buttonOverThread:set("colR", BUTTON_OVER_R )
+		buttonOverThread:set("colG", BUTTON_OVER_G )
+		buttonOverThread:set("colB", BUTTON_OVER_B )
 	else
 		if not buttonOver then	-- if there's no button yet, that means the thread is still running...
 		
@@ -168,19 +181,89 @@ function button.init()
 			status = buttonOverThread:get("status")
 			if status == "done" then
 				buttonOver = buttonOverThread:get("imageData")		-- get the generated image data from the thread
-				print(buttonOff)
 				buttonOver = love.graphics.newImage(buttonOver)
 				buttonOverThread = nil
 			end
 		end
 	end
 	
+	if not buttonOffSmallThread and not buttonOffSmall then		-- only start thread once!
+		loadingScreen.addSection("Rendering Deactivated Button (small)")
+		buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/createImageBox.lua")
+		buttonOffSmallThread:start()
+	
+		buttonOffSmallThread:set("width", SMALL_BUTTON_WIDTH )
+		buttonOffSmallThread:set("height", SMALL_BUTTON_HEIGHT )
+		buttonOffSmallThread:set("shadow", true )
+		buttonOffSmallThread:set("shadowOffsetX", 5 )
+		buttonOffSmallThread:set("shadowOffsetY", 2 )
+		buttonOffSmallThread:set("colR", BUTTON_OFF_R )
+		buttonOffSmallThread:set("colG", BUTTON_OFF_G )
+		buttonOffSmallThread:set("colB", BUTTON_OFF_B )
+	else
+		if not buttonOffSmall then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = buttonOffSmallThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Deactivated Button (small)", percent)
+			end
+			err = buttonOffSmallThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = buttonOffSmallThread:get("status")
+			if status == "done" then
+				buttonOffSmall = buttonOffSmallThread:get("imageData")		-- get the generated image data from the thread
+				buttonOffSmall = love.graphics.newImage(buttonOffSmall)
+				buttonOffSmallThread = nil
+			end
+		end
+	end
+	
+	if not buttonOverSmallThread and not buttonOverSmall then		-- only start thread once!
+	
+		loadingScreen.addSection("Rendering Activated Button (small)")
+		buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/createImageBox.lua")
+		buttonOverSmallThread:start()
+	
+		buttonOverSmallThread:set("width", SMALL_BUTTON_WIDTH )
+		buttonOverSmallThread:set("height", SMALL_BUTTON_HEIGHT )
+		buttonOverSmallThread:set("shadow", true )
+		buttonOverSmallThread:set("shadowOffsetX", 6 )
+		buttonOverSmallThread:set("shadowOffsetY", 1 )
+		buttonOverSmallThread:set("colR", BUTTON_OVER_R )
+		buttonOverSmallThread:set("colG", BUTTON_OVER_G )
+		buttonOverSmallThread:set("colB", BUTTON_OVER_B )
+	else
+		if not buttonOverSmall then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = buttonOverSmallThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Activated Button (small)", percent)
+			end
+			
+			err = buttonOverSmallThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+		
+			status = buttonOverSmallThread:get("status")
+			if status == "done" then
+				buttonOverSmall = buttonOverSmallThread:get("imageData")		-- get the generated image data from the thread
+				buttonOverSmall = love.graphics.newImage(buttonOverSmall)
+				buttonOverSmallThread = nil
+			end
+		end
+	end
+	
 	-- buttonOff = createBoxImage(STND_BUTTON_WIDTH , STND_BUTTON_HEIGHT, true, 5,2, 64,160,100)
-	-- buttonOver = createBoxImage(STND_BUTTON_WIDTH, STND_BUTTON_HEIGHT, true, 6,1, 64,160,100)
+	-- buttonOverSmall = createBoxImage(STND_BUTTON_WIDTH, STND_BUTTON_HEIGHT, true, 6,1, 64,160,100)
 end
 
 function button.initialised()
-	if buttonOver and buttonOff then
+	if buttonOver and buttonOff and buttonOverSmall and buttonOffSmall then
 		return true
 	end
 end

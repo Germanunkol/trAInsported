@@ -53,17 +53,6 @@ showConsole = true
 initialising = true
 
 function love.load()
-	if true then
-	tbl1 = {1, 2, {lol, this, is, funny}, 4, 5, 6, 7}
-	tbl2 = copyTable(tbl1)
---	tbl2[3] = "test"
-	printTable(tbl1)
-	printTable(tbl2)
-	
-	love.event.quit()
-	return
-	end
-
 
 	initialising = true
 	loadingScreen.reset()

@@ -49,7 +49,8 @@ end
 function copyTable(tbl)
 	local newTbl = {}
 	for k, v in pairs(tbl) do
-		if type(v) == "tbl" then
+		if type(v) == "table" then
+			print(k, v)
 			newTbl[k] = copyTable(v)
 		else
 			newTbl[k] = v
@@ -58,20 +59,20 @@ function copyTable(tbl)
 	return newTbl
 end
 
-function printTable(table, lvl)
-	print(starting)
-	lvl = lvl or 0
+function printTable(tbl, lvl)
+	lvl = lvl or 1
+	local str = ""
+	for i = 1,lvl-1 do
+		str = str .. "\t"
+	end
 	if lvl > 10 then print("Maximum Level Depth reached")
 	else
-		for k, v in pairs(table) do
+		for k, v in pairs(tbl) do
 			if type(v) == "table" then
-				print("\t\t\t", type(v))
+				print(str,k.. "{")
 				printTable(v, lvl + 1)
+				print(str, "}")
 			else
-				str = ""
-				for i = 1,lvl do
-					str = str .. "\t"
-				end
 				print(str, k, v)
 			end
 		end

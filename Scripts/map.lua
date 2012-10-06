@@ -149,7 +149,14 @@ function map.generate(width, height, seed)
 			map.print("Finished Map:")
 			mapGenerateThread = nil
 			collectgarbage("collect")
-			map.render()
+			--map.render()
+			second = copyTable(curMap)
+			second.railList[3] = "lol"
+			print("original:")
+			printTable(curMap)
+			print("second:")
+			printTable(second)
+			
 			
 			return curMap
 		elseif status then

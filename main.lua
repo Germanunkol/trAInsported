@@ -53,6 +53,17 @@ showConsole = true
 initialising = true
 
 function love.load()
+	if true then
+	tbl1 = {1, 2, {lol, this, is, funny}, 4, 5, 6, 7}
+	tbl2 = copyTable(tbl1)
+--	tbl2[3] = "test"
+	printTable(tbl1)
+	printTable(tbl2)
+	
+	love.event.quit()
+	return
+	end
+
 
 	initialising = true
 	loadingScreen.reset()
@@ -69,12 +80,14 @@ function finishStartupProcess()
 	
 	ok, msg = pcall(ai.new, "AI/testAI1.lua")
 	if not ok then print("Err: " .. msg) end
-	ok, msg = pcall(ai.new, "AI/testAI2.lua")
+	--[[ok, msg = pcall(ai.new, "AI/testAI2.lua")
 	if not ok then print("Err: " .. msg) end
+	
 	ok, msg = pcall(ai.new, "AI/testAI3.lua")
 	if not ok then print("Err: " .. msg) end
 	ok, msg = pcall(ai.new, "AI/testAI4.lua")
 	if not ok then print("Err: " .. msg) end
+	]]--
 
 	PLAYERCOLOUR1 = ai.getColour(1)
 	PLAYERCOLOUR2 = ai.getColour(2)
@@ -100,7 +113,7 @@ function love.update(dt)
 	-- ai.run()
 	-- time = time + dt
 	
-	mapMouseX, mapMouseY = coordinatesToMap(love.mouse.getPosition())
+	--mapMouseX, mapMouseY = coordinatesToMap(love.mouse.getPosition())
 			
 			
 	if initialising then
@@ -206,7 +219,7 @@ function love.draw()
 		love.graphics.scale(camZ)
 		
 		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-		--love.graphics.rotate(CAM_ANGLE)
+		love.graphics.rotate(CAM_ANGLE)
 		love.graphics.setColor(34,10,10, 105)
 		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		love.graphics.setColor(255,255,255, 255)
@@ -216,8 +229,8 @@ function love.draw()
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
 		
-		love.graphics.setColor(255,255,255,255)
-		love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
+		--love.graphics.setColor(255,255,255,255)
+		--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
 		
 		train.showAll()
 		passenger.showAll(dt)
@@ -262,10 +275,12 @@ function love.draw()
 	
 	--love.graphics.setColor(255,255,255,50)
 	--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
+	--[[
 	love.graphics.print("mouse x " .. mapMouseX, 10, 200)
 	love.graphics.print("mouse y " .. mapMouseY, 10, 220)
 	love.graphics.print("normal mouse x " .. love.mouse.getX(), 10, 240)
 	love.graphics.print("normal mouse y " .. love.mouse.getY(), 10, 260)
+	]]--
 	
 	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
 	msgBox.show()

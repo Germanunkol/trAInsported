@@ -156,9 +156,8 @@ end
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
-		print("Initializing AI:", aiID)
+		print("Initializing AI:", aiID, aiList[aiID].name)
 		
-		print("--> ai.init")
 		local crInit = coroutine.create(runAiFunctionCoroutine)
 		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
 		if not ok then print("NEW ERROR:", msg) end

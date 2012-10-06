@@ -30,7 +30,7 @@ function newMap(width, height, seed)
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	
@@ -845,7 +845,7 @@ end
 -- if I keep moving into the same direction, which direction can I move in on the next tile?
 function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	local nextTileX, nextTileY = curTileX, curTileY
-	
+	print(curTileX, curTileY , curDir)
 	if curDir == "N" then
 		nextTileY = nextTileY - 1
 	elseif curDir == "S" then
@@ -857,6 +857,7 @@ function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	end
 	
 	railType = getRailType( nextTileX, nextTileY )
+	print("rail Type", railType)
 	if railType == 1 then	-- straight rail: can only keep moving in same dir
 		if curDir == "N" then return {N=true}, 1
 		else return {S=true}, 1 end

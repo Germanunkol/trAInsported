@@ -41,6 +41,11 @@ end
 
 function train.init(col1, col2, col3, col4)
 
+	col1 = col1 or {r=0,g=0,b=0}
+	col2 = col2 or {r=0,g=0,b=0}
+	col3 = col3 or {r=0,g=0,b=0}
+	col4 = col4 or {r=0,g=0,b=0}
+	
 	newTrainQueue = {}
 
 	trainList[1] = {}
@@ -369,9 +374,15 @@ function moveSingleTrain(tr, t)
 				
 				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 					
+					print("checking directions")
 					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
 					
 					tr.nextDir = nil
+					
+					print("num directions: ", tr.numDirections)
+					for k, v in pairs(tr.possibleDirs) do
+						print(k, v)
+					end
 					
 					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
 						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
@@ -384,7 +395,6 @@ function moveSingleTrain(tr, t)
 						else tr.nextDir = "W"
 						end
 					end
-					
 					
 					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
 					
@@ -429,9 +439,6 @@ function moveSingleTrain(tr, t)
 					tr.timeBlocked = 0
 					tr.blocked = false
 					
-					--print("reset:", tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)
-					
-					--print("set:", nextX, nextY, cameFromDir, tr.nextDir)
 					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
 					tr.freedTileOccupation = false
 					
@@ -440,6 +447,8 @@ function moveSingleTrain(tr, t)
 					tr.tileX, tr.tileY = nextX, nextY
 				
 					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
+					print("get path", tr.tileX, tr.tileY, tr.nextDir, tr.dir)
+					
 					
 					tr.dir = tr.nextDir
 				

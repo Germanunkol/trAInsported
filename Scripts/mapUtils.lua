@@ -321,6 +321,10 @@ end
 
 
 function getRailType(i, j)
+print("",i, j)
+print(curMap[i-1][j-1], curMap[i][j-1], curMap[i+1][j-1])
+print(curMap[i-1][j], curMap[i][j], curMap[i+1][j])
+print(curMap[i-1][j+1], curMap[i][j+1], curMap[i+1][j+1])
 	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
 		return NS
 	end

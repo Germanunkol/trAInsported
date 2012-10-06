@@ -59,11 +59,13 @@ function copyTable(tbl)
 end
 
 function printTable(table, lvl)
+	print(starting)
 	lvl = lvl or 0
 	if lvl > 10 then print("Maximum Level Depth reached")
 	else
 		for k, v in pairs(table) do
 			if type(v) == "table" then
+				print("\t\t\t", type(v))
 				printTable(v, lvl + 1)
 			else
 				str = ""

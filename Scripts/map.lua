@@ -38,7 +38,7 @@ end
 
 -- called when map has been generated and rendered
 function runMap()
-	stats.init(4)
+	stats.start(4)
 	stats.setAIName(1, "Ai1")
 	stats.setAIName(2, "Ai2")
 	stats.setAIName(3, "Ai3")

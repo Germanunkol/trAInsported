@@ -1,5 +1,8 @@
 local msgBox = {}
 
+local MSG_BOX_WIDTH = 400
+local MSG_BOX_HEIGHT = 150
+
 local msgBoxList = {}
 
 local msgBox_mt = { __index = msgBox }
@@ -74,8 +77,59 @@ function msgBox.show()
 	end
 end
 
+function msgBox.isVisible()
+	for k, m in pairs(msgBoxList) do
+		return true
+	end
+end
+
+local msgBoxBGThread
+
 function msgBox.init()
-	msgBoxBG = createBoxImage(400,150,true, 10, 0,64,160,100)
+	
+	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
+		print("starting thread:")
+		loadingScreen.addSection("Rendering Message Box")
+		msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/createImageBox.lua")
+		msgBoxBGThread:start()
+	
+		msgBoxBGThread:set("width", MSG_BOX_WIDTH )
+		msgBoxBGThread:set("height", MSG_BOX_HEIGHT )
+		msgBoxBGThread:set("shadow", true )
+		msgBoxBGThread:set("shadowOffsetX", 10 )
+		msgBoxBGThread:set("shadowOffsetY", 0 )
+		msgBoxBGThread:set("colR", 64 )
+		msgBoxBGThread:set("colG", 160 )
+		msgBoxBGThread:set("colB", 100 )
+	else
+		if not msgBoxBG then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = msgBoxBGThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Message Box", percent)
+			end
+			err = msgBoxBGThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = msgBoxBGThread:get("status")
+			if status == "done" then
+				msgBoxBG = msgBoxBGThread:get("imageData")		-- get the generated image data from the thread
+				msgBoxBG = love.graphics.newImage(msgBoxBG)
+				msgBoxBGThread = nil
+			end
+		end
+	end
+	
+	--old:
+	--msgBoxBG = createBoxImage(MSG_BOX_WIDTH,MSG_BOX_HEIGHT,true, 10, 0,64,160,100)
+end
+
+function msgBox.initialised()
+	if msgBoxBG then
+		return true
+	end
 end
 
 return msgBox

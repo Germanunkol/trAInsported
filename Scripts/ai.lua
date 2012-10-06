@@ -93,11 +93,9 @@ end
 
 function generateColour(name, brightness)
 	brightness = brightness or 1
-	print("name: ", name)
 	sum = 0
 	for i = 1,#name do
 		sum = sum + name:byte(i,i)
-		print(sum)
 	end
 	_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
 	__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
@@ -105,11 +103,9 @@ function generateColour(name, brightness)
 	red = vonNeumannRandom(___)
 	green = vonNeumannRandom(red)
 	blue = vonNeumannRandom(green)
-	print("col1:", red, green, blue)
 	red = cycle(red, 0, 255)
 	blue = cycle(blue, 0, 255)
 	green = cycle(green, 0, 255)
-	print("col2:", red, green, blue)
 	return {r=clamp(red*brightness, 0, 255), g=clamp(green*brightness, 0, 255), b=clamp(blue*brightness, 0, 255)}
 end
 

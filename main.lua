@@ -46,15 +46,23 @@ timeFactor = 1
 curMap = false
 showQuickHelp = false
 showConsole = true
+initialising = true
 
 function love.load()
+
+	initialising = true
+	loadingScreen.reset()
 
 	button.init()
 	msgBox.init()
 	loadingScreen.init()
 	quickHelp.init()
+	stats.init()
+end
 
+function finishStartupProcess()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
+	
 	ok, msg = pcall(ai.new, "AI/ai1.lua")
 	if not ok then print("Err: " .. msg) end
 	ok, msg = pcall(ai.new, "AI/ai2.lua")
@@ -71,15 +79,14 @@ function love.load()
 
 	train.init(PLAYERCOLOUR1, PLAYERCOLOUR2, PLAYERCOLOUR3, PLAYERCOLOUR4)
 	map.init()
-	
+
 	ai.findAvailableAIs()
-	
+
 	love.graphics.setBackgroundColor(60,40,30,255)
 
 	console.add("Loaded...")
-	
+
 	menu.init()
-	
 end
 
 
@@ -89,79 +96,90 @@ function love.update(dt)
 	-- ai.run()
 	-- time = time + dt
 	
-	functionQueue.run()
+	if initialising then
+		button.init()
+		msgBox.init()
+		loadingScreen.init()
+		quickHelp.init()
+		stats.init()
+		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() then
+			initialising = false
+			finishStartupProcess()
+		end
+	else
+		functionQueue.run()
 	
-	
-	button.calcMouseHover()
-	if mapImage then
+		button.calcMouseHover()
+		if mapImage then
 		
-		map.handleEvents(dt)
+			map.handleEvents(dt)
 	
-		prevX = camX
-		prevY = camY
-		if panningView then
-			x, y = love.mouse.getPosition()
-			camX = clamp(camX - (mouseLastX-x)*0.75/camZ, -MAX_PAN, MAX_PAN)
-			camY = clamp(camY - (mouseLastY-y)*0.75/camZ, -MAX_PAN, MAX_PAN)
-			mouseLastX = x
-			mouseLastY = y
+			prevX = camX
+			prevY = camY
+			if panningView then
+				x, y = love.mouse.getPosition()
+				camX = clamp(camX - (mouseLastX-x)*0.75/camZ, -MAX_PAN, MAX_PAN)
+				camY = clamp(camY - (mouseLastY-y)*0.75/camZ, -MAX_PAN, MAX_PAN)
+				mouseLastX = x
+				mouseLastY = y
 			
-			floatPanX = (camX - prevX)*40
-			floatPanY = (camY - prevY)*40
+				floatPanX = (camX - prevX)*40
+				floatPanY = (camY - prevY)*40
 				
-		else
-			if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-				camX = clamp(camX + 300*dt/camZ, -MAX_PAN, MAX_PAN)
-			end
-			if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-				camX = clamp(camX - 300*dt/camZ, -MAX_PAN, MAX_PAN)
-			end 
-			if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
-				camY = clamp(camY + 300*dt/camZ, -MAX_PAN, MAX_PAN)
-			end
-			if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
-				camY = clamp(camY - 300*dt/camZ, -MAX_PAN, MAX_PAN)
-			end
-			if love.keyboard.isDown("q") then
-				camZ = clamp(camZ + dt*0.25, 0.1, 1)
-				camX = clamp(camX, -MAX_PAN, MAX_PAN)
-				camY = clamp(camY, -MAX_PAN, MAX_PAN)
-			end
-			if love.keyboard.isDown("e") then
-				camZ = clamp(camZ - dt*0.25, 0.1, 1)
-				camX = clamp(camX, -MAX_PAN, MAX_PAN)
-				camY = clamp(camY, -MAX_PAN, MAX_PAN)
-			end
+			else
+				if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+					camX = clamp(camX + 300*dt/camZ, -MAX_PAN, MAX_PAN)
+				end
+				if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+					camX = clamp(camX - 300*dt/camZ, -MAX_PAN, MAX_PAN)
+				end 
+				if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
+					camY = clamp(camY + 300*dt/camZ, -MAX_PAN, MAX_PAN)
+				end
+				if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
+					camY = clamp(camY - 300*dt/camZ, -MAX_PAN, MAX_PAN)
+				end
+				if love.keyboard.isDown("q") then
+					camZ = clamp(camZ + dt*0.25, 0.1, 1)
+					camX = clamp(camX, -MAX_PAN, MAX_PAN)
+					camY = clamp(camY, -MAX_PAN, MAX_PAN)
+				end
+				if love.keyboard.isDown("e") then
+					camZ = clamp(camZ - dt*0.25, 0.1, 1)
+					camX = clamp(camX, -MAX_PAN, MAX_PAN)
+					camY = clamp(camY, -MAX_PAN, MAX_PAN)
+				end
 			
-			if camX ~= prevX or camY ~= prevY then
-				floatPanX = (camX - prevX)*20
-				floatPanY = (camY - prevY)*20
+				if camX ~= prevX or camY ~= prevY then
+					floatPanX = (camX - prevX)*20
+					floatPanY = (camY - prevY)*20
+				end
 			end
+			if camX == prevX and camY == prevY then
+				floatPanX = floatPanX*math.max(1 - dt*3, 0)
+				floatPanY = floatPanY*math.max(1 - dt*3, 0)
+				camX = clamp(camX + floatPanX*dt, -MAX_PAN, MAX_PAN)
+				camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
+			end
+		elseif mapGenerateThread then
+			err = mapGenerateThread:get("error")
+			if err then
+				print("Error in thread", err)
+			end
+			curMap = map.generate()
+		elseif mapRenderThread then
+			err = mapRenderThread:get("error")
+			if err then
+				print("Error in thread", err)
+			end
+			mapImage,mapShadowImage,mapObjectImage = map.render()
 		end
-		if camX == prevX and camY == prevY then
-			floatPanX = floatPanX*math.max(1 - dt*3, 0)
-			floatPanY = floatPanY*math.max(1 - dt*3, 0)
-			camX = clamp(camX + floatPanX*dt, -MAX_PAN, MAX_PAN)
-			camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
-		end
-	elseif mapGenerateThread then
-		err = mapGenerateThread:get("error")
-		if err then
-			print("Error in thread", err)
-		end
-		curMap = map.generate()
-	elseif mapRenderThread then
-		err = mapRenderThread:get("error")
-		if err then
-			print("Error in thread", err)
-		end
-		mapImage,mapShadowImage,mapObjectImage = map.render()
-	end
 	
-	if not roundEnded then
-		train.moveAll()
-		if curMap then
-			curMap.time = curMap.time + dt*timeFactor
+		if not roundEnded then
+			train.moveAll()
+			if curMap then
+				curMap.time = curMap.time + dt*timeFactor
+			end
 		end
 	end
 end
@@ -170,6 +188,12 @@ end
 local camAngle = -0.1
 
 function love.draw()
+
+	if initialising then		--only runs once at startup, until all images are rendered.
+		loadingScreen.render()
+		return
+	end
+
 	-- love.graphics.rectangle("fill",50,50,300,300)
 	dt = love.timer.getDelta()
 	if mapImage then
@@ -184,6 +208,7 @@ function love.draw()
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+		
 		train.showAll()
 		passenger.showAll(dt)
 		
@@ -210,7 +235,7 @@ function love.draw()
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
-		if not love.keyboard.isDown("i") then clouds.render() end
+		clouds.render()
 		--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 		
 		love.graphics.pop()
@@ -222,23 +247,22 @@ function love.draw()
 		loadingScreen.render()
 	end
 	
-	if roundEnded and curMap and mapImage then stats.display(200, 40, dt) end
+	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
 	msgBox.show()
 	button.show()
 	
-	
-	love.graphics.setFont(FONT_CONSOLE)
-	love.graphics.setColor(255,255,255,255)
-	love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-150, 5)
-	love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
-	love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
-	love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)
-	love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,65)
-	love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,80)
-	love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,95)
-	if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,110) end
-	
-	if testImg then love.graphics.draw(testImg, 100, 400) end
+	if love.keyboard.isDown(" ") then
+		love.graphics.setFont(FONT_CONSOLE)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-150, 5)
+		love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
+		love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
+		love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)
+		love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,65)
+		love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,80)
+		love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,95)
+		if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,110) end
+	end
 	
 end
 

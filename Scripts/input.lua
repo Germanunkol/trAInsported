@@ -12,6 +12,11 @@ function resetTimeFactor()
 end
 
 function love.mousepressed(x, y, b)
+	if curMap and mapImage then
+		if b == "l" then
+			train.checkSelection()
+		end
+	end
 	if b == "wd" then
 		camZ = clamp(camZ - 0.05, 0.1, 1)
 		camX = clamp(camX, -MAX_PAN, MAX_PAN)

@@ -16,8 +16,8 @@ function randomMatch()
 		print("Already generating new map!")
 		return
 	end
-	local width = math.random(4,20)
-	local height = math.random(4,20)
+	local width = 30--math.random(4,20)
+	local height = 30--math.random(4,20)
 	local seed = 1
 	print("ls:")
 	loadingScreen.reset()

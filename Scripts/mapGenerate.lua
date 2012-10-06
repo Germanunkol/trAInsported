@@ -35,8 +35,6 @@ thisThread:set("percentage", 10)
 generateRailRectangles()
 thisThread:set("percentage", 20)
 
-
-
 clearLargeJunctions()
 thisThread:set("percentage", 30)
 connectLooseEnds()
@@ -55,7 +53,6 @@ thisThread:set("percentage", 70)
 
 generateRailList()
 thisThread:set("percentage", 90)
-
 
 -- return the results to parent (main) thread:
 thisThread:set("curMap", TSerial.pack(curMap))

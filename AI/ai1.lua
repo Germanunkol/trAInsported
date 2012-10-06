@@ -52,6 +52,7 @@ function chooseSmart(train, possibleDirections)
 		print("train.passenger destination:", rememberPassengers[train.passenger].destX, rememberPassengers[train.passenger].destY)
 		printTable(rememberPassengers)
 		print("train.pos:", train.x, train.y)
+		
 		if possibleDirections["N"] and rememberPassengers[train.passenger].destY+1 < train.y and random() < .7 then
 			print("I think North is best")
 			return "N"

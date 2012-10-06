@@ -1,8 +1,13 @@
 
-function blur( imgData, radius )
+function blur( imgData, radius, thread, percentage, maxPercentage )
 	radius = radius or 1
 	if radius == 0 then radius = 1 end
 	numPixels = (radius*2+1)^2
+	
+	if thread then
+		percentStep = (maxPercentage-percentage)/(imgData:getWidth()*imgData:getHeight())
+	end
+	
 	
 	local imgDataBlur = love.image.newImageData(imgData:getWidth(), imgData:getHeight())
 	for x = 0, imgData:getWidth()-1 do
@@ -24,6 +29,10 @@ function blur( imgData, radius )
 			b = b/numPixels
 			a = a/numPixels
 			imgDataBlur:setPixel(x,y, r,g,b,a)
+			if thread then
+				percentage = percentage + percentStep
+				thread:set("percentage", percentage)
+			end
 		end
 	end
 	

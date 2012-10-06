@@ -637,6 +637,8 @@ end
 
 
 function train.showAll()
+
+	love.graphics.setFont(FONT_CONSOLE)
 	for k, list in pairs(trainList) do
 		for k, tr in pairs(list) do
 			--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
@@ -672,6 +674,12 @@ function train.showAll()
 			end
 		end
 	end
+end
+
+function train.checkSelection()
+	x,y = love.mouse.getPosition()
+		-- love.graphics.scale(camZ)
+		-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 end
 
 return train

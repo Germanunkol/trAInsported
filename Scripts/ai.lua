@@ -80,17 +80,6 @@ function runAiFunctionCoroutine(f, ... )
 end
 
 
-function copyTable(tbl)
-	local newTbl = {}
-	for k, v in pairs(tbl) do
-		if type(v) == "tbl" then
-			newTbl[k] = copyTable(v)
-		else
-			newTbl[k] = v
-		end
-	end
-	return newTbl
-end
 
 function generateColour(name, brightness)
 	brightness = brightness or 1
@@ -123,7 +112,7 @@ function ai.new(scriptName)
 		if aiList[i] == nil then
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
-			aiList[i].name = scriptName
+			aiList[i].name = str.sub(scriptName, 4, #scriptName-4)
 			break
 		end
 	end
@@ -154,7 +143,7 @@ function ai.new(scriptName)
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
 	
 	s = scriptName:find("/")
-	aiList[aiID].colour = generateColour(scriptName:sub(s+1, #scriptName-4), 1)
+	aiList[aiID].colour = generateColour(aiList[aiID].name, 1)
 	print("colour", aiList[aiID].colour.r,aiList[aiID].colour.g,aiList[aiID].colour.b)
 	--printTable(aiList[aiID])
 end
@@ -171,7 +160,7 @@ function ai.init()
 		
 		print("--> ai.init")
 		local crInit = coroutine.create(runAiFunctionCoroutine)
-		ok, msg = coroutine.resume(crInit, aiList[aiID].init)
+		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
 		if not ok then print("NEW ERROR:", msg) end
 		if coroutine.status(crInit) ~= "dead" then
 			crInit = nil
@@ -181,15 +170,6 @@ function ai.init()
 		crInit = nil
 	end
 end
-
-
-
-
-
-
-
-
-
 
 
 

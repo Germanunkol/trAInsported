@@ -12,6 +12,7 @@ curNode: the node it last visited
 
 local train = {}
 
+local newTrainQueue = {}
 
 local train_mt = { __index = train }
 
@@ -39,6 +40,8 @@ function tint(col)
 end
 
 function train.init(col1, col2, col3, col4)
+
+	newTrainQueue = {}
 
 	trainList[1] = {}
 	trainList[2] = {}
@@ -109,6 +112,66 @@ function getTrainImage( aiID )
 	end
 end
 
+function train.buyNew(aiID)
+	return function (posX, posY, dir)
+		if type(posX) == "number" and type(posY) == "number" then
+			posX = math.floor(clamp(posX, 1, curMap.width))
+			posY = math.floor(clamp(posY, 1, curMap.height))
+			
+			if stats.getMoney(aiID) >= TRAIN_COST then
+				print("Bought new Train", aiID, posX, posY)
+				stats.subMoney(aiID, TRAIN_COST)
+				table.insert(newTrainQueue, {aiID=aiID, posX=posX, posY=posY, dir=dir})
+			end
+		else
+			print("Error: X and Y passed to 'buyTrain' must be numbers!")	-- will print inside the coroutine => ingame console
+		end
+	end
+end
+
+function train.handleNewTrains()		-- go through list of newly created trains and place them on the map!
+	if not curMap then return end
+	
+	for k, tr in pairs(newTrainQueue) do
+		if curMap[tr.posX][tr.posY] ~= "C" then
+			local foundX = nil
+			local foundY = nil
+			local dist = 1
+			
+			-- search for "C" around the given position. If not found, increase the radius (dist)
+			while (not foundX or not foundY) and dist < math.max(curMap.width, curMap.height) do
+				for i = -dist,dist do
+					for j = -dist,dist do
+						if tr.posX +i > 0 and tr.posY+j > 0 and tr.posX +i < curMap.width and tr.posY+j < curMap.width then
+							if curMap[tr.posX + i][tr.posY + j] == "C" then
+								foundX = tr.posX + i
+								foundY = tr.posY + j
+								break
+							end
+						end
+					end
+					if foundX and foundY then
+						break
+					end
+				end
+				dist = dist + 1
+			end
+			if not foundX or not foundY then
+				print("Error: could not find Rail to place train on!")
+				newTrainQueue[k] = nil
+			else
+				tr.posX = foundX
+				tr.posY = foundY
+			end
+		else
+			if not map.getIsTileOccupied(tr.posX, tr.posY) then
+				train:new( tr.aiID, tr.posX, tr.posY, tr.dir )
+				newTrainQueue[k] = nil	-- don't generate again!
+			end
+		end
+	end
+end
+
 function train:new( aiID, x, y, dir )
 	if curMap[x][y] ~= "C" then
 		error("Trying to place train on non-valid tile")
@@ -122,20 +185,45 @@ function train:new( aiID, x, y, dir )
 			
 			--print("Placing new train at:", x, y)
 			--print("\tHeading:", dir)
-			
+			path = nil
 			if dir == "N" then
-				path = map.getRailPath(x, y, dir)
+				if curMap[x][y-1] == "C" then
+					path = map.getRailPath(x, y, dir)
+				end
 			elseif dir == "S" then
-				path = map.getRailPath(x, y, dir)
+				if curMap[x][y+1] == "C" then
+					path = map.getRailPath(x, y, dir)
+				end
 			elseif dir == "E" then
-				path = map.getRailPath(x, y, dir)
-			else
-				path = map.getRailPath(x, y, dir)
+				if curMap[x+1][y] == "C" then
+					path = map.getRailPath(x, y, dir)
+				end
+			elseif dir == "W" then
+				if curMap[x-1][y] == "C" then
+					path = map.getRailPath(x, y, dir)
+				end
+			end
+			
+			if not path then
+				if curMap[x][y-1] == "C" then
+					path = map.getRailPath(x, y, "N")
+					dir = "N"
+				elseif curMap[x][y+1] == "C" then
+					path = map.getRailPath(x, y, "S")
+					dir = "S"
+				elseif curMap[x+1][y] == "C" then
+					path = map.getRailPath(x, y, "E")
+					dir = "E"
+				else
+					path = map.getRailPath(x, y, "W")
+					dir = "W"
+				end
+				
 			end
 			
 			trainList[aiID][i].tileX = x
 			trainList[aiID][i].tileY = y
-			-- map.setTileOccupied(x, y, nil, dir)
+			map.setTileOccupied(x, y, nil, dir)
 			
 			trainList[aiID][i].name = "train" .. i
 			trainList[aiID][i].timeBlocked = 0
@@ -660,14 +748,19 @@ function train.showAll()
 			love.graphics.setColor(255,255,255,255)
 			x = tr.tileX*TILE_SIZE + tr.x
 			y = tr.tileY*TILE_SIZE + tr.y
+			scale = 1
+			
+			if vecDist(x, y, mapMouseX, mapMouseY) < 20 then
+				scale = 3
+			end
 			
 			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, 1, 1, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+			love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
 			
 			love.graphics.setColor(255,255,255,255)
-			love.graphics.draw( tr.image, x, y, tr.smoothAngle, 1, 1, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+			love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
 			if tr.curPassenger then
-				love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, 1, 1, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
+				love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
 			end
 			--love.graphics.print( tr.name, x, y+30)
 			if tr.timeBlocked > 0 then

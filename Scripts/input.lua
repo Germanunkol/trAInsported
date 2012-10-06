@@ -41,6 +41,30 @@ function love.mousereleased()
 	panningView = false
 end
 
+
+function coordinatesToMap(x, y)
+	-- rotate:
+	--x, y = matrixMultiply({aa=math.cos(CAM_ANGLE), ab=-math.sin(CAM_ANGLE), ba = math.sin(CAM_ANGLE), bb = math.cos(CAM_ANGLE)},{x=x, y= y})
+	-- translate:
+	x, y = x - camX, y - camY
+	if curMap then x, y = x + (TILE_SIZE*(curMap.width+2) - love.graphics.getWidth())/2, y + (TILE_SIZE*(curMap.height+2) - love.graphics.getHeight())/2
+	if love.keyboard.isDown("6") then
+		factor = factor + love.timer.getDelta()
+		print(factor)
+	end
+	if love.keyboard.isDown("7") then
+		factor = factor - love.timer.getDelta()
+		print(factor)
+	end
+	
+	x = x + (x-TILE_SIZE*(curMap.width+2)/2)*(1-camZ)*factor
+	y = y + (y-TILE_SIZE*(curMap.height+2)/2)*(1-camZ)*factor
+	 end
+	-- scale:
+--	x, y = matrixMultiply({aa=camZ, ab=0, ba = 0, bb = camZ},{x=x, y= y})
+	return x, y
+end
+
 function love.keypressed(key, unicode)
 	if key == "f12" then
 		debug.debug()

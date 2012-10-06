@@ -30,6 +30,7 @@ function newMap(width, height, seed)
 	train.clear()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
+		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	
@@ -50,7 +51,7 @@ function runMap()
 		--passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
 		passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
 		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
-		populateMap()
+		--populateMap()
 		ai.init()
 		
 		clouds.restart()
@@ -185,7 +186,18 @@ end
 
 function map.getIsTileOccupied(x, y, f, t)
 	if not f or not t then
-		return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		if curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+		then
+			return true
+		end
+		
+		for k, v in pairs(curMapOccupiedExits[x][y]) do
+			if v then
+				return true
+			end
+		end
+		
+		return false
 	end
 	directionStr = f .. t
 	railType = getRailType(x,y)
@@ -314,14 +326,16 @@ end
 
 function map.setTileOccupied(x, y, f, t)
 	--print("Occupying: ", f, t)
-	if not f or not t then return end
-	if not curMapOccupiedTiles[x][y][f..t] then
-		curMapOccupiedTiles[x][y][f..t] = 1
-	else
-		curMapOccupiedTiles[x][y][f..t] = curMapOccupiedTiles[x][y][f..t]  + 1
+	if f and t then
+		if not curMapOccupiedTiles[x][y][f..t] then
+			curMapOccupiedTiles[x][y][f..t] = 1
+		else
+			curMapOccupiedTiles[x][y][f..t] = curMapOccupiedTiles[x][y][f..t]  + 1
+		end
 	end
-	
-	curMapOccupiedExits[x][y][t] = true
+	if t then
+		curMapOccupiedExits[x][y][t] = true
+	end
 	
 	-- if f then curMapOccupiedTiles[x][y].from[f] = true end
 	-- if t then curMapOccupiedTiles[x][y].to[t] = true end
@@ -340,6 +354,7 @@ function map.resetTileOccupied(x, y, f, t)
 end
 
 function map.resetTileExitOccupied(x, y, to)
+	print(x, y, to)
 	curMapOccupiedExits[x][y][to] = false
 end
 
@@ -1002,7 +1017,9 @@ end
 --		- passenger lost
 --------------------------------------------------------------
 
+-- make sure to reset these at round end!
 local passengerTimePassed = 10
+local newTrainQueueTime = 0
 
 function map.handleEvents(dt)
 
@@ -1011,6 +1028,12 @@ function map.handleEvents(dt)
 		passenger.new()
 		passengerTimePassed = passengerTimePassed - .1	-- to make sure it's the same on all platforms
 	end
+	
+	newTrainQueueTime = newTrainQueueTime + dt*timeFactor
+	if newTrainQueueTime >= .1 then
+		train.handleNewTrains()
+		newTrainQueueTime = newTrainQueueTime - .1
+	end
 end
 
 function map.endRound()
@@ -1018,6 +1041,7 @@ function map.endRound()
 	stats.print()
 	stats.generateStatWindows()
 	passengerTimePassed = 10
+	newTrainQueueTime = 0
 end
 
 

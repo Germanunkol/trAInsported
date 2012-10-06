@@ -20,6 +20,8 @@ loadingScreen = require("Scripts/loadingScreen")
 require("Scripts/globals")
 numTrains = 0
 
+factor = 3.25
+
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 14 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
@@ -41,7 +43,8 @@ mouseLastX = 0
 mouseLastY = 0
 MAX_PAN = 500
 camX, camY = 0,0
-camZ = 0.7
+camZ = 1
+mapMouseX, mapMouseY = 0,0
 
 timeFactor = 1
 curMap = false
@@ -64,13 +67,13 @@ end
 function finishStartupProcess()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
-	ok, msg = pcall(ai.new, "AI/ai1.lua")
+	ok, msg = pcall(ai.new, "AI/testAI1.lua")
 	if not ok then print("Err: " .. msg) end
-	ok, msg = pcall(ai.new, "AI/ai2.lua")
+	ok, msg = pcall(ai.new, "AI/testAI2.lua")
 	if not ok then print("Err: " .. msg) end
-	ok, msg = pcall(ai.new, "AI/ai3.lua")
+	ok, msg = pcall(ai.new, "AI/testAI3.lua")
 	if not ok then print("Err: " .. msg) end
-	ok, msg = pcall(ai.new, "AI/ai4.lua")
+	ok, msg = pcall(ai.new, "AI/testAI4.lua")
 	if not ok then print("Err: " .. msg) end
 
 	PLAYERCOLOUR1 = ai.getColour(1)
@@ -97,6 +100,9 @@ function love.update(dt)
 	-- ai.run()
 	-- time = time + dt
 	
+	mapMouseX, mapMouseY = coordinatesToMap(love.mouse.getPosition())
+			
+			
 	if initialising then
 		button.init()
 		msgBox.init()
@@ -112,7 +118,7 @@ function love.update(dt)
 	
 		button.calcMouseHover()
 		if mapImage then
-		
+			
 			map.handleEvents(dt)
 	
 			prevX = camX
@@ -186,8 +192,6 @@ function love.update(dt)
 end
 
 
-local camAngle = -0.1
-
 function love.draw()
 
 	if initialising then		--only runs once at startup, until all images are rendered.
@@ -202,13 +206,18 @@ function love.draw()
 		love.graphics.scale(camZ)
 		
 		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-		love.graphics.rotate(camAngle)
+		--love.graphics.rotate(CAM_ANGLE)
 		love.graphics.setColor(34,10,10, 105)
 		love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-100,-TILE_SIZE*(curMap.height+2)/2-100, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		
+		
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+		
+		
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
 		
 		train.showAll()
 		passenger.showAll(dt)
@@ -226,12 +235,15 @@ function love.draw()
 		--love.graphics.setColor(255,255,255, 50)
 		--love.graphics.draw(cl, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
 		
+		--if love.mouse.isDown("l") then
+		--end
+		
 		love.graphics.pop()
 		love.graphics.push()
 		love.graphics.scale(camZ*1.5)
 		
 		love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
-		love.graphics.rotate(camAngle)
+		love.graphics.rotate(CAM_ANGLE)
 		love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 		--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
@@ -248,6 +260,13 @@ function love.draw()
 		loadingScreen.render()
 	end
 	
+	--love.graphics.setColor(255,255,255,50)
+	--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
+	love.graphics.print("mouse x " .. mapMouseX, 10, 200)
+	love.graphics.print("mouse y " .. mapMouseY, 10, 220)
+	love.graphics.print("normal mouse x " .. love.mouse.getX(), 10, 240)
+	love.graphics.print("normal mouse y " .. love.mouse.getY(), 10, 260)
+	
 	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
 	msgBox.show()
 	button.show()
@@ -259,10 +278,12 @@ function love.draw()
 		love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
 		love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
 		love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)
-		love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,65)
-		love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,80)
-		love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,95)
-		if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,110) end
+		love.graphics.print('Z ' .. camZ, love.graphics.getWidth()-150,65)
+		love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,80)
+		love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,95)
+		love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,110)
+		if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,125) end
+		love.graphics.print('factor ' .. factor, love.graphics.getWidth()-150,140)
 	end
 	
 end

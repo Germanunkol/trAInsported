@@ -46,6 +46,18 @@ function getScreenshot()
 	screen:encode(fileName)
 end
 
+function copyTable(tbl)
+	local newTbl = {}
+	for k, v in pairs(tbl) do
+		if type(v) == "tbl" then
+			newTbl[k] = copyTable(v)
+		else
+			newTbl[k] = v
+		end
+	end
+	return newTbl
+end
+
 function printTable(table, lvl)
 	lvl = lvl or 0
 	if lvl > 10 then print("Maximum Level Depth reached")
@@ -62,4 +74,23 @@ function printTable(table, lvl)
 			end
 		end
 	end
+end
+
+function readOnlyTable(table)
+   return setmetatable({}, {
+     __index = table,
+     __newindex = function(table, key, value)
+                    error("Attempt to modify read-only table")
+                  end,
+     __metatable = false
+   });
+end
+
+
+function matrixMultiply(mat, vec)
+	return mat.aa*vec.x + mat.ab*vec.y, mat.ba*vec.x + mat.bb*vec.y
+end
+
+function vecDist(x1,y1,x2,y2)
+	return math.sqrt((x1-x2)^2 + (y1-y2)^2)
 end

@@ -26,16 +26,18 @@ To do for trAInsported:
 - Automatically replace windows line endings with unix line breaks.
 
 **Game**
--	Add VIPs
+[x]	Add VIPs
 [x]	Add Hotspots
 - Randomize order in which players get to move
 - Beautify rails	(shadows?), increase # of waypoints
 - buy new trains
-- rework train movement: make it pixel-independet and make it work with percentages.
+[x] rework train movement: make it pixel-independet and make it work with percentages.
 
 **Visual**
-- clouds, trees, water
-- rework all visuals
+[x]	clouds
+-	trees, water
+[x]	rework all visuals
+- Urban setting
 
 **Misc**
 - Add tipps

@@ -137,9 +137,9 @@ function passenger.leaveTrain(aiID)
 				
 				stats.broughtToDestination( aiID, tr.ID, tr.curPassenger.vip )
 				if tr.curPassenger.vip == true and tr.curPassenger.vipTime > 0 then
-					stats.addCash( aiID, MONEY_VIP )
+					stats.addMoney( aiID, MONEY_VIP )
 				else
-					stats.addCash( aiID, MONEY_PASSENGER )
+					stats.addMoney( aiID, MONEY_PASSENGER )
 				end
 				
 				numPassengersDroppedOff = numPassengersDroppedOff + 1

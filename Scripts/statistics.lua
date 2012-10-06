@@ -2,9 +2,6 @@ local statistics = {}
 
 local aiStats = {}
 
-MONEY_PASSENGER = 5
-MONEY_VIP = 15
-
 local BOX_WIDTH = 350
 local BOX_HEIGHT = 95
 
@@ -29,9 +26,10 @@ function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID].timeBlocked = 0
 	aiStats[aiID].trains[train.ID].pNormal = 0
 	aiStats[aiID].trains[train.ID].pVIP = 0
+	aiStats[aiID].numTrains = aiStats[aiID].numTrains + 1
 end
 
-function statistics.addCash( aiID, money )
+function statistics.addMoney( aiID, money )
 	aiStats[aiID].money = aiStats[aiID].money + money
 	aiStats[aiID].moneyEarnedTotal = aiStats[aiID].moneyEarnedTotal + money
 	if aiStats[aiID].money >= TRAIN_COST then
@@ -39,12 +37,20 @@ function statistics.addCash( aiID, money )
 	end
 end
 
-function statistics.subCash( aiID, money )
+function statistics.subMoney( aiID, money )
 	if aiStats[aiID].money >= money then
 		aiStats[aiID].money = aiStats[aiID].money - money
 		return true
 	else
 		return false
+	end
+end
+
+function statistics.getMoney( aiID )
+	if aiStats[aiID] then
+		return aiStats[aiID].money
+	else
+		return 0
 	end
 end
 
@@ -198,6 +204,9 @@ function statistics.generateStatWindows()
 	-- ai: most normal transported
 	local mostNormalTransported = 0
 	local mostNormalTransportedID = nil
+	-- ai: largest number of trains:
+	local mostTrains = 0
+	local mostTrainsID = nil
 	
 	-- train: most passengers picked up:
 	local trMostPickedUp = 0
@@ -252,6 +261,13 @@ function statistics.generateStatWindows()
 			end
 			mostNormalTransported = aiStats[i].pNormal
 		end
+		if aiStats[i].numTrains and aiStats[i].numTrains >= mostTrains then
+			mostTrainsID = i
+			if mostTrains == aiStats[i].numTrains then
+				mostTrainsID = nil
+			end
+			mostTrains = aiStats[i].numTrains
+		end
 		
 		for k, tr in pairs(aiStats[i].trains) do
 			if tr.pPickedUp and tr.pPickedUp >= trMostPickedUp then
@@ -303,6 +319,17 @@ function statistics.generateStatWindows()
 		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 		addStatWindow({title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
+	end
+	if mostTrainsID then
+		if mostTrains ~= 1 then
+			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostPickedUp .. " trains."
+		else
+			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostPickedUp .. " train."
+		end
+		icons = {}
+		table.insert(icons, {img=getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
+		addStatWindow({title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTransportedID then
 		icons = {}
@@ -434,6 +461,7 @@ function statistics.start( ais )
 		aiStats[i].name = "default"
 		aiStats[i].pNormal = 0
 		aiStats[i].pVIP = 0
+		aiStats[i].numTrains = 0
 	end
 end
 

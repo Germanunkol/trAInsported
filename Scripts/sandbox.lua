@@ -18,6 +18,7 @@ function restrictAITable(table)
    });
 end
 ]]--
+
 local function safeprint(aiID)
 	return function (...)
 		str = "[" .. ai.getName(aiID) .. "]"
@@ -52,6 +53,7 @@ function sandbox.createNew(aiID)
 
 	sb.random = math.random
 	sb.dropPassenger = passenger.leaveTrain(aiID)
+	sb.buyTrain = train.buyNew(aiID)
 	return sb
 end
 

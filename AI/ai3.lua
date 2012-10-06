@@ -5,6 +5,11 @@ function ai.lol()
 	a = math.random()
 end
 
+function ai.enoughMoney()
+	print("yay!!!")
+end
+
+
 function printTable(table, lvl)
 	if not type(table) == "table" then
 		print("not a table!")

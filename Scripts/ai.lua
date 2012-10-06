@@ -7,7 +7,8 @@ local aiUserData = {		--default fallbacks in case a function is not created by t
 	chooseDirection = function () print("No valid \"ai.chooseDirection\" function found. Using fallback.") end,
 	blocked = function () print("No valid \"ai.blocked\" function found. Using fallback.") end,
 	foundPassengers = function () print("Implement a function \"ai.foundPassengers\" if you want to pick up passengers!") end,
-	foundDestination = function () print("Implement a function \"ai.foundDestination\" if you want to earn money!") end
+	foundDestination = function () print("Implement a function \"ai.foundDestination\" if you want to earn money!") end,
+	enoughMoney = function () print("Implement a function \"ai.enoughMoney\" if you want to get notifications when you have enough money to buy a new train!") end
 }
 
 local sandbox = require("Scripts/sandbox")
@@ -150,6 +151,7 @@ function ai.new(scriptName)
 	aiList[aiID].newPassenger = sb.ai.newPassenger
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
+	aiList[aiID].enoughMoney = sb.ai.enoughMoney
 	
 	s = scriptName:find("/")
 	aiList[aiID].colour = generateColour(scriptName:sub(s+1, #scriptName-4), 1)
@@ -206,7 +208,7 @@ function ai.chooseDirection(train, possibleDirs)
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].chooseDirection, tr, dirs)
 			if not ok or coroutine.status(cr) ~= "dead" then
-				console.add(aiList[aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
+				console.add(aiList[train.aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".chooseDirection()")
 			end
 		end
@@ -312,6 +314,25 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
 			end
+		end
+	end
+end
+
+function ai.enoughMoney(aiID, cash)
+	print("enough money", aiID, cash)
+	local result = nil
+	if aiList[aiID] then
+		print("enough money 2")
+		if aiList[aiID].enoughMoney then
+			print("enough money 3")
+			local cr = coroutine.create(runAiFunctionCoroutine)
+			
+			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, cash)
+			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})
+				print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".enoughMoney()")
+			end
+		print("enough money 4")
 		end
 	end
 end

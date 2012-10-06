@@ -39,6 +39,8 @@ end
 
 function sandbox.createNew(aiID)
 	sb = {}
+	
+	-- list of all functions which the AI is allowed to use:
 	sb.pairs = pairs
 	sb.ipairs = ipairs
 	sb.table = table

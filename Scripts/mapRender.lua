@@ -223,6 +223,7 @@ if curMap then
 	thisThread:set("groundData", groundData)
 	thisThread:set("shadowData", shadowData)
 	thisThread:set("objectData", objectData)
+	thisThread:set("highlightList", TSerial.pack(highlightList))
 	
 	thisThread:set("status", "done")
 	--[[for i = 0,curMap.height+1,1 do

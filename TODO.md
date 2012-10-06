@@ -26,8 +26,8 @@ To do for trAInsported:
 - Automatically replace windows line endings with unix line breaks.
 
 **Game**
-- Add VIPs
-- Add Hotspots
+-	Add VIPs
+[x]	Add Hotspots
 - Randomize order in which players get to move
 - Beautify rails	(shadows?), increase # of waypoints
 - buy new trains

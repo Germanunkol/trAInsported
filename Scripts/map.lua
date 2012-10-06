@@ -967,6 +967,7 @@ function map.render()
 			groundData = mapRenderThread:get("groundData")
 			shadowData = mapRenderThread:get("shadowData")
 			objectData = mapRenderThread:get("objectData")
+			highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
 
 			for i = 1,20 do
 				highlightListQuads[i] = love.graphics.newQuad( (i-1)*22, 0, 22, 21, 440, 21 )

@@ -47,6 +47,11 @@ if lvl > 2 then return end
 	end
 end
 
+function ai.enoughMoney()
+	print("yay!!!")
+end
+
+
 function chooseSmart(train, possibleDirections)
 	if train.passenger then
 		print("train.passenger destination:", rememberPassengers[train.passenger].destX, rememberPassengers[train.passenger].destY)

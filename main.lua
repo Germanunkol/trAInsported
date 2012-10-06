@@ -17,6 +17,7 @@ passenger = require("Scripts/passenger")
 stats = require("Scripts/statistics")
 clouds = require("Scripts/clouds")
 loadingScreen = require("Scripts/loadingScreen")
+require("Scripts/globals")
 numTrains = 0
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )

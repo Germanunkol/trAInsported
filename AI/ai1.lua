@@ -72,6 +72,10 @@ function chooseSmart(train, possibleDirections)
 	end
 end
 
+function ai.enoughMoney()
+	print("yay!!!")
+end
+
 function chooseRandom(train, possibleDirections)
 	tbl = {}
 	if possibleDirections["N"] then

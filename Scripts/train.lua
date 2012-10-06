@@ -12,6 +12,7 @@ curNode: the node it last visited
 
 local train = {}
 
+
 local train_mt = { __index = train }
 
 local trainList = {}

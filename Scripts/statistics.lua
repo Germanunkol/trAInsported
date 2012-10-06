@@ -34,6 +34,9 @@ end
 function statistics.addCash( aiID, money )
 	aiStats[aiID].money = aiStats[aiID].money + money
 	aiStats[aiID].moneyEarnedTotal = aiStats[aiID].moneyEarnedTotal + money
+	if aiStats[aiID].money >= TRAIN_COST then
+		ai.enoughMoney(aiID, aiStats[aiID].money)
+	end
 end
 
 function statistics.subCash( aiID, money )
@@ -422,7 +425,7 @@ function statistics.start( ais )
 	passengerStats = {}
 	for i = 1,ais do
 		aiStats[i] = {}
-		aiStats[i].money = 0
+		aiStats[i].money = STARTUP_MONEY
 		aiStats[i].moneyEarnedTotal = 0
 		aiStats[i].pPickedUp = 0		-- number of passengers which were picked up
 		aiStats[i].pDroppedOff = 0	-- number of passengers dropped off

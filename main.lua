@@ -9,6 +9,7 @@ quickHelp = require("Scripts/quickHelp")
 button = require("Scripts/button")
 menu = require("Scripts/menu")
 msgBox = require("Scripts/msgBox")
+tutorialBox = require("Scripts/tutorialBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
 functionQueue = require("Scripts/functionQueue")
@@ -90,7 +91,8 @@ function love.update(dt)
 		loadingScreen.init()
 		quickHelp.init()
 		stats.init()
-		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() then
+		tutorialBox.init()
+		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() then
 			initialising = false
 			finishStartupProcess()
 		end
@@ -273,7 +275,11 @@ function love.draw()
 	]]--
 	
 	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
-	msgBox.show()
+	if msgBox.isVisible() then
+		msgBox.show()
+	else
+		tutorialBox.show()
+	end
 	button.show()
 	menu.render()
 	

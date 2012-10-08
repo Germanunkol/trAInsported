@@ -41,6 +41,9 @@ function quickHelp.toggle()
 		showQuickHelp = false
 	else
 		showQuickHelp = true
+		if tutorial.f1Event then
+			tutorial.f1Event()
+		end
 	end
 end
 

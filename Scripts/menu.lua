@@ -149,7 +149,7 @@ function menu.init(menuX, menuY)
 	menu.removeAll()
 	x = defaultMenuX
 	y = defaultMenuY
-	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", nil, nil)
+	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil)
 	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "New", menu.newRound, nil)
 	y = y + 45
@@ -161,6 +161,10 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	
 	trainImagesCreated = false
+	
+	--reset tutorial:
+	tutorial = {}
+	tutorialBox.clearAll()
 end
 
 
@@ -417,9 +421,53 @@ end
 --		TUTORIAL MENU:
 --------------------------------------------------------------
 
-function menu.tutorials()
-
+local function alphabetical(a, b)
+	print(a,b)
+	if a < b then return true end
 end
+
+function findTutorialFiles()
+	local files = love.filesystem.enumerate("Tutorials")		-- load AI subdirector
+	local foundFiles = {}
+	for k, file in ipairs(files) do
+		s, e = file:find(".lua")
+		if e == #file then
+			print("Tutorial found: " .. k .. ". " .. file)
+			table.insert(foundFiles, file)
+		end
+	end
+	
+--	table.sort(files, alphabetical)
+	return foundFiles
+end
+
+
+function executeTutorial(fileName)
+	tutorialData = love.filesystem.load("Tutorials/" .. fileName)
+	local result = tutorialData() -- execute the chunk
+	tutorial.start()
+end
+
+function menu.tutorials()
+	menu.removeAll()
+	x = defaultMenuX
+	y = defaultMenuY
+	
+	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
+	y = y + 60
+	tutFiles = findTutorialFiles()
+	for i = 1, #tutFiles do
+		if tutFiles[i] then
+		menuButtons[i] = button:new(x, y, tutFiles[i]:sub(1, #tutFiles[i]-4), executeTutorial, tutFiles[i])
+		end
+		y = y + 45
+	end
+end
+
+
+--------------------------------------------------------------
+--		ETC:
+--------------------------------------------------------------
 
 function quitRound()
 	map.endRound()

@@ -125,8 +125,8 @@ end
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
-		print("Initialising AI:", aiID, aiList[aiID].name)
-		
+		print("Initialising AI:", "ID: " .. aiID, "Name: " .. aiList[aiID].name)
+		if aiList[aiID].init then
 		local crInit = coroutine.create(runAiFunctionCoroutine)
 		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
 		if not ok then print("NEW ERROR:", msg) end
@@ -134,6 +134,9 @@ function ai.init()
 			crInit = nil
 			console.add(aiList[aiID].name .. ": Stopped function: ai.init()", {r = 255,g=50,b=50})
 			print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
+		end
+		else
+			print("\tNo ai.init() function found for this AI")
 		end
 		crInit = nil
 	end
@@ -297,16 +300,41 @@ function ai.getName(ID)
 end
 
 function ai.findAvailableAIs()
-	local files = love.filesystem.enumerate("AI")		-- load AI subdirector
+	local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
 	for k, file in ipairs(files) do
-		s, e = file:find(".lua")
-		if e == #file then
-			print(k .. ". " .. file)
-		else
+		if file:find("Backup.lua") then
 			files[k] = nil
+		else
+			s, e = file:find(".lua")
+			if e == #file then
+				print("AI found: " .. k .. ". " .. file)
+			else
+				files[k] = nil
+			end
 		end
 	end
 	return files
 end
-	
+
+function ai.backupTutorialAI( fileName )
+	if love.filesystem.exists( "AI/" .. fileName ) then
+		contents = love.filesystem.read( "AI/" .. fileName )
+		love.filesystem.remove( "AI/" .. fileName )
+		
+		file = io.open("AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua","w")
+
+		file:write(contents)
+		file:close()
+		os.remove("AI/" .. fileName)
+	end
+end
+
+function ai.createNewTutAI( fileName, fileContent)
+	ai.backupTutorialAI( fileName )
+	file = io.open("AI/" .. fileName, "w")
+	if file then
+		file:write(fileContent)
+		file:close()
+	end
+end
 return ai

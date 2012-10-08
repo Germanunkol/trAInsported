@@ -27,11 +27,14 @@ function map.startupProcess()
 	end
 end
 
-function map.new(width, height, seed)
+function map.new(width, height, seed, tutorialMap)
 	if mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
 	end
+	
+	seed = seed or 1
+	
 	newMapStarting = true
 	mapRenderPercent = nil
 	mapGeneratePercent = nil
@@ -44,13 +47,13 @@ function map.new(width, height, seed)
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	
 	
-	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000)
+	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000, tutorialMap)
 	--map.generate(5,5,2)
 	
 end
 
 -- called when map has been generated and rendered
-function runMap()
+function runMap(restart)
 	newMapStarting = false
 	if curMap then
 		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
@@ -71,6 +74,13 @@ function runMap()
 		roundEnded = false
 		
 		menu.ingame()
+		
+		
+		
+		-- If there's a tutorial callback registered by the current map, then start that now!
+		if not restart and tutorial and tutorial.mapRenderingDoneCallback then
+			tutorial.mapRenderingDoneCallback()
+		end
 		
 	else
 		print("ERROR: NO MAP FOUND!")
@@ -99,7 +109,7 @@ function map.restart()
 		end
 	end
 	
-	runMap()	-- re-initialise map
+	runMap(true)	-- re-initialise map
 end
 
 function clearAllOccupations()
@@ -109,7 +119,7 @@ function clearAllOccupations()
 	for i = 1,curMap.width do
 		curMapOccupiedTiles[i] = {}
 		curMapOccupiedExits[i] = {}
-		for j = 1, height do
+		for j = 1, curMap.height do
 			curMapOccupiedTiles[i][j] = {}
 			curMapOccupiedTiles[i][j].from = {}
 			curMapOccupiedTiles[i][j].to = {}
@@ -155,7 +165,7 @@ end
 local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
-function map.generate(width, height, seed)
+function map.generate(width, height, seed, tutorialMap)
 	if not mapGenerateThread then
 	
 		mapImage,mapShadowImage,mapObjectImage = nil,nil,nil
@@ -179,7 +189,7 @@ function map.generate(width, height, seed)
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
 		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
 		mapGenerateThread:start()
-		
+		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
 		mapGenerateThread:set("width", width )
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
@@ -1015,7 +1025,7 @@ function map.render()
 		mapRenderThread = love.thread.newThread("mapRenderingThread" ..mapRenderThreadNumber, "Scripts/mapRender.lua")
 		mapRenderThreadNumber = mapRenderThreadNumber + 1
 		mapRenderThread:start()
-		mapRenderThread:set("curMap", TSerial.pack(curMap) )
+		mapRenderThread:set("curMap", TSerial.pack( curMap) )
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
 		loadingScreen.addSection("Rendering Map")
@@ -1075,24 +1085,28 @@ local newTrainQueueTime = 0
 
 function map.handleEvents(dt)
 
-	passengerTimePassed = passengerTimePassed - dt*timeFactor
-	if passengerTimePassed <= 0 then
-		passenger.new()
-		passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
-	end
+	if tutorial and tutorial.handleEvents then
+		tutorial.handleEvents()
+	else
+		passengerTimePassed = passengerTimePassed - dt*timeFactor
+		if passengerTimePassed <= 0 then
+			passenger.new()
+			passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
+		end
 	
-	newTrainQueueTime = newTrainQueueTime + dt*timeFactor
-	if newTrainQueueTime >= .1 then
-		train.handleNewTrains()
-		newTrainQueueTime = newTrainQueueTime - .1
-	end
+		newTrainQueueTime = newTrainQueueTime + dt*timeFactor
+		if newTrainQueueTime >= .1 then
+			train.handleNewTrains()
+			newTrainQueueTime = newTrainQueueTime - .1
+		end
 	
-	if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-		map.endRound()
-	end
-	 
-	if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
-		map.endRound()
+		if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+			map.endRound()
+		end
+		 
+		if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
+			map.endRound()
+		end
 	end
 end
 

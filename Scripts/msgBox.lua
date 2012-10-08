@@ -36,11 +36,11 @@ end
 
 function msgBox:new(x, y, msg, ... )
 	text = wrap(msg, msgBoxBG:getWidth()-30, FONT_BUTTON)
-	height = #text*FONT_BUTTON:getHeight()
+	
 	for i=1,#msgBoxList+1,1 do
 		if not msgBoxList[i] then
-			--local bgImage = createMsgBoxBG(width, height + STND_BUTTON_HEIGHT + 35, text)
-			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), text=msg, bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)
+		
+			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
@@ -59,8 +59,8 @@ end
 
 function msgBox:remove()
 	b = box or self
-	for i = 1, #self.buttons,1 do
-		self.buttons[i]:remove()
+	for i = 1, #b.buttons,1 do
+		b.buttons[i]:remove()
 	end
 	msgBoxList[b.index] = nil
 	return nil

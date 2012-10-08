@@ -249,11 +249,11 @@ end
 
 
 function placeHouses()
-	for i = 1, curMap.width do
-		for j = 1, curMap.height do
+	for i = 0, curMap.width+1 do
+		for j = 0, curMap.height+1 do
 			if curMap[i][j] == nil then
-				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
-					if math.random(3) == 1 then curMap[i][j] = "H" end
+				if (curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if math.random(2) == 1 then curMap[i][j] = "H" end
 				end
 			end
 		end

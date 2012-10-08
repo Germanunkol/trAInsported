@@ -1,6 +1,6 @@
 local ai = {}
 
-local aiList = {}		-- holds all the ai functions/events
+aiList = {}		-- holds all the ai functions/events
 
 local aiUserData = {		--default fallbacks in case a function is not created by the User's AI script.
 	init = function () print("No ai.init() function found.") end,
@@ -16,8 +16,6 @@ local sandbox = require("Scripts/sandbox")
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 10000
 local MAX_LINES_EXECUTING = 10000
-
-aisOnMap = 0
 
 local coLoad = nil
 linesUsed = 0
@@ -82,25 +80,6 @@ function runAiFunctionCoroutine(f, ... )
 end
 
 
-
-function generateColour(name, brightness)
-	brightness = brightness or 1
-	sum = 0
-	for i = 1,#name do
-		sum = sum + name:byte(i,i)
-	end
-	_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
-	__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
-	___ = vonNeumannRandom(__)		--discard first number, it's usually too similar.
-	red = vonNeumannRandom(___)
-	green = vonNeumannRandom(red)
-	blue = vonNeumannRandom(green)
-	red = cycle(red, 0, 255)
-	blue = cycle(blue, 0, 255)
-	green = cycle(green, 0, 255)
-	return {r=clamp(red*brightness, 0, 255), g=clamp(green*brightness, 0, 255), b=clamp(blue*brightness, 0, 255)}
-end
-
 function ai.new(scriptName)
 	print("Opening: " .. scriptName)
 	local ok, chunk = pcall(love.filesystem.read, scriptName )
@@ -119,12 +98,10 @@ function ai.new(scriptName)
 		end
 	end
 	
+	
 	--set up the ai which the user's script will have access to:
 	sb = sandbox.createNew(aiID)
 	sb.ai = {}
-	--sb.ai = restrictAITable(aiList[aiID])
-	print("first print", aiID)
-	--printTable(sb)
 	
 	--this first coroutine compiles and runs the source code of the user's AI script:
 	local crLoad = coroutine.create(safelyLoadAI)
@@ -143,22 +120,12 @@ function ai.new(scriptName)
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
-	
-	s = scriptName:find("/")
-	aiList[aiID].colour = generateColour(aiList[aiID].name, 1)
-	print("colour", aiList[aiID].colour.r,aiList[aiID].colour.g,aiList[aiID].colour.b)
-	--printTable(aiList[aiID])
-end
-
-function ai.getColour(aiID)
-	if not aiList[aiID] then return end
-	return aiList[aiID].colour
 end
 
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
-		print("Initializing AI:", aiID, aiList[aiID].name)
+		print("Initialising AI:", aiID, aiList[aiID].name)
 		
 		local crInit = coroutine.create(runAiFunctionCoroutine)
 		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
@@ -172,7 +139,14 @@ function ai.init()
 	end
 end
 
-
+function ai.restart()
+	aiNames = {}
+	for i = 1, #aiList do
+		aiNames[i] = aiList[i].name
+		aiList[i] = nil
+	end
+	return aiNames
+end
 
 function ai.chooseDirection(train, possibleDirs)
 	--print("choosing dir:", train.aiID)

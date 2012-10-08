@@ -1,4 +1,3 @@
-
 require("Scripts/TSerial")
 ai = require("Scripts/ai")
 console = require("Scripts/console")
@@ -152,19 +151,34 @@ function love.update(dt)
 				camX = clamp(camX + floatPanX*dt, -MAX_PAN, MAX_PAN)
 				camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
 			end
-		elseif mapGenerateThread then
-			err = mapGenerateThread:get("error")
-			if err then
-				print("Error in thread", err)
+		elseif map.startupProcess() then
+			if mapGenerateThread then
+				err = mapGenerateThread:get("error")
+				if err then
+					print("Error in thread", err)
+				end
+				curMap = map.generate()
+			elseif mapRenderThread then
+				err = mapRenderThread:get("error")
+				if err then
+					print("Error in thread", err)
+				end
+				mapImage,mapShadowImage,mapObjectImage = map.render()
 			end
-			curMap = map.generate()
-		elseif mapRenderThread then
-			err = mapRenderThread:get("error")
-			if err then
-				print("Error in thread", err)
+			if train.isRenderingImages() then
+				train.renderTrainImage()
 			end
-			mapImage,mapShadowImage,mapObjectImage = map.render()
+			
+			if not train.isRenderingImages() and not mapGenerateThread and not mapRenderThread then	-- done rendering everything!
+				runMap()	-- start the map!
+			end
+		else
+			if menu.isRenderingImages() then
+				menu.renderTrainImages()
+			end
 		end
+		
+		
 	
 		if not roundEnded then
 			train.moveAll()
@@ -208,6 +222,7 @@ function love.draw()
 		
 		passenger.showAll(passedTime)
 		train.showAll()
+		passenger.showVIPs(passedTime)
 		
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.draw(mapShadowImage, 0,0)	
@@ -243,9 +258,10 @@ function love.draw()
 		if showQuickHelp then quickHelp.show() end
 		if showConsole then console.show() end
 		
-	elseif mapGenerateThread or mapRenderThread then
+	elseif mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
 		loadingScreen.render()
 	end
+
 	
 	--love.graphics.setColor(255,255,255,50)
 	--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)

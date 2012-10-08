@@ -109,6 +109,10 @@ function loadingScreen.render()
 			end
 		end
 	end
+	
+	--if trainGenerateThreads > 0 then
+	
+	--end
 end
 
 local bgBoxThread

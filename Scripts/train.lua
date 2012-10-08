@@ -18,10 +18,13 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-
-trainImage = love.image.newImageData("Images/Train1.png")
-trainImageLower = love.image.newImageData("Images/Train1Lower.png")
 trainImageBorder = love.graphics.newImage("Images/Train1Boarded.png")
+
+local trainImages = {}
+local trainImageThreads = {}
+local numTrainImageThreads = 0
+local totalNumImageThreads = 0
+
 --[[
 trainImagePlayer1
 trainImagePlayer2
@@ -37,12 +40,7 @@ function tint(col)
 	end
 end
 
-function train.init(col1, col2, col3, col4)
-
-	col1 = col1 or {r=0,g=0,b=0}
-	col2 = col2 or {r=0,g=0,b=0}
-	col3 = col3 or {r=0,g=0,b=0}
-	col4 = col4 or {r=0,g=0,b=0}
+function train.init()
 	
 	newTrainQueue = {}
 
@@ -50,7 +48,13 @@ function train.init(col1, col2, col3, col4)
 	trainList[2] = {}
 	trainList[3] = {}
 	trainList[4] = {}
+	
+	trainImageThreads = {}
+	numTrainImageThreads = 0
+	
+	blockedTrains = {}
 
+	--[[
 	trainImagePlayer1d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	trainImagePlayer2d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	trainImagePlayer3d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
@@ -62,11 +66,6 @@ function train.init(col1, col2, col3, col4)
 	trainImagePlayer3dLower = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	trainImagePlayer4dLower = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 	
-	--[[trainImagePlayer1d:mapPixel(tint(col1))
-	trainImagePlayer2d:mapPixel(tint(col2))
-	trainImagePlayer3d:mapPixel(tint(col3))
-	trainImagePlayer4d:mapPixel(tint(col4))
-	]]--
 	
 	
 	for i=0,trainImage:getWidth()-1 do
@@ -105,18 +104,65 @@ function train.init(col1, col2, col3, col4)
 	trainImagePlayer2 = love.graphics.newImage(trainImagePlayer2d)
 	trainImagePlayer3 = love.graphics.newImage(trainImagePlayer3d)
 	trainImagePlayer4 = love.graphics.newImage(trainImagePlayer4d)
+	]]--
 end
 
-function getTrainImage( aiID )
-	if aiID == 1 then return trainImagePlayer1
-	elseif aiID == 2 then return trainImagePlayer2
-	elseif aiID == 3 then return trainImagePlayer3
-	else return trainImagePlayer4
+function train.resetImages()
+	trainImages = {}
+end
+
+function train.setTrainImage( img, ID )
+	trainImages[ID] = img
+end
+
+function train.getTrainImage( ID )
+	return trainImages[ID]
+end
+
+function train.renderTrainImage( name, ID )
+	if name and ID then
+		print("starting thread...train.renderTrainImage", name .. ".lua")
+		col = generateColour(name .. ".lua", 1)
+		trainImageThreads[ID] = love.thread.newThread("traimImageThread" .. totalNumImageThreads, "Scripts/renderTrainImage.lua")
+		totalNumImageThreads = totalNumImageThreads + 1
+		trainImageThreads[ID]:start()
+		trainImageThreads[ID]:set("seed", name .. ".lua")
+		trainImageThreads[ID]:set("colour", TSerial.pack(col))
+		numTrainImageThreads = numTrainImageThreads + 1
+	else
+		for k, t in pairs(trainImageThreads) do
+			status = t:get("status")
+			err = t:get("error")
+			if err then
+				print("Error in train image thread:" .. err)
+				trainImageThreads[k] = nil
+			end
+			if status == "done" then
+				print("Rendered train image:", k)
+				img = t:get("image")
+				if img then
+					trainImages[k] = love.graphics.newImage(img)
+				else
+					print("Error rendering train image!")
+				end
+				trainImageThreads[k] = nil
+				numTrainImageThreads = numTrainImageThreads - 1
+			elseif status then
+				print("Image Thread:", status)
+			end
+		end
+	end
+end
+
+function train.isRenderingImages()
+	if numTrainImageThreads > 0 then
+		return true
 	end
 end
 
 function train.buyNew(aiID)
 	return function (posX, posY, dir)
+		print("ATTEMPT TO BUY NEW TRAIN", aiID, posX, posY, dir)
 		if type(posX) == "number" and type(posY) == "number" then
 			posX = math.floor(clamp(posX, 1, curMap.width))
 			posY = math.floor(clamp(posY, 1, curMap.height))
@@ -186,7 +232,7 @@ function train:new( aiID, x, y, dir )
 		if not trainList[aiID][i] then
 			--local imageOff = createButtonOff(width, height, label)
 			--local imageOver = createButtonOver(width, height, label)
-			local image = getTrainImage( aiID )
+			local image = trainImages[aiID]
 			trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, button_mt)
 			
 			--print("Placing new train at:", x, y)
@@ -726,16 +772,6 @@ function train.moveAll()
 	end
 end
 
-
-function train.clear()
-	blockedTrains = {}
-	trainList[1] = {}
-	trainList[2] = {}
-	trainList[3] = {}
-	trainList[4] = {}
-end
-
-
 function train.showAll()
 
 	love.graphics.setFont(FONT_CONSOLE)
@@ -786,5 +822,6 @@ function train.checkSelection()
 		-- love.graphics.scale(camZ)
 		-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 end
+
 
 return train

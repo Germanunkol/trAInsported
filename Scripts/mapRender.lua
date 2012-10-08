@@ -147,6 +147,11 @@ if curMap then
 			if curMap[i][j] == "H" then
 				randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
 				houseType = math.random(4)
+				
+				file = love.filesystem.newFile("log.txt")
+				file:open('a')
+				file:write( "house\n")
+				file:close()
 				if houseType == 1 then
 					transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
 					transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )

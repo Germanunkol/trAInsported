@@ -33,6 +33,17 @@ To do for trAInsported:
 - buy new trains
 [x] rework train movement: make it pixel-independet and make it work with percentages.
 
+**Tutorial**
+tut 1: 
+- Controls
+- Init game, print
+- Placing train
+tut 2:
+- Picking up passenger
+- Letting passenger get off
+- Multiple Passengers
+
+
 **Visual**
 [x]	clouds
 -	trees, water
@@ -42,3 +53,4 @@ To do for trAInsported:
 **Misc**
 - Add tipps
 - No guarantee that game's outcome is always the same...
+- Statu message box

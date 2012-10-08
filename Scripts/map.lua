@@ -13,40 +13,53 @@ IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
 
 local status = nil
 
+local mapSeed = 0
+
 --------------------------------------------------------------
 --		INITIALISE MAP:
 --------------------------------------------------------------
 
-function newMap(width, height, seed)
+local newMapStarting = false
+
+function map.startupProcess()
+	if newMapStarting == true then
+		return true
+	end
+end
+
+function map.new(width, height, seed)
 	if mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
 	end
+	newMapStarting = true
 	mapRenderPercent = nil
 	mapGeneratePercent = nil
 --	math.randomseed(1)
 	numTrains = 0
-	train.clear()
+	mapSeed = seed
+	
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+	
+	
 	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000)
 	--map.generate(5,5,2)
 	
 end
 
-
 -- called when map has been generated and rendered
 function runMap()
-	
+	newMapStarting = false
 	if curMap then
-		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2
+		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
 		
 		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
 		
+		math.randomseed(mapSeed)
+		
 		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		--passenger.init (math.ceil(curMap.width*curMap.height/5) )		-- start generating random passengers, set the maximum number of them.
-		--passenger.init ( 2 )		-- start generating random passengers, set the maximum number of them.
 		--populateMap()
 		ai.init()
 		
@@ -64,6 +77,50 @@ function runMap()
 	end
 end
 
+function map.restart()
+	
+	AIs = ai.restart()	-- get list of current ais, and remove the current ais.
+
+	stats.start( #AIs )
+	train.init()
+	clearAllOccupations()
+	
+	print("restarting ais:")
+	for k, a in pairs(AIs) do
+		print(k, a)
+	end
+	
+	for i = 1, #AIs do
+		ok, msg = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
+		if not ok then
+			print("Err: " .. msg)
+		else
+			stats.setAIName(k, AIs[i])
+		end
+	end
+	
+	runMap()	-- re-initialise map
+end
+
+function clearAllOccupations()
+	curMapOccupiedTiles = {}
+	curMapOccupiedExits = {}
+	
+	for i = 1,curMap.width do
+		curMapOccupiedTiles[i] = {}
+		curMapOccupiedExits[i] = {}
+		for j = 1, height do
+			curMapOccupiedTiles[i][j] = {}
+			curMapOccupiedTiles[i][j].from = {}
+			curMapOccupiedTiles[i][j].to = {}
+		
+			curMapOccupiedExits[i][j] = {}
+		end
+	end
+
+end
+
+--[[
 function populateMap()
 	if not curMap then return end
 	
@@ -92,6 +149,8 @@ function populateMap()
 		end
 	end
 end
+]]--
+
 
 local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
@@ -986,7 +1045,6 @@ function map.render()
 			
 			mapRenderThread = nil
 			
-			runMap()
 			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
 		elseif status then
 			loadingScreen.addSubSection("Rendering Map", status)

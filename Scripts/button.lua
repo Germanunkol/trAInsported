@@ -12,6 +12,7 @@ local buttonLevel = 1
 local buttonOver = nil
 local buttonOff = nil
 
+
 function button.getPriority()
 	return buttonLevel
 end
@@ -97,14 +98,22 @@ function button.show()
 				f = FONT_BUTTON
 			end
 			love.graphics.setFont(f)
+			if b.selected then
+				red,green,blue = 50,255,50
+			else
+				red,green,blue = 255,255,255
+			end
+			
 			if b.mouseHover then
-				love.graphics.setColor(255,255,255,255)
+				love.graphics.setColor(red,green,blue,255)
 				love.graphics.draw(b.imageOver, b.x, b.y)
+				love.graphics.setColor(255,255,255,255)
 				love.graphics.printf(b.l, b.x, b.y + 8, b.imageOver:getWidth(), "center")
 			else
-				if b.priority == buttonLevel then love.graphics.setColor(255,255,255,255)
-				else love.graphics.setColor(255,255,255,150) end
+				if b.priority == buttonLevel then love.graphics.setColor(red,green,blue,255)
+				else love.graphics.setColor(red,green,blue,150) end
 				love.graphics.draw(b.imageOff, b.x, b.y)
+				love.graphics.setColor(255,255,255,255)
 				love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
 			end
 		end

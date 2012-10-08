@@ -29,6 +29,25 @@ function vonNeumannRandom(seed)		-- generates a random number using the von Neum
 	return tonumber(str:sub(2,6))
 end
 
+
+function generateColour(name, brightness)
+	brightness = brightness or 1
+	sum = 0
+	for i = 1,#name do
+		sum = sum + name:byte(i,i)
+	end
+	_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
+	__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
+	___ = vonNeumannRandom(__)		--discard first number, it's usually too similar.
+	red = vonNeumannRandom(___)
+	green = vonNeumannRandom(red)
+	blue = vonNeumannRandom(green)
+	red = cycle(red, 0, 255)
+	blue = cycle(blue, 0, 255)
+	green = cycle(green, 0, 255)
+	return {r=clamp(red*brightness, 0, 255), g=clamp(green*brightness, 0, 255), b=clamp(blue*brightness, 0, 255)}
+end
+
 function getScreenshot()
 	local curTime = os.date("*t")
 	local fileName
@@ -50,7 +69,6 @@ function copyTable(tbl)
 	local newTbl = {}
 	for k, v in pairs(tbl) do
 		if type(v) == "table" then
-			print(k, v)
 			newTbl[k] = copyTable(v)
 		else
 			newTbl[k] = v

@@ -274,16 +274,21 @@ function passenger.showAll(dt)
 			love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 		end
 		
-		if p.vip then
-			
-			love.graphics.setColor(255,255,255,255)
-			p.markZ = p.markZ + dt*5
-			c = math.sin(p.markZ)^2
-			love.graphics.draw(passengerVIPImage, x + 4, y - 15 - 10*c, 0, 1+c/10, 1+c/10)
-		end
-			
+		p.renderX, p.renderY = x,y
 		--love.graphics.setColor(255,255,255,100)
 		--love.graphics.print(p.name, x, y + 20)
+	end
+end
+
+function passenger.showVIPs(dt)
+	love.graphics.setColor(255,255,255,255)
+	for k, p in pairs(passengerList) do
+		if p.vip then
+			
+			p.markZ = p.markZ + dt*5
+			c = math.sin(p.markZ)^2
+			love.graphics.draw(passengerVIPImage, p.renderX + 4, p.renderY - 15 - 10*c, 0, 1+c/10, 1+c/10)
+		end
 	end
 end
 

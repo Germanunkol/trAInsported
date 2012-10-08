@@ -20,6 +20,12 @@ ROUND_TIME = 1000
 
 MAX_NUM_TRAINS = 5
 
+-- game options:
+
+POSSIBLE_TIMES = {"Day", "Rushhour"}
+POSSIBLE_MODES = {"Time", "Passengers"}
+
+
 
 -- sizes:
 

@@ -320,7 +320,7 @@ function statistics.generateStatWindows()
 			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passenger."
 		end
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
 	end
@@ -331,13 +331,13 @@ function statistics.generateStatWindows()
 			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " train."
 		end
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
-		table.insert(icons, {img=getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
 		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTransportedID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostTransported ~= 1 then
 			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
@@ -348,18 +348,18 @@ function statistics.generateStatWindows()
 	end
 	if mostNormalTransportedID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostNormalTransported ~= 1 then
 			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passengers to their destinations."
 		else
 			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
 		end
-		table.insert( allPossibleStats, {title="Kommunist", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if mostWrongDestination ~= 1 then
 			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
@@ -370,7 +370,7 @@ function statistics.generateStatWindows()
 	end
 	if mostMoneyID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
 		text = "Player " .. ai.getName(mostMoneyID) .. " earned " .. mostMoney .. " credits."
 		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
@@ -379,21 +379,21 @@ function statistics.generateStatWindows()
 	--trains:
 	if trMostPickedUpID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 		text = trMostPickedUpName .. " [" .. ai.getName(trMostPickedUpID) .. "] " .. " picked up more passengers than any other train."
 		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostTransportedID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		text = trMostTransportedName .. " [" .. ai.getName(trMostTransportedID) .. "] " .. " brought more passengers to their destination than any other train."
 		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if trMostWrongDestination ~= 1 then
 			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
@@ -404,7 +404,7 @@ function statistics.generateStatWindows()
 	end
 	if trLongestBlockedID then
 		icons = {}
-		table.insert(icons, {img=getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
 		text = trLongestBlockedName .. " [" .. ai.getName(trLongestBlockedID) .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
 		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})

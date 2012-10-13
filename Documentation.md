@@ -383,5 +383,21 @@ Will try to buy a train and place it at the position [X][Y]. If there's no rail 
 			end
 		end
 
+###getMoney()###
 
+**Arguments:**
 
+- none
+
+**Returns:**
+
+- The amount of credits the player currently has at his or her disposal.
+
+**Example:**
+
+		myMoney = getMoney()
+		if myMoney > 10 then
+			print("I'm rich!")
+		else
+			print("I'm not so rich...")
+		end

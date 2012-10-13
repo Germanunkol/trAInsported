@@ -117,10 +117,13 @@ function ai.new(scriptName)
 	aiList[aiID].chooseDirection = sb.ai.chooseDirection
 	aiList[aiID].blocked = sb.ai.blocked
 	aiList[aiID].newPassenger = sb.ai.newPassenger
+	aiList[aiID].passengerBoarded = sb.ai.passengerBoarded
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
 end
+
+
 
 function ai.init()
 	for aiID = 1, #aiList do
@@ -256,6 +259,28 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 	end
 end
 
+function ai.passengerBoarded(train, passenger)		-- called when the train enters a field that its passenger wants to go to.
+	local result = nil
+	for i = 1, #aiList do
+		if i ~= train.aiID and aiList[i] then
+			if aiList[i].passengerBoarded then
+				local cr = coroutine.create(runAiFunctionCoroutine)
+			
+				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+				if train.curPassenger then
+					tr.passenger = train.curPassenger.name
+				end
+			
+				ok, result = coroutine.resume(cr, aiList[i].passengerBoarded, tr, passenger)
+				if not ok or coroutine.status(cr) ~= "dead" then		
+					console.add(aiList[i].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
+					print("\tCoroutine stopped prematurely: " .. aiList[i].name .. ".foundDestination()")
+				end
+			end
+		end
+	end
+end
+
 function ai.foundDestination(train)		-- called when the train enters a field that its passenger wants to go to.
 	local result = nil
 	if aiList[train.aiID] then
@@ -275,6 +300,7 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 		end
 	end
 end
+
 
 function ai.enoughMoney(aiID, cash)
 	print("enough money", aiID, cash)

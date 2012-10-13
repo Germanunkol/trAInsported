@@ -10,6 +10,7 @@ button = require("Scripts/button")
 menu = require("Scripts/menu")
 msgBox = require("Scripts/msgBox")
 tutorialBox = require("Scripts/tutorialBox")
+codeBox = require("Scripts/codeBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
 functionQueue = require("Scripts/functionQueue")
@@ -92,7 +93,8 @@ function love.update(dt)
 		quickHelp.init()
 		stats.init()
 		tutorialBox.init()
-		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() then
+		codeBox.init()
+		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() and codeBox.initialised() then
 			initialising = false
 			finishStartupProcess()
 		end
@@ -234,7 +236,7 @@ function love.draw()
 		
 		if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
 	
-		--map.drawOccupation()
+		map.drawOccupation()
 			
 		--love.graphics.setColor(255,255,255, 50)
 		--love.graphics.draw(cl, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
@@ -279,6 +281,7 @@ function love.draw()
 		msgBox.show()
 	else
 		tutorialBox.show()
+		codeBox.show()
 	end
 	button.show()
 	menu.render()

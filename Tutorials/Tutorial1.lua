@@ -2,18 +2,19 @@ tutorial = {}
 
 tutMap = {}
 tutMap.width = 5
-tutMap.height = 6
+tutMap.height = 4
 
 for i = 0, tutMap.width+1 do
 	tutMap[i] = {}
 end
 
-tutMap[2][2] = "C"
+tutMap[1][3] = "C"
 tutMap[2][3] = "C"
-tutMap[2][5] = "C"
-tutMap[3][5] = "C"
-tutMap[4][5] = "C"
-tutMap[4][4] = "H"
+tutMap[2][4] = "C"
+tutMap[3][4] = "C"
+tutMap[4][4] = "C"
+tutMap[5][4] = "C"
+
 
 tutorialSteps = {}
 currentStep = 1
@@ -22,19 +23,23 @@ currentTutBox = nil
 
 function nextTutorialStep()
 	currentStep = currentStep + 1
-	if tutorialSteps[currentStep].event then
-		tutorialSteps[currentStep].event()
-	end
-	if currentTutBox then tutorialBox.remove(currentTutBox) end
-	currentTutBox = tutorialBox.new( love.graphics.getWidth()/2- 200, love.graphics.getHeight()/2-100, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
+	showCurrentStep()
 end
 function prevTutorialStep()
 	currentStep = currentStep - 1
+	showCurrentStep()
+end
+
+function showCurrentStep()
+	if print1Box then
+		codeBox.remove(print1Box)
+		print1Box = nil
+	end
 	if tutorialSteps[currentStep].event then
 		tutorialSteps[currentStep].event()
 	end
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
-	currentTutBox = tutorialBox.new( love.graphics.getWidth()/2- 200, love.graphics.getHeight()/2-100, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
+	currentTutBox = tutorialBox.new( 150, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
 end
 
 function startThisTutorial()
@@ -42,7 +47,7 @@ function startThisTutorial()
 	--define buttons for message box:
 	print("tutorialSteps[1].buttons", tutorialSteps[1].buttons[1].name)
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
-	currentTutBox = tutorialBox.new( love.graphics.getWidth()/2- 200, love.graphics.getHeight()/2-100, tutorialSteps[1].message, tutorialSteps[1].buttons )
+	currentTutBox = tutorialBox.new( 150, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50, tutorialSteps[1].message, tutorialSteps[1].buttons )
 end
 
 function tutorial.start()
@@ -126,18 +131,47 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	k = k + 1
 	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "The game has a subfolder called 'AI'.\nIn it, you'll find a new file that I just generated. It's called 'Tutorial1.lua'.\nOpen this file in any text editor of your choice and read it."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Now, let's write some code!\nThe first thing you have to learn is how to communicate with the game. Type the code shown on the left at the bottom of Tutorial1.lua. Once done, save it and press the 'Reload' button at the bottom of this window."
+	tutorialSteps[k].event = firstPrint
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "You've completed the first tutorial, well done! On to the next one."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "End", event = endTutorial}
+	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorial}
+end
+
+function firstPrint()
+	print1Box = codeBox.new(love.graphics.getWidth() - CODE_BOX_WIDTH - 100, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50, "print( \"Hello trAIns!\" )")
+	console.setVisible(true)
+	quickHelp.setVisibility(false)
 end
 
 function endTutorial()
-	menu.init()
 	map.endRound()
 	mapImage = nil
 	curMap = nil
 	tutorial = {}
+	menu.init()
+end
+
+function nextTutorial()
+	map.endRound()
+	mapImage = nil
+	curMap = nil
+	tutorial = {}
+	menu.init()
+	menu.executeTutorial("Tutorial2.lua")
 end
 
 function setF1Event(k)

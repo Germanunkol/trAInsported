@@ -47,6 +47,14 @@ function quickHelp.toggle()
 	end
 end
 
+function quickHelp.setVisibility(vis)
+	if vis then
+		showQuickHelp = true
+	else
+		showQuickHelp = false
+	end
+end
+
 local helpBgThread
 
 function quickHelp.init()

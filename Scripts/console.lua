@@ -49,6 +49,14 @@ function console.toggle()
 	end
 end
 
+function console.setVisible(vis)
+	if vis then
+		showConsole = true
+	else
+		showConsole = false
+	end
+end
+
 function console.init(width, y)
 	console.y = y
 	console.width = width

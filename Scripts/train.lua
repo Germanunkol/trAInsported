@@ -12,6 +12,8 @@ curNode: the node it last visited
 
 local train = {}
 
+local blockedTrains = {}
+
 local newTrainQueue = {}
 
 local train_mt = { __index = train }
@@ -51,8 +53,10 @@ function train.init()
 	
 	trainImageThreads = {}
 	numTrainImageThreads = 0
-	
+	print("RESETTING BLOCKED TRAINS")
 	blockedTrains = {}
+	print("blockedTrains 1")
+	printTable(blockedTrains)
 
 	--[[
 	trainImagePlayer1d = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
@@ -275,6 +279,7 @@ function train:new( aiID, x, y, dir )
 			
 			trainList[aiID][i].tileX = x
 			trainList[aiID][i].tileY = y
+			print("TEST 1")
 			map.setTileOccupied(x, y, nil, dir)
 			
 			trainList[aiID][i].name = "Train" .. i
@@ -343,7 +348,6 @@ function train.getByID( aiID, trainID)
 end
 -- function distance(x1,y1,x2,y2) return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) end
 
-local blockedTrains = {}
 
 function addBlockedTrain(tr)
 	blockedTrains[#blockedTrains+1] = tr
@@ -378,7 +382,7 @@ function getAngleByDir( dir )
 	end
 end
 
-function moveSingleTrain(tr, t)
+function moveSingleTrain(tr, t, deb)
 	if tr.path then
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
@@ -488,6 +492,7 @@ function moveSingleTrain(tr, t)
 					tr.timeBlocked = 0
 					tr.blocked = false
 					
+					print("TEST 2", deb)
 					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
 					tr.freedTileOccupation = false
 					
@@ -544,6 +549,7 @@ function moveSingleTrain(tr, t)
 				else
 					tr.curDistTraveled = 0
 					if not tr.blocked then
+						print("train is blocked, adding!", tr.tileX, tr.tileY, tr.ID, tr.aiID)
 						addBlockedTrain(tr)
 						tr.blocked = true
 					end
@@ -755,7 +761,7 @@ end
 function train.moveAll()
 	t = love.timer.getDelta()*timeFactor
 	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
-		moveSingleTrain(tr, t)
+		moveSingleTrain(tr, t, 1)
 		tr.hasMoved = true
 		if tr.blocked then
 			tr.timeBlocked = tr.timeBlocked + t
@@ -765,11 +771,15 @@ function train.moveAll()
 	for k, list in pairs(trainList) do	-- TO DO move through train lists in random order!
 		for k, tr in pairs(list) do
 			if tr.hasMoved == false then
-				moveSingleTrain(tr, t)
+				moveSingleTrain(tr, t, 2)
 			end
 			tr.hasMoved = false	-- reset for next round!
 		end
 	end
+end
+
+function train.getBlockedTrains()
+	return blockedTrains
 end
 
 function train.showAll()

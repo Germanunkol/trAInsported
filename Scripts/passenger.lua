@@ -121,6 +121,7 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			train.passengerArrived = false
 			p.train = train
 			stats.passengersPickedUp( train.aiID, train.ID )
+			ai.passengerBoarded(train, name)
 			break
 		end
 	end
@@ -132,7 +133,7 @@ function passenger.leaveTrain(aiID)
 
 	return function (pseudoTrain)
 		tr = train.getByID(aiID, pseudoTrain.ID)
-		if tr then
+		if tr and tr.curPassenger then
 		
 			tr.stop = tr.stop + 1
 			tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY		-- place passenger onto the tile the train's currently on
@@ -156,7 +157,8 @@ function passenger.leaveTrain(aiID)
 				end
 				
 				numPassengersDroppedOff = numPassengersDroppedOff + 1
-
+			else
+				ai.newPassenger(tr.curPassenger)
 			end
 			
 			tr.curPassenger = nil

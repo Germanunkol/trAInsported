@@ -265,7 +265,7 @@ function placeHotspots()		-- at random, place hotspots.
 		for j = 1, curMap.height do
 			if curMap[i][j] == nil then
 				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
-					if math.random(15) == 1 then curMap[i][j] = "S" end		-- make hotspot
+					if math.random(5) == 1 then curMap[i][j] = "S" end		-- make hotspot
 				end
 			end
 		end

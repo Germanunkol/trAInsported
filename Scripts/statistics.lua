@@ -57,6 +57,14 @@ function statistics.getMoney( aiID )
 	end
 end
 
+function statistics.getMoneyAI( aiID )
+	return function ()
+		if aiStats[aiID] then
+			return (aiStats[aiID].money)
+		end
+	end
+end
+
 function statistics.passengersPickedUp( aiID, trainID )
 	aiStats[aiID].pPickedUp = aiStats[aiID].pPickedUp + 1
 	aiStats[aiID].trains[trainID].pPickedUp = aiStats[aiID].trains[trainID].pPickedUp + 1

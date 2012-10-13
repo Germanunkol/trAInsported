@@ -39,7 +39,7 @@ function startMatch( width, height, time, maxTime, gameMode, AIs )
 		loadingScreen.addSubSection("New Map", "Mode: Transport enough Passengers")
 	end
 	
-
+	ai.restart()	-- make sure aiList is reset!
 	stats.start( #AIs )
 	train.init()
 	train.resetImages()
@@ -65,8 +65,8 @@ end
 
 function randomMatch()
 	
-	local width = math.random(4,10)
-	local height = math.random(4,10)
+	local width = math.random(4,25)
+	local height = math.random(4,25)
 	
 	aiFiles = ai.findAvailableAIs()
 	
@@ -185,7 +185,7 @@ function normalMatch()
 		print("Need to choose at least one AI!")
 		return
 	end
-	if chosenWidth == 0 or chosenWidth == 0 then
+	if chosenWidth == 0 or chosenHeight == 0 then
 		print("Invalid map dimensions!")
 		return
 	end
@@ -442,7 +442,7 @@ function findTutorialFiles()
 end
 
 
-function executeTutorial(fileName)
+function menu.executeTutorial(fileName)
 	tutorialData = love.filesystem.load("Tutorials/" .. fileName)
 	local result = tutorialData() -- execute the chunk
 	tutorial.start()
@@ -458,7 +458,7 @@ function menu.tutorials()
 	tutFiles = findTutorialFiles()
 	for i = 1, #tutFiles do
 		if tutFiles[i] then
-		menuButtons[i] = button:new(x, y, tutFiles[i]:sub(1, #tutFiles[i]-4), executeTutorial, tutFiles[i])
+		menuButtons[i] = button:new(x, y, tutFiles[i]:sub(1, #tutFiles[i]-4), menu.executeTutorial, tutFiles[i])
 		end
 		y = y + 45
 	end

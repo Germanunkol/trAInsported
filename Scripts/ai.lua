@@ -83,9 +83,13 @@ end
 function ai.new(scriptName)
 	print("Opening: " .. scriptName)
 	local ok, chunk = pcall(love.filesystem.read, scriptName )
-	if not ok then error("Could not open file: " .. chunk) end
+	if not ok then error("Could not open file: " .. chunk)
+		console.add("Failed to open file (" .. scriptName .. "): " .. msg, {r=255,g=50,b=50})
+	end
 	
-	if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!") end
+	if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!")
+		console.add("Binary bytecode prohibited. Open source ftw!", {r=255,g=50,b=50})
+	end
 	
 	local aiID = 0
 	
@@ -93,7 +97,7 @@ function ai.new(scriptName)
 		if aiList[i] == nil then
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
-			aiList[i].name = str.sub(scriptName, 4, #scriptName-4)
+			aiList[i].name = string.sub(scriptName, 4, #scriptName-4)
 			break
 		end
 	end
@@ -128,7 +132,7 @@ end
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
-		print("Initialising AI:", "ID: " .. aiID, "Name: " .. aiList[aiID].name)
+		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name)
 		if aiList[aiID].init then
 		local crInit = coroutine.create(runAiFunctionCoroutine)
 		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))

@@ -2,8 +2,6 @@ local statistics = {}
 
 local aiStats = {}
 
-local BOX_WIDTH = 350
-local BOX_HEIGHT = 95
 
 local IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
 local IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
@@ -20,6 +18,14 @@ function statistics.setAIName(aiID, name)
 	end
 end
 
+function statistics.setAIName(aiID, red, green, blue)
+	if aiStats[aiID] then
+		aiStats[aiID].red = red
+		aiStats[aiID].green = green
+		aiStats[aiID].blue = blue
+	end
+end
+
 function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID] = train
 	aiStats[aiID].trains[train.ID].pPickedUp = 0		-- number of passengers which were picked up
@@ -29,7 +35,6 @@ function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID].pNormal = 0
 	aiStats[aiID].trains[train.ID].pVIP = 0
 	aiStats[aiID].numTrains = aiStats[aiID].numTrains + 1
-	print("I now own", aiStats[aiID].numTrains, "trains")
 end
 
 function statistics.addMoney( aiID, money )
@@ -447,7 +452,6 @@ function statistics.display(globX, globY, dt)
 				s.displayTime = s.displayTime - dt
 			else
 				x,y = globX + s.x, globY + s.y
-		
 				love.graphics.draw(s.bg, x, y)
 				love.graphics.setFont(FONT_STAT_HEADING)
 				love.graphics.printf(s.title, x, y+8, s.bg:getWidth(), "center")
@@ -470,6 +474,25 @@ function statistics.display(globX, globY, dt)
 	end
 end
 
+local displayStatusX = 0
+local displayStatusY = 0
+local displayStatusBoxWidth = 10
+
+function statistics.displayStatus()
+	if not statBoxStatus then return end
+	
+	love.graphics.setFont(FONT_STANDARD)
+	for i = 1, #aiStats do
+		if aiStats[i].name ~= "" then	-- if the ai has already been loaded and named
+			x = displayStatusX + (i-1)*displayStatusBoxWidth
+			
+			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255)
+			love.graphics.draw(statBoxStatus, x, displayStatusY)
+			love.graphics.setColor(255,255,255,255)
+			love.graphics.printf(aiStats[i].name, x, displayStatusY + 15, displayStatusBoxWidth, "center")
+		end
+	end
+end
 
 function statistics.start( ais )
 	aiStats = {}
@@ -482,11 +505,17 @@ function statistics.start( ais )
 		aiStats[i].pDroppedOff = 0	-- number of passengers dropped off
 		aiStats[i].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
 		aiStats[i].trains = {}
-		aiStats[i].name = "default"
+		aiStats[i].name = ""
 		aiStats[i].pNormal = 0
 		aiStats[i].pVIP = 0
 		aiStats[i].numTrains = 0
+		aiStats[i].red = 255	-- default colour
+		aiStats[i].green = 255
+		aiStats[i].blue = 255
 	end
+	displayStatusBoxWidth = statBoxStatus:getWidth()
+	displayStatusX = love.graphics.getWidth()/2 - #aiStats/2*displayStatusBoxWidth
+	displayStatusY = love.graphics.getHeight() - statBoxStatus:getHeight() - 50
 end
 
 function statistics.init()
@@ -495,8 +524,8 @@ function statistics.init()
 		statBoxPositiveThread = love.thread.newThread("statBoxPositiveThread", "Scripts/createImageBox.lua")
 		statBoxPositiveThread:start()
 	
-		statBoxPositiveThread:set("width", BOX_WIDTH )
-		statBoxPositiveThread:set("height", BOX_HEIGHT )
+		statBoxPositiveThread:set("width", STAT_BOX_WIDTH )
+		statBoxPositiveThread:set("height", STAT_BOX_HEIGHT )
 		statBoxPositiveThread:set("shadow", true )
 		statBoxPositiveThread:set("shadowOffsetX", 10 )
 		statBoxPositiveThread:set("shadowOffsetY", 0 )
@@ -529,8 +558,8 @@ function statistics.init()
 		statBoxNegativeThread = love.thread.newThread("statBoxNegativeThread", "Scripts/createImageBox.lua")
 		statBoxNegativeThread:start()
 	
-		statBoxNegativeThread:set("width", BOX_WIDTH )
-		statBoxNegativeThread:set("height", BOX_HEIGHT )
+		statBoxNegativeThread:set("width", STAT_BOX_WIDTH )
+		statBoxNegativeThread:set("height", STAT_BOX_HEIGHT )
 		statBoxNegativeThread:set("shadow", true )
 		statBoxNegativeThread:set("shadowOffsetX", 10 )
 		statBoxNegativeThread:set("shadowOffsetY", 0 )
@@ -557,13 +586,46 @@ function statistics.init()
 			end
 		end
 	end
+	if not statBoxStatusThread and not statBoxStatus then		-- only start thread once!
+		loadingScreen.addSection("Rendering Stat Box (status)")
+		statBoxStatusThread = love.thread.newThread("statBoxStatusThread", "Scripts/createImageBox.lua")
+		statBoxStatusThread:start()
+	
+		statBoxStatusThread:set("width", BOX_STATUS_WIDTH )
+		statBoxStatusThread:set("height", BOX_STATUS_HEIGHT )
+		statBoxStatusThread:set("shadow", true )
+		statBoxStatusThread:set("shadowOffsetX", 10 )
+		statBoxStatusThread:set("shadowOffsetY", 0 )
+		statBoxStatusThread:set("colR", STAT_BOX_STATUS_R )
+		statBoxStatusThread:set("colG", STAT_BOX_STATUS_G )
+		statBoxStatusThread:set("colB", STAT_BOX_STATUS_B )
+	else
+		if not statBoxStatus then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = statBoxStatusThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Stat Box (status)", percent)
+			end
+			err = statBoxStatusThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = statBoxStatusThread:get("status")
+			if status == "done" then
+				statBoxStatus = statBoxStatusThread:get("imageData")		-- get the generated image data from the thread
+				statBoxStatus = love.graphics.newImage(statBoxStatus)
+				statBoxStatusThread = nil
+			end
+		end
+	end
 
 	-- statBoxPositive = createBoxImage(350, 95, true, 10, 0, 64, 140, 100)
-	-- statBoxNegative = createBoxImage(350, 95, true, 10, 0, 150, 90, 65)
+	-- statBoxStatus = createBoxImage(350, 95, true, 10, 0, 150, 90, 65)
 end
 
 function statistics.initialised()
-	if statBoxPositive and statBoxNegative then
+	if statBoxPositive and statBoxNegative and statBoxStatus then
 		return true
 	end
 end

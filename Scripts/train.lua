@@ -175,6 +175,9 @@ function train.buyNew(aiID)
 				print("Bought new Train", aiID, posX, posY)
 				stats.subMoney(aiID, TRAIN_COST)
 				table.insert(newTrainQueue, {aiID=aiID, posX=posX, posY=posY, dir=dir})
+				if tutorial and tutorial.trainPlacingEvent then
+					tutorial.trainPlacingEvent()
+				end
 			end
 		else
 			print("Error: X and Y passed to 'buyTrain' must be numbers!")	-- will print inside the coroutine => ingame console
@@ -279,7 +282,7 @@ function train:new( aiID, x, y, dir )
 			
 			trainList[aiID][i].tileX = x
 			trainList[aiID][i].tileY = y
-			print("TEST 1")
+			
 			map.setTileOccupied(x, y, nil, dir)
 			
 			trainList[aiID][i].name = "Train" .. i
@@ -382,7 +385,7 @@ function getAngleByDir( dir )
 	end
 end
 
-function moveSingleTrain(tr, t, deb)
+function moveSingleTrain(tr, t)
 	if tr.path then
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
@@ -492,7 +495,6 @@ function moveSingleTrain(tr, t, deb)
 					tr.timeBlocked = 0
 					tr.blocked = false
 					
-					print("TEST 2", deb)
 					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
 					tr.freedTileOccupation = false
 					
@@ -761,7 +763,7 @@ end
 function train.moveAll()
 	t = love.timer.getDelta()*timeFactor
 	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
-		moveSingleTrain(tr, t, 1)
+		moveSingleTrain(tr, t)
 		tr.hasMoved = true
 		if tr.blocked then
 			tr.timeBlocked = tr.timeBlocked + t
@@ -771,7 +773,7 @@ function train.moveAll()
 	for k, list in pairs(trainList) do	-- TO DO move through train lists in random order!
 		for k, tr in pairs(list) do
 			if tr.hasMoved == false then
-				moveSingleTrain(tr, t, 2)
+				moveSingleTrain(tr, t)
 			end
 			tr.hasMoved = false	-- reset for next round!
 		end

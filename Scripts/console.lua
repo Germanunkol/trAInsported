@@ -18,6 +18,10 @@ function console.add( text, colour )
 	local str = ""
 	if colour == nil then colour = {r=255,g=255,b=255} end
 	
+	if tutorial and tutorial.consoleEvent then		-- if the tutorial has registered an event for me, run it now.
+		tutorial.consoleEvent(text)
+	end
+	
 	for c in text:gfind(".") do
 		if c == "\t" then
 			str = str .. "   "

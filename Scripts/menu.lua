@@ -50,7 +50,7 @@ function startMatch( width, height, time, maxTime, gameMode, AIs )
 		if not ok then
 			print("Err: " .. msg)
 		else
-			stats.setAIName(k, AIs[i]:sub(1, #AIs[i]-4))
+			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
 			train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
 		end
 	end
@@ -161,6 +161,9 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	
 	trainImagesCreated = false
+	
+	--load connection to main server:
+	connection.startClient(MAIN_SERVER_IP, PORT)
 	
 	--reset tutorial:
 	tutorial = {}
@@ -487,7 +490,7 @@ function confirmEndRound()
 	msgBox:new(love.graphics.getWidth()/2-210, 40, "Leave the current match and return to menu?", {name="Yes",event=quitRound, args=nil},"remove")
 end
 function confirmReload()
-	msgBox:new(love.graphics.getWidth()/2-210, 40, "Restart the current match?", {name="Yes",event=map.restart, args=nil},"remove")
+	msgBox:new(love.graphics.getWidth()/2-210, 40, "Reload the AIs?", {name="Yes",event=map.restart, args=nil},"remove")
 end
 
 function menu.ingame()

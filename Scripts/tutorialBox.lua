@@ -19,12 +19,9 @@ function tutorialBox.new(x, y, msg, ... )
 			tutorialBoxList[i] = setmetatable({x=x, y=y, width=tutorialBoxBG:getWidth(), text=msg, bg=tutorialBoxBG, index = i, buttons={}}, tutorialBox_mt)
 			local priority = 1		-- same importance as anything else
 			for j = 1, #arg, 1 do
-				if arg[j] == "remove" then
-					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + tutorialBoxBG:getHeight() - 60, "Cancel", tutorialBox.remove, tutorialBoxList[i], priority)			
+				if arg[j].inBetweenSteps then
+					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + tutorialBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority)
 				else
-					for k, p in pairs(arg[j]) do
-						print(k, p)
-					end
 					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + tutorialBoxBG:getHeight() - 60, arg[j].name, tutorialBoxEvent(tutorialBoxList[i], arg[j].event), arg[j].args, priority)
 				end
 				if b then

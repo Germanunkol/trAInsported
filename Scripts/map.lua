@@ -94,13 +94,14 @@ function map.restart()
 	train.init()
 	
 	clearAllOccupations()
+	console.add("--- Restart ---", {r=255,g=50,b=50})
 	
 	for i = 1, #AIs do
 		ok, msg = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
 		if not ok then
 			print("Err: " .. msg)
 		else
-			stats.setAIName(k, AIs[i])
+			stats.setAIName(i, AIs[i])
 		end
 	end
 	
@@ -248,36 +249,27 @@ function map.drawOccupation()
 end
 
 function map.getIsTileOccupied(x, y, f, t)
-	if love.keyboard.isDown("i") then print("starting", x, y) end
 	if not f or not t then
 		if curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
 		then
-	if love.keyboard.isDown("i") then print("1") end
 			return true
 		end
 		
 		for k, v in pairs(curMapOccupiedExits[x][y]) do
-	if love.keyboard.isDown("i") then print(k, v) end
 			if v then
-			
-	if love.keyboard.isDown("i") then print("lol") end
 				return true
 			end
 		end
 		
-	if love.keyboard.isDown("i") then print("blubb") end
 		return false
 	end
 	directionStr = f .. t
 	railType = getRailType(x,y)
-	if love.keyboard.isDown("i") then print("dir: " .. directionStr) end
 --	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
 	--	return false
 	if curMapOccupiedTiles[x][y][directionStr] then		-- if someone's moving in the direction that I've been meaning to move,block.
-		if love.keyboard.isDown("i") then print("blubb2") end
 		return true
 	elseif curMapOccupiedExits[x][y][t] then			-- if someone's standing at the exit I was wanting to take, block.
-		if love.keyboard.isDown("i") then print("blubb3") end
 		return true
 	--[[
 	if railType == NS then
@@ -304,7 +296,6 @@ function map.getIsTileOccupied(x, y, f, t)
 	
 		
 	elseif railType == NES then
-		if love.keyboard.isDown("i") then print("NES") end
 		if directionStr == "NS" then
 			return curMapOccupiedTiles[x][y]["ES"]	-- straight line
 		elseif directionStr == "SN" then
@@ -320,7 +311,6 @@ function map.getIsTileOccupied(x, y, f, t)
 		end
 		
 	elseif railType == ESW then
-		if love.keyboard.isDown("i") then print("ESW") end
 		if directionStr == "EW" then
 			return curMapOccupiedTiles[x][y]["SW"]	-- straight line
 		elseif directionStr == "WE" then
@@ -336,7 +326,6 @@ function map.getIsTileOccupied(x, y, f, t)
 		end
 		
 	elseif railType == NSW then
-		if love.keyboard.isDown("i") then print("NSW") end
 		if directionStr == "SN" then
 			return curMapOccupiedTiles[x][y]["WN"]
 		elseif directionStr == "NS" then
@@ -351,7 +340,6 @@ function map.getIsTileOccupied(x, y, f, t)
 			return curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SW"]
 		end
 	elseif railType == NEW then
-		if love.keyboard.isDown("i") then print("NEW") end
 		if directionStr == "WE" then
 			return curMapOccupiedTiles[x][y]["NE"]
 		elseif directionStr == "EW" then
@@ -366,7 +354,6 @@ function map.getIsTileOccupied(x, y, f, t)
 			return curMapOccupiedTiles[x][y]["EW"]
 		end
 	elseif railType == NESW then
-		if love.keyboard.isDown("i") then print("NESW") end
 		if directionStr == "NS" then return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
 		elseif directionStr == "SN" then return curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
 		elseif directionStr == "EW" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
@@ -381,8 +368,6 @@ function map.getIsTileOccupied(x, y, f, t)
 		elseif directionStr == "WN" then return curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"]
 		end
 	end
-	
-	print("false alarm")
 	
 	--[[--old
 	if not f and not t then		-- if f and t are left out, the function returns whether ANYTHING is on the rail.
@@ -411,7 +396,6 @@ function map.setTileOccupied(x, y, f, t)
 		end
 	end
 	if t then
-		print("SETTING OCCUPIED!", x, y, t)
 		curMapOccupiedExits[x][y][t] = true
 	end
 	
@@ -432,7 +416,6 @@ function map.resetTileOccupied(x, y, f, t)
 end
 
 function map.resetTileExitOccupied(x, y, to)
-	print("RESETTING OCCUPIED!", x, y, to)
 	curMapOccupiedExits[x][y][to] = false
 end
 

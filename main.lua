@@ -18,6 +18,7 @@ passenger = require("Scripts/passenger")
 stats = require("Scripts/statistics")
 clouds = require("Scripts/clouds")
 loadingScreen = require("Scripts/loadingScreen")
+connection = require("Scripts/connectionClient")
 require("Scripts/globals")
 numTrains = 0
 
@@ -99,6 +100,8 @@ function love.update(dt)
 			finishStartupProcess()
 		end
 	else
+	
+		connection.handleConnection()
 		functionQueue.run()
 	
 		button.calcMouseHover()
@@ -191,6 +194,7 @@ function love.update(dt)
 			end
 		end
 	end
+	
 end
 
 
@@ -262,6 +266,8 @@ function love.draw()
 		if showQuickHelp then quickHelp.show() end
 		if showConsole then console.show() end
 		
+		stats.displayStatus()
+		
 	elseif mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
 		loadingScreen.render()
 	end
@@ -277,12 +283,12 @@ function love.draw()
 	]]--
 	
 	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
-	if msgBox.isVisible() then
-		msgBox.show()
-	else
 		tutorialBox.show()
 		codeBox.show()
+	if msgBox.isVisible() then
+		msgBox.show()
 	end
+	
 	button.show()
 	menu.render()
 	

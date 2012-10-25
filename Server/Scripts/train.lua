@@ -159,7 +159,7 @@ function train:new( aiID, x, y, dir )
 			--local imageOff = createButtonOff(width, height, label)
 			--local imageOver = createButtonOver(width, height, label)
 			--local image = trainImages[aiID]
-			trainList[aiID][i] = setmetatable({ID = i, aiID = aiID}, button_mt)
+			trainList[aiID][i] = setmetatable({ID = i, aiID = aiID}, train_mt)
 			
 			print("Placing new train at:", x, y)
 			print("\tHeading:", dir)
@@ -404,6 +404,14 @@ function moveSingleTrain(tr, t)
 						tr.y = tr.path[tr.curNode].y
 						
 					end
+					
+					sendStr = "TRAIN_CONT:"
+					sendStr = sendStr .. tr.aiID .. ","
+					sendStr = sendStr .. tr.name .. ","
+					sendStr = sendStr .. tr.tileX .. ","
+					sendStr = sendStr .. tr.tileY .. ","
+					sendStr = sendStr .. tr.dir .. ","
+					sendMapUpdate(sendStr)
 					
 					if tr.curPassenger and tr.curPassenger.onTrain then
 						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!

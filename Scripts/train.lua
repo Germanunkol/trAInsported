@@ -378,131 +378,131 @@ function moveSingleTrain(tr, t)
 			tr.curDistTraveled = tr.curDistTraveled - tr.path[tr.curNode+1].length	-- remember overshoot!
 			
 			local nextX, nextY = tr.tileX, tr.tileY
-				local cameFromDir = ""
+			local cameFromDir = ""
+			
+			if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 				
-				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
+				tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
+				
+				tr.nextDir = nil
+				
+				if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
+					tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
+				end
+				
+				if tr.nextDir == nil then	-- fallback: if choosing the next dir went wrong or if there's only one direction to go in:
+					if tr.possibleDirs["N"] then tr.nextDir = "N"
+					elseif tr.possibleDirs["S"] then tr.nextDir = "S"
+					elseif tr.possibleDirs["E"] then tr.nextDir = "E"
+					else tr.nextDir = "W"
+					end
+				end
+				
+				map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
+				
+			else
+				if tr.timeBlocked > MAX_BLOCK_TIME then
 					
-					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.nextDir = nil
+					stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
+					tr.timeBlocked = 0
 					
 					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
-					end
-					
-					if tr.nextDir == nil then	-- fallback: if choosing the next dir went wrong or if there's only one direction to go in:
-						if tr.possibleDirs["N"] then tr.nextDir = "N"
-						elseif tr.possibleDirs["S"] then tr.nextDir = "S"
-						elseif tr.possibleDirs["E"] then tr.nextDir = "E"
-						else tr.nextDir = "W"
-						end
-					end
-					
-					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
-					
-				else
-					if tr.timeBlocked > MAX_BLOCK_TIME then
-						
-						stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
-						tr.timeBlocked = 0
-						
-						if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-							tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
-						end
+						tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
 					end
 				end
-				
-				if tr.dir == "N" then
-					nextY = nextY - 1
-					cameFromDir = "S"
-					--print("moved north")
-				end
-				if tr.dir == "S" then
-					nextY = nextY + 1
-					cameFromDir = "N"
-					--print("moved south")
-				end
-				if tr.dir == "W" then
-					nextX = nextX - 1
-					cameFromDir = "E"
-					--print("moved west")
-				end
-				if tr.dir == "E" then
-					nextX = nextX + 1
-					cameFromDir = "W"
-					--print("moved east")
-				end
-				
-				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
-					
-					if tr.blocked then removeBlockedTrain(tr) end
-					map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.timeBlocked = 0
-					tr.blocked = false
-					
-					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
-					tr.freedTileOccupation = false
-					
-					tr.cameFromDir = cameFromDir
-					
-					tr.tileX, tr.tileY = nextX, nextY
-				
-					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
-					
-					
-					tr.dir = tr.nextDir
-				
-					if tr.path then
-					
-						tr.curNode = 1
-						
-						tr.prevAngle = tr.angle
-						if tr.path[tr.curNode+2] then
-							if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-							else
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-							end
-						else
-							tr.angle = getAngleByDir(tr.dir)
-						end
-						if tr.prevAngle - tr.angle < -math.pi then
-							tr.prevAngle = tr.prevAngle + 2*math.pi
-						end
-						if tr.prevAngle - tr.angle > math.pi then
-							tr.prevAngle = tr.prevAngle - 2*math.pi
-						end
-					
-						tr.x = tr.path[tr.curNode].x
-						tr.y = tr.path[tr.curNode].y
-					
-						-- dx = (tr.path[tr.curNode+1].x - tr.x)
-						-- dy = (tr.path[tr.curNode+1].y - tr.y)
-						--normalize:
-						-- d = math.sqrt(dx ^ 2 + dy ^ 2)
-					end
-					
-					if tr.curPassenger and tr.curPassenger.onTrain then
-						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
-							ai.foundDestination(tr)
-						end
-					end
-									
-					p = passenger.find(tr.tileX, tr.tileY)
-					if p then
-						ai.foundPassengers(tr, p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
-					end
-					
-				else
-					tr.curDistTraveled = 0
-					if not tr.blocked then
-						print("train is blocked, adding!", tr.tileX, tr.tileY, tr.ID, tr.aiID)
-						addBlockedTrain(tr)
-						tr.blocked = true
-					end
-				end
+			end
 			
+			if tr.dir == "N" then
+				nextY = nextY - 1
+				cameFromDir = "S"
+				--print("moved north")
+			end
+			if tr.dir == "S" then
+				nextY = nextY + 1
+				cameFromDir = "N"
+				--print("moved south")
+			end
+			if tr.dir == "W" then
+				nextX = nextX - 1
+				cameFromDir = "E"
+				--print("moved west")
+			end
+			if tr.dir == "E" then
+				nextX = nextX + 1
+				cameFromDir = "W"
+				--print("moved east")
+			end
+			
+			if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
+				
+				if tr.blocked then removeBlockedTrain(tr) end
+				map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
+				
+				tr.timeBlocked = 0
+				tr.blocked = false
+				
+				map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
+				tr.freedTileOccupation = false
+				
+				tr.cameFromDir = cameFromDir
+				
+				tr.tileX, tr.tileY = nextX, nextY
+			
+				tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
+				
+				
+				tr.dir = tr.nextDir
+			
+				if tr.path then
+				
+					tr.curNode = 1
+					
+					tr.prevAngle = tr.angle
+					if tr.path[tr.curNode+2] then
+						if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
+							tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
+						else
+							tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
+						end
+					else
+						tr.angle = getAngleByDir(tr.dir)
+					end
+					if tr.prevAngle - tr.angle < -math.pi then
+						tr.prevAngle = tr.prevAngle + 2*math.pi
+					end
+					if tr.prevAngle - tr.angle > math.pi then
+						tr.prevAngle = tr.prevAngle - 2*math.pi
+					end
+				
+					tr.x = tr.path[tr.curNode].x
+					tr.y = tr.path[tr.curNode].y
+				
+					-- dx = (tr.path[tr.curNode+1].x - tr.x)
+					-- dy = (tr.path[tr.curNode+1].y - tr.y)
+					--normalize:
+					-- d = math.sqrt(dx ^ 2 + dy ^ 2)
+				end
+				
+				if tr.curPassenger and tr.curPassenger.onTrain then
+					if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
+						ai.foundDestination(tr)
+					end
+				end
+								
+				p = passenger.find(tr.tileX, tr.tileY)
+				if p then
+					ai.foundPassengers(tr, p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
+				end
+				
+			else
+				tr.curDistTraveled = 0
+				if not tr.blocked then
+					print("train is blocked, adding!", tr.tileX, tr.tileY, tr.ID, tr.aiID)
+					addBlockedTrain(tr)
+					tr.blocked = true
+				end
+			end
+		
 		end
 		
 		

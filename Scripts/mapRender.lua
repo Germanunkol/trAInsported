@@ -136,6 +136,9 @@ if curMap then
 	for i = 0,curMap.width+1,1 do
 		for j = 0,curMap.height+1,1 do
 			groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
+			--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
+			--updatePercentage()
 		end
 	end
 	
@@ -148,18 +151,19 @@ if curMap then
 				randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
 				houseType = math.random(4)
 				
+				col = {r = math.random(40)-20, g = 0, b = 0}
 				if houseType == 1 then
 					transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
-					transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 				elseif houseType == 2 then
 					transparentPaste( shadowData, IMAGE_HOUSE02_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
-					transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 				elseif houseType == 3 then
 					transparentPaste( shadowData, IMAGE_HOUSE03_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
-					transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 				elseif houseType == 4 then
 					transparentPaste( shadowData, IMAGE_HOUSE04_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26 )
-					transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 				end
 			elseif curMap[i][j] == "S" then
 				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
@@ -184,9 +188,10 @@ if curMap then
 			if not curMap[i][j] and math.random(7) == 1 then
 				numTries = math.random(3)+1
 				for k = 1, numTries do
+					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
 					randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
 					transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+					transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 				end
 			end
 			
@@ -204,15 +209,17 @@ if curMap then
 				for k = 1, numTries do
 					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
 					treetype = math.random(3)
+					
+					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
 					if treetype == 1 then
 						transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
 					elseif treetype == 2 then
 						transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
 					else
 						transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
 					end
 				end
 			end

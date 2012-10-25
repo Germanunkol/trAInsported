@@ -126,18 +126,23 @@ local status = false
 
 function button.init()
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
-		loadingScreen.addSection("Rendering Deactivated Button")
-		buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/createImageBox.lua")
-		buttonOffThread:start()
 	
-		buttonOffThread:set("width", STND_BUTTON_WIDTH )
-		buttonOffThread:set("height", STND_BUTTON_HEIGHT )
-		buttonOffThread:set("shadow", true )
-		buttonOffThread:set("shadowOffsetX", 5 )
-		buttonOffThread:set("shadowOffsetY", 2 )
-		buttonOffThread:set("colR", BUTTON_OFF_R )
-		buttonOffThread:set("colG", BUTTON_OFF_G )
-		buttonOffThread:set("colB", BUTTON_OFF_B )
+		ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
+		if not ok then
+			buttonOff = nil
+			loadingScreen.addSection("Rendering Deactivated Button")
+			buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/createImageBox.lua")
+			buttonOffThread:start()
+	
+			buttonOffThread:set("width", STND_BUTTON_WIDTH )
+			buttonOffThread:set("height", STND_BUTTON_HEIGHT )
+			buttonOffThread:set("shadow", true )
+			buttonOffThread:set("shadowOffsetX", 5 )
+			buttonOffThread:set("shadowOffsetY", 2 )
+			buttonOffThread:set("colR", BUTTON_OFF_R )
+			buttonOffThread:set("colG", BUTTON_OFF_G )
+			buttonOffThread:set("colB", BUTTON_OFF_B )
+		end
 	else
 		if not buttonOff then	-- if there's no button yet, that means the thread is still running...
 		
@@ -153,6 +158,7 @@ function button.init()
 			status = buttonOffThread:get("status")
 			if status == "done" then
 				buttonOff = buttonOffThread:get("imageData")		-- get the generated image data from the thread
+				buttonOff:encode("buttonOff.png")
 				buttonOff = love.graphics.newImage(buttonOff)
 				buttonOffThread = nil
 			end
@@ -161,18 +167,23 @@ function button.init()
 	
 	if not buttonOverThread and not buttonOver then		-- only start thread once!
 	
-		loadingScreen.addSection("Rendering Activated Button")
-		buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/createImageBox.lua")
-		buttonOverThread:start()
+		ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
+		print(buttonOver)
+		if not ok then
+			buttonOver = nil
+			loadingScreen.addSection("Rendering Activated Button")
+			buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/createImageBox.lua")
+			buttonOverThread:start()
 	
-		buttonOverThread:set("width", STND_BUTTON_WIDTH )
-		buttonOverThread:set("height", STND_BUTTON_HEIGHT )
-		buttonOverThread:set("shadow", true )
-		buttonOverThread:set("shadowOffsetX", 6 )
-		buttonOverThread:set("shadowOffsetY", 1 )
-		buttonOverThread:set("colR", BUTTON_OVER_R )
-		buttonOverThread:set("colG", BUTTON_OVER_G )
-		buttonOverThread:set("colB", BUTTON_OVER_B )
+			buttonOverThread:set("width", STND_BUTTON_WIDTH )
+			buttonOverThread:set("height", STND_BUTTON_HEIGHT )
+			buttonOverThread:set("shadow", true )
+			buttonOverThread:set("shadowOffsetX", 6 )
+			buttonOverThread:set("shadowOffsetY", 1 )
+			buttonOverThread:set("colR", BUTTON_OVER_R )
+			buttonOverThread:set("colG", BUTTON_OVER_G )
+			buttonOverThread:set("colB", BUTTON_OVER_B )
+		end
 	else
 		if not buttonOver then	-- if there's no button yet, that means the thread is still running...
 		
@@ -190,6 +201,7 @@ function button.init()
 			status = buttonOverThread:get("status")
 			if status == "done" then
 				buttonOver = buttonOverThread:get("imageData")		-- get the generated image data from the thread
+				buttonOver:encode("buttonOver.png")
 				buttonOver = love.graphics.newImage(buttonOver)
 				buttonOverThread = nil
 			end
@@ -197,18 +209,25 @@ function button.init()
 	end
 	
 	if not buttonOffSmallThread and not buttonOffSmall then		-- only start thread once!
-		loadingScreen.addSection("Rendering Deactivated Button (small)")
-		buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/createImageBox.lua")
-		buttonOffSmallThread:start()
 	
-		buttonOffSmallThread:set("width", SMALL_BUTTON_WIDTH )
-		buttonOffSmallThread:set("height", SMALL_BUTTON_HEIGHT )
-		buttonOffSmallThread:set("shadow", true )
-		buttonOffSmallThread:set("shadowOffsetX", 5 )
-		buttonOffSmallThread:set("shadowOffsetY", 2 )
-		buttonOffSmallThread:set("colR", BUTTON_OFF_R )
-		buttonOffSmallThread:set("colG", BUTTON_OFF_G )
-		buttonOffSmallThread:set("colB", BUTTON_OFF_B )
+		
+		ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
+		print(buttonOffSmall)
+		if not ok then
+			buttonOffSmall = nil
+			loadingScreen.addSection("Rendering Deactivated Button (small)")
+			buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/createImageBox.lua")
+			buttonOffSmallThread:start()
+	
+			buttonOffSmallThread:set("width", SMALL_BUTTON_WIDTH )
+			buttonOffSmallThread:set("height", SMALL_BUTTON_HEIGHT )
+			buttonOffSmallThread:set("shadow", true )
+			buttonOffSmallThread:set("shadowOffsetX", 5 )
+			buttonOffSmallThread:set("shadowOffsetY", 2 )
+			buttonOffSmallThread:set("colR", BUTTON_OFF_R )
+			buttonOffSmallThread:set("colG", BUTTON_OFF_G )
+			buttonOffSmallThread:set("colB", BUTTON_OFF_B )
+		end
 	else
 		if not buttonOffSmall then	-- if there's no button yet, that means the thread is still running...
 		
@@ -224,6 +243,7 @@ function button.init()
 			status = buttonOffSmallThread:get("status")
 			if status == "done" then
 				buttonOffSmall = buttonOffSmallThread:get("imageData")		-- get the generated image data from the thread
+				buttonOffSmall:encode("buttonOffSmall.png")
 				buttonOffSmall = love.graphics.newImage(buttonOffSmall)
 				buttonOffSmallThread = nil
 			end
@@ -232,18 +252,23 @@ function button.init()
 	
 	if not buttonOverSmallThread and not buttonOverSmall then		-- only start thread once!
 	
-		loadingScreen.addSection("Rendering Activated Button (small)")
-		buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/createImageBox.lua")
-		buttonOverSmallThread:start()
+		ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
+		print(buttonOverSmall)
+		if not ok then
+			buttonOverSmall = nil
+			loadingScreen.addSection("Rendering Activated Button (small)")
+			buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/createImageBox.lua")
+			buttonOverSmallThread:start()
 	
-		buttonOverSmallThread:set("width", SMALL_BUTTON_WIDTH )
-		buttonOverSmallThread:set("height", SMALL_BUTTON_HEIGHT )
-		buttonOverSmallThread:set("shadow", true )
-		buttonOverSmallThread:set("shadowOffsetX", 6 )
-		buttonOverSmallThread:set("shadowOffsetY", 1 )
-		buttonOverSmallThread:set("colR", BUTTON_OVER_R )
-		buttonOverSmallThread:set("colG", BUTTON_OVER_G )
-		buttonOverSmallThread:set("colB", BUTTON_OVER_B )
+			buttonOverSmallThread:set("width", SMALL_BUTTON_WIDTH )
+			buttonOverSmallThread:set("height", SMALL_BUTTON_HEIGHT )
+			buttonOverSmallThread:set("shadow", true )
+			buttonOverSmallThread:set("shadowOffsetX", 6 )
+			buttonOverSmallThread:set("shadowOffsetY", 1 )
+			buttonOverSmallThread:set("colR", BUTTON_OVER_R )
+			buttonOverSmallThread:set("colG", BUTTON_OVER_G )
+			buttonOverSmallThread:set("colB", BUTTON_OVER_B )
+		end
 	else
 		if not buttonOverSmall then	-- if there's no button yet, that means the thread is still running...
 		
@@ -261,6 +286,7 @@ function button.init()
 			status = buttonOverSmallThread:get("status")
 			if status == "done" then
 				buttonOverSmall = buttonOverSmallThread:get("imageData")		-- get the generated image data from the thread
+				buttonOverSmall:encode("buttonOverSmall.png")
 				buttonOverSmall = love.graphics.newImage(buttonOverSmall)
 				buttonOverSmallThread = nil
 			end

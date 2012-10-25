@@ -1,12 +1,9 @@
 
-function seperateStrings(str, seperator)
-	tbl = {}
-	index = 1
-	for val in string.gfind(str, ".-,") do
-		tbl[index] = val:sub(1,#val-1)
-		index = index + 1
+function interpretEvent( str )
+	chunk = loadstring(str)
+	if chunk then
+		chunk()
 	end
-	return tbl
 end
 
 function incrementID( num )
@@ -35,21 +32,6 @@ function cycle(x, min, max)
 		x = x + (max-min)
 	end
 	return x
-end
-
-function getPlayerColour(ID)
-	if ID == 1 then
-		return PLAYERCOLOUR1_CONSOLE
-	end
-	if ID == 2 then
-		return PLAYERCOLOUR2_CONSOLE
-	end
-	if ID == 3 then
-		return PLAYERCOLOUR3_CONSOLE
-	end
-	if ID == 4 then
-		return PLAYERCOLOUR4_CONSOLE
-	end
 end
 
 function dropAlpha(x,y,r,g,b,a)

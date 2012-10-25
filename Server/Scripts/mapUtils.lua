@@ -275,12 +275,11 @@ end
 
 -- This function iterates over the whole map and calculates the rail type for each tile.
 -- That's important for placing correct images on the map and for calculating movement later on.
-function calculateRailTypes(map)
-	map = map or curMap
-	if map then
-		for i = 1,map.width do
-			for j = 1,map.height do
-				curMapRailTypes[i][j] = getRailType(i,j, map)
+function calculateRailTypes()
+	if curMap then
+		for i = 1,curMap.width do
+			for j = 1,curMap.height do
+				curMapRailTypes[i][j] = getRailType(i,j)
 			end
 		end
 	end
@@ -321,58 +320,57 @@ function generateRailList()
 end
 
 
-function getRailType(i, j, map)
-	map = map or curMap
-	if map[i-1][j] ~= "C" and map[i+1][j] ~= "C" and map[i][j-1] == "C" and map[i][j+1] == "C" then
+function getRailType(i, j)
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
 		return NS
 	end
-	if map[i-1][j] == "C" and map[i+1][j] == "C" and map[i][j-1] ~= "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
 		return EW
 	end
 	
 	--curves
-	if map[i-1][j] == "C" and map[i+1][j] ~= "C" and map[i][j-1] == "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
 		return NW
 	end
-	if map[i-1][j] == "C" and map[i+1][j] ~= "C" and map[i][j-1] ~= "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
 		return SW
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] == "C" and map[i][j-1] == "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
 		return NE
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] == "C" and map[i][j-1] ~= "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
 		return ES
 	end
 	
 	--junctions
-	if map[i-1][j] == "C" and map[i+1][j] == "C" and map[i][j-1] == "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
 		return NEW
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] == "C" and map[i][j-1] == "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
 		return NES	-- NES
 	end
-	if map[i-1][j] == "C" and map[i+1][j] == "C" and map[i][j-1] ~= "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
 		return ESW	-- ESW
 	end
-	if map[i-1][j] == "C" and map[i+1][j] ~= "C" and map[i][j-1] == "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
 		return NSW	-- NSW
 	end
 	
-	if map[i-1][j] == "C" and map[i+1][j] == "C" and map[i][j-1] == "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] == "C" and curMap[i][j-1] == "C" and curMap[i][j+1] == "C" then
 		return NESW	-- NESW
 	end
 	
 	--turn around
-	if map[i-1][j] == "C" and map[i+1][j] ~= "C" and map[i][j-1] ~= "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] == "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
 		return WW	-- W
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] == "C" and map[i][j-1] ~= "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] == "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] ~= "C" then
 		return EE	-- E
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] ~= "C" and map[i][j-1] == "C" and map[i][j+1] ~= "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] == "C" and curMap[i][j+1] ~= "C" then
 		return NN	-- N
 	end
-	if map[i-1][j] ~= "C" and map[i+1][j] ~= "C" and map[i][j-1] ~= "C" and map[i][j+1] == "C" then
+	if curMap[i-1][j] ~= "C" and curMap[i+1][j] ~= "C" and curMap[i][j-1] ~= "C" and curMap[i][j+1] == "C" then
 		return SS	-- S
 	end
 end

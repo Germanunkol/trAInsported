@@ -21,10 +21,10 @@ end
 local trainImagesCreated = false
 
 function startMatch( width, height, time, maxTime, gameMode, AIs )
-	if mapRenderThread or mapGenerateThread then
+	--[[if mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
-	end
+	end]]--
 	
 	ROUND_TIME = math.floor(maxTime)
 	GAME_TYPE = gameMode
@@ -65,6 +65,7 @@ end
 
 function randomMatch()
 	
+	simulation.stop()
 	local width = math.random(4,25)
 	local height = math.random(4,25)
 	
@@ -200,10 +201,10 @@ function normalMatch()
 		print("Invalid game mode!")
 		return
 	end
-	if mapRenderThread or mapGenerateThread then
+	--[[if mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
-	end
+	end]]--
 	for k, aiName in pairs(chosenAIs) do
 		if not menuTrainImages[k] then
 			print("Still rendering train images...")
@@ -346,6 +347,8 @@ function menu.renderTrainImages()
 end
 
 function menu.newRound()
+	simulation.stop()
+
 	menu.removeAll()
 	numAIsChosen = 0
 	chosenAIs = {}

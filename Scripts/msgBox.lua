@@ -88,19 +88,22 @@ local msgBoxBGThread
 function msgBox.init()
 	
 	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
-		loadingScreen.addSection("Rendering Message Box")
-		msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/createImageBox.lua")
-		msgBoxBGThread:start()
+		ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
+		if not ok then
+			msgBoxBG = nil
+			loadingScreen.addSection("Rendering Message Box")
+			msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/createImageBox.lua")
+			msgBoxBGThread:start()
 	
-		msgBoxBGThread:set("width", MSG_BOX_WIDTH )
-		msgBoxBGThread:set("height", MSG_BOX_HEIGHT )
-		msgBoxBGThread:set("shadow", true )
-		msgBoxBGThread:set("shadowOffsetX", 10 )
-		msgBoxBGThread:set("shadowOffsetY", 0 )
-		msgBoxBGThread:set("colR", MSG_BOX_R )
-		msgBoxBGThread:set("colG", MSG_BOX_G )
-		msgBoxBGThread:set("colB", MSG_BOX_B )
-		
+			msgBoxBGThread:set("width", MSG_BOX_WIDTH )
+			msgBoxBGThread:set("height", MSG_BOX_HEIGHT )
+			msgBoxBGThread:set("shadow", true )
+			msgBoxBGThread:set("shadowOffsetX", 10 )
+			msgBoxBGThread:set("shadowOffsetY", 0 )
+			msgBoxBGThread:set("colR", MSG_BOX_R )
+			msgBoxBGThread:set("colG", MSG_BOX_G )
+			msgBoxBGThread:set("colB", MSG_BOX_B )
+		end
 	else
 		if not msgBoxBG then	-- if there's no button yet, that means the thread is still running...
 		
@@ -116,6 +119,7 @@ function msgBox.init()
 			status = msgBoxBGThread:get("status")
 			if status == "done" then
 				msgBoxBG = msgBoxBGThread:get("imageData")		-- get the generated image data from the thread
+				msgBoxBG:encode("msgBoxBG.png")
 				msgBoxBG = love.graphics.newImage(msgBoxBG)
 				msgBoxBGThread = nil
 			end

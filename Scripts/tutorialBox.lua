@@ -64,21 +64,24 @@ end
 function tutorialBox.init()
 	
 	if not tutorialBoxBGThread and not tutorialBoxBG then		-- only start thread once!
-		loadingScreen.addSection("Rendering Tutorial Box")
-		tutorialBoxBGThread = love.thread.newThread("tutorialBoxBGThread", "Scripts/createImageBox.lua")
-		tutorialBoxBGThread:start()
+		ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
+		if not ok then
+			tutorialBoxBG = nil
+			loadingScreen.addSection("Rendering Tutorial Box")
+			tutorialBoxBGThread = love.thread.newThread("tutorialBoxBGThread", "Scripts/createImageBox.lua")
+			tutorialBoxBGThread:start()
 	
 		
-		tutorialBoxBGThread:set("alpha", 200 )
-		tutorialBoxBGThread:set("width", TUT_BOX_WIDTH )
-		tutorialBoxBGThread:set("height", TUT_BOX_HEIGHT )
-		tutorialBoxBGThread:set("shadow", true )
-		tutorialBoxBGThread:set("shadowOffsetX", 10 )
-		tutorialBoxBGThread:set("shadowOffsetY", 0 )
-		tutorialBoxBGThread:set("colR", MSG_BOX_R )
-		tutorialBoxBGThread:set("colG", MSG_BOX_G )
-		tutorialBoxBGThread:set("colB", MSG_BOX_B )
-		
+			tutorialBoxBGThread:set("alpha", 200 )
+			tutorialBoxBGThread:set("width", TUT_BOX_WIDTH )
+			tutorialBoxBGThread:set("height", TUT_BOX_HEIGHT )
+			tutorialBoxBGThread:set("shadow", true )
+			tutorialBoxBGThread:set("shadowOffsetX", 10 )
+			tutorialBoxBGThread:set("shadowOffsetY", 0 )
+			tutorialBoxBGThread:set("colR", MSG_BOX_R )
+			tutorialBoxBGThread:set("colG", MSG_BOX_G )
+			tutorialBoxBGThread:set("colB", MSG_BOX_B )
+		end
 	else
 		if not tutorialBoxBG then	-- if there's no button yet, that means the thread is still running...
 		
@@ -94,6 +97,7 @@ function tutorialBox.init()
 			status = tutorialBoxBGThread:get("status")
 			if status == "done" then
 				tutorialBoxBG = tutorialBoxBGThread:get("imageData")		-- get the generated image data from the thread
+				tutorialBoxBG:encode("tutorialBoxBG.png")
 				tutorialBoxBG = love.graphics.newImage(tutorialBoxBG)
 				tutorialBoxBGThread = nil
 			end

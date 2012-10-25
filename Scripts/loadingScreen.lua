@@ -119,18 +119,22 @@ local bgBoxThread
 
 function loadingScreen.init()
 	if not bgBoxThread and not bgBox then		-- only start thread once!
-		loadingScreen.addSection("Rendering Loading Box")
-		bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/createImageBox.lua")
-		bgBoxThread:start()
+		ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
+		if not ok then
+			bgBox = nil
+			loadingScreen.addSection("Rendering Loading Box")
+			bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/createImageBox.lua")
+			bgBoxThread:start()
 	
-		bgBoxThread:set("width", BOX_WIDTH )
-		bgBoxThread:set("height", BOX_HEIGHT )
-		bgBoxThread:set("shadow", true )
-		bgBoxThread:set("shadowOffsetX", 10 )
-		bgBoxThread:set("shadowOffsetY", 0 )
-		bgBoxThread:set("colR", LOAD_BOX_LARGE_R )
-		bgBoxThread:set("colG", LOAD_BOX_LARGE_G )
-		bgBoxThread:set("colB", LOAD_BOX_LARGE_B )
+			bgBoxThread:set("width", BOX_WIDTH )
+			bgBoxThread:set("height", BOX_HEIGHT )
+			bgBoxThread:set("shadow", true )
+			bgBoxThread:set("shadowOffsetX", 10 )
+			bgBoxThread:set("shadowOffsetY", 0 )
+			bgBoxThread:set("colR", LOAD_BOX_LARGE_R )
+			bgBoxThread:set("colG", LOAD_BOX_LARGE_G )
+			bgBoxThread:set("colB", LOAD_BOX_LARGE_B )
+		end
 	else
 		if not bgBox then	-- if there's no button yet, that means the thread is still running...
 		
@@ -146,6 +150,7 @@ function loadingScreen.init()
 			status = bgBoxThread:get("status")
 			if status == "done" then
 				bgBox = bgBoxThread:get("imageData")		-- get the generated image data from the thread
+				bgBox:encode("bgBox.png")
 				bgBox = love.graphics.newImage(bgBox)
 				bgBoxThread = nil
 			end
@@ -153,18 +158,22 @@ function loadingScreen.init()
 	end
 	
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
-		loadingScreen.addSection("Rendering Loading Box (small)")
-		bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/createImageBox.lua")
-		bgBoxSmallThread:start()
+		ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
+		if not ok then
+			bgBoxSmall = nil
+			loadingScreen.addSection("Rendering Loading Box (small)")
+			bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/createImageBox.lua")
+			bgBoxSmallThread:start()
 	
-		bgBoxSmallThread:set("width", BOX_WIDTH_SMALL )
-		bgBoxSmallThread:set("height", BOX_HEIGHT_SMALL )
-		bgBoxSmallThread:set("shadow", true )
-		bgBoxSmallThread:set("shadowOffsetX", 10 )
-		bgBoxSmallThread:set("shadowOffsetY", 0 )
-		bgBoxSmallThread:set("colR", LOAD_BOX_SMALL_R )
-		bgBoxSmallThread:set("colG", LOAD_BOX_SMALL_G )
-		bgBoxSmallThread:set("colB", LOAD_BOX_SMALL_B )
+			bgBoxSmallThread:set("width", BOX_WIDTH_SMALL )
+			bgBoxSmallThread:set("height", BOX_HEIGHT_SMALL )
+			bgBoxSmallThread:set("shadow", true )
+			bgBoxSmallThread:set("shadowOffsetX", 10 )
+			bgBoxSmallThread:set("shadowOffsetY", 0 )
+			bgBoxSmallThread:set("colR", LOAD_BOX_SMALL_R )
+			bgBoxSmallThread:set("colG", LOAD_BOX_SMALL_G )
+			bgBoxSmallThread:set("colB", LOAD_BOX_SMALL_B )
+		end
 	else
 		if not bgBoxSmall then	-- if there's no button yet, that means the thread is still running...
 		
@@ -180,6 +189,7 @@ function loadingScreen.init()
 			status = bgBoxSmallThread:get("status")
 			if status == "done" then
 				bgBoxSmall = bgBoxSmallThread:get("imageData")		-- get the generated image data from the thread
+				bgBoxSmall:encode("bgBoxSmall.png")
 				bgBoxSmall = love.graphics.newImage(bgBoxSmall)
 				bgBoxSmallThread = nil
 			end

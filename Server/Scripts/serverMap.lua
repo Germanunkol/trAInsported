@@ -1,57 +1,8 @@
+require("Scripts/TSerial")
 require("Scripts/mapUtils")
 
 local map = {}
 
-roundEnded = false
-
-TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
-
-local curMapOccupiedTiles = {}	-- stores if a certain path on a tile is already being used by another train
-local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is already being used by another train
-
-IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
-
-local status = nil
-
-local mapSeed = 0
-
---------------------------------------------------------------
---		INITIALISE MAP:
---------------------------------------------------------------
-
-newMapStarting = false
-
-function map.startupProcess()
-	if newMapStarting == true then
-		return true
-	end
-end
-
-function map.new(width, height, seed, tutorialMap)
-	--[[if mapRenderThread or mapGenerateThread then
-		print("Already generating new map!")
-		return
-	end]]--
-	
-	seed = seed or 1
-	
-	newMapStarting = true
-	mapRenderPercent = nil
-	mapGeneratePercent = nil
---	math.randomseed(1)
-	numTrains = 0
-	mapSeed = seed
-	
-	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-	
-	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-	
-	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000, tutorialMap)
-	--map.generate(5,5,2)
-	
-end
-
--- called when map has been generated and rendered
 function runMap(restart)
 	newMapStarting = false
 	if curMap then
@@ -59,112 +10,75 @@ function runMap(restart)
 		
 		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
 		
-		math.randomseed(mapSeed)
+		math.randomseed(1)
 		
 		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
 		--populateMap()
+		
+		
+		clearAllOccupations()
 		ai.init()
 		
-		clouds.restart()
+		--clouds.restart()
 		curMap.time = 0		-- start map timer.
 		
-		resetTimeFactor()		-- set back to 1.
+		--resetTimeFactor()		-- set back to 1.
 		
 		roundEnded = false
 		
-		menu.ingame()
-		
-		
-		-- If there's a tutorial callback registered by the current map, then start that now!
-		if not restart and tutorial and tutorial.mapRenderingDoneCallback then
-			tutorial.mapRenderingDoneCallback()
-		end
+		--menu.ingame()
 		
 	else
 		print("ERROR: NO MAP FOUND!")
 	end
 end
 
-function map.restart()
-	
-	AIs = ai.restart()	-- get list of current ais, and remove the current ais.
 
+function startMatch( width, height, time, maxTime, gameMode, AIs )
+	if mapRenderThread or mapGenerateThread then
+		print("Already generating new map!")
+		return
+	end
+	
+	ROUND_TIME = math.floor(maxTime)
+	GAME_TYPE = gameMode
+--[[
+	loadingScreen.reset()
+	loadingScreen.addSection("New Map")
+	loadingScreen.addSubSection("New Map", "Size: " .. width .. "x" .. height)
+	loadingScreen.addSubSection("New Map", "Time: Day")
+	if GAME_TYPE == GAME_TYPE_TIME then
+		loadingScreen.addSubSection("New Map", "Mode: Round Time (" .. ROUND_TIME .. "s)")
+	elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+		loadingScreen.addSubSection("New Map", "Mode: Transport enough Passengers")
+	end]]--
+	
+	ai.restart()	-- make sure aiList is reset!
 	stats.start( #AIs )
 	train.init()
 	
-	clearAllOccupations()
-	console.add("--- Restart ---", {r=255,g=50,b=50})
 	
+	print("found AI:", #AIs)
 	for i = 1, #AIs do
-		ok, msg = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
+		ok, msg = pcall(ai.new, "AI/" .. AIs[i])
 		if not ok then
 			print("Err: " .. msg)
 		else
-			stats.setAIName(i, AIs[i])
+			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
 		end
 	end
 	
-	runMap(true)	-- re-initialise map
-end
-
-function clearAllOccupations()
-
-	curMapOccupiedTiles = {}
-	curMapOccupiedExits = {}
+	map.generate( width, height, 1)
 	
-	for i = 1,curMap.width do
-		curMapOccupiedTiles[i] = {}
-		curMapOccupiedExits[i] = {}
-		for j = 1, curMap.height do
-			curMapOccupiedTiles[i][j] = {}
-			curMapOccupiedTiles[i][j].from = {}
-			curMapOccupiedTiles[i][j].to = {}
-		
-			curMapOccupiedExits[i][j] = {}
-		end
-	end
-
+	--menu.exitOnly()
 end
-
---[[
-function populateMap()
-	if not curMap then return end
-	
-	local firstFound = false
-	for i = 1, 1 do
-		--firstFound = false
-		for i = 1, curMap.width do
-			for j = 1, curMap.height do
-				if curMap[i][j] == "C" and not map.getIsTileOccupied(i, j) then
-					if math.random(3) == 1 then
-					--if not firstFound then
-						firstFound = true
-						if curMap[i-1][j] == "C" then
-							train:new( math.random(4), i, j, "W" )
-						elseif curMap[i+1][j] == "C" then
-							train:new( math.random(4), i, j, "E" )
-						elseif curMap[i][j-1] == "C" then
-							train:new( math.random(4), i, j, "N" )
-						else
-							train:new( math.random(4), i, j, "S" )
-						end
-						numTrains = numTrains+1
-					end
-				end
-			end
-		end
-	end
-end
-]]--
 
 
 local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
-function map.generate(width, height, seed, tutorialMap)
+function map.generate(width, height, seed)
 	if not mapGenerateThread then
-		simulation.stop()
-		print("Generating map!")
 	
 		mapImage,mapShadowImage,mapObjectImage = nil,nil,nil
 		
@@ -181,26 +95,19 @@ function map.generate(width, height, seed, tutorialMap)
 			height = 4
 		end
 
-	
-		if tutorialMap then print("Generating Map...", tutorialMap.width, tutorialMap.height)
-		else print("Generating Map...", width, height)
-		end
+		print("Generating Map...", width, height)
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
 		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
 		mapGenerateThread:start()
-		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
 		mapGenerateThread:set("width", width )
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
 		
-		loadingScreen.addSection("Generating Map")
+		--loadingScreen.addSection("Generating Map")
 		
 	else
 		percent = mapGenerateThread:get("percentage")
-		if percent then
-			loadingScreen.percentage("Generating Map", percent)
-		end
 		status = mapGenerateThread:get("status")
 		if status == "done" then
 			print("Generating done!")
@@ -209,45 +116,64 @@ function map.generate(width, height, seed, tutorialMap)
 			curMapRailTypes = TSerial.unpack(mapGenerateThread:demand("curMapRailTypes"))
 			curMapOccupiedTiles = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedTiles"))
 			curMapOccupiedExits = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedExits"))
-			
-			loadingScreen.percentage("Generating Map", 100)
+			--loadingScreen.percentage("Generating Map", 100)
 			map.print("Finished Map:")
 			mapGenerateThread = nil
 			collectgarbage("collect")
-			map.render(curMap)			
+			--map.render()
+			
+			runMap()	
+			
+			sendMap()
 			
 			return curMap
-		elseif status then
-			loadingScreen.addSubSection("Generating Map", status)
+		end
+		err = mapGenerateThread:get("error")
+		if err then
+			print("THREAD error (map generation): ", err)
+		end
+	end
+end
+
+function map.print(title, m)
+	m = m or curMap
+	title = title or "Current map:"
+	if m then
+		print(title)
+		local str = ""
+		for j = 0,m.height+1,1 do
+			str = ""
+			for i = 0,m.width+1,1 do
+				if m[i][j] then
+					str = str .. m[i][j] .. " "
+				else
+					str = str .. "- "
+				end
+			end
+			print(str)
 		end
 	end
 end
 
 
---------------------------------------------------------------
---		MAP TILE OCCUPATION:
---------------------------------------------------------------
+function clearAllOccupations()
 
-
-function map.drawOccupation()
-	love.graphics.setColor(255,128,128,255)
-	for i = 1, curMap.width do
+	curMapOccupiedTiles = {}
+	curMapOccupiedExits = {}
+	for i = 1,curMap.width do
+		curMapOccupiedTiles[i] = {}
+		curMapOccupiedExits[i] = {}
 		for j = 1, curMap.height do
-			if curMapOccupiedExits[i][j]["N"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+20, 5)
-			end
-			if curMapOccupiedExits[i][j]["S"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+TILE_SIZE-20, 5)
-			end
-			if curMapOccupiedExits[i][j]["W"] then
-				love.graphics.circle("fill", i*TILE_SIZE+20, j*TILE_SIZE+TILE_SIZE/2, 5)
-			end
-			if curMapOccupiedExits[i][j]["E"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE-20, j*TILE_SIZE+TILE_SIZE/2, 5)
-			end
+			curMapOccupiedTiles[i][j] = {}
+			curMapOccupiedTiles[i][j].from = {}
+			curMapOccupiedTiles[i][j].to = {}
+		
+			curMapOccupiedExits[i][j] = {}
 		end
 	end
+
 end
+
 
 function map.getIsTileOccupied(x, y, f, t)
 	if not f or not t then
@@ -740,7 +666,6 @@ function map.init()
 end
 
 function map.getRailPath(tileX, tileY, dir, prevDir)
-
 	if curMapRailTypes[tileX][tileY] == 1 then
 		if dir == "S" then
 			return pathNS, dir
@@ -985,125 +910,29 @@ function map.getNextPossibleDirs(curTileX, curTileY , curDir)
 	end
 end
 
-function map.print(title, m)
-	m = m or curMap
-	title = title or "Current map:"
-	if m then
-		print(title)
-		local str = ""
-		for j = 0,m.height+1,1 do
-			str = ""
-			for i = 0,m.width+1,1 do
-				if m[i][j] then
-					str = str .. m[i][j] .. " "
-				else
-					str = str .. "- "
-				end
-			end
-			print(str)
-		end
-	end
-end
-
-
-mapGenerationPercentage = 0
-
-local highlightList = {}
-local highlightListQuads = {}
-
-mapThread = nil
-mapThreadPercentage = 0
-
---
-function map.render(map)
-	if not mapRenderThread or map ~= nil then		-- if a new map is given, render this new map!
-		print("Rendering Map...")
-		mapRenderThread = love.thread.newThread("mapRenderingThread" ..mapRenderThreadNumber, "Scripts/mapRender.lua")
-		mapRenderThreadNumber = mapRenderThreadNumber + 1
-		mapRenderThread:start()
-		map = map or curMap
-		mapRenderThread:set("curMap", TSerial.pack( map ) )
-		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
-		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
-		loadingScreen.addSection("Rendering Map")
-	else
-		percent = mapRenderThread:get("percentage")
-		if percent then
-			loadingScreen.percentage("Rendering Map", percent)
-		end
-		
-		status = mapRenderThread:get("status")
-		if status == "done" then
-			print("Rendering done!")
-			
-			local groundData = nil
-			local shadowData = nil
-			local objectData = nil
-			groundData = mapRenderThread:get("groundData")
-			shadowData = mapRenderThread:get("shadowData")
-			objectData = mapRenderThread:get("objectData")
-			highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
-
-			for i = 1,20 do
-				highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
-			end
-			
-			loadingScreen.percentage("Rendering Map", 100)
-			
-			mapRenderThread = nil
-			
-			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
-		elseif status then
-			loadingScreen.addSubSection("Rendering Map", status)
-		end
-	end
-end
-
-
-function map.renderHighlights(dt)
-	for k, hl in pairs(highlightList) do
-		if math.ceil(hl.frame) >= 1 and math.ceil(hl.frame) <= #highlightListQuads then
-			love.graphics.drawq(IMAGE_HOTSPOT_HIGHLIGHT, highlightListQuads[math.ceil(hl.frame)], hl.x, hl.y)
-		end
-		hl.frame = hl.frame + dt*15
-		while hl.frame > #highlightListQuads do hl.frame = hl.frame - #highlightListQuads end
-	end
-end
-
---------------------------------------------------------------
---		MAP EVENTS:
---		- new passenger
---		- passenger lost
---------------------------------------------------------------
-
 -- make sure to reset these at round end!
 local passengerTimePassed = 0
 local newTrainQueueTime = 0
 
 function map.handleEvents(dt)
+	passengerTimePassed = passengerTimePassed - dt*timeFactor
+	if passengerTimePassed <= 0 then
+		passenger.new()
+		passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
+	end
 
-	if tutorial and tutorial.handleEvents then
-		tutorial.handleEvents()
-	else
-		passengerTimePassed = passengerTimePassed - dt*timeFactor
-		if passengerTimePassed <= 0 then
-			passenger.new()
-			passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
-		end
-	
-		newTrainQueueTime = newTrainQueueTime + dt*timeFactor
-		if newTrainQueueTime >= .1 then
-			train.handleNewTrains()
-			newTrainQueueTime = newTrainQueueTime - .1
-		end
-	
-		if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-			map.endRound()
-		end
-		 
-		if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
-			map.endRound()
-		end
+	newTrainQueueTime = newTrainQueueTime + dt*timeFactor
+	if newTrainQueueTime >= .1 then
+		train.handleNewTrains()
+		newTrainQueueTime = newTrainQueueTime - .1
+	end
+
+	if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+		map.endRound()
+	end
+	 
+	if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
+		map.endRound()
 	end
 end
 
@@ -1114,6 +943,5 @@ function map.endRound()
 	passengerTimePassed = 10
 	newTrainQueueTime = 0
 end
-
 
 return map

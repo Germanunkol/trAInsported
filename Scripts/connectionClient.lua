@@ -6,6 +6,8 @@ local connectionThread
 
 local printLineNumber = 0
 
+local packetNumber = 0
+
 function connection.startClient(ip, port)
 
 	if connectionThread then
@@ -18,6 +20,7 @@ function connection.startClient(ip, port)
 		connectionThread:set("ip", ip)
 		connectionThread:set("port", port)
 		printLineNumber = 0
+		packetNumber = 0
 	end
 end
 
@@ -41,6 +44,18 @@ function connection.handleConnection()
 		else
 			lineFound = false
 		end
+	end
+	
+	str = connectionThread:get("newMap")
+	if str then
+		simulationMap = TSerial.unpack(str)
+		simulation.init()
+	end
+	
+	str = connectionThread:get("packet" .. packetNumber)
+	if str then
+		simulation.addUpdate(str)
+		packetNumber = incrementID(packetNumber)
 	end
 end
 

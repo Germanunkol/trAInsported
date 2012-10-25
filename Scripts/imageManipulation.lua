@@ -1,3 +1,5 @@
+require("Scripts/misc")
+
 
 function blur( imgData, radius, thread, percentage, maxPercentage )
 	radius = radius or 1
@@ -39,7 +41,7 @@ function blur( imgData, radius, thread, percentage, maxPercentage )
 	return imgDataBlur
 end
 
-function transparentPaste(imgDataDest, imgDataSource, posX, posY)
+function transparentPaste(imgDataDest, imgDataSource, posX, posY, colOffset)
 	posX = posX or 0
 	posY = posY or 0
 	--imgDataResult = love.image.newImageData(imgDataDest:getWidth(), imgDataDest:getHeight())
@@ -51,6 +53,11 @@ function transparentPaste(imgDataDest, imgDataSource, posX, posY)
 				rDest,gDest,bDest,aDest = imgDataDest:getPixel(x,y)
 				--if x >= posX and x-posX < imgDataSource:getWidth() and y >= posY and y-posY < imgDataSource:getHeight() then
 				rSource,gSource,bSource,aSource = imgDataSource:getPixel(x-posX,y-posY)
+				if colOffset then
+					rSource = clamp(rSource + colOffset.r, 0, 255)
+					gSource = clamp(gSource + colOffset.g, 0, 255)
+					bSource = clamp(bSource + colOffset.b, 0, 255)
+				end
 				if aSource > 0 then
 					rSource,gSource,bSource,aSource = rSource/255,gSource/255,bSource/255,aSource/255
 					--r = rDest/255*aDest + rSource/255*aSource

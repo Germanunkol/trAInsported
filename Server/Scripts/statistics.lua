@@ -2,28 +2,27 @@ local statistics = {}
 
 local aiStats = {}
 
-
+--[[
 local IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
 local IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
 local IMAGE_STATS_DROPOFF_WRONG = love.graphics.newImage("Images/StatsIconDropOffWrong.png")
 local IMAGE_STATS_CASH = love.graphics.newImage("Images/StatsIconCash.png")
 local IMAGE_STATS_TIME = love.graphics.newImage("Images/StatsIconTime.png")
-
+]]--
 local statBoxPositive = nil
 local statBoxNegative = nil
 
 function statistics.setAIName(aiID, name)
 	if aiStats[aiID] then
 		aiStats[aiID].name = name
-		statistics.setAIColour(aiID, getPlayerColour(aiID))
 	end
 end
 
-function statistics.setAIColour(aiID, col)
+function statistics.setAIName(aiID, red, green, blue)
 	if aiStats[aiID] then
-		aiStats[aiID].red = col.r
-		aiStats[aiID].green = col.g
-		aiStats[aiID].blue = col.b
+		aiStats[aiID].red = red
+		aiStats[aiID].green = green
+		aiStats[aiID].blue = blue
 	end
 end
 
@@ -334,9 +333,9 @@ function statistics.generateStatWindows()
 			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passenger."
 		end
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+		--table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTrainsID then
 		if mostTrains ~= 1 then
@@ -345,83 +344,83 @@ function statistics.generateStatWindows()
 			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " train."
 		end
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
-		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
+		--table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostTransportedID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostTransported ~= 1 then
 			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
 		else
 			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passenger to her/his destinations."
 		end
-		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostNormalTransportedID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostNormalTransported ~= 1 then
 			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passengers to their destinations."
 		else
 			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
 		end
-		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if mostWrongDestination ~= 1 then
 			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
 		else
 			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
-		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
+		--table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
 	end
 	if mostMoneyID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
 		text = "Player " .. ai.getName(mostMoneyID) .. " earned " .. mostMoney .. " credits."
-		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	
 	--trains:
 	if trMostPickedUpID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 		text = trMostPickedUpName .. " [" .. ai.getName(trMostPickedUpID) .. "] " .. " picked up more passengers than any other train."
-		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostTransportedID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		text = trMostTransportedName .. " [" .. ai.getName(trMostTransportedID) .. "] " .. " brought more passengers to their destination than any other train."
-		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
+		--table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+		--table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if trMostWrongDestination ~= 1 then
 			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
 		else
 			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
 		end
-		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
+		--table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
 	end
 	if trLongestBlockedID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
-		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
+		--table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
+		--table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
 		text = trLongestBlockedName .. " [" .. ai.getName(trLongestBlockedID) .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
-		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
+		--table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
 	end
 	
 	--randomize:
@@ -478,7 +477,7 @@ end
 local displayStatusX = 0
 local displayStatusY = 0
 local displayStatusBoxWidth = 10
-
+--[[
 function statistics.displayStatus()
 	if not statBoxStatus then return end
 	
@@ -489,15 +488,12 @@ function statistics.displayStatus()
 			
 			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255)
 			love.graphics.draw(statBoxStatus, x, displayStatusY)
-			love.graphics.setColor(0,0,0,100)
-			love.graphics.draw(train.getTrainImage(i), x + 20, displayStatusY + 45)		-- shadow of train
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 15, displayStatusBoxWidth, "center")
-			
-			love.graphics.draw(train.getTrainImage(i), x + 24 , displayStatusY + 40)
 		end
 	end
 end
+ ]]--
 
 function statistics.start( ais )
 	aiStats = {}
@@ -518,11 +514,12 @@ function statistics.start( ais )
 		aiStats[i].green = 255
 		aiStats[i].blue = 255
 	end
-	displayStatusBoxWidth = statBoxStatus:getWidth()
-	displayStatusX = love.graphics.getWidth()/2 - #aiStats/2*displayStatusBoxWidth
-	displayStatusY = love.graphics.getHeight() - statBoxStatus:getHeight() - 50
+	--displayStatusBoxWidth = statBoxStatus:getWidth()
+	--displayStatusX = love.graphics.getWidth()/2 - #aiStats/2*displayStatusBoxWidth
+	--displayStatusY = love.graphics.getHeight() - statBoxStatus:getHeight() - 50
 end
 
+--[[
 function statistics.init()
 	if not statBoxPositiveThread and not statBoxPositive then		-- only start thread once!
 		ok, statBoxPositive = pcall(love.graphics.newImage, "statBoxPositive.png")
@@ -649,6 +646,7 @@ function statistics.initialised()
 		return true
 	end
 end
+]]--
 
 return statistics
 

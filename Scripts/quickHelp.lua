@@ -60,18 +60,22 @@ local helpBgThread
 function quickHelp.init()
 
 	if not helpBgThread and not helpBg then		-- only start thread once!
-		loadingScreen.addSection("Rendering Help Box")
-		helpBgThread = love.thread.newThread("helpBgThread", "Scripts/createImageBox.lua")
-		helpBgThread:start()
+		ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
+		if not ok then
+			helpBg = nil
+			loadingScreen.addSection("Rendering Help Box")
+			helpBgThread = love.thread.newThread("helpBgThread", "Scripts/createImageBox.lua")
+			helpBgThread:start()
 	
-		helpBgThread:set("width", HELP_WIDTH )
-		helpBgThread:set("height", HELP_HEIGHT )
-		helpBgThread:set("shadow", true )
-		helpBgThread:set("shadowOffsetX", 10 )
-		helpBgThread:set("shadowOffsetY", 0 )
-		helpBgThread:set("colR", HELP_BOX_R )
-		helpBgThread:set("colG", HELP_BOX_G )
-		helpBgThread:set("colB", HELP_BOX_B )
+			helpBgThread:set("width", HELP_WIDTH )
+			helpBgThread:set("height", HELP_HEIGHT )
+			helpBgThread:set("shadow", true )
+			helpBgThread:set("shadowOffsetX", 10 )
+			helpBgThread:set("shadowOffsetY", 0 )
+			helpBgThread:set("colR", HELP_BOX_R )
+			helpBgThread:set("colG", HELP_BOX_G )
+			helpBgThread:set("colB", HELP_BOX_B )
+		end
 	else
 		if not helpBg then	-- if there's no button yet, that means the thread is still running...
 		
@@ -87,6 +91,7 @@ function quickHelp.init()
 			status = helpBgThread:get("status")
 			if status == "done" then
 				helpBg = helpBgThread:get("imageData")		-- get the generated image data from the thread
+				helpBg:encode("helpBg.png")
 				helpBg = love.graphics.newImage(helpBg)
 				helpBgThread = nil
 			end

@@ -71,21 +71,23 @@ end
 function codeBox.init()
 	
 	if not codeBoxBGThread and not codeBoxBG then		-- only start thread once!
-		loadingScreen.addSection("Rendering Code Box")
-		codeBoxBGThread = love.thread.newThread("codeBoxBGThread", "Scripts/createImageBox.lua")
-		codeBoxBGThread:start()
+		ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
+		if not ok then
+			codeBoxBG = nil
+			loadingScreen.addSection("Rendering Code Box")
+			codeBoxBGThread = love.thread.newThread("codeBoxBGThread", "Scripts/createImageBox.lua")
+			codeBoxBGThread:start()
 	
-		
-		codeBoxBGThread:set("alpha", 200 )
-		codeBoxBGThread:set("width", CODE_BOX_WIDTH )
-		codeBoxBGThread:set("height", CODE_BOX_HEIGHT )
-		codeBoxBGThread:set("shadow", true )
-		codeBoxBGThread:set("shadowOffsetX", 10 )
-		codeBoxBGThread:set("shadowOffsetY", 0 )
-		codeBoxBGThread:set("colR", CODE_BOX_R )
-		codeBoxBGThread:set("colG", CODE_BOX_G )
-		codeBoxBGThread:set("colB", CODE_BOX_B )
-		
+			codeBoxBGThread:set("alpha", 200 )
+			codeBoxBGThread:set("width", CODE_BOX_WIDTH )
+			codeBoxBGThread:set("height", CODE_BOX_HEIGHT )
+			codeBoxBGThread:set("shadow", true )
+			codeBoxBGThread:set("shadowOffsetX", 10 )
+			codeBoxBGThread:set("shadowOffsetY", 0 )
+			codeBoxBGThread:set("colR", CODE_BOX_R )
+			codeBoxBGThread:set("colG", CODE_BOX_G )
+			codeBoxBGThread:set("colB", CODE_BOX_B )
+		end
 	else
 		if not codeBoxBG then	-- if there's no button yet, that means the thread is still running...
 		
@@ -101,6 +103,7 @@ function codeBox.init()
 			status = codeBoxBGThread:get("status")
 			if status == "done" then
 				codeBoxBG = codeBoxBGThread:get("imageData")		-- get the generated image data from the thread
+				codeBoxBG:encode("codeBoxBG.png")
 				codeBoxBG = love.graphics.newImage(codeBoxBG)
 				codeBoxBGThread = nil
 			end

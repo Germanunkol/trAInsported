@@ -20,28 +20,6 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-trainImageBorder = love.graphics.newImage("Images/Train1Boarded.png")
-
-local trainImages = {}
-local trainImageThreads = {}
-local numTrainImageThreads = 0
-local totalNumImageThreads = 0
-
---[[
-trainImagePlayer1
-trainImagePlayer2
-trainImagePlayer3
-trainImagePlayer4
-]]--
-
-function tint(col)
-	local bright = 0
-	return function (x,y,r,g,b,a)
-		bright = (r+g+b)/3	--calc brightness (average) of pixel
-		return bright*col.r/255, bright*col.g/255, bright*col.b/255, a
-	end
-end
-
 function train.init()
 	
 	newTrainQueue = {}
@@ -51,12 +29,11 @@ function train.init()
 	trainList[3] = {}
 	trainList[4] = {}
 	
-	trainImageThreads = {}
-	numTrainImageThreads = 0
 	blockedTrains = {}
-
+	
 end
 
+--[[
 function train.resetImages()
 	trainImages = {}
 end
@@ -68,7 +45,6 @@ end
 function train.getTrainImage( ID )
 	return trainImages[ID]
 end
-
 function train.renderTrainImage( name, ID )
 	if name and ID then
 		print("starting thread...train.renderTrainImage", name .. ".lua")
@@ -102,7 +78,7 @@ function train.renderTrainImage( name, ID )
 			end
 		end
 	end
-end
+end]]--
 
 function train.isRenderingImages()
 	if numTrainImageThreads > 0 then
@@ -121,9 +97,6 @@ function train.buyNew(aiID)
 				print("Bought new Train", aiID, posX, posY)
 				stats.subMoney(aiID, TRAIN_COST)
 				table.insert(newTrainQueue, {aiID=aiID, posX=posX, posY=posY, dir=dir})
-				if tutorial and tutorial.trainPlacingEvent then
-					tutorial.trainPlacingEvent()
-				end
 			end
 		else
 			print("Error: X and Y passed to 'buyTrain' must be numbers!")	-- will print inside the coroutine => ingame console
@@ -185,11 +158,11 @@ function train:new( aiID, x, y, dir )
 		if not trainList[aiID][i] then
 			--local imageOff = createButtonOff(width, height, label)
 			--local imageOver = createButtonOver(width, height, label)
-			local image = trainImages[aiID]
-			trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, button_mt)
+			--local image = trainImages[aiID]
+			trainList[aiID][i] = setmetatable({ID = i, aiID = aiID}, button_mt)
 			
-			--print("Placing new train at:", x, y)
-			--print("\tHeading:", dir)
+			print("Placing new train at:", x, y)
+			print("\tHeading:", dir)
 			path = nil
 			if dir == "N" then
 				if curMap[x][y-1] == "C" then
@@ -223,7 +196,6 @@ function train:new( aiID, x, y, dir )
 					path = map.getRailPath(x, y, "W")
 					dir = "W"
 				end
-				
 			end
 			
 			trainList[aiID][i].tileX = x
@@ -237,6 +209,15 @@ function train:new( aiID, x, y, dir )
 			trainList[aiID][i].curDistTraveled = 0
 			trainList[aiID][i].curSpeed = 0
 			trainList[aiID][i].stop = 0
+			
+			
+			sendStr = "NEW_TRAIN:"
+			sendStr = sendStr .. aiID .. ","
+			sendStr = sendStr .. trainList[aiID][i].name .. ","
+			sendStr = sendStr .. trainList[aiID][i].tileX .. ","
+			sendStr = sendStr .. trainList[aiID][i].tileY .. ","
+			sendStr = sendStr .. dir .. ","
+			sendMapUpdate(sendStr)
 			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
@@ -254,19 +235,6 @@ function train:new( aiID, x, y, dir )
 				--trainList[aiID][i].x = (path[curPathNode+1].x - path[curPathNode].x)/2 + path[curPathNode].x
 				--trainList[aiID][i].y = (path[curPathNode+1].y - path[curPathNode].y)/2 + path[curPathNode].y
 				
-				tr = trainList[aiID][i]
-				if tr.path[tr.curNode+1] then
-					if tr.path[tr.curNode+1].x >= tr.path[tr.curNode].x then
-						tr.angle = math.atan((tr.path[tr.curNode+1].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+1].x - tr.path[tr.curNode].x)) + math.pi/2
-					else
-						tr.angle = math.atan((tr.path[tr.curNode+1].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+1].x - tr.path[tr.curNode].x)) - math.pi/2
-					end
-				else
-					tr.angle = getAngleByDir(tr.dir)
-				end
-				
-				trainList[aiID][i].prevAngle = trainList[aiID][i].angle
-				
 				
 				dx = (path[curPathNode+1].x - trainList[aiID][i].x)
 				dy = (path[curPathNode+1].y - trainList[aiID][i].y)
@@ -279,7 +247,6 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].y = math.random(100)
 			end
 			
-			print("NEW TRAIN!!")
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
 			return trainList[aiID][i]
 		end
@@ -344,36 +311,12 @@ function moveSingleTrain(tr, t)
 			tr.curSpeed = math.max(tr.curSpeed-TRAIN_ACCEL*t, 0)
 		end
 		
-		--distToMove = math.sqrt(toMoveX^2+toMoveY^2)		-- length of way to travel
-		
-		-- print("path:")
-		-- printTable(tr.path)
-		
 		while tr.curDistTraveled > tr.path[tr.curNode+1].length and tr.path[tr.curNode+2] do
 			tr.curNode = tr.curNode + 1
-			
-			tr.prevAngle = tr.angle
-				
-			tr.prevAngle = tr.angle
-			if tr.path[tr.curNode+2] then
-				if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-				else
-					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-				end
-			else
-				tr.angle = getAngleByDir(tr.dir)
-			end
-			if tr.prevAngle - tr.angle < -math.pi then
-				tr.prevAngle = tr.prevAngle + 2*math.pi
-			end
-			if tr.prevAngle - tr.angle > math.pi then
-				tr.prevAngle = tr.prevAngle - 2*math.pi
-			end
-			
-		end
 		
+		end
 		if tr.curDistTraveled > tr.path[tr.curNode+1].length then
+		
 			--tr.blocked = true
 			tr.curDistTraveled = tr.curDistTraveled - tr.path[tr.curNode+1].length	-- remember overshoot!
 			
@@ -383,7 +326,6 @@ function moveSingleTrain(tr, t)
 				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 					
 					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
-					
 					tr.nextDir = nil
 					
 					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
@@ -435,7 +377,9 @@ function moveSingleTrain(tr, t)
 				
 				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
 					
-					if tr.blocked then removeBlockedTrain(tr) end
+					if tr.blocked then removeBlockedTrain(tr)
+						print("Train no longer blocked!")
+					end
 					map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
 					
 					tr.timeBlocked = 0
@@ -450,41 +394,20 @@ function moveSingleTrain(tr, t)
 				
 					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
 					
-					
 					tr.dir = tr.nextDir
 				
 					if tr.path then
 					
 						tr.curNode = 1
 						
-						tr.prevAngle = tr.angle
-						if tr.path[tr.curNode+2] then
-							if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-							else
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-							end
-						else
-							tr.angle = getAngleByDir(tr.dir)
-						end
-						if tr.prevAngle - tr.angle < -math.pi then
-							tr.prevAngle = tr.prevAngle + 2*math.pi
-						end
-						if tr.prevAngle - tr.angle > math.pi then
-							tr.prevAngle = tr.prevAngle - 2*math.pi
-						end
-					
 						tr.x = tr.path[tr.curNode].x
 						tr.y = tr.path[tr.curNode].y
-					
-						-- dx = (tr.path[tr.curNode+1].x - tr.x)
-						-- dy = (tr.path[tr.curNode+1].y - tr.y)
-						--normalize:
-						-- d = math.sqrt(dx ^ 2 + dy ^ 2)
+						
 					end
 					
 					if tr.curPassenger and tr.curPassenger.onTrain then
 						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
+							print("found destination!", tr.tileX, tr.tileY, tr.curPassenger.name)
 							ai.foundDestination(tr)
 						end
 					end
@@ -520,194 +443,16 @@ function moveSingleTrain(tr, t)
 		
 			partCovered = clamp(1-d/fullDist, 0, 1)	-- the part of the path between the nodes that has been traveled
 		
-			tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
+			--tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
 			
 		end
 		
-		--[[
-		
-		-- if traveling would bring me past the node:
-		if d <= distToMove then
-			distToMove = distToMove - d
-			if tr.path[tr.curNode+2] then
-				tr.curNode = tr.curNode + 1
-				
-				dx = (tr.path[tr.curNode+1].x - tr.x)
-				dy = (tr.path[tr.curNode+1].y - tr.y)
-				--normalize:
-				d = math.sqrt(dx ^ 2 + dy ^ 2)
-				
-				tr.prevAngle = tr.angle
-				
-				tr.prevAngle = tr.angle
-				if tr.path[tr.curNode+2] then
-					if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-						tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-					else
-						tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-					end
-				else
-					tr.angle = getAngleByDir(tr.dir)
-				end
-				if tr.prevAngle - tr.angle < -math.pi then
-					tr.prevAngle = tr.prevAngle + 2*math.pi
-				end
-				if tr.prevAngle - tr.angle > math.pi then
-					tr.prevAngle = tr.prevAngle - 2*math.pi
-				end
-			else
-				
-				local nextX, nextY = tr.tileX, tr.tileY
-				local cameFromDir = ""
-				
-				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
-					
-					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.nextDir = nil
-					
-					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
-					end
-					
-					if tr.nextDir == nil then	-- fallback: if choosing the next dir went wrong or if there's only one direction to go in:
-						if tr.possibleDirs["N"] then tr.nextDir = "N"
-						elseif tr.possibleDirs["S"] then tr.nextDir = "S"
-						elseif tr.possibleDirs["E"] then tr.nextDir = "E"
-						else tr.nextDir = "W"
-						end
-					end
-					
-					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
-					
-				else
-					if tr.timeBlocked > MAX_BLOCK_TIME then
-						
-						tr.timeBlocked = 0
-						
-						if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-							tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
-						end
-					end
-				end
-				
-				if tr.dir == "N" then
-					nextY = nextY - 1
-					cameFromDir = "S"
-					--print("moved north")
-				end
-				if tr.dir == "S" then
-					nextY = nextY + 1
-					cameFromDir = "N"
-					--print("moved south")
-				end
-				if tr.dir == "W" then
-					nextX = nextX - 1
-					cameFromDir = "E"
-					--print("moved west")
-				end
-				if tr.dir == "E" then
-					nextX = nextX + 1
-					cameFromDir = "W"
-					--print("moved east")
-				end
-				
-				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
-					
-					if tr.blocked then removeBlockedTrain(tr) end
-					map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.timeBlocked = 0
-					tr.blocked = false
-					
-					--print("reset:", tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)
-					
-					--print("set:", nextX, nextY, cameFromDir, tr.nextDir)
-					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
-					tr.freedTileOccupation = false
-					
-					tr.cameFromDir = cameFromDir
-					
-					tr.tileX, tr.tileY = nextX, nextY
-				
-					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
-					
-					tr.dir = tr.nextDir
-				
-					if tr.path then
-					
-						tr.curNode = 1
-						
-						tr.prevAngle = tr.angle
-						if tr.path[tr.curNode+2] then
-							if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-							else
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-							end
-						else
-							tr.angle = getAngleByDir(tr.dir)
-						end
-						if tr.prevAngle - tr.angle < -math.pi then
-							tr.prevAngle = tr.prevAngle + 2*math.pi
-						end
-						if tr.prevAngle - tr.angle > math.pi then
-							tr.prevAngle = tr.prevAngle - 2*math.pi
-						end
-					
-						tr.x = tr.path[tr.curNode].x
-						tr.y = tr.path[tr.curNode].y
-					
-						dx = (tr.path[tr.curNode+1].x - tr.x)
-						dy = (tr.path[tr.curNode+1].y - tr.y)
-						--normalize:
-						d = math.sqrt(dx ^ 2 + dy ^ 2)
-					end
-					
-					if tr.curPassenger then
-						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
-							ai.foundDestination(tr)
-						end
-					end
-									
-					p = passenger.find(tr.tileX, tr.tileY)
-					if p then
-						ai.foundPassengers(tr, p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
-					end
-					
-				else
-					if not tr.blocked then
-						addBlockedTrain(tr)
-						tr.blocked = true
-					end
-				end
-			end
-		end
-		
-		if not tr.blocked then
-			--tr.dxPrevSign = (dx < 0)
-			--tr.dyPrevSign = (dy < 0)
-		
-			fullDist = math.sqrt((tr.path[tr.curNode+1].x - tr.path[tr.curNode].x)^2 +(tr.path[tr.curNode+1].y - tr.path[tr.curNode].y)^2)
-		
-			partCovered = clamp(1-d/fullDist, 0, 1)	-- the part of the path between the nodes that has been traveled
-		
-			dx = dx/d
-			dy = dy/d
-			
-		
-			tr.smoothAngle = (tr.angle-tr.prevAngle)*partCovered + tr.prevAngle
-		
-			tr.x = tr.x + t*dx*TRAIN_SPEED
-			tr.y = tr.y + t*dy*TRAIN_SPEED
-		end
-		]]--
 		
 	end
 end
 
-function train.moveAll()
-	t = love.timer.getDelta()*timeFactor
+function train.moveAll(passedTime)
+	t = passedTime
 	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
 		moveSingleTrain(tr, t)
 		tr.hasMoved = true
@@ -717,6 +462,7 @@ function train.moveAll()
 	end
 	
 	for k, list in pairs(trainList) do	-- TO DO move through train lists in random order!
+	
 		for k, tr in pairs(list) do
 			if tr.hasMoved == false then
 				moveSingleTrain(tr, t)
@@ -726,60 +472,40 @@ function train.moveAll()
 	end
 end
 
-function train.getBlockedTrains()
-	return blockedTrains
-end
-
-function train.showAll()
-
-	love.graphics.setFont(FONT_CONSOLE)
-	for k, list in pairs(trainList) do
-		for k, tr in pairs(list) do
-			--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
-			
-			if DEBUG_OVERLAY then
-				for i = 1,#tr.path do
-					brightness = 1-(#tr.path-i)/#tr.path
-					love.graphics.setColor(255,0,0,255)
-					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, brightness*4+3)
-				end
-			
-				love.graphics.setColor(255,255,0,255)
-				love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
-				love.graphics.setColor(128,255,0,255)
-				love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE+tr.y, 5)
-			end
-			
-			love.graphics.setColor(255,255,255,255)
-			x = tr.tileX*TILE_SIZE + tr.x
-			y = tr.tileY*TILE_SIZE + tr.y
-			scale = 1
-			
-			if vecDist(x, y, mapMouseX, mapMouseY) < 20 then
-				scale = 3
-			end
-			
-			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-			
-			love.graphics.setColor(255,255,255,255)
-			love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-			if tr.curPassenger and tr.curPassenger.onTrain and not tr.curPassenger.gettingOff then
-				love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
-			end
-			--love.graphics.print( tr.name, x, y+30)
-			if tr.timeBlocked > 0 then
-				love.graphics.print( tr.timeBlocked, x, y+30)
-			end
+function train.printAll()
+	--[[for k, list in pairs(trainList) do
+		print("Trains for player " .. k .. ":", list)
+		for k, tr in pairs(trainList[2]) do
+			print(" ", tr.name, tr.tileX, tr.tileY, tr.curPassenger)
 		end
+	end]]--
+	print("Trains:", curMap.time)
+	if curMap then
+		for j = 0, curMap.height+1 do
+			str = ""
+			for i = 0, curMap.width+1 do
+				if i == 0 or j == 0 or i > curMap.width or j > curMap.height then
+					str = str .. "- "
+				elseif map.getIsTileOccupied(i, j) then
+					str = str .. "T "
+				else
+					str = str .. "- "
+				end
+			end
+			print(str)
+		end
+		--[[for k, list in pairs(trainList) do
+			for l, tr in pairs(list) do
+				if tr.stop then
+					print(k, tr.name, tr.tileX, tr.tileY, tr.stop)
+				end
+			end
+		end]]--
 	end
 end
 
-function train.checkSelection()
-	x,y = love.mouse.getPosition()
-		-- love.graphics.scale(camZ)
-		-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+function train.getBlockedTrains()
+	return blockedTrains
 end
-
 
 return train

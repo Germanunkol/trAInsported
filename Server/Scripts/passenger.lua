@@ -120,6 +120,13 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			stats.passengerPickedUp(p)
 			train.curPassenger = p
 			train.stop = train.stop + 1
+			if train.stop == 1 then
+				sendStr = "TRAIN_STOP:"
+				sendStr = sendStr .. train.aiID .. ","
+				sendStr = sendStr .. train.name .. ","
+				sendStr = sendStr .. train.stop .. ","
+				sendMapUpdate(sendStr)
+			end
 			train.passengerArrived = false
 			p.train = train
 			stats.passengersPickedUp( train.aiID, train.ID )
@@ -138,6 +145,13 @@ function passenger.leaveTrain(aiID)
 		if tr and tr.curPassenger then
 		
 			tr.stop = tr.stop + 1
+			if tr.stop == 1 then
+				sendStr = "TRAIN_STOP:"
+				sendStr = sendStr .. tr.aiID .. ","
+				sendStr = sendStr .. tr.name .. ","
+				sendStr = sendStr .. tr.stop .. ","
+				sendMapUpdate(sendStr)
+			end
 			tr.curPassenger.tileX, tr.curPassenger.tileY = tr.tileX, tr.tileY		-- place passenger onto the tile the train's currently on
 			
 			tr.curPassenger.gettingOff = true
@@ -201,6 +215,13 @@ function passenger.showAll(dt)
 					if d < vecDist(p.x, p.y, p.train.x, p.train.y) then
 						p.onTrain = true
 						p.train.stop = p.train.stop - 1
+						if p.train.stop == 0 then
+							sendStr = "TRAIN_STOP:"
+							sendStr = sendStr .. p.train.aiID .. ","
+							sendStr = sendStr .. p.train.name .. ","
+							sendStr = sendStr .. p.train.stop .. ","
+							sendMapUpdate(sendStr)
+						end
 					end
 				end
 				x = p.x - 10 + p.train.tileX*TILE_SIZE
@@ -217,6 +238,14 @@ function passenger.showAll(dt)
 			
 				if d < vecDist(p.x, p.y, p.xEnd, p.yEnd) then
 					p.train.stop = p.train.stop - 1
+					if p.train.stop == 0 then
+						sendStr = "TRAIN_STOP:"
+						sendStr = sendStr .. p.train.aiID .. ","
+						sendStr = sendStr .. p.train.name .. ","
+						sendStr = sendStr .. p.train.stop .. ","
+						sendMapUpdate(sendStr)
+					end
+					
 					p.onTrain = false
 					p.train = nil
 					p.gettingOff = false

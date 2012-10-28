@@ -1,7 +1,7 @@
 local console = {}
 
 function console.add( txt, col )
-	print(txt)
+	--print(txt)
 end
 
 return console

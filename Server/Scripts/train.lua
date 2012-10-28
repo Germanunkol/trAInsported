@@ -247,6 +247,9 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].y = math.random(100)
 			end
 			
+			train.printAll()
+			
+			print("Placed new train @", trainList[aiID][i].tileX, trainList[aiID][i].tileY, "heading:", trainList[aiID][i].dir, trainList[aiID][i].x, trainList[aiID][i].y)
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
 			return trainList[aiID][i]
 		end
@@ -486,7 +489,8 @@ function train.printAll()
 		for k, tr in pairs(trainList[2]) do
 			print(" ", tr.name, tr.tileX, tr.tileY, tr.curPassenger)
 		end
-	end]]--
+	end
+	]]--
 	print("Trains:", curMap.time)
 	if curMap then
 		for j = 0, curMap.height+1 do
@@ -502,13 +506,7 @@ function train.printAll()
 			end
 			print(str)
 		end
-		--[[for k, list in pairs(trainList) do
-			for l, tr in pairs(list) do
-				if tr.stop then
-					print(k, tr.name, tr.tileX, tr.tileY, tr.stop)
-				end
-			end
-		end]]--
+		
 	end
 end
 

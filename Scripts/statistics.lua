@@ -20,6 +20,7 @@ function statistics.setAIName(aiID, name)
 end
 
 function statistics.setAIColour(aiID, col)
+	print("SETTING COL", aiID, col)
 	if aiStats[aiID] then
 		aiStats[aiID].red = col.r
 		aiStats[aiID].green = col.g
@@ -482,7 +483,7 @@ local displayStatusBoxWidth = 10
 function statistics.displayStatus()
 	if not statBoxStatus then return end
 	
-	love.graphics.setFont(FONT_STANDARD)
+	love.graphics.setFont(FONT_STAT_MSGBOX)
 	for i = 1, #aiStats do
 		if aiStats[i].name ~= "" then	-- if the ai has already been loaded and named
 			x = displayStatusX + (i-1)*displayStatusBoxWidth
@@ -494,7 +495,11 @@ function statistics.displayStatus()
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 15, displayStatusBoxWidth, "center")
 			
-			love.graphics.draw(train.getTrainImage(i), x + 24 , displayStatusY + 40)
+			love.graphics.draw(train.getTrainImage(i), x + 34 , displayStatusY + 40)
+			love.graphics.print(aiStats[i].numTrains, x + 84 , displayStatusY + 50)
+			
+			love.graphics.draw(IMAGE_STATS_DROPOFF, x + 24 , displayStatusY + 98)
+			love.graphics.print(aiStats[i].pTransported, x + 84 , displayStatusY + 100)
 		end
 	end
 end

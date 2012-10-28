@@ -109,7 +109,7 @@ while true do
 	msg = thisThread:get("packet" .. packetNumber)
 	if msg then
 		for k, cl in pairs(clientList) do
-			ok, msg = sl:send("U:" .. msg .. "\n")		-- send update to clients.
+			ok, err = cl:send("U:" .. msg .. "\n")		-- send update to clients.
 		end
 		packetNumber = incrementID(packetNumber)
 		

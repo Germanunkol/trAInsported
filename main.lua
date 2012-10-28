@@ -21,6 +21,7 @@ loadingScreen = require("Scripts/loadingScreen")
 connection = require("Scripts/connectionClient")
 require("Scripts/globals")
 simulation = require("Scripts/simulation")
+statusMsg = require("Scripts/statusMsg")
 
 numTrains = 0
 
@@ -61,12 +62,6 @@ function love.load()
 	initialising = true
 	loadingScreen.reset()
 	love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
-
-	button.init()
-	msgBox.init()
-	loadingScreen.init()
-	quickHelp.init()
-	stats.init()
 end
 
 function finishStartupProcess()
@@ -98,7 +93,9 @@ function love.update(dt)
 		stats.init()
 		tutorialBox.init()
 		codeBox.init()
-		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() and codeBox.initialised() then
+		statusMsg.init()
+		
+		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() and codeBox.initialised() and statusMsg.initialised() then
 			initialising = false
 			finishStartupProcess()
 		end
@@ -190,7 +187,11 @@ function love.update(dt)
 			end
 			
 			if not train.isRenderingImages() and not mapGenerateThread and not mapRenderThread then	-- done rendering everything!
-				runMap()	-- start the map!
+				if not simulation.isRunning() then
+					runMap()	-- start the map!
+				else
+					simulation.runMap()
+				end
 			end
 		else
 			if menu.isRenderingImages() then
@@ -310,6 +311,7 @@ function love.draw()
 	
 	button.show()
 	menu.render()
+	statusMsg.display(dt)
 	
 	if love.keyboard.isDown(" ") then
 		love.graphics.setFont(FONT_CONSOLE)
@@ -323,6 +325,11 @@ function love.draw()
 		love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,95)
 		love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,110)
 		if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,125) end
+		if roundEnded then
+			love.graphics.print('roundEnded: true', love.graphics.getWidth()-150,140)
+		else
+			love.graphics.print('roundEnded: false', love.graphics.getWidth()-150,140)
+		end
 	end
 	
 end

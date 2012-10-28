@@ -29,8 +29,6 @@ local lineFound = true
 
 function connection.handleConnection()
 	if not connectionThread then return end
-	err = connectionThread:get("error")
-	if err then print("CONNECTION ERROR:", err) end
 	
 	lineFound = true
 	while lineFound do
@@ -56,6 +54,20 @@ function connection.handleConnection()
 	if str then
 		simulation.addUpdate(str)
 		packetNumber = incrementID(packetNumber)
+	end
+	
+	str = connectionThread:get("statusErr")
+	if str then
+		statusMsg.new(str, true)
+	end
+	str = connectionThread:get("statusMsg")
+	if str then
+		statusMsg.new(str, false)
+	end
+	
+	err = connectionThread:get("error")
+	if err then
+		print("CONNECTION ERROR:", err)
 	end
 end
 

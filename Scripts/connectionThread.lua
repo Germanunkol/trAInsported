@@ -35,9 +35,11 @@ print("Hello from inside the connection thread!")
 print("Attempting to connect to:", ip .. ":" .. port)
 ok, client = pcall(socket.connect, ip, port)
 if not ok or not client then
-	print("Could not connect!", client)
+	thisThread:set("statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance.")
+	error("Could not connect!")
 	return
 else
+	thisThread:set("statusMsg", "Connected to server.")
 	print("Connected.")
 end
 
@@ -51,7 +53,9 @@ while true do
 	
 	data, msg = client:receive()
 	if not msg then
-		print("received: " .. data)
+		if data:find("NEW_TRAIN") then
+			print("received: " .. data)
+		end
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))
 		elseif data:find("U:") == 1 then

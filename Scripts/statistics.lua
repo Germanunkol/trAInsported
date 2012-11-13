@@ -2,7 +2,6 @@ local statistics = {}
 
 local aiStats = {}
 
-
 local IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
 local IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
 local IMAGE_STATS_DROPOFF_WRONG = love.graphics.newImage("Images/StatsIconDropOffWrong.png")
@@ -20,7 +19,6 @@ function statistics.setAIName(aiID, name)
 end
 
 function statistics.setAIColour(aiID, col)
-	print("SETTING COL", aiID, col)
 	if aiStats[aiID] then
 		aiStats[aiID].red = col.r
 		aiStats[aiID].green = col.g
@@ -107,9 +105,15 @@ function secondsToReadableTime(time)		-- convert time given in seconds to a huma
 end
 
 function statistics.print()
-	if curMap then
+	if curMap or simulationMap then
+		local t = 0
+		if curMap then
+			t = curMap.time
+		else
+			t = simulationMap.time
+		end
 		
-		print("Time taken: " .. secondsToReadableTime(curMap.time))		-- print in readable format
+		print("Time taken: " .. secondsToReadableTime(t))		-- print in readable format
 		
 		for i = 1,#aiStats do
 			print(aiStats[i].name .. ":")
@@ -140,28 +144,42 @@ end
 --------------------------------------------------------------
 
 function statistics.newPassenger( passenger )
+	local t = 0
+	if curMap then t = curMap.time
+	elseif simulationMap then
+		t = simulationMap.time
+	end
 	passengerStats[passenger.name] = {}
-	passengerStats[passenger.name].timeSpawned = curMap.time		-- save the current time
+	passengerStats[passenger.name].timeSpawned = t		-- save the current time
 	passengerStats[passenger.name].timeOnRails = 0
 	passengerStats[passenger.name].timeWaited = 0
 end
 
 
 function statistics.passengerPickedUp( passenger )
-
-	passengerStats[passenger.name].timeWaited = passengerStats[passenger.name].timeWaited + (curMap.time - (passengerStats[passenger.name].timeLastDroppedOff or passengerStats[passenger.name].timeSpawned))
-	if passengerStats[passenger.name].timeFirstPickedUp == nil then		-- have I been picked up before?
-		passengerStats[passenger.name].timeFirstPickedUp = curMap.time		-- save the current time
-		passengerStats[passenger.name].timeUntilFirstPickup = curMap.time - passengerStats[passenger.name].timeSpawned
+	local t = 0
+	if curMap then t = curMap.time
+	elseif simulationMap then
+		t = simulationMap.time
 	end
-	passengerStats[passenger.name].timeLastPickup = curMap.time
+	passengerStats[passenger.name].timeWaited = passengerStats[passenger.name].timeWaited + (t - (passengerStats[passenger.name].timeLastDroppedOff or passengerStats[passenger.name].timeSpawned))
+	if passengerStats[passenger.name].timeFirstPickedUp == nil then		-- have I been picked up before?
+		passengerStats[passenger.name].timeFirstPickedUp = t		-- save the current time
+		passengerStats[passenger.name].timeUntilFirstPickup = t - passengerStats[passenger.name].timeSpawned
+	end
+	passengerStats[passenger.name].timeLastPickup = t
 end
 
 function statistics.passengerDroppedOff( passenger )
-	passengerStats[passenger.name].timeLastDroppedOff = curMap.time
-	passengerStats[passenger.name].timeOnRails = passengerStats[passenger.name].timeOnRails + (curMap.time - passengerStats[passenger.name].timeLastPickup)
+local t = 0
+	if curMap then t = curMap.time
+	elseif simulationMap then
+		t = simulationMap.time
+	end
+	passengerStats[passenger.name].timeLastDroppedOff = t
+	passengerStats[passenger.name].timeOnRails = passengerStats[passenger.name].timeOnRails + (t - passengerStats[passenger.name].timeLastPickup)
 	if passenger.tileX == passenger.destX and passenger.tileY == passenger.destY then
-		passengerStats[passenger.name].timeTotal = curMap.time - passengerStats[passenger.name].timeSpawned
+		passengerStats[passenger.name].timeTotal = t - passengerStats[passenger.name].timeSpawned
 	end
 end
 
@@ -330,9 +348,9 @@ function statistics.generateStatWindows()
 	
 	if mostPickedUpID then
 		if mostPickedUp ~= 1 then
-			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passengers."
+			text = "Player " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."
 		else
-			text = "Player " .. ai.getName(mostPickedUpID) .. " picked up " .. mostPickedUp .. " passenger."
+			text = "Player " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passenger."
 		end
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
@@ -341,9 +359,9 @@ function statistics.generateStatWindows()
 	end
 	if mostTrainsID then
 		if mostTrains ~= 1 then
-			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " trains."
+			text = "Player " .. aiStats[mostTrainsID].name .. " owned " .. mostTrains .. " trains."
 		else
-			text = "Player " .. ai.getName(mostTrainsID) .. " owned " .. mostTrains .. " train."
+			text = "Player " .. aiStats[mostTrainsID].name .. " owned " .. mostTrains .. " train."
 		end
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
@@ -355,9 +373,9 @@ function statistics.generateStatWindows()
 		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostTransported ~= 1 then
-			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passengers to their destinations."
+			text = "Player " .. aiStats[mostTransportedID].name .. " brought " .. mostTransported .. " passengers to their destinations."
 		else
-			text = "Player " .. ai.getName(mostTransportedID) .. " brought " .. mostTransported .. " passenger to her/his destinations."
+			text = "Player " .. aiStats[mostTransportedID].name .. " brought " .. mostTransported .. " passenger to her/his destinations."
 		end
 		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
 	end
@@ -366,20 +384,20 @@ function statistics.generateStatWindows()
 		table.insert(icons, {img=train.getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostNormalTransported ~= 1 then
-			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passengers to their destinations."
+			text = "Player " .. aiStats[mostNormalTransportedID].name .. " brought " .. mostNormalTransported .. " non-VIP passengers to their destinations."
 		else
-			text = "Player " .. ai.getName(mostNormalTransportedID) .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
+			text = "Player " .. aiStats[mostNormalTransportedID].name .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
 		end
 		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if mostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(mostWrongDestinationID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if mostWrongDestination ~= 1 then
-			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
+			text = "Player " .. aiStats[mostWrongDestinationID].name .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
 		else
-			text = "Player " .. ai.getName(mostWrongDestinationID) .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
+			text = "Player " .. aiStats[mostWrongDestinationID].name .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
 		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
 	end
@@ -387,33 +405,33 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
-		text = "Player " .. ai.getName(mostMoneyID) .. " earned " .. mostMoney .. " credits."
+		text = "Player " .. aiStats[mostMoneyID].name .. " earned " .. mostMoney .. " credits."
 		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
 	end
 	
 	--trains:
 	if trMostPickedUpID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(trMostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		text = trMostPickedUpName .. " [" .. ai.getName(trMostPickedUpID) .. "] " .. " picked up more passengers than any other train."
+		text = trMostPickedUpName .. " [" .. aiStats[trMostPickedUpID].name .. "] " .. " picked up more passengers than any other train."
 		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostTransportedID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(trMostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
-		text = trMostTransportedName .. " [" .. ai.getName(trMostTransportedID) .. "] " .. " brought more passengers to their destination than any other train."
+		text = trMostTransportedName .. " [" .. aiStats[trMostTransportedID].name .. "] " .. " brought more passengers to their destination than any other train."
 		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
-		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
+		table.insert(icons, {img=train.getTrainImage(trMostWrongDestinationID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if trMostWrongDestination ~= 1 then
-			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
+			text = trMostWrongDestinationName .. " [" .. aiStats[trMostWrongDestinationID].name .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
 		else
-			text = trMostWrongDestinationName .. " [" .. ai.getName(trMostWrongDestinationID) .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
+			text = trMostWrongDestinationName .. " [" .. aiStats[trMostWrongDestinationID].name .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
 		end
 		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
 	end
@@ -421,8 +439,12 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
-		text = trLongestBlockedName .. " [" .. ai.getName(trLongestBlockedID) .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
+		text = trLongestBlockedName .. " [" .. aiStats[trLongestBlockedID].name .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
 		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
+	end
+	
+	for k, v in pairs(allPossibleStats) do
+		print(v.title, v.text)
 	end
 	
 	--randomize:
@@ -457,10 +479,10 @@ function statistics.display(globX, globY, dt)
 				love.graphics.draw(s.bg, x, y)
 				love.graphics.setFont(FONT_STAT_HEADING)
 				love.graphics.printf(s.title, x, y+8, s.bg:getWidth(), "center")
-		
 				love.graphics.setFont(FONT_STANDARD)
 				if s.icons then
 					for k, icon in pairs(s.icons) do
+					
 						if icon.shadow then
 							love.graphics.setColor(0,0,0,150)
 							love.graphics.draw(icon.img, x+icon.x-3, y+icon.y+7)
@@ -485,16 +507,15 @@ function statistics.displayStatus()
 	
 	love.graphics.setFont(FONT_STAT_MSGBOX)
 	for i = 1, #aiStats do
-		if aiStats[i].name ~= "" then	-- if the ai has already been loaded and named
+		if aiStats[i].name ~= "" and train.getTrainImage(i) then	-- if the ai has already been loaded and named
 			x = displayStatusX + (i-1)*displayStatusBoxWidth
 			
 			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255)
 			love.graphics.draw(statBoxStatus, x, displayStatusY)
 			love.graphics.setColor(0,0,0,100)
-			love.graphics.draw(train.getTrainImage(i), x + 20, displayStatusY + 45)		-- shadow of train
+			love.graphics.draw(train.getTrainImage(i), x + 30, displayStatusY + 45)		-- shadow of train
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 15, displayStatusBoxWidth, "center")
-			
 			love.graphics.draw(train.getTrainImage(i), x + 34 , displayStatusY + 40)
 			love.graphics.print(aiStats[i].numTrains, x + 84 , displayStatusY + 50)
 			

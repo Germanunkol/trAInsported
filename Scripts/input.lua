@@ -67,10 +67,14 @@ function love.keypressed(key, unicode)
 	elseif key == "c" then
 		console.toggle()
 	elseif key == "+" then
-		timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
+		if not simulation.isRunning() then
+			timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
+		end
 		timeFactor = timeFactorList[timeFactorIndex]
 	elseif key == "-" then
-		timeFactorIndex = math.max(timeFactorIndex - 1, 1)
+		if not simulation.isRunning() then
+			timeFactorIndex = math.max(timeFactorIndex - 1, 1)
+		end
 		timeFactor = timeFactorList[timeFactorIndex]
 	elseif key == "p" then
 		stats.print()

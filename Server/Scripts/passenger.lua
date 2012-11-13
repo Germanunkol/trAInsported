@@ -5,7 +5,7 @@ local passengerList = {}
 passengerPositions = {}
 
 MAX_NUM_PASSENGERS = 50
-VIP_RATIO = 1/7
+VIP_RATIO = 1/3
 MAX_VIP_TIME = 30
 
 local numPassengersTotal = 1
@@ -82,6 +82,26 @@ function passenger.new()
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
+				
+				sendStr = "P_NEW:"
+				sendStr = sendStr .. passengerList[i].name .. ","
+				if passengerList[i].vip then
+					sendStr = sendStr .. "true,"
+					sendStr = sendStr .. passengerList[i].vipTime .. ","
+				else
+					sendStr = sendStr .. "false,"
+					sendStr = sendStr .. "0,"
+				end
+				sendStr = sendStr .. passengerList[i].tileX .. ","
+				sendStr = sendStr .. passengerList[i].tileY .. ","
+				sendStr = sendStr .. passengerList[i].destX .. ","
+				sendStr = sendStr .. passengerList[i].destY .. ","
+				sendStr = sendStr .. passengerList[i].x .. ","
+				sendStr = sendStr .. passengerList[i].y .. ","
+				sendStr = sendStr .. passengerList[i].xEnd .. ","
+				sendStr = sendStr .. passengerList[i].yEnd .. ","
+				sendMapUpdate(sendStr)
+				
 				numPassengersTotal = numPassengersTotal + 1
 				
 				stats.newPassenger(passengerList[i], curMap.roundTime)
@@ -131,6 +151,14 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			p.train = train
 			stats.passengersPickedUp( train.aiID, train.ID )
 			ai.passengerBoarded(train, name)
+			
+			
+			sendStr = "P_PICKUP:"
+			sendStr = sendStr .. train.aiID .. ","
+			sendStr = sendStr .. train.name .. ","
+			sendStr = sendStr .. p.name .. ","
+			sendMapUpdate(sendStr)
+			
 			break
 		end
 	end
@@ -176,6 +204,17 @@ function passenger.leaveTrain(aiID)
 			else
 				ai.newPassenger(tr.curPassenger)
 			end
+			
+			sendStr = "P_DROPOFF:"
+			sendStr = sendStr .. tr.aiID .. ","
+			sendStr = sendStr .. tr.name .. ","
+			sendStr = sendStr .. tr.curPassenger.name .. ","
+			sendStr = sendStr .. tr.curPassenger.tileX .. ","
+			sendStr = sendStr .. tr.curPassenger.tileY .. ","
+			if tr.curPassenger.reachedDestination == true then
+				sendStr = sendStr .. "true,"
+			end
+			sendMapUpdate(sendStr)
 			
 			tr.curPassenger = nil
 		end

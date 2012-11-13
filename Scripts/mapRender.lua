@@ -210,7 +210,7 @@ if curMap then
 					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
 					treetype = math.random(3)
 					
-					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
+					col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
 					if treetype == 1 then
 						transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)

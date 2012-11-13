@@ -12,6 +12,8 @@ local msgNumber = 0
 local statusNumber = 0
 local packetNumber = 0
 
+local timeUntilNextMatch = 0
+
 local connection = {}
 
 local server, client
@@ -53,6 +55,9 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 			client:send("U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 			print("SENT: " .. "U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 		end
+	else
+		client:send("NEXT_MATCH:" .. timeUntilNextMatch .. "\n")
+		print("SENT:" .. "NEXT_MATCH:" .. timeUntilNextMatch)
 	end
 end
 
@@ -90,24 +95,44 @@ if not ok then
 end
 print("Connection started.")
 
+curTime = os.time()
+
 while true do
+	dt = os.time()-curTime
+	curTime = os.time()
+
 	input = thisThread:get("input")
 	if input == "close" then
 		return
 	end
 	connection.handleServer()
 
+	reset = thisThread:get("reset")
+	if reset then
+		sendPackets.init()			-- important! if there's a new map, reset everything you did last round!
+	end
+
 	newMap = thisThread:get("curMap")
 	if newMap then
 		curMapStr = newMap		-- careful: in this thread, it's only in string form, not in a table!
 		
 		for k, cl in pairs(clientList) do
-			ok, msg = sl:send("MAP:" .. curMapStr .. "\n")
+			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
 		end
+		
 	end
+	
+	str = thisThread:get("nextMatch")
+	if str then
+		timeUntilNextMatch = tonumber(str)
+	end
+	timeUntilNextMatch = timeUntilNextMatch - dt
 	
 	msg = thisThread:get("packet" .. packetNumber)
 	if msg then
+	
+		print("SENT:", msg)
+	
 		for k, cl in pairs(clientList) do
 			ok, err = cl:send("U:" .. msg .. "\n")		-- send update to clients.
 		end
@@ -121,6 +146,7 @@ while true do
 		time = tonumber(msg:sub(1, s-1))
 		msg = msg:sub(e+1, #msg)
 		sendPackets.add(msg, time)
+		
 	end
 	
 end

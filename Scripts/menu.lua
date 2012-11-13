@@ -186,19 +186,19 @@ local aiFiles = {}
 
 function normalMatch()
 	if numAIsChosen <= 0 then
-		print("Need to choose at least one AI!")
+		statusMsg.new("Need to choose at least one AI!", true)
 		return
 	end
 	if chosenWidth == 0 or chosenHeight == 0 then
-		print("Invalid map dimensions!")
+		statusMsg.new("Invalid map dimensions!", true)
 		return
 	end
 	if not chosenTime then
-		print("Invalid game time!")
+		statusMsg.new("Invalid game time!", true)
 		return
 	end
 	if not chosenMode then
-		print("Invalid game mode!")
+		statusMsg.new("Invalid game mode!", true)
 		return
 	end
 	--[[if mapRenderThread or mapGenerateThread then
@@ -207,7 +207,7 @@ function normalMatch()
 	end]]--
 	for k, aiName in pairs(chosenAIs) do
 		if not menuTrainImages[k] then
-			print("Still rendering train images...")
+			statusMsg.new("Still rendering train images...\nTry again in a few seconds.", true)
 			return
 		end
 	end

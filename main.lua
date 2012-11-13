@@ -106,7 +106,8 @@ function love.update(dt)
 	
 		button.calcMouseHover()
 		if mapImage then
-			if simulationMap then
+			if simulationMap and not roundEnded then
+				simulationMap.time = simulationMap.time + dt*timeFactor
 				simulation.update(dt*timeFactor)
 				if train.isRenderingImages() then
 					train.renderTrainImage()
@@ -205,8 +206,6 @@ function love.update(dt)
 			train.moveAll()
 			if curMap then
 				curMap.time = curMap.time + dt*timeFactor
-			elseif simulationMap then
-				simulationMap.time = simulationMap.time + dt*timeFactor
 			end
 		end
 	end
@@ -227,7 +226,7 @@ function love.draw()
 	
 	if mapImage then
 		if simulationMap then
-			simulation.draw()
+			simulation.draw(dt)
 		else
 			love.graphics.push()
 			love.graphics.scale(camZ)
@@ -285,11 +284,13 @@ function love.draw()
 		
 			if showQuickHelp then quickHelp.show() end
 			if showConsole then console.show() end
-		
+			
 			stats.displayStatus()
 		end
 	elseif mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
 		loadingScreen.render()
+	else
+		simulation.displayTimeUntilNextMatch(nil, dt)
 	end
 
 	
@@ -302,7 +303,7 @@ function love.draw()
 	love.graphics.print("normal mouse y " .. love.mouse.getY(), 10, 260)
 	]]--
 	
-	if roundEnded and curMap and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
+	if roundEnded and (curMap or simulationMap) and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
 		tutorialBox.show()
 		codeBox.show()
 	if msgBox.isVisible() then

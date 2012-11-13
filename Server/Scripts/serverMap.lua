@@ -12,15 +12,17 @@ function runMap(restart)
 		
 		math.randomseed(1)
 		
-		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		passenger.init (math.ceil(curMap.width*curMap.height/3))		-- start generating random passengers, set the maximum number of them.
 		--populateMap()
 		
 		
 		clearAllOccupations()
-		ai.init()
+		
 		
 		--clouds.restart()
 		curMap.time = 0		-- start map timer.
+		
+		ai.init()		-- load the ai's init functions and send the ais to the other players.
 		
 		--resetTimeFactor()		-- set back to 1.
 		
@@ -54,9 +56,13 @@ function startMatch( width, height, time, maxTime, gameMode, AIs )
 	end]]--
 	
 	ai.restart()	-- make sure aiList is reset!
+	print("Number of AIS:", #AIs)
 	stats.start( #AIs )
 	train.init()
-	
+	if connection.thread then
+		connection.thread:set("reset", "true")	-- reset all packets that have been sent last round!
+	end
+	map.generate( width, height, math.random(9999))
 	
 	print("found AI:", #AIs)
 	for i = 1, #AIs do
@@ -66,9 +72,7 @@ function startMatch( width, height, time, maxTime, gameMode, AIs )
 		else
 			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
 		end
-	end
-	
-	map.generate( width, height, 1)
+	end	
 	
 	--menu.exitOnly()
 end
@@ -122,9 +126,10 @@ function map.generate(width, height, seed)
 			collectgarbage("collect")
 			--map.render()
 			
+			sendMap()		-- important! send before running the map!
+			
 			runMap()	
 			
-			sendMap()
 			
 			return curMap
 		end
@@ -133,6 +138,10 @@ function map.generate(width, height, seed)
 			print("THREAD error (map generation): ", err)
 		end
 	end
+end
+
+function map.generating()
+	if mapGenerateThread then return true end
 end
 
 function map.print(title, m)
@@ -940,8 +949,10 @@ function map.endRound()
 	roundEnded = true
 	stats.print()
 	stats.generateStatWindows()
-	passengerTimePassed = 10
+	passengerTimePassed = 1
 	newTrainQueueTime = 0
+	
+	sendMapUpdate("END_ROUND:")
 end
 
 return map

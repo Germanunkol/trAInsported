@@ -79,7 +79,6 @@ function runAiFunctionCoroutine(f, ... )
 	return msg
 end
 
-
 function ai.new(scriptName)
 	print("Opening: " .. scriptName)
 	local ok, chunk = pcall(love.filesystem.read, scriptName )
@@ -326,7 +325,9 @@ function ai.enoughMoney(aiID, cash)
 end
 
 function ai.getName(ID)
-	if aiList[ID] then return aiList[ID].name end
+	if aiList[ID] then return aiList[ID].name
+	else return simulation.getName[ID]
+	end
 end
 
 function ai.findAvailableAIs()

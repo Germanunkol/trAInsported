@@ -457,8 +457,6 @@ function moveSingleTrain(tr, t)
 			--tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
 			
 		end
-		
-		
 	end
 end
 

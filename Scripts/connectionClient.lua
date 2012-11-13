@@ -46,6 +46,12 @@ function connection.handleConnection()
 	
 	str = connectionThread:get("newMap")
 	if str then
+		print("old", curMap, map.startupProcess())
+		if not curMap and not map.startupProcess() then
+			mapImage = nil
+		end
+		map.print("new map", simulationMap)
+		roundEnded = true
 		simulationMap = TSerial.unpack(str)
 		simulation.init()
 	end
@@ -63,6 +69,12 @@ function connection.handleConnection()
 	str = connectionThread:get("statusMsg")
 	if str then
 		statusMsg.new(str, false)
+	end
+	str = connectionThread:get("nextMatch")
+	if str then
+		timeUntilNextMatch = str
+		print("timeUntilNextMatch", timeUntilNextMatch)
+		simulation.displayTimeUntilNextMatch(timeUntilNextMatch)
 	end
 	
 	err = connectionThread:get("error")

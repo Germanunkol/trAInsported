@@ -10,7 +10,7 @@ port = thisThread:demand("port")
 sendMsgNumber = 0
 
 printLineNumber = 0
-print = function(...)
+print = function( ... )
 	str = ""
 	for i=1,#arg do
 		if arg[i] then
@@ -53,13 +53,17 @@ while true do
 	
 	data, msg = client:receive()
 	if not msg then
-		if data:find("NEW_TRAIN") then
-			print("received: " .. data)
+		if data:find("NEW_AI") or data:find("MAP:") then
+			print("RECEIVED: " .. data)
+			
 		end
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))
 		elseif data:find("U:") == 1 then
 			newPacket(data:sub(3,#data))
+		elseif data:find("NEXT_MATCH:") == 1 then
+			timeUntilNextMatch = tonumber(data:sub(12, #data))
+			thisThread:set("nextMatch", timeUntilNextMatch)
 		end
 	else
 		print("error: " .. msg)

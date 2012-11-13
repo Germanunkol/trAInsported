@@ -124,11 +124,6 @@ function ai.new(scriptName)
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
-	
-	sendStr = "NEW_AI:"
-	sendStr = sendStr .. aiID .. ","
-	sendStr = sendStr .. aiList[aiID].name .. ","
-	sendMapUpdate(sendStr)
 end
 
 function ai.init()
@@ -148,6 +143,11 @@ function ai.init()
 			print("\tNo ai.init() function found for this AI")
 		end
 		crInit = nil
+		
+		sendStr = "NEW_AI:"
+		sendStr = sendStr .. aiID .. ","
+		sendStr = sendStr .. aiList[aiID].name .. ","
+		sendMapUpdate(sendStr)
 	end
 end
 

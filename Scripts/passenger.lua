@@ -11,9 +11,9 @@ MAX_VIP_TIME = 30
 local numPassengersTotal = 1
 numPassengersDroppedOff = 0
 
-local passengerImage = love.graphics.newImage("Images/Passenger.png")
-local passengerVIPImage = love.graphics.newImage("Images/VIP.png")
-local passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
+passengerImage = love.graphics.newImage("Images/Passenger.png")
+passengerVIPImage = love.graphics.newImage("Images/VIP.png")
+passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
 
 function randPassengerPos()
 	local x, y = 0,0

@@ -9,6 +9,23 @@ function seperateStrings(str, seperator)
 	return tbl
 end
 
+function makeTimeReadable(time)
+	days = math.floor(time/(60*60*24))
+	time = time - days*60*60*24
+	hours = math.floor(time/(60*60))
+	time = time - hours*60*60
+	minutes = math.floor(time/(60))
+	time = time - minutes*60
+	seconds = time
+	
+	local str = ""
+	if days > 0 then str = str .. days .. " days " end
+	if hours > 0 then str = str .. hours .. " h " end
+	if minutes > 0 then str = str .. minutes .. " mins " end
+	if seconds > 0 then str = str .. math.floor(seconds) .. " secs " end
+	return str
+end
+
 function incrementID( num )
 	if num == 99999 then
 		num = 0

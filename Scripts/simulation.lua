@@ -28,7 +28,7 @@ function simulation.init()
 	
 	passengerList = {}
 	liveSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LIVE MATCH"))/2
-	liveSymbolY = 10
+	liveSymbolY = 15
 	
 	vipClockImages = {}
 	for i = 1,11,1 do
@@ -458,8 +458,10 @@ function simulation.draw(dt)
 		love.graphics.pop()
 		
 		liveSymbolBlinkTime = liveSymbolBlinkTime + dt*2
-		love.graphics.setColor(255,255,255,205*math.sin(liveSymbolBlinkTime)^2+50)
+		love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
 		love.graphics.setFont(FONT_BUTTON)
+		love.graphics.print("LIVE MATCH", liveSymbolX-2, liveSymbolY+6)
+		love.graphics.setColor(255,255,255,205*math.sin(liveSymbolBlinkTime)^2+50)
 		love.graphics.print("LIVE MATCH", liveSymbolX, liveSymbolY)
 	
 		if showQuickHelp then quickHelp.show() end

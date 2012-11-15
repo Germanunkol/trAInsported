@@ -133,6 +133,8 @@ function menu.removeAll()
 	
 	trainImageThreads = {}
 	menuTrainImages = {}
+	
+	hideLogo = false
 end
 
 
@@ -350,6 +352,7 @@ function menu.newRound()
 	simulation.stop()
 
 	menu.removeAll()
+	hideLogo = true
 	numAIsChosen = 0
 	chosenAIs = {}
 	chosenWidth = 0
@@ -416,6 +419,7 @@ end
 
 function menu.settings()
 	menu.removeAll()
+	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
 	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
@@ -456,6 +460,7 @@ end
 
 function menu.tutorials()
 	menu.removeAll()
+	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
 	
@@ -484,6 +489,7 @@ end
 
 function menu.exitOnly()
 	menu.removeAll()
+	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
 	menuButtons.buttonExit = button:new(x, y, "Exit", confirmCloseGame, nil)
@@ -498,6 +504,7 @@ end
 
 function menu.ingame()
 	menu.removeAll()
+	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
 	menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil)

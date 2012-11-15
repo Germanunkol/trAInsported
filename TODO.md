@@ -18,6 +18,7 @@ To do for trAInsported:
 	-[x] "pick up passenger"
 	-[x] "Random"
 	-[x] "Print"
+	-[x] "New Train"
 
 **Server**
 
@@ -30,8 +31,9 @@ To do for trAInsported:
 [x]	Add Hotspots
 - Randomize order in which players get to move
 - Beautify rails	(shadows?), increase # of waypoints
-- buy new trains
+[x] buy new trains
 [x] rework train movement: make it pixel-independet and make it work with percentages.
+- Add statistics for passengers at round end
 
 **Tutorial**
 tut 1: 
@@ -46,14 +48,15 @@ tut 2:
 
 **Visual**
 [x]	clouds
--	trees, water
+[x] trees
+- water
 [x]	rework all visuals
 - Urban setting
 
 **Misc**
 - Add tipps
 - No guarantee that game's outcome is always the same...
-- Statu message box
+[x] Status message box
 
 
 **Maybe**

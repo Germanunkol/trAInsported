@@ -113,6 +113,7 @@ function connectPiece(i, j)
 			while i < curMap.height and not triedDir3 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i + 1
+				print("currently @ ", i, j)
 				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!

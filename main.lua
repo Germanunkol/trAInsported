@@ -42,6 +42,8 @@ PLAYERCOLOUR2_CONSOLE = {r=200,g=200,b=255}
 PLAYERCOLOUR3_CONSOLE = {r=255,g=220,b=100}
 PLAYERCOLOUR4_CONSOLE = {r=200,g=255,b=200}
 
+LOGO_IMG = love.graphics.newImage("Images/Logo.png")
+
 
 time = 0
 mouseLastX = 0
@@ -287,10 +289,15 @@ function love.draw()
 			
 			stats.displayStatus()
 		end
-	elseif mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
-		loadingScreen.render()
 	else
-		simulation.displayTimeUntilNextMatch(nil, dt)
+		if not hideLogo then
+			love.graphics.draw(LOGO_IMG, (love.graphics.getWidth()-LOGO_IMG:getWidth())/2, love.graphics.getHeight()-LOGO_IMG:getHeight()- 50)
+		end
+		if mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
+			loadingScreen.render()
+		else
+			simulation.displayTimeUntilNextMatch(nil, dt)
+		end
 	end
 
 	

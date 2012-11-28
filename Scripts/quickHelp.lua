@@ -72,9 +72,9 @@ function quickHelp.init()
 			helpBgThread:set("shadow", true )
 			helpBgThread:set("shadowOffsetX", 10 )
 			helpBgThread:set("shadowOffsetY", 0 )
-			helpBgThread:set("colR", HELP_BOX_R )
-			helpBgThread:set("colG", HELP_BOX_G )
-			helpBgThread:set("colB", HELP_BOX_B )
+			helpBgThread:set("colR", MSG_BOX_R )
+			helpBgThread:set("colG", MSG_BOX_G )
+			helpBgThread:set("colB", MSG_BOX_B )
 		end
 	else
 		if not helpBg then	-- if there's no button yet, that means the thread is still running...

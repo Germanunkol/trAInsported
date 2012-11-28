@@ -57,6 +57,7 @@ tut 2:
 - Add tipps
 - No guarantee that game's outcome is always the same...
 [x] Status message box
+- make sure globals.lua is the same for server and client!
 
 
 **Maybe**

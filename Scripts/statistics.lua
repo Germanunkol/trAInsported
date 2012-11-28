@@ -535,6 +535,10 @@ function statistics.displayStatus()
 		end
 		love.graphics.print("Round ends in", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Round ends in")/2, y+10)
 		love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
+	elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+		t = numPassengersDroppedOff .. " of " .. MAX_NUM_PASSENGERS .. " passengers"
+		love.graphics.print("Transported:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Transported:")/2, y+10)
+		love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 	end
 end
 

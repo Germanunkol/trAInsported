@@ -73,6 +73,21 @@ function passenger.new()
 					passengerList[i].markZ = love.timer.getDelta()
 					passengerList[i].vipTime = MAX_VIP_TIME
 					passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
+					local num = math.random(#vipSpeach)
+					if vipSpeach[num] then		-- just to make sure
+						passengerList[i].speach = vipSpeach[num]
+					end
+				else
+					local num = math.random(#passengerSpeach)
+					if passengerSpeach[num] then		-- just to make sure
+						passengerList[i].speach = passengerSpeach[num]
+					end
+				end
+				if not passengerList[i].speach then
+					passengerList[i].speach = " "
+					print("ERROR: no Speach found for passenger " .. passengerList[i].name)
+				else
+					print(passengerList[i].name .. ": '" .. passengerList[i].speach .. "'")
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )

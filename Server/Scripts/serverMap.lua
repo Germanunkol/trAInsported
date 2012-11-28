@@ -15,6 +15,7 @@ function runMap(restart)
 		passenger.init (math.ceil(curMap.width*curMap.height/3))		-- start generating random passengers, set the maximum number of them.
 		--populateMap()
 		
+		sendRoundInfo()
 		
 		clearAllOccupations()
 		

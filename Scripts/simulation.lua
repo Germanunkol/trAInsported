@@ -114,7 +114,16 @@ end
 
 function runUpdate(event, t1, t2)
 	print("Running: " .. event)
-	if event:find("NEW_AI:") == 1 then
+	if event:find("ROUND_DETAILS:") == 1 then
+		s,e = event:find("ROUND_DETAILS:")
+		local tbl = seperateStrings(event:sub(e+1,#event))
+		GAME_TYPE = tonumber(tbl[1])
+		if GAME_TYPE == GAME_TYPE_TIME then
+			ROUND_TIME = tonumber(tbl[2])
+		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+			MAX_NUM_PASSENGERS = tonumber(tbl[2])
+		end
+	elseif event:find("NEW_AI:") == 1 then
 		s,e = event:find("NEW_AI:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
 		ID = tbl[1]

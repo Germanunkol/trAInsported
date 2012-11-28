@@ -523,6 +523,19 @@ function statistics.displayStatus()
 			love.graphics.print(aiStats[i].pTransported, x + 84 , displayStatusY + 100)
 		end
 	end
+	
+	x = love.graphics.getWidth()-roundStats:getWidth()-20
+	y = 20
+	love.graphics.draw(roundStats, x, y)
+	if GAME_TYPE == GAME_TYPE_TIME then
+		if curMap then
+			t = makeTimeReadable(ROUND_TIME - curMap.time)
+		elseif simulationMap then
+			t = makeTimeReadable(ROUND_TIME - simulationMap.time)
+		end
+		love.graphics.print("Round ends in", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Round ends in")/2, y+10)
+		love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
+	end
 end
 
 function statistics.start( ais )
@@ -666,12 +679,50 @@ function statistics.init()
 		end
 	end
 
+	if not roundStatsThread and not roundStats then		-- only start thread once!
+		ok, roundStats = pcall(love.graphics.newImage, "roundStats.png")
+		if not ok then
+			roundStats = nil
+			loadingScreen.addSection("Rendering Round Info Box")
+			roundStatsThread = love.thread.newThread("roundStatsThread", "Scripts/createImageBox.lua")
+			roundStatsThread:start()
+	
+			roundStatsThread:set("width", STAT_BOX_WIDTH )
+			roundStatsThread:set("height", STAT_BOX_HEIGHT )
+			roundStatsThread:set("shadow", true )
+			roundStatsThread:set("shadowOffsetX", 10 )
+			roundStatsThread:set("shadowOffsetY", 0 )
+			roundStatsThread:set("colR", MSG_BOX_R )
+			roundStatsThread:set("colG", MSG_BOX_G )
+			roundStatsThread:set("colB", MSG_BOX_B )
+		end
+	else
+		if not roundStats then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = roundStatsThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Round Info Box", percent)
+			end
+			err = roundStatsThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = roundStatsThread:get("status")
+			if status == "done" then
+				roundStats = roundStatsThread:get("imageData")		-- get the generated image data from the thread
+				roundStats:encode("roundStats.png")
+				roundStats = love.graphics.newImage(roundStats)
+				roundStatsThread = nil
+			end
+		end
+	end
 	-- statBoxPositive = createBoxImage(350, 95, true, 10, 0, 64, 140, 100)
 	-- statBoxStatus = createBoxImage(350, 95, true, 10, 0, 150, 90, 65)
 end
 
 function statistics.initialised()
-	if statBoxPositive and statBoxNegative and statBoxStatus then
+	if statBoxPositive and statBoxNegative and statBoxStatus and roundStats then
 		return true
 	end
 end

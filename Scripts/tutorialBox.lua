@@ -65,7 +65,7 @@ function tutorialBox.init()
 	
 	if not tutorialBoxBGThread and not tutorialBoxBG then		-- only start thread once!
 		ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			tutorialBoxBG = nil
 			loadingScreen.addSection("Rendering Tutorial Box")
 			tutorialBoxBGThread = love.thread.newThread("tutorialBoxBGThread", "Scripts/createImageBox.lua")

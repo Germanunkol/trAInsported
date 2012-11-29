@@ -61,7 +61,7 @@ function quickHelp.init()
 
 	if not helpBgThread and not helpBg then		-- only start thread once!
 		ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			helpBg = nil
 			loadingScreen.addSection("Rendering Help Box")
 			helpBgThread = love.thread.newThread("helpBgThread", "Scripts/createImageBox.lua")

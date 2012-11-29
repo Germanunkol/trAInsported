@@ -80,7 +80,7 @@ function loadingScreen.render()
 		end
 	else
 		love.graphics.setFont(FONT_STANDARD)
-		love.graphics.print("Loading...", 10, 20)
+		love.graphics.print("Loading... Generating new images (only has to be done once)", 10, 20)
 		t = love.thread.getThreads()
 		num = 0
 		for k, v in pairs(t) do
@@ -120,7 +120,7 @@ local bgBoxThread
 function loadingScreen.init()
 	if not bgBoxThread and not bgBox then		-- only start thread once!
 		ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			bgBox = nil
 			loadingScreen.addSection("Rendering Loading Box")
 			bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/createImageBox.lua")
@@ -159,7 +159,7 @@ function loadingScreen.init()
 	
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
 		ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			bgBoxSmall = nil
 			loadingScreen.addSection("Rendering Loading Box (small)")
 			bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/createImageBox.lua")

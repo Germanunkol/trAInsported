@@ -14,7 +14,7 @@ codeBox = require("Scripts/codeBox")
 map = require("Scripts/map")
 train = require("Scripts/train")
 functionQueue = require("Scripts/functionQueue")
-require("Scripts/passengerSpeach")
+pSpeach = require("Scripts/passengerSpeach")
 passenger = require("Scripts/passenger")
 stats = require("Scripts/statistics")
 clouds = require("Scripts/clouds")
@@ -23,8 +23,11 @@ connection = require("Scripts/connectionClient")
 require("Scripts/globals")
 simulation = require("Scripts/simulation")
 statusMsg = require("Scripts/statusMsg")
+versionCheck = require("Scripts/versionCheck")
 
 numTrains = 0
+
+version = "0.1"
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
@@ -32,6 +35,7 @@ FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 15 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
 FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
+FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 14)
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
@@ -63,8 +67,10 @@ initialising = true
 function love.load()
 
 	initialising = true
-	loadingScreen.reset()
+	loadingScreen.reset()	
 	love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
+	
+	versionCheck.start()
 end
 
 function finishStartupProcess()
@@ -97,8 +103,11 @@ function love.update(dt)
 		tutorialBox.init()
 		codeBox.init()
 		statusMsg.init()
+		pSpeach.init()
 		
-		if button.initialised() and msgBox.initialised() and loadingScreen.initialised() and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised() and codeBox.initialised() and statusMsg.initialised() then
+		if button.initialised() and msgBox.initialised() and loadingScreen.initialised()
+				and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised()
+				and codeBox.initialised() and statusMsg.initialised() and pSpeach.initialised() then
 			initialising = false
 			finishStartupProcess()
 		end
@@ -259,6 +268,8 @@ function love.draw()
 			love.graphics.draw(mapObjectImage, 0,0)	
 		
 			map.renderHighlights(passedTime)
+			
+			passenger.showSelected(passedTime)
 		
 			if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
 	

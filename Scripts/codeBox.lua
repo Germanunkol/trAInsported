@@ -72,7 +72,7 @@ function codeBox.init()
 	
 	if not codeBoxBGThread and not codeBoxBG then		-- only start thread once!
 		ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			codeBoxBG = nil
 			loadingScreen.addSection("Rendering Code Box")
 			codeBoxBGThread = love.thread.newThread("codeBoxBGThread", "Scripts/createImageBox.lua")

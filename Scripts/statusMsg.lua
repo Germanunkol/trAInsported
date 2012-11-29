@@ -7,7 +7,7 @@ local currentTime = 0
 function statusMsg.init()
 	if not statusMsgBoxThread and not statusMsgBox then		-- only start thread once!
 		ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			statusMsgBox = nil
 			loadingScreen.addSection("Rendering Status Msg Box")
 			statusMsgBoxThread = love.thread.newThread("statusMsgBoxThread", "Scripts/createImageBox.lua")
@@ -46,7 +46,7 @@ function statusMsg.init()
 	
 	if not statusErrBoxThread and not statusErrBox then		-- only start thread once!
 		ok, statusErrBox = pcall(love.graphics.newImage, "statusErrBox.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			statusErrBox = nil
 			loadingScreen.addSection("Rendering Status Error Box")
 			statusErrBoxThread = love.thread.newThread("statusErrBoxThread", "Scripts/createImageBox.lua")

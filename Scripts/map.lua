@@ -1111,7 +1111,7 @@ function map.endRound()
 	roundEnded = true
 	stats.print()
 	stats.generateStatWindows()
-	passengerTimePassed = 10
+	passengerTimePassed = 0
 	newTrainQueueTime = 0
 end
 

@@ -128,7 +128,7 @@ function button.init()
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
 	
 		ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			buttonOff = nil
 			loadingScreen.addSection("Rendering Deactivated Button")
 			buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/createImageBox.lua")
@@ -169,7 +169,7 @@ function button.init()
 	
 		ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
 		print(buttonOver)
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			buttonOver = nil
 			loadingScreen.addSection("Rendering Activated Button")
 			buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/createImageBox.lua")
@@ -213,7 +213,7 @@ function button.init()
 		
 		ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
 		print(buttonOffSmall)
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			buttonOffSmall = nil
 			loadingScreen.addSection("Rendering Deactivated Button (small)")
 			buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/createImageBox.lua")
@@ -254,7 +254,7 @@ function button.init()
 	
 		ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
 		print(buttonOverSmall)
-		if not ok then
+		if not ok or not versionCheck.getMatch() then
 			buttonOverSmall = nil
 			loadingScreen.addSection("Rendering Activated Button (small)")
 			buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/createImageBox.lua")

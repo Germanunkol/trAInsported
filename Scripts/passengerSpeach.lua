@@ -21,3 +21,56 @@ vipSpeach = {
 	"My dog needs food!",
 	"...",
 }
+
+local pSpeach = {}
+
+function pSpeach.init()
+
+	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
+		ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
+		if not ok or not versionCheck.getMatch() then
+			pSpeachBubble = nil
+			loadingScreen.addSection("Rendering Speach Bubble Box")
+			pSpeachBubbleThread = love.thread.newThread("pSpeachBubbleThread", "Scripts/createImageBox.lua")
+			pSpeachBubbleThread:start()
+	
+			pSpeachBubbleThread:set("width", BUBBLE_WIDTH )
+			pSpeachBubbleThread:set("height", BUBBLE_HEIGHT )
+			pSpeachBubbleThread:set("shadow", true )
+			pSpeachBubbleThread:set("shadowOffsetX", 10 )
+			pSpeachBubbleThread:set("shadowOffsetY", 0 )
+			pSpeachBubbleThread:set("colR", BUBBLE_R )
+			pSpeachBubbleThread:set("colG", BUBBLE_G )
+			pSpeachBubbleThread:set("colB", BUBBLE_B )
+		end
+	else
+		if not pSpeachBubble then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = pSpeachBubbleThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Speach Bubble Box", percent)
+			end
+			err = pSpeachBubbleThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = pSpeachBubbleThread:get("status")
+			if status == "done" then
+				pSpeachBubble = pSpeachBubbleThread:get("imageData")		-- get the generated image data from the thread
+				pSpeachBubble:encode("pSpeachBubble.png")
+				pSpeachBubble = love.graphics.newImage(pSpeachBubble)
+				pSpeachBubbleThread = nil
+			end
+		end
+	end
+	--pSpeachBubble = createBoxImage(HELP_WIDTH,HELP_HEIGHT,true, 10, 0,64,160,100)
+end
+
+function pSpeach.initialised()
+	if pSpeachBubble then
+		return true
+	end
+end
+
+return pSpeach

@@ -65,6 +65,7 @@ function passenger.new()
 						curY = y,
 						image = passengerImage,
 						angle = math.random()*math.pi*2,
+						selected = 5
 						}
 				if vip then
 					--passengerList[i].image = passengerVIPImage
@@ -289,6 +290,7 @@ function passenger.showAll(dt)
 		end
 		
 		p.renderX, p.renderY = x,y
+		
 		--love.graphics.setColor(255,255,255,100)
 		--love.graphics.print(p.name, x, y + 20)
 	end
@@ -302,6 +304,22 @@ function passenger.showVIPs(dt)
 			p.markZ = p.markZ + dt*5
 			c = math.sin(p.markZ)^2
 			love.graphics.draw(passengerVIPImage, p.renderX + 4, p.renderY - 15 - 10*c, 0, 1+c/10, 1+c/10)
+		end
+	end
+end
+
+function passenger.showSelected()
+	love.graphics.setFont(FONT_SMALL)
+	for k, p in pairs(passengerList) do
+		if p.selected > 0 then
+	love.graphics.setColor(255,255,255)
+				love.graphics.draw(pSpeachBubble, p.renderX-85, p.renderY + 26)
+	love.graphics.setColor(0,0,0)
+				love.graphics.printf(p.speach, p.renderX-75, p.renderY + 30, 150, "center")
+				p.selected = p.selected - dt
+				if p.vip then
+				
+				end
 		end
 	end
 end

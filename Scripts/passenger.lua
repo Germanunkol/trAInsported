@@ -4,7 +4,6 @@ local passengerList = {}
 
 passengerPositions = {}
 
-
 local numPassengersTotal = 1
 numPassengersDroppedOff = 0
 
@@ -310,15 +309,16 @@ end
 
 function passenger.showSelected()
 	love.graphics.setFont(FONT_SMALL)
+	
 	for k, p in pairs(passengerList) do
 		if p.selected > 0 then
 	love.graphics.setColor(255,255,255)
-				love.graphics.draw(pSpeachBubble, p.renderX-85, p.renderY + 26)
+				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
 	love.graphics.setColor(0,0,0)
-				love.graphics.printf(p.speach, p.renderX-75, p.renderY + 30, 150, "center")
+				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
 				p.selected = p.selected - dt
 				if p.vip then
-				
+					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
 				end
 		end
 	end

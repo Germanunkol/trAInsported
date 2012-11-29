@@ -35,7 +35,7 @@ FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 15 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
 FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
-FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 14)
+FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 14)
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
@@ -75,7 +75,8 @@ end
 
 function finishStartupProcess()
 	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
-
+	
+	SPEACH_BUBBLE_WIDTH = pSpeachBubble:getWidth()
 
 	map.init()
 

@@ -13,7 +13,7 @@ vipSpeach = {
 	"I desperately need to use the loo!",
 	"I'm late for school!",
 	"I left the oven on.",
-	"Need to get home. Big Bang Theory starts any minute now...",
+	"Need to get home! 'Big Bang Theory' starts any minute now...",
 	"My wife will kill me if I'm not home by nine!",
 	"I HAVE to get to this party before she gets there.",
 	"Late for a date...",
@@ -37,8 +37,8 @@ function pSpeach.init()
 			pSpeachBubbleThread:set("width", BUBBLE_WIDTH )
 			pSpeachBubbleThread:set("height", BUBBLE_HEIGHT )
 			pSpeachBubbleThread:set("shadow", true )
-			pSpeachBubbleThread:set("shadowOffsetX", 10 )
-			pSpeachBubbleThread:set("shadowOffsetY", 0 )
+			pSpeachBubbleThread:set("shadowOffsetX", 6 )
+			pSpeachBubbleThread:set("shadowOffsetY", 1 )
 			pSpeachBubbleThread:set("colR", BUBBLE_R )
 			pSpeachBubbleThread:set("colG", BUBBLE_G )
 			pSpeachBubbleThread:set("colB", BUBBLE_B )

@@ -30,7 +30,7 @@ Screenshot
 function quickHelp.show()
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.setFont(FONT_STAT_MSGBOX)
-	x,y = love.graphics.getWidth()-HELP_WIDTH-20, 10
+	x,y = love.graphics.getWidth()-HELP_WIDTH-20, roundStats:getHeight() + 30
 	love.graphics.draw(helpBg, x,y )
 	love.graphics.printf(helpStrKeys, x+20, y+20, 120, "right")
 	love.graphics.printf(helpStr, x+150, y+20, HELP_WIDTH-170, "left")

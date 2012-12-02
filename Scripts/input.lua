@@ -12,11 +12,11 @@ function resetTimeFactor()
 end
 
 function love.mousepressed(x, y, b)
-	if curMap and mapImage then
-		if b == "l" then
-			train.checkSelection()
-		end
-	end
+	--if curMap and mapImage then
+		--if b == "l" then
+		--	train.checkSelection()
+		--end
+	--end
 	if b == "wd" then
 		camZ = clamp(camZ - 0.05, 0.1, 1)
 		camX = clamp(camX, -MAX_PAN, MAX_PAN)
@@ -29,8 +29,24 @@ function love.mousepressed(x, y, b)
 		camY = clamp(camY, -MAX_PAN, MAX_PAN)
 		return
 	end
+	
+	-- if already moving something, continue doing so:
+	
+	
 	if panningView then return end
+	
+	-- else, check if something new SHOULD be moved:
+	
 	local hit = button.handleClick()
+	if not hit then
+		hit = msgBox.handleClick()
+	end
+	if not hit then
+		hit = codeBox.handleClick()
+	end
+	if not hit then
+		hit = tutorialBox.handleClick()
+	end
 	if not hit then
 		panningView = true
 		mouseLastX, mouseLastY = love.mouse.getPosition()

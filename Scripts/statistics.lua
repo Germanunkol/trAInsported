@@ -524,21 +524,26 @@ function statistics.displayStatus()
 		end
 	end
 	
-	x = love.graphics.getWidth()-roundStats:getWidth()-20
-	y = 20
-	love.graphics.draw(roundStats, x, y)
-	if GAME_TYPE == GAME_TYPE_TIME then
-		if curMap then
-			t = makeTimeReadable(ROUND_TIME - curMap.time)
-		elseif simulationMap then
-			t = makeTimeReadable(ROUND_TIME - simulationMap.time)
+	
+	if tutorial and tutorial.roundStats then		-- let the tutorial draw the winning message
+		tutorial.roundStats()
+	else
+		x = love.graphics.getWidth()-roundStats:getWidth()-20
+		y = 20
+		love.graphics.draw(roundStats, x, y)
+		if GAME_TYPE == GAME_TYPE_TIME then
+			if curMap then
+				t = makeTimeReadable(ROUND_TIME - curMap.time)
+			elseif simulationMap then
+				t = makeTimeReadable(ROUND_TIME - simulationMap.time)
+			end
+			love.graphics.print("Round ends in", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Round ends in")/2, y+10)
+			love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
+		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+			t = numPassengersDroppedOff .. " of " .. MAX_NUM_PASSENGERS .. " passengers"
+			love.graphics.print("Transported:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Transported:")/2, y+10)
+			love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 		end
-		love.graphics.print("Round ends in", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Round ends in")/2, y+10)
-		love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
-	elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-		t = numPassengersDroppedOff .. " of " .. MAX_NUM_PASSENGERS .. " passengers"
-		love.graphics.print("Transported:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Transported:")/2, y+10)
-		love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 	end
 end
 

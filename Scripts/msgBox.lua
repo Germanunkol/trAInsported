@@ -40,13 +40,13 @@ function msgBox:new(x, y, msg, ... )
 	for i=1,#msgBoxList+1,1 do
 		if not msgBoxList[i] then
 		
-			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)
+			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), height=msgBoxBG:getHeight(), bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
-					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority)			
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority)			
 				else
-					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority)
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority)
 				end
 				if b then
 					table.insert(msgBoxList[i].buttons, b)
@@ -79,6 +79,38 @@ end
 
 function msgBox.isVisible()
 	for k, m in pairs(msgBoxList) do
+		return true
+	end
+end
+
+function msgBox.handleClick()
+	local mX, mY = love.mouse.getPosition()
+	
+	if not msgBox.moving then
+	
+		for k, b in pairs(msgBoxList) do
+			b.moving = rectangularCollision(b.x, b.y, b.width, b.height, mX, mY)
+			if b.moving then
+				msgBox.moving = b
+				mouseLastX = mX
+				mouseLastY = mY
+				return true
+			end
+		end
+	
+	else		-- allready moving a box?
+		oldX = msgBox.moving.x
+		oldY = msgBox.moving.y
+		
+		msgBox.moving.x = clamp(msgBox.moving.x + (mX - mouseLastX), 0, love.graphics.getWidth() - msgBox.moving.width)
+		msgBox.moving.y = clamp(msgBox.moving.y + (mY - mouseLastY), 0, love.graphics.getHeight() - msgBox.moving.height)
+		mouseLastX = mX
+		mouseLastY = mY
+		
+		for k, button in pairs(msgBox.moving.buttons) do
+			button.x = button.x + (msgBox.moving.x - oldX)
+			button.y = button.y + (msgBox.moving.y - oldY)
+		end
 		return true
 	end
 end

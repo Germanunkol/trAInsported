@@ -263,4 +263,5 @@ fileContent = [[
 --	d) Lua is extremly fast as well. In short:
 --	e) Lua doesn't suck.
 -- Now that you've successfully found the file and read this, go back to the game and press the "Next" button!
+-- Note: There are text editors which highlight the keywords for the Lua language. Just search for Lua editors on the internet. This makes scripting easier but is NOT needed - any old text editor should do.
 ]]

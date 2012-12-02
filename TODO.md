@@ -62,3 +62,4 @@ tut 2:
 
 **Maybe**
 - buy code lines using in-game cash
+- handicapped people

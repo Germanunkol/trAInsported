@@ -332,13 +332,16 @@ function love.draw()
 	]]--
 	
 	if roundEnded and (curMap or simulationMap) and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
-		tutorialBox.show()
-		codeBox.show()
+	
+	
+	button.show()
+	
+	tutorialBox.show()
+	codeBox.show()
 	if msgBox.isVisible() then
 		msgBox.show()
 	end
 	
-	button.show()
 	menu.render()
 	statusMsg.display(dt)
 	

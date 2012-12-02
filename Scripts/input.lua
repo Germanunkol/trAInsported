@@ -55,6 +55,9 @@ end
 
 function love.mousereleased()
 	panningView = false
+	msgBox.moving = nil
+	codeBox.moving = nil
+	tutorialBox.moving = nil
 end
 
 

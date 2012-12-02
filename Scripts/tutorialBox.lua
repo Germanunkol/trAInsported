@@ -16,13 +16,13 @@ function tutorialBox.new(x, y, msg, ... )
 	--text = wrap(msg, tutorialBoxBG:getWidth()-30, FONT_BUTTON)
 	for i=1,#tutorialBoxList+1,1 do
 		if not tutorialBoxList[i] then
-			tutorialBoxList[i] = setmetatable({x=x, y=y, width=tutorialBoxBG:getWidth(), text=msg, bg=tutorialBoxBG, index = i, buttons={}}, tutorialBox_mt)
+			tutorialBoxList[i] = setmetatable({x=x, y=y, width=tutorialBoxBG:getWidth(), height=tutorialBoxBG:getHeight(), text=msg, bg=tutorialBoxBG, index = i, buttons={}}, tutorialBox_mt)
 			local priority = 1		-- same importance as anything else
 			for j = 1, #arg, 1 do
 				if arg[j].inBetweenSteps then
-					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + tutorialBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority)
+					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority, nil, true)
 				else
-					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2, y + tutorialBoxBG:getHeight() - 60, arg[j].name, tutorialBoxEvent(tutorialBoxList[i], arg[j].event), arg[j].args, priority)
+					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, tutorialBoxEvent(tutorialBoxList[i], arg[j].event), arg[j].args, priority, nil, true)
 				end
 				if b then
 					table.insert(tutorialBoxList[i].buttons, b)
@@ -55,11 +55,45 @@ function tutorialBox.show()
 	for k, m in pairs(tutorialBoxList) do
 		love.graphics.draw(m.bg, m.x, m.y)
 		love.graphics.printf(m.text, m.x + 30, m.y + 15, m.bg:getWidth()-60, "left")
-		--for i=1, #m.text do
-			--love.graphics.print(m.text[i], m.x + (m.width - FONT_STAT_MSGBOX:getWidth(m.text[i]))/2, m.y + i*FONT_STAT_MSGBOX:getHeight())
-		--end
+		for l, b in pairs(m.buttons) do
+			button.renderSingle(b)
+		end
 	end
 end
+
+
+function tutorialBox.handleClick()
+	local mX, mY = love.mouse.getPosition()
+	
+	if not tutorialBox.moving then
+	
+		for k, b in pairs(tutorialBoxList) do
+			b.moving = rectangularCollision(b.x, b.y, b.width, b.height, mX, mY)
+			if b.moving then
+				tutorialBox.moving = b
+				mouseLastX = mX
+				mouseLastY = mY
+				return true
+			end
+		end
+	
+	else		-- allready moving a box?
+		oldX = tutorialBox.moving.x
+		oldY = tutorialBox.moving.y
+		
+		tutorialBox.moving.x = clamp(tutorialBox.moving.x + (mX - mouseLastX), 0, love.graphics.getWidth() - tutorialBox.moving.width)
+		tutorialBox.moving.y = clamp(tutorialBox.moving.y + (mY - mouseLastY), 0, love.graphics.getHeight() - tutorialBox.moving.height)
+		mouseLastX = mX
+		mouseLastY = mY
+		
+		for k, button in pairs(tutorialBox.moving.buttons) do
+			button.x = button.x + (tutorialBox.moving.x - oldX)
+			button.y = button.y + (tutorialBox.moving.y - oldY)
+		end
+		return true
+	end
+end
+
 
 function tutorialBox.init()
 	

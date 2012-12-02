@@ -16,7 +16,7 @@ function codeBox.new(x, y, msg, col)
 	--text = wrap(msg, codeBoxBG:getWidth()-30, FONT_BUTTON)
 	for i=1,#codeBoxList+1,1 do
 		if not codeBoxList[i] then
-			codeBoxList[i] = setmetatable({x=x, y=y, width=codeBoxBG:getWidth(), text=msg, bg=codeBoxBG, index = i, buttons={}, col=col}, codeBox_mt)
+			codeBoxList[i] = setmetatable({x=x, y=y, width=codeBoxBG:getWidth(), height=codeBoxBG:getHeight(), text=msg, bg=codeBoxBG, index = i, buttons={}, col=col}, codeBox_mt)
 			local priority = 1		-- same importance as anything else
 			--[[for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
@@ -65,6 +65,39 @@ function codeBox.show()
 		--for i=1, #m.text do
 			--love.graphics.print(m.text[i], m.x + (m.width - FONT_STAT_MSGBOX:getWidth(m.text[i]))/2, m.y + i*FONT_STAT_MSGBOX:getHeight())
 		--end
+	end
+end
+
+
+function codeBox.handleClick()
+	local mX, mY = love.mouse.getPosition()
+	
+	if not codeBox.moving then
+	
+		for k, b in pairs(codeBoxList) do
+			b.moving = rectangularCollision(b.x, b.y, b.width, b.height, mX, mY)
+			if b.moving then
+				codeBox.moving = b
+				mouseLastX = mX
+				mouseLastY = mY
+				return true
+			end
+		end
+	
+	else		-- allready moving a box?
+		oldX = codeBox.moving.x
+		oldY = codeBox.moving.y
+		
+		codeBox.moving.x = clamp(codeBox.moving.x + (mX - mouseLastX), 0, love.graphics.getWidth() - codeBox.moving.width)
+		codeBox.moving.y = clamp(codeBox.moving.y + (mY - mouseLastY), 0, love.graphics.getHeight() - codeBox.moving.height)
+		mouseLastX = mX
+		mouseLastY = mY
+		
+		for k, button in pairs(codeBox.moving.buttons) do
+			button.x = button.x + (codeBox.moving.x - oldX)
+			button.y = button.y + (codeBox.moving.y - oldY)
+		end
+		return true
 	end
 end
 

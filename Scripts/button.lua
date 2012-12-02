@@ -32,7 +32,7 @@ end
 
 local buttnOff, buttnOver
 
-function button:new(x, y, label, event, eventArgs, priority, size)
+function button:new(x, y, label, event, eventArgs, priority, size, renderSeperate)
 	priority = priority or 1
 	size = size or STANDARD
 	for i=1,#buttonList+1,1 do
@@ -40,9 +40,9 @@ function button:new(x, y, label, event, eventArgs, priority, size)
 			-- local imageOff = createButtonOff(width, height, label)
 			-- local imageOver = createButtonOver(width, height, label)
 			if size == STANDARD then
-				buttonList[i] = setmetatable({size = STANDARD, x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+				buttonList[i] = setmetatable({size = STANDARD, x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
 			elseif size == SMALL then
-				buttonList[i] = setmetatable({size = SMALL, x=x, y=y, imageOff=buttonOffSmall, imageOver=buttonOverSmall, event=event, index = i, w=buttonOverSmall:getWidth(), h=buttonOverSmall:getHeight(), l=label, eventArgs=eventArgs, priority=priority}, button_mt)
+				buttonList[i] = setmetatable({size = SMALL, x=x, y=y, imageOff=buttonOffSmall, imageOver=buttonOverSmall, event=event, index = i, w=buttonOverSmall:getWidth(), h=buttonOverSmall:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
 			end
 			button.setButtonLevel()
 			return buttonList[i]
@@ -88,34 +88,38 @@ function button.handleClick()
 	return hit
 end
 
+function button.renderSingle(b)
+	if b.size == SMALL then
+		f = FONT_BUTTON_SMALL
+	else
+		f = FONT_BUTTON
+	end
+	love.graphics.setFont(f)
+	if b.selected then
+		red,green,blue = 50,255,50
+	else
+		red,green,blue = 255,255,255
+	end
+	
+	if b.mouseHover then
+		love.graphics.setColor(red,green,blue,255)
+		love.graphics.draw(b.imageOver, b.x, b.y)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.printf(b.l, b.x, b.y + 8, b.imageOver:getWidth(), "center")
+	else
+		if b.priority == buttonLevel then love.graphics.setColor(red,green,blue,255)
+		else love.graphics.setColor(red,green,blue,150) end
+		love.graphics.draw(b.imageOff, b.x, b.y)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
+	end
+end
+
 function button.show()
 	w = buttonOver:getWidth()
 	for k, b in pairs(buttonList) do
-		if not b.invisible then
-			if b.size == SMALL then
-				f = FONT_BUTTON_SMALL
-			else
-				f = FONT_BUTTON
-			end
-			love.graphics.setFont(f)
-			if b.selected then
-				red,green,blue = 50,255,50
-			else
-				red,green,blue = 255,255,255
-			end
-			
-			if b.mouseHover then
-				love.graphics.setColor(red,green,blue,255)
-				love.graphics.draw(b.imageOver, b.x, b.y)
-				love.graphics.setColor(255,255,255,255)
-				love.graphics.printf(b.l, b.x, b.y + 8, b.imageOver:getWidth(), "center")
-			else
-				if b.priority == buttonLevel then love.graphics.setColor(red,green,blue,255)
-				else love.graphics.setColor(red,green,blue,150) end
-				love.graphics.draw(b.imageOff, b.x, b.y)
-				love.graphics.setColor(255,255,255,255)
-				love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
-			end
+		if not b.invisible and not b.renderSeperate then
+			button.renderSingle(b)
 		end
 	end
 end

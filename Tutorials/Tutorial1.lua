@@ -42,7 +42,12 @@ function showCurrentStep()
 	if tutorialSteps[currentStep].event then
 		tutorialSteps[currentStep].event()
 	end
-	if currentTutBox then tutorialBox.remove(currentTutBox) end
+	if currentTutBox then
+		TUT_BOX_X = currentTutBox.x
+		TUT_BOX_Y = currentTutBox.y
+		tutorialBox.remove(currentTutBox)
+	end
+		
 	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
 end
 
@@ -98,7 +103,15 @@ local tutBoxX, tutBoxY = 0,0
 function additionalInformation(text)
 	return function()
 		if not additionalInfoBox then
-			additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y + TUT_BOX_HEIGHT +10, text, {})
+			if currentTutBox then
+				TUT_BOX_X = currentTutBox.x
+				TUT_BOX_Y = currentTutBox.y
+			end
+			if TUT_BOX_Y + TUT_BOX_HEIGHT + 50 < love.graphics.getHeight() then		-- only show BELOW the current box if there's still space there...
+				additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y + TUT_BOX_HEIGHT +10, text, {})
+			else		-- Otherwise, show it ABOVE the current tut box!
+				additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y - 10 - TUT_BOX_HEIGHT, text, {})
+			end
 		end
 	end
 end

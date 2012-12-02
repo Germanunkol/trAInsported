@@ -44,9 +44,9 @@ function msgBox:new(x, y, msg, ... )
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
-					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority)			
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority, nil, true)	
 				else
-					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority)
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority, nil, true)
 				end
 				if b then
 					table.insert(msgBoxList[i].buttons, b)
@@ -73,6 +73,9 @@ function msgBox.show()
 		love.graphics.draw(m.bg, m.x, m.y)
 		for i=1, #m.text do
 			love.graphics.print(m.text[i], m.x + (m.width - FONT_STAT_MSGBOX:getWidth(m.text[i]))/2, m.y + i*FONT_STAT_MSGBOX:getHeight())
+			for l, b in pairs(m.buttons) do
+				button.renderSingle(b)
+			end
 		end
 	end
 end

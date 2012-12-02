@@ -171,6 +171,7 @@ function menu.init(menuX, menuY)
 	--reset tutorial:
 	tutorial = {}
 	tutorialBox.clearAll()
+	codeBox.clearAll()
 end
 
 

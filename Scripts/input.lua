@@ -97,8 +97,8 @@ function love.keypressed(key, unicode)
 		timeFactor = timeFactorList[timeFactorIndex]
 	elseif key == "p" then
 		stats.print()
-	else
-		print(key, unicode)
+--	else
+		--print(key, unicode)
 	end
 end
 

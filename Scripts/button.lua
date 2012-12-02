@@ -12,7 +12,6 @@ local buttonLevel = 1
 local buttonOver = nil
 local buttonOff = nil
 
-
 function button.getPriority()
 	return buttonLevel
 end

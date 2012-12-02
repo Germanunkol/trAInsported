@@ -42,7 +42,8 @@ POSSIBLE_MODES = {"Time", "Passengers"}
 
 TUT_BOX_X = 25
 TUT_BOX_Y = 75
-
+CODE_BOX_X = 60
+CODE_BOX_Y = 75
 
 -- sizes:
 

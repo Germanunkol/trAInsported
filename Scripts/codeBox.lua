@@ -41,6 +41,8 @@ function codeBox.remove(box)
 	for i = 1, #b.buttons,1 do
 		b.buttons[i]:remove()
 	end
+	CODE_BOX_X = b.x
+	CODE_BOX_Y = b.y
 	codeBoxList[b.index] = nil
 	return nil
 end

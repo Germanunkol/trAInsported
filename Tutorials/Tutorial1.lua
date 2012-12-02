@@ -118,8 +118,8 @@ end
 
 function tutorial.createTutBoxes()
 
-	codeBoxX = love.graphics.getWidth() - CODE_BOX_WIDTH - 100
-	codeBoxY = (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50
+	CODE_BOX_X = love.graphics.getWidth() - CODE_BOX_WIDTH - 100
+	CODE_BOX_Y = (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50
 
 
 	local k = 1
@@ -205,7 +205,7 @@ end
 function firstPrint(k)
 	return function()
 		setFirstPrintEvent(k)
-		cBox = codeBox.new(codeBoxX, codeBoxY, "print( \"Hello trAIns!\" )")
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, "print( \"Hello trAIns!\" )")
 		console.setVisible(true)
 		quickHelp.setVisibility(false)
 	end
@@ -257,7 +257,7 @@ end
 
 function setTrainPlacingEvent(k)
 	return function()
-		cBox = codeBox.new(codeBoxX, codeBoxY, "function ai.init()\n   buyTrain( 1, 3 )\nend")
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, "function ai.init()\n   buyTrain( 1, 3 )\nend")
 		tutorial.trainPlacingEvent = function()
 				tutorial.trainPlacingEvent = nil
 				tutorial.trainPlaced = true

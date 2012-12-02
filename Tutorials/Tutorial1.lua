@@ -21,6 +21,14 @@ currentStep = 1
 
 currentTutBox = nil
 
+
+local CODE_printHelloTrains = [[
+print( "Hello trAIns!" )
+]]
+
+local CODE_trainPlacing = "function ai.init()}\n\tbuyTrain( 1, 3 )\nend"
+
+
 function nextTutorialStep()
 	currentStep = currentStep + 1
 	showCurrentStep()
@@ -120,50 +128,56 @@ function tutorial.createTutBoxes()
 
 	CODE_BOX_X = love.graphics.getWidth() - CODE_BOX_WIDTH - 100
 	CODE_BOX_Y = (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50
-
-
+	
 	local k = 1
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Welcome to trAInsported!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "The near future:\nA few years ago, a new product was introduced to the international market: The AI-controlled-Train, also known as 'trAIn'."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "There's three major differences between 'trAIns' and their older sisters, the trains. For one thing, they only ever pick up one passenger at a time. Secondly, they go exactly where their passengers want them to go. Thirdly, they're controlled by artificial intelligence."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "In theory, this new traffic system could work wonders. Pollution decreased, the need for private vehicles is gone and there's no more accidents due to highly advanced technology. \n\nThere's just one problem... "
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Where there's profit, competition is never far away. New businesses are each trying to gain control of the market. And this is where you come in. Your job here is to control your company's trAIns - by writing the best artificial intelligence for them.\nEnough talk, let's get started!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "You can click and drag anywhere on the map to move the view. Use the mousewheel (or Q and E) to zoom." 
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "At all times, you can press F1 to get a help screen showing you the controls. Try it!"
 	tutorialSteps[k].event = setF1Event(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Good. Let's keep going.\nThe game has a subfolder called 'AI'.\nIn it, you'll find a new file that I just generated. It's called 'Tutorial1.lua'.\nOpen this file in any text editor of your choice and read it."
 	tutorialSteps[k].buttons = {}
@@ -175,6 +189,7 @@ function tutorial.createTutBoxes()
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	end
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Now, let's write some code!\nThe first thing you have to learn is how to communicate with the game. Type the code shown on the right at the bottom of Tutorial1.lua. Once done, save it and press the 'Reload' button at the bottom of this window."
 	tutorialSteps[k].event = firstPrint(k)
@@ -183,29 +198,42 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The print function allows you to print any text (meaning anything between \" quotes) or variables to the in-game console. This will allow you to easily debug your code later on. Try it out any you'll see what I mean."), inBetweenSteps = true}
 	--tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Well done.\nNext, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3.\nX is the width and Y is the height of the sqare at which you want to place the train."
+	tutorialSteps[k].message = "Well done.\n\nThe text you printed should now show up in the in-game console on the left. This is useful for debugging later on."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Next, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates of the square on which you want to place the train."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Note:\n-The coordinates (X and Y) go from 1 to the map's width (or height). You'll learn more about the maximum width and height of the map later on.\n-If you call buyTrain with coordinates that don't describe a rail, the game will place the train at the closest rail that it can find."), inBetweenSteps = true}
 	k = k + 1
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Yay, you just placed your first trAIn on the map! It will automatically keep going forward."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorial}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "You've completed the first tutorial, well done! On to the next one."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorial}
+	k = k + 1
 end
 
 function firstPrint(k)
 	return function()
 		setFirstPrintEvent(k)
-		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, "print( \"Hello trAIns!\" )")
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_printHelloTrains)
 		console.setVisible(true)
 		quickHelp.setVisibility(false)
 	end
@@ -243,9 +271,9 @@ function setFirstPrintEvent(k)
 	tutorial.consoleEvent = function (str)
 					if str:sub(1, 13) == "[TutorialAI1]" then
 						if str:upper() == string.upper("[TutorialAI1]\tHello trAIns!") then
-							tutorialSteps[k+1].message = "Well done.\nNext, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. X is the width and Y is the height of the sqare at which you want to place the train."
+							tutorialSteps[k+1].message = "Well done.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text. This will play a role when you challenge other AIs later on."
 						else
-							tutorialSteps[k+1].message = "Not quite the right text, but you get the idea.\nNext, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. X is the width and Y is the height of the sqare at which you want to place the train."
+							tutorialSteps[k+1].message = "Not quite the right text, but you get the idea.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text. This will play a role when you challenge other AIs later on."
 						end
 						tutorial.consoleEvent = nil
 						if currentStep == k then
@@ -255,9 +283,10 @@ function setFirstPrintEvent(k)
 				end
 end
 
+
 function setTrainPlacingEvent(k)
 	return function()
-		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, "function ai.init()\n   buyTrain( 1, 3 )\nend")
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_trainPlacing)
 		tutorial.trainPlacingEvent = function()
 				tutorial.trainPlacingEvent = nil
 				tutorial.trainPlaced = true

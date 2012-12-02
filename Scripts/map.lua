@@ -1083,7 +1083,7 @@ local newTrainQueueTime = 0
 function map.handleEvents(dt)
 
 	if tutorial and tutorial.handleEvents then
-		tutorial.handleEvents()
+		tutorial.handleEvents(dt)
 	else
 		passengerTimePassed = passengerTimePassed - dt*timeFactor
 		if passengerTimePassed <= 0 then

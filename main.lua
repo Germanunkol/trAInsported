@@ -27,7 +27,7 @@ versionCheck = require("Scripts/versionCheck")
 
 numTrains = 0
 
-version = "0.1"
+version = "0.11"
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
@@ -117,7 +117,15 @@ function love.update(dt)
 		connection.handleConnection()
 		functionQueue.run()
 	
-		button.calcMouseHover()
+		if msgBox.moving then
+			msgBox.handleClick()
+		elseif codeBox.moving then
+			codeBox.handleClick()
+		elseif tutorialBox.moving then
+			tutorialBox.handleClick()
+		else
+			button.calcMouseHover()
+		end
 		if mapImage then
 			if simulationMap and not roundEnded then
 				simulationMap.time = simulationMap.time + dt*timeFactor

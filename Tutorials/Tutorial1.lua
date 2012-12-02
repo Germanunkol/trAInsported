@@ -43,7 +43,7 @@ function showCurrentStep()
 		tutorialSteps[currentStep].event()
 	end
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
-	currentTutBox = tutorialBox.new( 150, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
+	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
 end
 
 function startThisTutorial()
@@ -51,7 +51,7 @@ function startThisTutorial()
 	--define buttons for message box:
 	print("tutorialSteps[1].buttons", tutorialSteps[1].buttons[1].name)
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
-	currentTutBox = tutorialBox.new( 150, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2, tutorialSteps[1].message, tutorialSteps[1].buttons )
+	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[1].message, tutorialSteps[1].buttons )
 end
 
 function tutorial.start()
@@ -98,7 +98,7 @@ local tutBoxX, tutBoxY = 0,0
 function additionalInformation(text)
 	return function()
 		if not additionalInfoBox then
-			additionalInfoBox = tutorialBox.new(150, (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - TUT_BOX_HEIGHT - 10, text, {})
+			additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y + TUT_BOX_HEIGHT +10, text, {})
 		end
 	end
 end
@@ -122,7 +122,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "There's three major differences between 'trAIns' and their older sisters, the trains. For one thing, they only ever pick up one passenger at a time. Secondly, they go exactly where their passengers want them to. Thirdly, they're controlled by artificial intelligence."
+	tutorialSteps[k].message = "There's three major differences between 'trAIns' and their older sisters, the trains. For one thing, they only ever pick up one passenger at a time. Secondly, they go exactly where their passengers want them to go. Thirdly, they're controlled by artificial intelligence."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -247,11 +247,30 @@ function setTrainPlacingEvent(k)
 		cBox = codeBox.new(codeBoxX, codeBoxY, "function ai.init()\n   buyTrain( 1, 3 )\nend")
 		tutorial.trainPlacingEvent = function()
 				tutorial.trainPlacingEvent = nil
+				tutorial.trainPlaced = true
 				if currentStep == k then
 					nextTutorialStep()
 				end
 			end
 		end
+end
+
+function tutorial.roundStats()
+	x = love.graphics.getWidth()-roundStats:getWidth()-20
+	y = 20
+	love.graphics.draw(roundStats, x, y)
+	
+	t = "How to buy trains"
+	love.graphics.print("Current step:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Current step:")/2, y+10)
+	love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
+end
+
+function tutorial.handleEvents(dt)
+	if tutorial.trainPlaced then
+		if tutorial.numPassengers == 0 then
+			passenger.new()
+		end
+	end
 end
 
 fileContent = [[

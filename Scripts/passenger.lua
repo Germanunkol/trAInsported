@@ -97,7 +97,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY)
 					passengerList[i].speach = " "
 					print("ERROR: no Speach found for passenger " .. passengerList[i].name)
 				else
-					print(passengerList[i].name .. ": '" .. passengerList[i].speach .. "'")
+					print(passengerList[i].name .. " (" .. passengerList[i].x .. "," .. passengerList[i].y .. ") : '" .. passengerList[i].speach .. "'")
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )

@@ -21,17 +21,26 @@ currentStep = 1
 
 currentTutBox = nil
 
-
-local CODE_printHelloTrains = [[
+local CODE_printHelloTrains = parseCode([[
 print( "Hello trAIns!" )
-]]
+]])
 
-local CODE_trainPlacing = [[
+local CODE_trainPlacing = parseCode([[
 function ai.init()
      buyTrain( 1, 3 )
 end
-]]
+]])
 
+local CODE_eventExamples = parseCode([[
+-- called at every round start:
+function ai.init( map, money )
+
+-- called when a train arrives at a junction:
+function ai.chooseDirection(train, possibleDirections)
+
+-- called when a train has reached a passenger's location:
+function ai.foundPassengers(train, passengers)
+]])
 
 function nextTutorialStep()
 	currentStep = currentStep + 1
@@ -70,8 +79,6 @@ function startThisTutorial()
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
 	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[1].message, tutorialSteps[1].buttons )
 	
-	CODE_printHelloTrains = parseCode(CODE_printHelloTrains)
-	CODE_trainPlacing = parseCode(CODE_trainPlacing)
 end
 
 function tutorial.start()
@@ -138,7 +145,7 @@ end
 
 function tutorial.createTutBoxes()
 
-	CODE_BOX_X = love.graphics.getWidth() - CODE_BOX_WIDTH - 100
+	CODE_BOX_X = love.graphics.getWidth() - CODE_BOX_WIDTH - 30
 	CODE_BOX_Y = (love.graphics.getHeight() - TUT_BOX_HEIGHT)/2 - 50
 	
 	local k = 1
@@ -219,7 +226,15 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Next, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates. When done, save and click reload."
+	tutorialSteps[k].message = "There are certain functions which your AI will need. During each round, when certain things happen, these functions will be called. There's a few examples shown in the code box. Your job will be to fill these functions with content."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].event = setCodeExamples
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates. When done, save and click reload."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -227,14 +242,24 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Yay, you just placed your first trAIn on the map! It will automatically keep going forward."
+	tutorialSteps[k].message = "Yay, you just placed your first trAIn on the map! It will automatically keep going forward.\nThe function 'ai.init()' is the a function in your script that will always be called when the round starts. In this function, you will be able to analize the map, plan your train movement and - as you just did - buy your first trains and place them on the map."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The function ai.init() is called with 2 arguments. The first one holds the current map (more on that later) and the second one holds the amount of money you currently own. This way, you can check how many trains you can buy. You always have enough money to buy at least one train.\nfunction ai.init( map, money )"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "I've just placed a passenger on the map. Hold down the Space bar on your keyboard to see a line showing where he wants to go!"
+	tutorialSteps[k].event = setPassengerStart
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Passengers will always be spawned near a rail."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Th"
 	tutorialSteps[k].event = setPassengerStart
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -304,6 +329,9 @@ function setFirstPrintEvent(k)
 				end
 end
 
+function setCodeExamples()
+	cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_eventExamples)
+end
 
 function setTrainPlacingEvent(k)
 	return function()

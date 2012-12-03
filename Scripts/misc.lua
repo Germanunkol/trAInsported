@@ -1,17 +1,12 @@
 
 function findOneOf(str, s, ...)
 	start = s or 1
-	results = {}
+	local results = {}
 	for i=1,#arg do
-		print("searching '" .. str:sub(start,#str) .. "' for: ", arg[i])
 		local s,e, pattern = str:find("(" .. arg[i] .. ")", start)
-		print("\t-> result:", s, e, pattern)
 		if s then
-			print("\t-> FOUND!")
 			results[#results+1] = {s = s, e=e, pattern = pattern}
-			printTable(results)
 		end
-		print("")
 	end
 	
 	table.sort(results, function (a, b)
@@ -26,7 +21,6 @@ end
 
 
 function parseCode(str)
-	print("parsing code:", str)
 	
 	-- seperate into lines:
 	n = 1
@@ -34,7 +28,7 @@ function parseCode(str)
 	while str:find("\n") do
 		s = str:find("\n")
 		--print(n, str:sub(1, s-1))
-		text[n] = {fullLine=str:sub(1, s-1)}
+		text[n] = {fullLine = str:sub(1, s-1)}
 		str = str:sub(s+1, #str)
 		n = n+1
 	end
@@ -42,25 +36,33 @@ function parseCode(str)
 	-- go through all lines and highlight all keywords.
 	local l = 1
 	while l < n do
-		local s,e,p = findOneOf(text[l].fullLine, nil, "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
+		local s,e,p = findOneOf(text[l].fullLine, nil, "%-%-", "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
 		while s do
-		print(l, "found one:", s, e, p)
+			if p == "--" then		-- if a comment was found
+				if string.len(text[l].fullLine:sub(1, s-1)) > 0 then
+					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN}
+				end
+				text[l][#text[l]+1] = {str = text[l].fullLine:sub(s, #text[l].fullLine), font = FONT_CODE_COMMENT}
+				text[l].fullLine = ""
+				
+				break	-- comment ALWAYS ends the line
+			else
+				if string.len(text[l].fullLine:sub(1, s-1)) > 0 then
+					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN}
+				end
+				text[l][#text[l]+1] = {str = p, font = FONT_CODE_BOLD}
+				text[l].fullLine = text[l].fullLine:sub(e+1, #text[l].fullLine)
 			
-			if string.len(text[l].fullLine:sub(1, s-1)) > 0 then
-				text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN}
+				s,e,p = findOneOf(text[l].fullLine, e+1, "%-%-", "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
 			end
-			text[l][#text[l]+1] = {str = p, font = FONT_CODE_BOLD}
-			text[l].fullLine = text[l].fullLine:sub(e+1, #text[l].fullLine)
-			
-			s,e,p = findOneOf(text[l].fullLine, e+1, "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
 		end
-		if string.len(text[l].fullLine) > 0 then
+		
+	--	if string.len(text[l].fullLine) > 0 then
 			text[l][#text[l]+1] = {str = text[l].fullLine, font = FONT_CODE_PLAIN}		-- anything remaining in the string should be put in here.
-		end
+	--	end
 		text[l].fullLine = nil		--no longer needed.
 		l = l+1
 	end
-	
 	
 	-- lastly, calculate the actual width each string will take.
 	l = 1

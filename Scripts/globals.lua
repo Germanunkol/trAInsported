@@ -73,7 +73,6 @@ BUBBLE_HEIGHT = 75
 
 --- colours:
 
---60,40,30
 BG_R = 50
 BG_G = 30
 BG_B = 20
@@ -107,7 +106,7 @@ BUTTON_OVER_B = 90
 --MSG_BOX_B = 45
 
 MSG_BOX_R = 105
-MSG_BOX_G = 115
+MSG_BOX_G = 135
 MSG_BOX_B = 95
 
 --HELP_BOX_R = 55

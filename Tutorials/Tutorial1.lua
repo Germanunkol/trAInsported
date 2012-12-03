@@ -26,7 +26,11 @@ local CODE_printHelloTrains = [[
 print( "Hello trAIns!" )
 ]]
 
-local CODE_trainPlacing = "function ai.init()}\n\tbuyTrain( 1, 3 )\nend"
+local CODE_trainPlacing = [[
+function ai.init()
+     buyTrain( 1, 3 )
+end
+]]
 
 
 function nextTutorialStep()
@@ -65,6 +69,9 @@ function startThisTutorial()
 	print("tutorialSteps[1].buttons", tutorialSteps[1].buttons[1].name)
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
 	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[1].message, tutorialSteps[1].buttons )
+	
+	CODE_printHelloTrains = parseCode(CODE_printHelloTrains)
+	CODE_trainPlacing = parseCode(CODE_trainPlacing)
 end
 
 function tutorial.start()
@@ -102,6 +109,11 @@ function tutorial.start()
 	tutorial.mapRenderingDoneCallback = startThisTutorial	
 	
 	menu.exitOnly()
+end
+
+
+function tutorial.endRound()
+	tutorial.placedFirstPassenger = nil
 end
 
 local codeBoxX, codeBoxY = 0,0
@@ -207,7 +219,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Next, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates of the square on which you want to place the train."
+	tutorialSteps[k].message = "Next, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates. When done, save and click reload."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -222,7 +234,15 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You've completed the first tutorial, well done! On to the next one."
+	tutorialSteps[k].message = "I've just placed a passenger on the map. Hold down the Space bar on your keyboard to see a line showing where he wants to go!"
+	tutorialSteps[k].event = setPassengerStart
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "You've completed the first tutorial, well done!\n\nOn to the next one."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
@@ -267,6 +287,7 @@ function setF1Event(k)
 			end
 end
 
+
 function setFirstPrintEvent(k)
 	tutorial.consoleEvent = function (str)
 					if str:sub(1, 13) == "[TutorialAI1]" then
@@ -290,11 +311,20 @@ function setTrainPlacingEvent(k)
 		tutorial.trainPlacingEvent = function()
 				tutorial.trainPlacingEvent = nil
 				tutorial.trainPlaced = true
+				tutorial.numPassengers = 0
 				if currentStep == k then
 					nextTutorialStep()
 				end
 			end
 		end
+end
+
+function setPassengerStart()
+	print("started event!")
+	if not tutorial.placedFirstPassenger then
+		passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+		tutorial.placedFirstPassenger = true
+	end
 end
 
 function tutorial.roundStats()
@@ -307,12 +337,19 @@ function tutorial.roundStats()
 	love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 end
 
+
 function tutorial.handleEvents(dt)
-	if tutorial.trainPlaced then
-		if tutorial.numPassengers == 0 then
-			passenger.new()
-		end
+
+	newTrainQueueTime = newTrainQueueTime + dt*timeFactor
+	if newTrainQueueTime >= .1 then
+		train.handleNewTrains()
+		newTrainQueueTime = newTrainQueueTime - .1
 	end
+	
+	--if tutorial.trainPlaced then
+		--if tutorial.numPassengers == 0 then
+		--end
+	--end
 end
 
 fileContent = [[

@@ -28,7 +28,8 @@ function randPassengerPos()
 	return x, y
 end
 
-function passenger.new()
+function passenger.new( givenX, givenY, givenDestX, givenDestY)
+	print("placing passenger")
 	if curMap and #passengerList < MAX_NUM_PASSENGERS then
 		local sIndex = math.random(#curMap.railList)
 		local dIndex = math.random(#curMap.railList)
@@ -39,9 +40,18 @@ function passenger.new()
 			dIndex = math.random(#curMap.railList)
 		end
 		
-		local x, y = randPassengerPos()
-		local xEnd, yEnd = randPassengerPos()
-		
+		local x, y = 0, 0
+		if givenX and givenY then
+			x,y = givenX, givenY
+		else
+			x,y = randPassengerPos()
+		end
+		local xEnd, yEnd = 0, 0
+		if givenDestX and givenDestY then
+			xEnd, yEnd = givenDestX, givenDestY
+		else
+			xEnd, yEnd = randPassengerPos()
+		end
 		
 		local vip = false
 		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 then

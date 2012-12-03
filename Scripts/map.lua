@@ -1077,8 +1077,8 @@ end
 --------------------------------------------------------------
 
 -- make sure to reset these at round end!
-local passengerTimePassed = 0
-local newTrainQueueTime = 0
+passengerTimePassed = 0
+newTrainQueueTime = 0
 
 function map.handleEvents(dt)
 
@@ -1108,6 +1108,9 @@ function map.handleEvents(dt)
 end
 
 function map.endRound()
+	if tutorial.endRound then
+		tutorial.endRound()
+	end
 	roundEnded = true
 	stats.print()
 	stats.generateStatWindows()

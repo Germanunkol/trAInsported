@@ -37,6 +37,9 @@ FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
 FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 14)
 
+FONT_CODE_PLAIN = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf",17 )
+FONT_CODE_BOLD = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
+
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
 PLAYERCOLOUR3 = {r=255,g=200,b=64}

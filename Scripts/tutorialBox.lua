@@ -51,8 +51,8 @@ end
 
 function tutorialBox.show()
 	love.graphics.setColor(255,255,255,255)
-	love.graphics.setFont(FONT_STAT_MSGBOX)
 	for k, m in pairs(tutorialBoxList) do
+	love.graphics.setFont(FONT_STAT_MSGBOX)
 		love.graphics.draw(m.bg, m.x, m.y)
 		love.graphics.printf(m.text, m.x + 30, m.y + 15, m.bg:getWidth()-60, "left")
 		for l, b in pairs(m.buttons) do

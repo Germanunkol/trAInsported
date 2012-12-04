@@ -124,9 +124,11 @@ function train.buyNew(aiID)
 				if tutorial and tutorial.trainPlacingEvent then
 					tutorial.trainPlacingEvent()
 				end
+			else
+				console.add("Error: " .. ai.getName(aiID) .. " tried to buy new train but doesn't have enough cash!", {r=255,g=50,b=50})
 			end
 		else
-			print("Error: X and Y passed to 'buyTrain' must be numbers!")	-- will print inside the coroutine => ingame console
+			console.add("Error: X and Y passed to 'buyTrain' must be numbers!", {r=255,g=50,b=50})
 		end
 	end
 end

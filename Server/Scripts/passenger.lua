@@ -133,32 +133,32 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			for k, v in pairs(passengerPositions[p.tileX][p.tileY]) do		-- remove me from the field so that I can't be picked up twice:
 				if v == p then
 					passengerPositions[p.tileX][p.tileY][k] = nil
+					
+					stats.passengerPickedUp(p)
+					train.curPassenger = p
+					train.stop = train.stop + 1
+					if train.stop == 1 then
+						sendStr = "TRAIN_STOP:"
+						sendStr = sendStr .. train.aiID .. ","
+						sendStr = sendStr .. train.name .. ","
+						sendStr = sendStr .. train.stop .. ","
+						sendMapUpdate(sendStr)
+					end
+					train.passengerArrived = false
+					p.train = train
+					stats.passengersPickedUp( train.aiID, train.ID )
+					ai.passengerBoarded(train, name)
+			
+			
+					sendStr = "P_PICKUP:"
+					sendStr = sendStr .. train.aiID .. ","
+					sendStr = sendStr .. train.name .. ","
+					sendStr = sendStr .. p.name .. ","
+					sendMapUpdate(sendStr)
+					
 					break
 				end
-			end
-			
-			stats.passengerPickedUp(p)
-			train.curPassenger = p
-			train.stop = train.stop + 1
-			if train.stop == 1 then
-				sendStr = "TRAIN_STOP:"
-				sendStr = sendStr .. train.aiID .. ","
-				sendStr = sendStr .. train.name .. ","
-				sendStr = sendStr .. train.stop .. ","
-				sendMapUpdate(sendStr)
-			end
-			train.passengerArrived = false
-			p.train = train
-			stats.passengersPickedUp( train.aiID, train.ID )
-			ai.passengerBoarded(train, name)
-			
-			
-			sendStr = "P_PICKUP:"
-			sendStr = sendStr .. train.aiID .. ","
-			sendStr = sendStr .. train.name .. ","
-			sendStr = sendStr .. p.name .. ","
-			sendMapUpdate(sendStr)
-			
+			end			
 			break
 		end
 	end

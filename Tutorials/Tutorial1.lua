@@ -19,6 +19,8 @@ tutMap[5][4] = "C"
 tutorialSteps = {}
 currentStep = 1
 
+currentStepTitle = ""
+
 currentTutBox = nil
 
 local CODE_printHelloTrains = parseCode([[
@@ -40,6 +42,28 @@ function ai.chooseDirection(train, possibleDirections)
 
 -- called when a train has reached a passenger's location:
 function ai.foundPassengers(train, passengers)
+]])
+
+local CODE_pickUpPassenger1 = parseCode([[
+-- code to pick up passengers:
+function ai.foundPassengers( train, passengers )
+    -- function body will go here later.
+end
+]])
+
+local CODE_pickUpPassenger2 = parseCode([[
+-- code to pick up passengers:
+function ai.foundPassengers( train, passengers )
+    return passengers[1]
+end
+]])
+local CODE_dropOffPassenger = parseCode([[
+-- code to drop off passengers:
+function ai.foundDestination(train)
+    -- drop off train's passenger:
+    dropPassenger(train)
+end
+
 ]])
 
 function nextTutorialStep()
@@ -68,6 +92,18 @@ function showCurrentStep()
 		TUT_BOX_Y = currentTutBox.y
 		tutorialBox.remove(currentTutBox)
 	end
+	
+	if tutorialSteps[currentStep].stepTitle then
+		currentStepTitle = tutorialSteps[currentStep].stepTitle
+	else
+		local l = currentStep - 1
+		while l > 0 do
+			if tutorialSteps[l] and tutorialSteps[l].stepTitle then
+				currentStepTitle = tutorialSteps[l].stepTitle
+			end
+			l = l - 1
+		end
+	end
 		
 	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[currentStep].message, tutorialSteps[currentStep].buttons )
 end
@@ -79,6 +115,8 @@ function startThisTutorial()
 	if currentTutBox then tutorialBox.remove(currentTutBox) end
 	currentTutBox = tutorialBox.new( TUT_BOX_X, TUT_BOX_Y, tutorialSteps[1].message, tutorialSteps[1].buttons )
 	
+	STARTUP_MONEY = 50
+	timeFactor = 0.5
 end
 
 function tutorial.start()
@@ -108,6 +146,8 @@ function tutorial.start()
 		stats.setAIName(1, aiFileName:sub(1, #aiFileName-4))
 		train.renderTrainImage(aiFileName:sub(1, #aiFileName-4), 1)
 	end
+	
+	tutorial.noTrees = true		-- don't render trees!
 	
 	map.new(nil,nil,1,tutMap)
 	
@@ -150,7 +190,8 @@ function tutorial.createTutBoxes()
 	
 	local k = 1
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Welcome to trAInsported!"
+	tutorialSteps[k].stepTitle = "How it all began..."
+	tutorialSteps[k].message = "Welcome to trAInsported!\n\nIn this Tutorial, you'll learn about:\n1) Buying trains\n2) Transporting passengers"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
@@ -184,6 +225,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
+	tutorialSteps[k].stepTitle = "Controls"
 	tutorialSteps[k].message = "You can click and drag anywhere on the map to move the view. Use the mousewheel (or Q and E) to zoom." 
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -198,11 +240,11 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Good. Let's keep going.\nThe game has a subfolder called 'AI'.\nIn it, you'll find a new file that I just generated. It's called 'Tutorial1.lua'.\nOpen this file in any text editor of your choice and read it."
+	tutorialSteps[k].message = "Good. Let's keep going.\n\nThe game has a subfolder called 'AI'.\nIn it, you'll find a new file that I just generated. It's called 'TutorialAI1.lua'.\nOpen this file in any text editor of your choice and read it."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The folder is located at: " .. love.filesystem.getWorkingDirectory() .. "/AI"), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The folder is located at: " .. love.filesystem.getWorkingDirectory() .. "/AI\n\n(Any normal text editor should do, but there's some which will help you when writing code. See the documentation for details)."), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -210,7 +252,8 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Now, let's write some code!\nThe first thing you have to learn is how to communicate with the game. Type the code shown on the right at the bottom of Tutorial1.lua. Once done, save it and press the 'Reload' button at the bottom of this window."
+	tutorialSteps[k].stepTitle = "Communication"
+	tutorialSteps[k].message = "Now, let's write some code!\nThe first thing you have to learn is how to communicate with the game. Type the code shown on the right at the bottom of TutorialAI1.lua. Once done, save it and press the 'Reload' button at the bottom of this window."
 	tutorialSteps[k].event = firstPrint(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -226,6 +269,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
+	tutorialSteps[k].stepTitle = "General AI functionality"
 	tutorialSteps[k].message = "There are certain functions which your AI will need. During each round, when certain things happen, these functions will be called. There's a few examples shown in the code box. Your job will be to fill these functions with content."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = setCodeExamples
@@ -234,7 +278,8 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates. When done, save and click reload."
+	tutorialSteps[k].stepTitle = "Buying the first train!"
+	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n\nWhen done, save and click 'Reload'."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -242,36 +287,105 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Yay, you just placed your first trAIn on the map! It will automatically keep going forward.\nThe function 'ai.init()' is the a function in your script that will always be called when the round starts. In this function, you will be able to analize the map, plan your train movement and - as you just did - buy your first trains and place them on the map."
-	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The function ai.init() is called with 2 arguments. The first one holds the current map (more on that later) and the second one holds the amount of money you currently own. This way, you can check how many trains you can buy. You always have enough money to buy at least one train.\nfunction ai.init( map, money )"), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
-	k = k + 1
-	
-	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "I've just placed a passenger on the map. Hold down the Space bar on your keyboard to see a line showing where he wants to go!"
-	tutorialSteps[k].event = setPassengerStart
-	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Passengers will always be spawned near a rail."), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
-	k = k + 1
-	
-	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Th"
-	tutorialSteps[k].event = setPassengerStart
+	tutorialSteps[k].message = "Yay, you just placed your first trAIn on the map! It will automatically keep going forward."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You've completed the first tutorial, well done!\n\nOn to the next one."
+	tutorialSteps[k].message = "You have programmed a simple ai.init function.\nThe function 'ai.init()' is the function in your script which will always be called when the round starts. In this function, you will be able to plan your train movement and - as you just did - buy your first trains and place them on the map."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The function ai.init() is usually called with 2 argument, like so:\nfunction ai.init( map, money )\nThe first one holds the current map (more on that later) and the second one holds the amount of money you currently own. This way, you can check how many trains you can buy. You will always have enough money to buy at least one train at round start.\nFor now, we can just ignore these arguments, though."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].stepTitle = "Picking up a passenger"
+	tutorialSteps[k].message = "I've just placed a passenger on the map. Her name is GLaDOS. Hold down the Space bar on your keyboard to see a line showing where she wants to go!\n\nPassengers will always be spawned near a rail. Their destination is also always near a rail."
+	tutorialSteps[k].event = setPassengerStart(k)
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("GLaDOS wants to go to the pie-store. She once promised a very special someone a cake.\n\n...\nAnd she wants to hold that promise."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Your job now is to pick up the passenger and take her where she wants to go. For this, we need to define a function 'ai.foundPassengers' for our TutorialAI1. This function is started whenever one of your trains reaches a square on which one or more passengers are standing."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "The function ai.foundPassengers will have two arguments: The first one, 'train', tells you which of your trains found the passenger. The second one, 'passengers', tells you about the passengers who are on the train's current position and could be picked up. Using these, you can tell the train which passenger to pick up."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "First, let's define our function. You don't need to copy the comments (everything after the '--'), they're just there to clarify things but are ignored by the game."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].event = pickUpPassengerStep1
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "What you need to know is two things:\n1. 'passengers' is a list of all passengers.\nTo access individual passengers, use passengers[1], passengers[2], passengers[3] etc.\n2. If the function ai.foundPassengers returns one of these passengers using the 'return' statement, then the game knows that you want to pick up this train and will do it for you, if possible."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].event = pickUpPassengerStep1
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("This means that the passenger will ONLY be picked up if the train does not currently hold another passenger."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Since we only have one passenger right now, there can only be one passenger in the list, who will be represented by passengers[1] (if there was a second passenger on the tile, that passenger would be passengers[2]). So, if we return this passengers[1], GLaDOS will be picked up.\nAdd the new line of code inside the function we just defined, as shown in the code box.\nOnce done, click Reload and watch your train pick up GLaDOS!"
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].event = pickUpPassengerStep2(k)
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "You successfully picked up GLaDOS!\nNote that the train's image changed to show that it now holds a passenger.\n\nWe're almost done, now we just need to place her down near the pie-store."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].stepTitle = "Drop 'er off!"
+	tutorialSteps[k].message = "You can drop off your passenger at any time by calling the function dropPassenger(train) somewhere in your code. To make things easier for you, whenever a train arrives at the square which the current passenger wants to go to, the function ai.foundDestination() in your code will be called, if you have written it. Let's do that!"
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Add the function shown in the code box to the bottom of your TutorialAI1.lua.\nThen reload the code again."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].event = dropOffPassengerEvent(k)
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].stepTitle = "Done!"
+	tutorialSteps[k].message = "You've completed the first tutorial, well done!\nClick 'More Info' for some ideas of what you can try on your own before going to the next tutorial."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1. Try to print something to the console using the print function when the train picks up the passenger and when it drops her off (for example: 'Welcome!' and 'Good bye').\n\n2. Buy two trains instead of one, by calling buyTrain twice in ai.init()"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Go directly to the next tutorial or return to the menu."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorial}
+	tutorialSteps[k].buttons[3] = {name = "Next Tutorial", event = nextTutorial}
 	k = k + 1
 end
 
@@ -317,9 +431,9 @@ function setFirstPrintEvent(k)
 	tutorial.consoleEvent = function (str)
 					if str:sub(1, 13) == "[TutorialAI1]" then
 						if str:upper() == string.upper("[TutorialAI1]\tHello trAIns!") then
-							tutorialSteps[k+1].message = "Well done.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text. This will play a role when you challenge other AIs later on."
+							tutorialSteps[k+1].message = "Well done.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text, in this case, TutorialAI1. This will play a role when you challenge other AIs later on."
 						else
-							tutorialSteps[k+1].message = "Not quite the right text, but you get the idea.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text. This will play a role when you challenge other AIs later on."
+							tutorialSteps[k+1].message = "Not quite the right text, but you get the idea.\n\nThe text you printed should now show up in the in-game console on the left. The console also shows which AI printed the text, in this case, TutorialAI1. This will play a role when you challenge other AIs later on."
 						end
 						tutorial.consoleEvent = nil
 						if currentStep == k then
@@ -347,12 +461,57 @@ function setTrainPlacingEvent(k)
 		end
 end
 
-function setPassengerStart()
+function setPassengerStart(k)
 	print("started event!")
-	if not tutorial.placedFirstPassenger then
-		passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
-		tutorial.placedFirstPassenger = true
+	return function()
+		if not tutorial.placedFirstPassenger then
+			passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+			tutorial.placedFirstPassenger = true
+			tutorial.restartEvent = function()
+					print("RESTARTED!")
+					print("RESTARTED!", currentStep, k)
+					if currentStep >= k then	-- if I haven't gone back to a previous step
+					
+						print("NEW!", currentStep, k)
+						passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+						tutorial.placedFirstPassenger = true
+					end
+				end
+		end
 	end
+end
+
+function pickUpPassengerStep1()
+	cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_pickUpPassenger1)
+end
+
+function pickUpPassengerStep2(k)
+	return function()
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_pickUpPassenger2)
+			tutorial.passengerPickupEvent = function()
+				tutorial.passengerPickupEvent = nil
+				if currentStep == k then
+					nextTutorialStep()
+				end
+			end
+		end
+end
+
+function dropOffPassengerEvent(k)
+	return function()
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_dropOffPassenger)
+			tutorial.passengerDropoffCorrectlyEvent = function()
+				tutorial.passengerDropoffCorrectlyEvent = nil
+				if currentStep == k then
+					nextTutorialStep()
+				end
+			end
+			tutorial.passengerDropoffWronglyEvent = function()		-- called when the passenger is dropped off elsewhere
+				if currentTutBox then
+					currentTutBox.text = "You dropped off the passenger at a wrong place!\n\nAdd the function shown in the code box to the bottom of your TutorialAI1.lua"
+				end
+			end
+		end
 end
 
 function tutorial.roundStats()
@@ -360,9 +519,8 @@ function tutorial.roundStats()
 	y = 20
 	love.graphics.draw(roundStats, x, y)
 	
-	t = "How to buy trains"
-	love.graphics.print("Current step:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Current step:")/2, y+10)
-	love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
+	love.graphics.print("Tutorial 1: Baby Steps", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 1: Baby Steps")/2, y+10)
+	love.graphics.print(currentStepTitle, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(currentStepTitle)/2, y+30)
 end
 
 

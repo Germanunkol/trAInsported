@@ -29,7 +29,7 @@ function randPassengerPos()
 end
 
 function passenger.new( givenX, givenY, givenDestX, givenDestY)
-	print("placing passenger")
+
 	if curMap and #passengerList < MAX_NUM_PASSENGERS then
 		local sIndex = math.random(#curMap.railList)
 		local dIndex = math.random(#curMap.railList)
@@ -133,17 +133,20 @@ function passenger.boardTrain(train, name)		-- try to board the train
 			for k, v in pairs(passengerPositions[p.tileX][p.tileY]) do		-- remove me from the field so that I can't be picked up twice:
 				if v == p then
 					passengerPositions[p.tileX][p.tileY][k] = nil
+					stats.passengerPickedUp(p)
+					train.curPassenger = p
+					train.stop = train.stop + 1
+					train.passengerArrived = false
+					p.train = train
+					stats.passengersPickedUp( train.aiID, train.ID )
+					ai.passengerBoarded(train, name)
+			
+					if tutorial and tutorial.passengerPickupEvent then
+						tutorial.passengerPickupEvent()
+					end
 					break
 				end
 			end
-			
-			stats.passengerPickedUp(p)
-			train.curPassenger = p
-			train.stop = train.stop + 1
-			train.passengerArrived = false
-			p.train = train
-			stats.passengersPickedUp( train.aiID, train.ID )
-			ai.passengerBoarded(train, name)
 			break
 		end
 	end
@@ -179,8 +182,15 @@ function passenger.leaveTrain(aiID)
 				end
 				
 				numPassengersDroppedOff = numPassengersDroppedOff + 1
+				
+				if tutorial and tutorial.passengerDropoffCorrectlyEvent then
+					tutorial.passengerDropoffCorrectlyEvent()
+				end
 			else
 				ai.newPassenger(tr.curPassenger)
+				if tutorial and tutorial.passengerDropoffWronglyEvent then
+					tutorial.passengerDropoffWronglyEvent()
+				end
 			end
 			
 			tr.curPassenger = nil

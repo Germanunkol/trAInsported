@@ -76,8 +76,12 @@ function runMap(restart)
 		
 		
 		-- If there's a tutorial callback registered by the current map, then start that now!
-		if not restart and tutorial and tutorial.mapRenderingDoneCallback then
-			tutorial.mapRenderingDoneCallback()
+		if tutorial then
+			if not restart and tutorial.mapRenderingDoneCallback then
+				tutorial.mapRenderingDoneCallback()
+			elseif restart and tutorial.restartEvent then
+				tutorial.restartEvent()
+			end
 		end
 		
 	else
@@ -1025,6 +1029,9 @@ function map.render(map)
 		mapRenderThread:set("curMap", TSerial.pack( map ) )
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
+		if tutorial and tutorial.noTrees then
+			mapRenderThread:set("NO_TREES", true)
+		end
 		loadingScreen.addSection("Rendering Map")
 	else
 		percent = mapRenderThread:get("percentage")

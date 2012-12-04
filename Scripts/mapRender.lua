@@ -8,6 +8,8 @@ require("Scripts/imageManipulation")
 curMap = TSerial.unpack(thisThread:demand("curMap"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 TILE_SIZE = thisThread:demand("TILE_SIZE")
+
+NO_TREES = thisThread:get("NO_TREES")
 -- RAIL Pieces:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
 
@@ -131,7 +133,11 @@ if curMap then
 	shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
 	objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
 	
-	percentageStep = 100/((curMap.height+2)*(curMap.width+2)*3)
+	if NO_TREES then
+		percentageStep = 100/((curMap.height+2)*(curMap.width+2))
+	else
+		percentageStep = 100/((curMap.height+2)*(curMap.width+2)*3)
+	end
 	
 	for i = 0,curMap.width+1,1 do
 		for j = 0,curMap.height+1,1 do
@@ -181,50 +187,52 @@ if curMap then
 		end
 	end
 	
-	thisThread:set("status", "bushes")
+	if not NO_TREES then
+		thisThread:set("status", "bushes")
 
-	for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
-		for j = 0,curMap.height+1,1 do
-			if not curMap[i][j] and math.random(7) == 1 then
-				numTries = math.random(3)+1
-				for k = 1, numTries do
-					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
-					randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
-				end
-			end
-			
-			updatePercentage()
-		end
-	end
-	
-	thisThread:set("status", "trees")
-	
-	local treetype = 0
-	for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
-		for j = 0,curMap.height+1,1 do
-			if not curMap[i][j] and math.random(3) == 1 then
-				numTries = math.random(5)+1
-				for k = 1, numTries do
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					treetype = math.random(3)
-					
-					col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
-					if treetype == 1 then
-						transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
-					elseif treetype == 2 then
-						transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
-					else
-						transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-						transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
+		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
+			for j = 0,curMap.height+1,1 do
+				if not curMap[i][j] and math.random(7) == 1 then
+					numTries = math.random(3)+1
+					for k = 1, numTries do
+						col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
+						randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col )
 					end
 				end
-			end
 			
-			updatePercentage()
+				updatePercentage()
+			end
+		end
+	
+		thisThread:set("status", "trees")
+	
+		local treetype = 0
+		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
+			for j = 0,curMap.height+1,1 do
+				if not curMap[i][j] and math.random(3) == 1 then
+					numTries = math.random(5)+1
+					for k = 1, numTries do
+						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						treetype = math.random(3)
+					
+						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+						if treetype == 1 then
+							transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
+						elseif treetype == 2 then
+							transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
+						else
+							transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+							transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col)
+						end
+					end
+				end
+			
+				updatePercentage()
+			end
 		end
 	end
 	

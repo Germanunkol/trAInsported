@@ -34,15 +34,18 @@ To do for trAInsported:
 [x] buy new trains
 [x] rework train movement: make it pixel-independet and make it work with percentages.
 - Add statistics for passengers at round end
+- Make game deterministic!
 
 **Tutorial**
 tut 1: 
-- Controls
-- Init game, print
-- Placing train
+[x] Controls
+[x] Init game, print
+[x] Placing train
+[x] Picking up passenger
+[x] Letting passenger get off
 tut 2:
-- Picking up passenger
-- Letting passenger get off
+[x] Junctions
+- Lua control structures (while, if)
 - Multiple Passengers
 
 

@@ -102,6 +102,9 @@ function tutorial.start()
 	train.init()
 	train.resetImages()
 	
+	
+	ai.restart()	-- make sure aiList is reset!
+	
 	ok, msg = pcall(ai.new, "AI/" .. aiFileName)
 	if not ok then
 		print("Err: " .. msg)

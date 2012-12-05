@@ -34,9 +34,11 @@ IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
 IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 
 
-
+--Hotspots/special Buildings:
 IMAGE_HOTSPOT01 = love.image.newImageData("Images/HotSpot1.png")
 IMAGE_HOTSPOT01_SHADOW = love.image.newImageData("Images/HotSpot1_Shadow.png")
+
+IMAGE_HOTSPOT_PIESTORE = love.image.newImageData("Images/HotSpot_PieStore.png")
 
 --Environment/Misc:
 IMAGE_HOUSE01 = love.image.newImageData("Images/House1.png")
@@ -181,6 +183,9 @@ if curMap then
 			elseif curMap[i][j] == "C" then
 				img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
 				if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+			elseif curMap[i][j] == "PS" then	-- pie store...
+				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
+				transparentPaste( objectData, IMAGE_HOTSPOT_PIESTORE, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			end
 			
 			updatePercentage()

@@ -14,6 +14,7 @@ tutMap[2][4] = "C"
 tutMap[3][4] = "C"
 tutMap[4][4] = "C"
 tutMap[5][4] = "C"
+tutMap[1][2] = "PS"
 
 
 tutorialSteps = {}
@@ -138,6 +139,8 @@ function tutorial.start()
 
 	train.init()
 	train.resetImages()
+	
+	ai.restart()	-- make sure aiList is reset!
 	
 	ok, msg = pcall(ai.new, "AI/" .. aiFileName)
 	if not ok then
@@ -358,14 +361,14 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Drop 'er off!"
-	tutorialSteps[k].message = "You can drop off your passenger at any time by calling the function dropPassenger(train) somewhere in your code. To make things easier for you, whenever a train arrives at the square which the current passenger wants to go to, the function ai.foundDestination() in your code will be called, if you have written it. Let's do that!"
+	tutorialSteps[k].message = "You can drop off your passenger at any time by calling the function dropPassenger(train) somewhere in your code. To make things easier for you, whenever a train arrives at the square which the current passenger wants to go to, the function ai.foundDestination() in your code will be called, if you have written it.\nLet's do that!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Add the function shown in the code box to the bottom of your TutorialAI1.lua.\nThen reload the code again."
+	tutorialSteps[k].message = "Add the function shown in the code box to the bottom of your TutorialAI1.lua.\nThen reload the code again and wait until the train has picked up GLaDOS and reached the pie store."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = dropOffPassengerEvent(k)
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -373,10 +376,10 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the first tutorial, well done!\nClick 'More Info' for some ideas of what you can try on your own before going to the next tutorial."
+	tutorialSteps[k].message = "You've completed the first tutorial, well done!\n\nClick 'More Info' for some ideas of what you can try on your own before going to the next tutorial."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1. Try to print something to the console using the print function when the train picks up the passenger and when it drops her off (for example: 'Welcome!' and 'Good bye').\n\n2. Buy two trains instead of one, by calling buyTrain twice in ai.init()"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1. Try to print something to the console using the print function when the train picks up the passenger and when it drops her off (for example: 'Welcome!' and 'Good bye').\n2. Buy two trains instead of one, by calling buyTrain twice in ai.init()\n3. Make the train start on the bottom right instead of the top left."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
@@ -465,7 +468,7 @@ function setPassengerStart(k)
 	print("started event!")
 	return function()
 		if not tutorial.placedFirstPassenger then
-			passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+			passenger.new(5,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
 			tutorial.placedFirstPassenger = true
 			tutorial.restartEvent = function()
 					print("RESTARTED!")
@@ -473,7 +476,7 @@ function setPassengerStart(k)
 					if currentStep >= k then	-- if I haven't gone back to a previous step
 					
 						print("NEW!", currentStep, k)
-						passenger.new(3,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+						passenger.new(5,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
 						tutorial.placedFirstPassenger = true
 					end
 				end

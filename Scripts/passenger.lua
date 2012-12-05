@@ -34,6 +34,24 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY)
 		local sIndex = math.random(#curMap.railList)
 		local dIndex = math.random(#curMap.railList)
 		
+		-- check to see if the given coordinates are a rail:
+		if givenX and givenY then
+			for k, r in pairs(curMap.railList) do
+				if r.x == givenX and r.y == givenY then
+					sIndex = k
+					break
+				end
+			end
+		end
+		if givenDestX and givenDestY then
+			for k, r in pairs(curMap.railList) do
+				if r.x == givenDestX and r.y == givenDestY then
+					dIndex = k
+					break
+				end
+			end
+		end
+		
 		while curMap.railList[dIndex].x == curMap.railList[sIndex].x and curMap.railList[dIndex].y == curMap.railList[sIndex].y do
 			dIndex = dIndex + 1		-- don't allow destination to be the same as the origin.
 			sIndex = math.random(#curMap.railList)
@@ -41,17 +59,10 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY)
 		end
 		
 		local x, y = 0, 0
-		if givenX and givenY then
-			x,y = givenX, givenY
-		else
-			x,y = randPassengerPos()
-		end
-		local xEnd, yEnd = 0, 0
-		if givenDestX and givenDestY then
-			xEnd, yEnd = givenDestX, givenDestY
-		else
-			xEnd, yEnd = randPassengerPos()
-		end
+
+		x,y = randPassengerPos()
+
+		xEnd, yEnd = randPassengerPos()
 		
 		local vip = false
 		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 then
@@ -62,10 +73,15 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY)
 			if passengerList[i] == nil then
 				passengerList[i] = {
 						name = "P" .. numPassengersTotal,
+						
+						-- holds the tile position when not riding a train:
 						tileX = curMap.railList[sIndex].x,
-						tileY = curMap.railList[sIndex].y,		-- holds the tile position when not riding a train
+						tileY = curMap.railList[sIndex].y,
+						
+						-- the tile the passenger wants to go to:
 						destX = curMap.railList[dIndex].x,
-						destY = curMap.railList[dIndex].y,		-- the tile the passenger wants to go to
+						destY = curMap.railList[dIndex].y,
+						
 						x = x,	-- position on tile
 						y = y,
 						xEnd = xEnd,	-- dest position on tile
@@ -292,7 +308,7 @@ function passenger.showAll(dt)
 				end
 			else
 				if love.keyboard.isDown(" ") then 
-					love.graphics.setColor(64,128,255,100)
+					love.graphics.setColor(64,128,255,200)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
 				love.graphics.setColor(0,0,0,120)

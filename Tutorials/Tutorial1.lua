@@ -101,6 +101,7 @@ function showCurrentStep()
 		while l > 0 do
 			if tutorialSteps[l] and tutorialSteps[l].stepTitle then
 				currentStepTitle = tutorialSteps[l].stepTitle
+				break
 			end
 			l = l - 1
 		end

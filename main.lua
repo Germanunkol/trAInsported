@@ -33,13 +33,14 @@ FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
 FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 15 )
 FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
-FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
+FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf",17 )
 FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
 FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 14)
+FONT_COORDINATES = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 25 )
 
-FONT_CODE_PLAIN = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf",17 )
-FONT_CODE_BOLD = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",17 )
-FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-L.ttf",17 )
+FONT_CODE_PLAIN = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf", 17 )
+FONT_CODE_BOLD = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 17 )
+FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-LI.ttf", 17 )
 
 PLAYERCOLOUR1 = {r=255,g=50,b=50}
 PLAYERCOLOUR2 = {r=64,g=64,b=250}
@@ -69,6 +70,16 @@ showConsole = true
 initialising = true
 
 function love.load()
+
+
+	myTable = {
+		x_Pos = 10,
+		y_Pos = 20
+	}
+	
+	-- calculate the average:
+	result = (myTable.x_Pos + myTable.y_Pos)/2
+	print(result)
 
 	initialising = true
 	loadingScreen.reset()	
@@ -251,63 +262,9 @@ function love.draw()
 	
 	if mapImage then
 		if simulationMap then
-			simulation.draw(dt)
+			simulation.show(dt)
 		else
-			love.graphics.push()
-			love.graphics.scale(camZ)
-		
-			love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-			love.graphics.rotate(CAM_ANGLE)
-			love.graphics.setColor(30,10,5, 150)
-			love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
-			love.graphics.setColor(0,0,0, 100)
-			love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
-			love.graphics.setColor(255,255,255, 255)
-			love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-		
-		
-			love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-		
-		
-			--love.graphics.setColor(255,255,255,255)
-			--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
-		
-			passenger.showAll(passedTime)
-			train.showAll()
-			passenger.showVIPs(passedTime)
-		
-			love.graphics.setColor(255,255,255,255)
-			love.graphics.draw(mapShadowImage, 0,0)	
-			love.graphics.draw(mapObjectImage, 0,0)	
-		
-			map.renderHighlights(passedTime)
-			
-			passenger.showSelected(passedTime)
-		
-			if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
-	
-			--map.drawOccupation()
-			
-			--love.graphics.setColor(255,255,255, 50)
-			--love.graphics.draw(cl, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.width+2)/2)
-		
-			--if love.mouse.isDown("l") then
-			--end
-		
-			love.graphics.pop()
-			love.graphics.push()
-			love.graphics.scale(camZ*1.5)
-		
-			love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
-			love.graphics.rotate(CAM_ANGLE)
-			love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-			--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-			--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-		
-			clouds.render()
-			--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
-		
-			love.graphics.pop()
+			map.show()
 		
 			if showQuickHelp then quickHelp.show() end
 			if showConsole then console.show() end

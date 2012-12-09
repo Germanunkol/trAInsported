@@ -1077,6 +1077,77 @@ function map.renderHighlights(dt)
 	end
 end
 
+
+--------------------------------------------------------------
+--		SHOW THE MAP:
+--------------------------------------------------------------
+
+function map.showCoordinates(m)
+	love.graphics.setColor(255,255,255,80)
+	love.graphics.setFont(FONT_COORDINATES)
+	local str = ""
+	for i = 1, m.width do
+		for j = 1, m.height do
+			str = "(" .. i .. "," .. j .. ")"
+			love.graphics.print(str, (i+0.5)*TILE_SIZE - FONT_COORDINATES:getWidth(str)/2, (j+0.5)*TILE_SIZE - FONT_COORDINATES:getHeight()/2)
+		end
+	end
+end
+
+function map.show()
+	love.graphics.push()
+	love.graphics.scale(camZ)
+
+	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+	love.graphics.rotate(CAM_ANGLE)
+	love.graphics.setColor(30,10,5, 150)
+	love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+	love.graphics.setColor(0,0,0, 100)
+	love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
+	love.graphics.setColor(255,255,255, 255)
+	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+
+
+	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+
+
+	--love.graphics.setColor(255,255,255,255)
+	--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
+
+	passenger.showAll(passedTime)
+	train.showAll()
+	passenger.showVIPs(passedTime)
+
+	love.graphics.setColor(255,255,255,255)
+	love.graphics.draw(mapShadowImage, 0,0)	
+	love.graphics.draw(mapObjectImage, 0,0)	
+
+	map.renderHighlights(passedTime)
+	
+	passenger.showSelected(passedTime)
+
+	clouds.renderShadows(passedTime)
+	
+	if love.keyboard.isDown("M") then
+		map.showCoordinates(curMap) -- display coordinates on the map
+	end
+
+	love.graphics.pop()
+	love.graphics.push()
+	love.graphics.scale(camZ*1.5)
+
+	love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
+	love.graphics.rotate(CAM_ANGLE)
+	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+	--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+	--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+
+	clouds.render()
+	--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
+
+	love.graphics.pop()
+end
+
 --------------------------------------------------------------
 --		MAP EVENTS:
 --		- new passenger

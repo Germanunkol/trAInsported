@@ -44,9 +44,11 @@ tut 1:
 [x] Picking up passenger
 [x] Letting passenger get off
 tut 2:
+[x] Lua control structures (while, if)
 [x] Junctions
-- Lua control structures (while, if)
+tut 3:
 - Multiple Passengers
+- Smart choosing directions
 
 
 **Visual**

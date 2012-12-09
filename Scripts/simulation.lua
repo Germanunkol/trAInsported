@@ -423,7 +423,7 @@ end
 
 local liveSymbolBlinkTime = 0
 
-function simulation.draw(dt)
+function simulation.show(dt)
 	if mapImage then
 		love.graphics.push()
 		love.graphics.scale(camZ)
@@ -453,6 +453,10 @@ function simulation.draw(dt)
 		if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
 
 		--map.drawOccupation()
+		
+		if love.keyboard.isDown("M") then
+			map.showCoordinates(simulationMap)
+		end
 		
 		love.graphics.pop()
 		love.graphics.push()

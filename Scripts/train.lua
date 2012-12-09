@@ -449,6 +449,10 @@ function moveSingleTrain(tr, t)
 				tr.cameFromDir = cameFromDir
 				
 				tr.tileX, tr.tileY = nextX, nextY
+				
+				if tutorial and tutorial.reachedNewTileEvent then
+					tutorial.reachedNewTileEvent( tr.tileX, tr.tileY )
+				end
 			
 				tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
 				

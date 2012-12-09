@@ -133,14 +133,14 @@ function ai.init()
 		--the second coroutine loads the ai.init() function in the user's AI script:
 		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name)
 		if aiList[aiID].init then
-		local crInit = coroutine.create(runAiFunctionCoroutine)
-		ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
-		if not ok then print("NEW ERROR:", msg) end
-		if coroutine.status(crInit) ~= "dead" then
-			crInit = nil
-			console.add(aiList[aiID].name .. ": Stopped function: ai.init()", {r = 255,g=50,b=50})
-			print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
-		end
+			local crInit = coroutine.create(runAiFunctionCoroutine)
+			ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
+			if not ok then print("NEW ERROR:", msg) end
+			if coroutine.status(crInit) ~= "dead" then
+				crInit = nil
+				console.add(aiList[aiID].name .. ": Stopped function: ai.init()", {r = 255,g=50,b=50})
+				print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
+			end
 		else
 			print("\tNo ai.init() function found for this AI")
 		end
@@ -162,6 +162,11 @@ function ai.chooseDirection(train, possibleDirs)
 	local result = nil
 	if aiList[train.aiID] then
 		if aiList[train.aiID].chooseDirection then
+		
+			if tutorial and tutorial.chooseDirectionEvent then
+				tutorial.chooseDirectionEvent()
+			end
+			
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
@@ -174,6 +179,10 @@ function ai.chooseDirection(train, possibleDirs)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
 				print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".chooseDirection()")
+			end
+			
+			if tutorial and tutorial.chooseDirectionEventCleanup then
+				tutorial.chooseDirectionEventCleanup()
 			end
 		end
 	end

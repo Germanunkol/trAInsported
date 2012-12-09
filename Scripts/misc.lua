@@ -21,6 +21,14 @@ end
 
 
 function parseCode(str)
+
+	-- replace tabs with spaces!
+	while str:find("	") do
+		s,e = str:find("	")
+		
+		-- place spaces:
+		str = str:sub(1, s-1) .. "     " .. str:sub(e+1, #str)
+	end
 	
 	-- seperate into lines:
 	n = 1
@@ -36,24 +44,26 @@ function parseCode(str)
 	-- go through all lines and highlight all keywords.
 	local l = 1
 	while l < n do
-		local s,e,p = findOneOf(text[l].fullLine, nil, "%-%-", "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
+		local s,e,p = findOneOf(text[l].fullLine, nil, "%-%-", "function", "end", "elseif", "if", "while", "for", "do", "then", "else", "return", "print")
+		
 		while s do
 			if p == "--" then		-- if a comment was found
 				if string.len(text[l].fullLine:sub(1, s-1)) > 0 then
-					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN}
+					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN, f = "plain"}
 				end
-				text[l][#text[l]+1] = {str = text[l].fullLine:sub(s, #text[l].fullLine), font = FONT_CODE_COMMENT}
+				text[l][#text[l]+1] = {str = text[l].fullLine:sub(s, #text[l].fullLine), font = FONT_CODE_COMMENT,f = "comment"}
 				text[l].fullLine = ""
 				
 				break	-- comment ALWAYS ends the line
 			else
 				if string.len(text[l].fullLine:sub(1, s-1)) > 0 then
-					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN}
+					text[l][#text[l]+1] = {str = text[l].fullLine:sub(1, s-1), font = FONT_CODE_PLAIN, f = "plain"}
 				end
-				text[l][#text[l]+1] = {str = p, font = FONT_CODE_BOLD}
+				text[l][#text[l]+1] = {str = p, font = FONT_CODE_BOLD, f = "bold"}
+				
 				text[l].fullLine = text[l].fullLine:sub(e+1, #text[l].fullLine)
 			
-				s,e,p = findOneOf(text[l].fullLine, e+1, "%-%-", "function", "end", "if", "while", "for", "do", "then", "else", "return", "print")
+				s,e,p = findOneOf(text[l].fullLine, 1, "%-%-", "function", "end", "elseif", "if", "while", "for", "do", "then", "else", "return", "print")
 			end
 		end
 		

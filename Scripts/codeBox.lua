@@ -62,16 +62,18 @@ function codeBox.show()
 		--love.graphics.printf(m.text, m.x + 30, m.y + 15, m.bg:getWidth()-60, "left")
 		height = 0
 		for line = 1, #m.text do
-			love.graphics.setColor(255, 255, 255, 255)
 			for lineSegment = 1, #m.text[line] do
+				love.graphics.setColor(255, 255, 255, 255)
 				if m.text[line][lineSegment].font == FONT_CODE_COMMENT then
-					love.graphics.setColor(255, 255, 255, 150)
+					love.graphics.setColor(200, 255, 170, 255)
+				elseif m.text[line][lineSegment].font == FONT_CODE_PLAIN then
+					love.graphics.setColor(200, 200, 200, 255)
 				end
 				love.graphics.setFont(m.text[line][lineSegment].font)
 				love.graphics.print(m.text[line][lineSegment].str, m.x + 30 + m.text[line][lineSegment].x, m.y + 15 + height)
 			end
 			if m.text[line][1] and m.text[line][1].font then
-				height = height + m.text[line][1].font:getHeight()
+				height = height + m.text[line][1].font:getHeight() + 2
 			end
 		end
 		--for i=1, #m.text do

@@ -30,7 +30,7 @@ print( "Hello trAIns!" )
 
 local CODE_trainPlacing = parseCode([[
 function ai.init()
-     buyTrain( 1, 3 )
+	buyTrain( 1, 3 )
 end
 ]])
 
@@ -48,21 +48,21 @@ function ai.foundPassengers(train, passengers)
 local CODE_pickUpPassenger1 = parseCode([[
 -- code to pick up passengers:
 function ai.foundPassengers( train, passengers )
-    -- function body will go here later.
+	-- function body will go here later.
 end
 ]])
 
 local CODE_pickUpPassenger2 = parseCode([[
 -- code to pick up passengers:
 function ai.foundPassengers( train, passengers )
-    return passengers[1]
+	return passengers[1]
 end
 ]])
 local CODE_dropOffPassenger = parseCode([[
 -- code to drop off passengers:
 function ai.foundDestination(train)
-    -- drop off train's passenger:
-    dropPassenger(train)
+	-- drop off train's passenger:
+	dropPassenger(train)
 end
 
 ]])
@@ -283,7 +283,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Buying the first train!"
-	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n\nWhen done, save and click 'Reload'."
+	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n(Press 'M' to see all coordinates!)\nWhen done, save and click 'Reload'."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}

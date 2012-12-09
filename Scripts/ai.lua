@@ -172,6 +172,8 @@ function ai.chooseDirection(train, possibleDirs)
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = train.curPassenger.name
+				tr.passengerX = train.curPassenger.destX
+				tr.passengerY = train.curPassenger.destY
 			end
 			dirs = copyTable(possibleDirs)
 			
@@ -205,6 +207,8 @@ function ai.blocked(train, possibleDirs, lastDir)
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = train.curPassenger.name
+				tr.passengerX = train.curPassenger.destX
+				tr.passengerY = train.curPassenger.destY
 			end
 			dirs = copyTable(possibleDirs)
 			
@@ -249,6 +253,8 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = train.curPassenger.name
+				tr.passengerX = train.curPassenger.destX
+				tr.passengerY = train.curPassenger.destY
 			end
 			local pCopy = copyTable(p)				-- don't let the ai change the original list of passengers!
 			
@@ -281,6 +287,8 @@ function ai.passengerBoarded(train, passenger)		-- called when the train enters 
 				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
 				if train.curPassenger then
 					tr.passenger = train.curPassenger.name
+					tr.passengerX = train.curPassenger.destX
+					tr.passengerY = train.curPassenger.destY
 				end
 			
 				ok, result = coroutine.resume(cr, aiList[i].passengerBoarded, tr, passenger)
@@ -302,6 +310,8 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = train.curPassenger.name
+				tr.passengerX = train.curPassenger.destX
+				tr.passengerY = train.curPassenger.destY
 			end
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundDestination, tr)

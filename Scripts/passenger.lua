@@ -28,9 +28,11 @@ function randPassengerPos()
 	return x, y
 end
 
-function passenger.new( givenX, givenY, givenDestX, givenDestY)
-
-	if curMap and #passengerList < MAX_NUM_PASSENGERS then
+function passenger.new( givenX, givenY, givenDestX, givenDestY )
+	
+	if givenX then dontCreateVIP = true end
+	
+	if curMap and (#passengerList < MAX_NUM_PASSENGERS or givenX) then	-- allow more than MAX_NUM_PASSENGERS if forced by tutorial.
 		local sIndex = math.random(#curMap.railList)
 		local dIndex = math.random(#curMap.railList)
 		
@@ -65,7 +67,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY)
 		xEnd, yEnd = randPassengerPos()
 		
 		local vip = false
-		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 then
+		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 and not dontCreateVIP then
 			vip = true
 		end
 		

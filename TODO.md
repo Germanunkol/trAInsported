@@ -48,8 +48,9 @@ tut 2:
 [x] Junctions
 tut 3:
 - Multiple Passengers
-- Smart choosing directions
-
+- Smart choosing of directions (depending on passenger's dest)
+tut 4:
+- euclidean distance
 
 **Visual**
 [x]	clouds
@@ -68,3 +69,4 @@ tut 3:
 **Maybe**
 - buy code lines using in-game cash
 - handicapped people
+- option to transport 

@@ -27,7 +27,7 @@ versionCheck = require("Scripts/versionCheck")
 
 numTrains = 0
 
-version = "0.1"
+version = "0.11"
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )

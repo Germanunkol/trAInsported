@@ -518,10 +518,10 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the second tutorial, well done!\nClick 'More Info' for some ideas of what you can try on your own before going to the next tutorial."
+	tutorialSteps[k].message = "You've completed the second tutorial, well done!\nClick 'More Ideas' for some ideas of what you can try on your own before going to the next tutorial."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("You can try to go East, then North, then South, then East again and so on. To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time it calls ai.chooseDirection. Then return \"N\", \"S\" or \"E\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go East, then North, then South, then East again and so on. To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time it calls ai.chooseDirection. Then return \"N\", \"S\" or \"E\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!"), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	

@@ -64,7 +64,8 @@ tut 4:
 - No guarantee that game's outcome is always the same...
 [x] Status message box
 - make sure globals.lua is the same for server and client!
-
+- train movment on client is now no longer allowing overshoot -> same for server!
+- possibly make server and client use the same files?!
 
 **Maybe**
 - buy code lines using in-game cash

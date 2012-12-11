@@ -346,39 +346,11 @@ function moveSingleTrain(tr, t)
 			tr.curSpeed = math.max(tr.curSpeed-TRAIN_ACCEL*t, 0)
 		end
 		
-		--distToMove = math.sqrt(toMoveX^2+toMoveY^2)		-- length of way to travel
+		while tr.curDistTraveled > tr.path[#tr.path].length do
 		
-		-- print("path:")
-		-- printTable(tr.path)
-		
-		while tr.curDistTraveled > tr.path[tr.curNode+1].length and tr.path[tr.curNode+2] do
-			tr.curNode = tr.curNode + 1
-			
-			tr.prevAngle = tr.angle
-				
-			tr.prevAngle = tr.angle
-			if tr.path[tr.curNode+2] then
-				if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-				else
-					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-				end
-			else
-				tr.angle = getAngleByDir(tr.dir)
-			end
-			if tr.prevAngle - tr.angle < -math.pi then
-				tr.prevAngle = tr.prevAngle + 2*math.pi
-			end
-			if tr.prevAngle - tr.angle > math.pi then
-				tr.prevAngle = tr.prevAngle - 2*math.pi
-			end
-			
-		end
-		
-		if tr.curDistTraveled > tr.path[tr.curNode+1].length then
+			print("b")
 			--tr.blocked = true
-			tr.curDistTraveled = tr.curDistTraveled - tr.path[tr.curNode+1].length	-- remember overshoot!
-			
+			tr.curDistTraveled = tr.curDistTraveled - tr.path[#tr.path].length	-- remember overshoot!
 			local nextX, nextY = tr.tileX, tr.tileY
 			local cameFromDir = ""
 			
@@ -403,7 +375,9 @@ function moveSingleTrain(tr, t)
 				map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
 				
 			else
+			print("c")
 				if tr.timeBlocked > MAX_BLOCK_TIME then
+				print("d")
 					
 					stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
 					tr.timeBlocked = 0
@@ -437,6 +411,7 @@ function moveSingleTrain(tr, t)
 			
 			if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
 				
+				print("e")
 				if tr.blocked then removeBlockedTrain(tr) end
 				map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
 				
@@ -501,6 +476,7 @@ function moveSingleTrain(tr, t)
 				end
 				
 			else
+			print("f")
 				tr.curDistTraveled = 0
 				if not tr.blocked then
 					print("train is blocked, adding!", tr.tileX, tr.tileY, tr.ID, tr.aiID)
@@ -508,11 +484,35 @@ function moveSingleTrain(tr, t)
 					tr.blocked = true
 				end
 			end
+		end
+		
+		while tr.curDistTraveled > tr.path[tr.curNode+1].length and tr.path[tr.curNode+2] do
+			tr.curNode = tr.curNode + 1
+		
+			tr.prevAngle = tr.angle
+			
+			tr.prevAngle = tr.angle
+			if tr.path[tr.curNode+2] then
+				if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
+					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
+				else
+					tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
+				end
+			else
+				tr.angle = getAngleByDir(tr.dir)
+			end
+			if tr.prevAngle - tr.angle < -math.pi then
+				tr.prevAngle = tr.prevAngle + 2*math.pi
+			end
+			if tr.prevAngle - tr.angle > math.pi then
+				tr.prevAngle = tr.prevAngle - 2*math.pi
+			end
 		
 		end
 		
 		
 		if not tr.blocked then
+		print("g")
 			dx = tr.path[tr.curNode+1].x - tr.path[tr.curNode].x
 			dy = tr.path[tr.curNode+1].y - tr.path[tr.curNode].y
 			
@@ -525,9 +525,8 @@ function moveSingleTrain(tr, t)
 			fullDist = math.sqrt((tr.path[tr.curNode+1].x - tr.path[tr.curNode].x)^2 +(tr.path[tr.curNode+1].y - tr.path[tr.curNode].y)^2)
 		
 			partCovered = clamp(1-d/fullDist, 0, 1)	-- the part of the path between the nodes that has been traveled
-		
-			tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
 			
+			tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
 		end
 		
 		--[[

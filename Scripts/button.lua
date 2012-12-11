@@ -31,7 +31,7 @@ end
 
 local buttnOff, buttnOver
 
-function button:new(x, y, label, event, eventArgs, priority, size, renderSeperate)
+function button:new(x, y, label, event, eventArgs, priority, size, renderSeperate, toolTip)
 	priority = priority or 1
 	size = size or STANDARD
 	for i=1,#buttonList+1,1 do
@@ -43,14 +43,15 @@ function button:new(x, y, label, event, eventArgs, priority, size, renderSeperat
 			elseif size == SMALL then
 				buttonList[i] = setmetatable({size = SMALL, x=x, y=y, imageOff=buttonOffSmall, imageOver=buttonOverSmall, event=event, index = i, w=buttonOverSmall:getWidth(), h=buttonOverSmall:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
 			end
+			buttonList[i].toolTip = toolTip
 			button.setButtonLevel()
 			return buttonList[i]
 		end
 	end
 end
 
-function button:newSmall(x, y, label, event, eventArgs, priority)
-	return button:new(x, y, label, event, eventArgs, priority, SMALL)
+function button:newSmall(x, y, label, event, eventArgs, priority, renderSeperate, toolTip)
+	return button:new(x, y, label, event, eventArgs, priority, SMALL, renderSeperate, toolTip)
 end
 
 function button:remove()
@@ -69,9 +70,13 @@ end
 
 function button.calcMouseHover()
 	mX, mY = love.mouse.getPosition()
+	toolTip = nil
 	for k, b in pairs(buttonList) do
 		if b.priority == buttonLevel then
 			b.mouseHover = rectangularCollision(b.x, b.y, b.w, b.h, mX, mY)
+			if b.mouseHover then
+				toolTip = b.toolTip
+			end
 		end
 	end
 end

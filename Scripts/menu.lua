@@ -152,11 +152,11 @@ function menu.init(menuX, menuY)
 	menu.removeAll()
 	x = defaultMenuX
 	y = defaultMenuY
-	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil)
+	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
-	menuButtons.buttonNew = button:new(x, y, "New", menu.newRound, nil)
+	menuButtons.buttonNew = button:new(x, y, "New", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45
-	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil)
+	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil, nil, nil, nil, "Start a random match on a random map using random AIs from your folder")
 	y = y + 60
 	menuButtons.buttonSettings = button:new(x, y, "Settings", menu.settings, nil)
 	y = y + 45
@@ -366,14 +366,14 @@ function menu.newRound()
 	x = defaultMenuX
 	y = defaultMenuY
 	menuButtons.buttonReturn = button:new(x, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Return", menu.init, nil)
-	menuButtons.buttonContinue = button:new(love.graphics.getWidth() - x - STND_BUTTON_WIDTH - 10, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Continue", normalMatch, nil)
+	menuButtons.buttonContinue = button:new(love.graphics.getWidth() - x - STND_BUTTON_WIDTH - 10, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Continue", normalMatch, nil, nil, nil, nil, "Start the match with these settings")
 	
-	table.insert(menuDividers, {x=x, y = defaultMenuY, txt="Choose AIs for Match:"})
+	table.insert(menuDividers, {x = x, y = defaultMenuY, txt = "Choose AIs for Match:"})
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	jumped = false
 	for k, file in pairs(aiFiles) do
-		menuButtons[file] = button:newSmall(x, y, file:sub(1, #file-4), selectAI, file)
+		menuButtons[file] = button:newSmall(x, y, file:sub(1, #file-4), selectAI, file, nil, nil, "Choose this AI for the match?")
 		y = y + 37
 		if y > love.graphics.getWidth() - 150 then
 			if jumped then		-- no more space! Only one jump.
@@ -391,8 +391,8 @@ function menu.newRound()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	for width = 4, 26,2 do
-		widthButtons[width] = button:newSmall(x, y, tostring(width), selectWidth, width)
-		heightButtons[width] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, tostring(width), selectHeigth, width)
+		widthButtons[width] = button:newSmall(x, y, tostring(width), selectWidth, width, nil, nil, "Set map width")
+		heightButtons[width] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, tostring(width), selectHeigth, width, nil, nil, "Set map height")
 		y = y + 37
 	end
 	
@@ -402,12 +402,12 @@ function menu.newRound()
 	x = x + 20
 	y = defaultMenuY + bgBoxSmall:getHeight()+5
 	for k, timeOption in pairs(POSSIBLE_TIMES) do
-		timeButtons[timeOption] = button:newSmall(x, y, timeOption, selectTime, timeOption)
+		timeButtons[timeOption] = button:newSmall(x, y, timeOption, selectTime, timeOption, nil, nil, POSSIBLE_TIMES_TOOLTIPS[k])
 		y = y + 37
 	end
 	y = defaultMenuY + bgBoxSmall:getHeight()+5
 	for k, modeOption in pairs(POSSIBLE_MODES) do
-		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, modeOption, selectMode, modeOption)
+		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, modeOption, selectMode, modeOption, nil, nil, POSSIBLE_MODES_TOOLTIPS[k])
 		y = y + 37
 	end
 	
@@ -470,7 +470,7 @@ function menu.tutorials()
 	tutFiles = findTutorialFiles()
 	for i = 1, #tutFiles do
 		if tutFiles[i] then
-		menuButtons[i] = button:new(x, y, tutFiles[i]:sub(1, #tutFiles[i]-4), menu.executeTutorial, tutFiles[i])
+		menuButtons[i] = button:new(x, y, tutFiles[i]:sub(1, #tutFiles[i]-4), menu.executeTutorial, tutFiles[i], nil, nil, nil, tutDescriptions[i])
 		end
 		y = y + 45
 	end
@@ -508,10 +508,10 @@ function menu.ingame()
 	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
-	menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil)
+	menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil, nil, nil, nil, "Return to main menu.")
 	x = love.graphics.getWidth() - defaultMenuX - STND_BUTTON_WIDTH-10
 	y = love.graphics.getHeight() - defaultMenuY - STND_BUTTON_HEIGHT
-	menuButtons.buttonReload = button:new(x, y, "Reload", confirmReload, nil)
+	menuButtons.buttonReload = button:new(x, y, "Reload", confirmReload, nil, nil, nil, nil, "Reload the AI scripts and restart the round.")
 end
 
 function menu.render()

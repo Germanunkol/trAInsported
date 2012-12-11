@@ -82,11 +82,50 @@ function statusMsg.init()
 			end
 		end
 	end
+	
+	if not toolTipBoxThread and not toolTipBox then		-- only start thread once!
+		ok, toolTipBox = pcall(love.graphics.newImage, "toolTipBox.png")
+		if not ok or not versionCheck.getMatch() then
+			toolTipBox = nil
+			loadingScreen.addSection("Rendering Tool Tip Box")
+			toolTipBoxThread = love.thread.newThread("toolTipBoxThread", "Scripts/createImageBox.lua")
+			toolTipBoxThread:start()
+	
+			toolTipBoxThread:set("width", STAT_MSG_WIDTH )
+			toolTipBoxThread:set("height", STAT_MSG_HEIGHT )
+			toolTipBoxThread:set("shadow", true )
+			toolTipBoxThread:set("shadowOffsetX", 6 )
+			toolTipBoxThread:set("shadowOffsetY", 1 )
+			toolTipBoxThread:set("colR", STAT_MSG_R )
+			toolTipBoxThread:set("colG", STAT_MSG_G )
+			toolTipBoxThread:set("colB", STAT_MSG_B )
+		end
+	else
+		if not toolTipBox then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = toolTipBoxThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Tool Tip Box", percent)
+			end
+			err = toolTipBoxThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = toolTipBoxThread:get("status")
+			if status == "done" then
+				toolTipBox = toolTipBoxThread:get("imageData")		-- get the generated image data from the thread
+				toolTipBox:encode("toolTipBox.png")
+				toolTipBox = love.graphics.newImage(toolTipBox)
+				toolTipBoxThread = nil
+			end
+		end
+	end
 end
 
 
 function statusMsg.initialised()
-	if statusMsgBox and statusErrBox then
+	if statusMsgBox and statusErrBox and toolTipBox then
 		return true
 	end
 end
@@ -95,7 +134,7 @@ end
 function statusMsg.new(txt, err)
 	currentErr = err
 	currentMsg = txt
-	currentTime = 7
+	currentTime = 3
 end
 
 function statusMsg.display(dt)
@@ -108,7 +147,12 @@ function statusMsg.display(dt)
 		else
 			love.graphics.draw(statusMsgBox, (love.graphics.getWidth() - statusMsgBox:getWidth())/2 -10, love.graphics.getHeight() - statusMsgBox:getHeight())
 		end
-		love.graphics.printf(currentMsg, (love.graphics.getWidth() - statusMsgBox:getWidth())/2, love.graphics.getHeight() - statusMsgBox:getHeight() + 3, statusMsgBox:getWidth()-30, "center")
+		love.graphics.printf(currentMsg, (love.graphics.getWidth() - statusMsgBox:getWidth())/2, love.graphics.getHeight() - statusMsgBox:getHeight() + 5, statusMsgBox:getWidth()-30, "center")
+	elseif toolTip then
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.setFont(FONT_STANDARD)
+		love.graphics.draw(toolTipBox, (love.graphics.getWidth() - statusMsgBox:getWidth())/2 -10, love.graphics.getHeight() - statusMsgBox:getHeight())
+		love.graphics.printf(toolTip, (love.graphics.getWidth() - toolTipBox:getWidth())/2, love.graphics.getHeight() - toolTipBox:getHeight() + 5, toolTipBox:getWidth()-30, "center")
 	end
 end
 

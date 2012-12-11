@@ -127,7 +127,6 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 				
 				ai.newPassenger(passengerList[i])
 				
-				
 				break
 			end
 		end

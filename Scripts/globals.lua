@@ -36,7 +36,11 @@ MIN_VIP_TIME = 10
 -- game options:
 
 POSSIBLE_TIMES = {"Day", "Rushhour"}
+POSSIBLE_TIMES_TOOLTIPS = {"Normal setup, average amount of passengers", "Lots of passengers, more VIPs"}
+
 POSSIBLE_MODES = {"Time", "Passengers"}
+POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
+
 
 -- tutorial:
 
@@ -44,6 +48,13 @@ TUT_BOX_X = 20
 TUT_BOX_Y = 75
 CODE_BOX_X = 80
 CODE_BOX_Y = 75
+
+tutDescriptions = {}
+tutDescriptions[1] = [[Start here! Basic introduction to the game.]]
+tutDescriptions[2] = [[Teaches you all the basics you need to know about the Lua scripting language.]]
+tutDescriptions[3] = [[The first junction! Basic decision making.]]
+
+
 
 -- sizes:
 

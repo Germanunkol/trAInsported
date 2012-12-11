@@ -12,6 +12,14 @@ TILE_SIZE = thisThread:demand("TILE_SIZE")
 NO_TREES = thisThread:get("NO_TREES")
 -- RAIL Pieces:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
+IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
+IMAGE_GROUND_RIGHT = love.image.newImageData("Images/BorderRight.png")
+IMAGE_GROUND_BOTTOM = love.image.newImageData("Images/BorderBottom.png")
+IMAGE_GROUND_TOP = love.image.newImageData("Images/BorderTop.png")
+IMAGE_GROUND_TOPLEFT = love.image.newImageData("Images/BorderTopLeft.png")
+IMAGE_GROUND_TOPRIGHT = love.image.newImageData("Images/BorderTopRight.png")
+IMAGE_GROUND_BOTTOMLEFT = love.image.newImageData("Images/BorderBottomLeft.png")
+IMAGE_GROUND_BOTTOMRIGHT = love.image.newImageData("Images/BorderBottomRight.png")
 
 IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS.png")
 IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW.png")
@@ -147,7 +155,25 @@ if curMap then
 	
 	for i = 0,curMap.width+1,1 do
 		for j = 0,curMap.height+1,1 do
-			groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			if i == 0 and j == 0 then
+				groundData:paste( IMAGE_GROUND_TOPLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif i == 0 and j == curMap.height+1 then
+				groundData:paste( IMAGE_GROUND_BOTTOMLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif i == curMap.width+1 and j == 0 then
+				groundData:paste( IMAGE_GROUND_TOPRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif i == curMap.width+1 and j == curMap.height+1 then
+				groundData:paste( IMAGE_GROUND_BOTTOMRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif i == 0 then
+				groundData:paste( IMAGE_GROUND_LEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif i == curMap.width+1 then
+				groundData:paste( IMAGE_GROUND_RIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif j == 0 then
+				groundData:paste( IMAGE_GROUND_TOP, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif j == curMap.height+1 then
+				groundData:paste( IMAGE_GROUND_BOTTOM, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			else
+				groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			end
 			--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
 			--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
 			--updatePercentage()

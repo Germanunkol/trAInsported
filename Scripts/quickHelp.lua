@@ -6,25 +6,27 @@ local HELP_WIDTH, HELP_HEIGHT = 400,300
 
 
 
-local helpStrKeys = [[F1 : 
-Space :
+local helpStrKeys = [[Space :
 W,A,S,D :
 Cursor Keys :
 Q,E :
 C :
 + :
 - :
+m :
 F5 :
+F1 :
 ]]
-local helpStr = [[Toggle this Help
-Tactical Overlay
-Move View
-Move View
-Zoom View
-Toggle Console
+local helpStr = [[Tactical overlay
+Move view
+Move view
+Zoom view
+Toggle console
 Speed up
 Slow down
+Show map coordinates
 Screenshot
+Toggle this Help
 ]]
 
 function quickHelp.show()

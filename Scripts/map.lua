@@ -1100,10 +1100,12 @@ function map.show()
 
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.rotate(CAM_ANGLE)
-	love.graphics.setColor(30,10,5, 150)
-	love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
-	love.graphics.setColor(0,0,0, 100)
-	love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
+	love.graphics.setColor(30,10,5, 200)
+	--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+	--love.graphics.setColor(0,0,0, 100)
+	
+	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2-30, -TILE_SIZE*(curMap.height+2)/2+30)
+	-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 	love.graphics.setColor(255,255,255, 255)
 	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
@@ -1128,7 +1130,7 @@ function map.show()
 
 	clouds.renderShadows(passedTime)
 	
-	if love.keyboard.isDown("M") then
+	if love.keyboard.isDown("m") then
 		map.showCoordinates(curMap) -- display coordinates on the map
 	end
 

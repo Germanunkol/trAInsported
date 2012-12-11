@@ -91,14 +91,14 @@ function statusMsg.init()
 			toolTipBoxThread = love.thread.newThread("toolTipBoxThread", "Scripts/createImageBox.lua")
 			toolTipBoxThread:start()
 	
-			toolTipBoxThread:set("width", STAT_MSG_WIDTH )
-			toolTipBoxThread:set("height", STAT_MSG_HEIGHT )
+			toolTipBoxThread:set("width", TOOL_TIP_WIDTH )
+			toolTipBoxThread:set("height", TOOL_TIP_HEIGHT )
 			toolTipBoxThread:set("shadow", true )
 			toolTipBoxThread:set("shadowOffsetX", 6 )
 			toolTipBoxThread:set("shadowOffsetY", 1 )
-			toolTipBoxThread:set("colR", STAT_MSG_R )
-			toolTipBoxThread:set("colG", STAT_MSG_G )
-			toolTipBoxThread:set("colB", STAT_MSG_B )
+			toolTipBoxThread:set("colR", TOOL_TIP_R )
+			toolTipBoxThread:set("colG", TOOL_TIP_G )
+			toolTipBoxThread:set("colB", TOOL_TIP_B )
 		end
 	else
 		if not toolTipBox then	-- if there's no button yet, that means the thread is still running...
@@ -151,7 +151,7 @@ function statusMsg.display(dt)
 	elseif toolTip then
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.setFont(FONT_STANDARD)
-		love.graphics.draw(toolTipBox, (love.graphics.getWidth() - statusMsgBox:getWidth())/2 -10, love.graphics.getHeight() - statusMsgBox:getHeight())
+		love.graphics.draw(toolTipBox, (love.graphics.getWidth() - toolTipBox:getWidth())/2 -10, love.graphics.getHeight() - toolTipBox:getHeight())
 		love.graphics.printf(toolTip, (love.graphics.getWidth() - toolTipBox:getWidth())/2, love.graphics.getHeight() - toolTipBox:getHeight() + 5, toolTipBox:getWidth()-30, "center")
 	end
 end

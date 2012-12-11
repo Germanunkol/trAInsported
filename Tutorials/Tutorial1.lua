@@ -194,7 +194,7 @@ function tutorial.createTutBoxes()
 	local k = 1
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "How it all began..."
-	tutorialSteps[k].message = "Welcome to trAInsported!\n\nIn this Tutorial, you'll learn about:\n1) Buying trains\n2) Transporting passengers"
+	tutorialSteps[k].message = "Welcome to trAInsported!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
@@ -229,14 +229,14 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Controls"
-	tutorialSteps[k].message = "You can click and drag anywhere on the map to move the view. Use the mousewheel (or Q and E) to zoom." 
+	tutorialSteps[k].message = "\n\nIn this Tutorial, you'll learn about:\n1) Game Controls\n3) Buying trains\n2) Transporting your first passengers" 
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "At all times, you can press F1 to get a help screen showing you the controls. Try it!"
+	tutorialSteps[k].message = "You can click and drag anywhere on the map to move the view. Use the mousewheel (or Q and E) to zoom.\nAt all times, you can press F1 to get a help screen showing you the controls. Try it!"
 	tutorialSteps[k].event = setF1Event(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -329,7 +329,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "First, let's define our function. You don't need to copy the comments (everything after the '--'), they're just there to clarify things but are ignored by the game."
+	tutorialSteps[k].message = "First, let's define our function. Type the code shown in the code box into your .lua file. You don't need to copy the comments (everything after the '- -'), they're just there to clarify things but are ignored by the game."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = pickUpPassengerStep1
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -539,7 +539,7 @@ end
 fileContent = [[
 -- Tutorial 1: Baby Steps
 -- What you should know:
---	a) Lines starting with two dashes are comments, they will be ignored by the game.
+--	a) Lines starting with two dashes (minus signs) are comments, they will be ignored by the game.
 --	b) All your instructions will be written in the Lua scripting language.
 --	c) The basics of Lua are very easy to learn, and this game will teach them to you step by step.
 --	d) Lua is extremly fast as well. In short:

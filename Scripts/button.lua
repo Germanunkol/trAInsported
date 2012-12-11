@@ -111,11 +111,17 @@ function button.renderSingle(b)
 		love.graphics.setColor(255,255,255,255)
 		love.graphics.printf(b.l, b.x, b.y + 8, b.imageOver:getWidth(), "center")
 	else
-		if b.priority == buttonLevel then love.graphics.setColor(red,green,blue,255)
-		else love.graphics.setColor(red,green,blue,150) end
-		love.graphics.draw(b.imageOff, b.x, b.y)
-		love.graphics.setColor(255,255,255,255)
-		love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
+		if b.priority == buttonLevel then
+			love.graphics.setColor(red,green,blue,255)
+			love.graphics.draw(b.imageOff, b.x, b.y)
+			love.graphics.setColor(255,255,255,255)
+			love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
+		else
+			love.graphics.setColor(200,150,180,255)
+			love.graphics.draw(b.imageOff, b.x, b.y)
+			love.graphics.setColor(255,255,255,100)
+			love.graphics.printf(b.l, b.x, b.y + 10, b.imageOver:getWidth(), "center")
+		end
 	end
 end
 

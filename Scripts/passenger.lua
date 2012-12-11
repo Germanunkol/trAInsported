@@ -35,9 +35,11 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 	if curMap and (#passengerList < MAX_NUM_PASSENGERS or givenX) then	-- allow more than MAX_NUM_PASSENGERS if forced by tutorial.
 		local sIndex = math.random(#curMap.railList)
 		local dIndex = math.random(#curMap.railList)
+		local s = 5
 		
 		-- check to see if the given coordinates are a rail:
 		if givenX and givenY then
+			s = 0
 			for k, r in pairs(curMap.railList) do
 				if r.x == givenX and r.y == givenY then
 					sIndex = k
@@ -92,7 +94,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 						curY = y,
 						image = passengerImage,
 						angle = math.random()*math.pi*2,
-						selected = 5
+						selected = s
 						}
 				if vip then
 					--passengerList[i].image = passengerVIPImage

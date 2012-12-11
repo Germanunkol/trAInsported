@@ -122,6 +122,17 @@ for i = 2, width, 2 do
 end
 ]])
 
+local CODE_loop3 = parseCode([[
+i = 1
+while i < #passengers do
+	if passengers[i].name == "Skywalker" then
+		print("I found Luke!!")
+		break	-- stop looking. End the loop!
+	end
+	i = i + 1
+end
+]])
+
 local CODE_tables1 = parseCode([[
 -- example 1:
 myTable = {var1=10, var2="lol", var3="a beer"}
@@ -157,6 +168,17 @@ myTable.x = nil
 
 -- this will throw an error because 'x' no longer exists:
 a = myTable.x + 10
+]])
+
+local CODE_tables4 = parseCode([[
+-- If you leave away the names, Lua will automatically
+-- use the numbers [1], [2], [3] and so on:
+myList = {"apples", "are", "red"}
+
+print(myList[1]) -- will print 'apples'.
+
+-- replace "red" with "green":
+myList[3] = "green"
 ]])
 
 local CODE_hintPrint = parseCode([[
@@ -454,6 +476,26 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You can also add new elements (by assigning them a number) and remove them (by assigning 'nil')."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables3)
+		end
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "The 'passengers' list we used in tutorial 1 was a table. Here, we used numbers to name the elements, instead of names. If you choose to do that, then you can access the individual elements using the [ ] brackets, just like we did in tutorial 1."
+	tutorialSteps[k].event =  function()
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables4)
+		end
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Note: You can end a loop prematurely if some condition is true. For example, if you're looking for a passenger in a table and have found him, you can jump to the end of the loop using 'break'.\n(Note that putting a '#' infront of passengers gives you the length of that list. This only works if you used numbers to name the elements.)\nDon't worry if this went a little too fast for you; there will be an example for this in Tutorial3."
+	tutorialSteps[k].event =  function()
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_loop3)
 		end
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}

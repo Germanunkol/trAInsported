@@ -38,7 +38,11 @@ IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 IMAGE_HOTSPOT01 = love.image.newImageData("Images/HotSpot1.png")
 IMAGE_HOTSPOT01_SHADOW = love.image.newImageData("Images/HotSpot1_Shadow.png")
 
+-- Tutorial:
 IMAGE_HOTSPOT_PIESTORE = love.image.newImageData("Images/HotSpot_PieStore.png")
+IMAGE_HOTSPOT_HOME = love.image.newImageData("Images/HotSpot_Home.png")
+IMAGE_HOTSPOT_SCHOOL = love.image.newImageData("Images/HotSpot_School.png")
+IMAGE_HOTSPOT_PLAYGROUND = love.image.newImageData("Images/HotSpot_Playground.png")
 
 --Environment/Misc:
 IMAGE_HOUSE01 = love.image.newImageData("Images/House1.png")
@@ -186,6 +190,15 @@ if curMap then
 			elseif curMap[i][j] == "PS" then	-- pie store...
 				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
 				transparentPaste( objectData, IMAGE_HOTSPOT_PIESTORE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif curMap[i][j] == "HO" then	-- home
+				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
+				transparentPaste( objectData, IMAGE_HOTSPOT_HOME, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif curMap[i][j] == "SC" then	-- school
+				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
+				transparentPaste( objectData, IMAGE_HOTSPOT_SCHOOL, (i)*TILE_SIZE, (j)*TILE_SIZE )
+			elseif curMap[i][j] == "PL" then	-- playground
+				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26 )
+				transparentPaste( objectData, IMAGE_HOTSPOT_PLAYGROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			end
 			
 			updatePercentage()

@@ -18,6 +18,9 @@ tutMap[3][2] = "C"
 tutMap[3][4] = "C"
 tutMap[3][5] = "C"
 
+tutMap[1][2] = "SC"
+tutMap[5][2] = "PL"
+tutMap[2][5] = "HO"
 
 tutorialSteps = {}
 currentStep = 1
@@ -92,6 +95,25 @@ local CODE_enoughMoney = parseCode([[
 function ai.enoughMoney()
 	buyTrain(1,3)
 end
+]])
+
+
+local CODE_moreIdeas = parseCode([[
+-- check if this is the first train:
+if train.ID == 1 then
+	...
+	
+-- loop through passengers:
+-- IMPORTANT: #passengers is the length of the list!!
+i = 1
+while i < #passengers do
+	...
+	if ... then
+		-- pick up passenger
+		break	-- finish the loop!
+	end
+	i = i + 1
+end 
 ]])
 
 function nextTutorialStep()
@@ -208,7 +230,7 @@ local codeBoxX, codeBoxY = 0,0
 local tutBoxX, tutBoxY = 0,0
 
 
-function additionalInformation(text)
+function additionalInformation(text, code)
 	return function()
 		if not additionalInfoBox then
 			if currentTutBox then
@@ -220,6 +242,9 @@ function additionalInformation(text)
 			else		-- Otherwise, show it ABOVE the current tut box!
 				additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y - 10 - TUT_BOX_HEIGHT, text, {})
 			end
+		end
+		if not cBox then
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_moreIdeas)
 		end
 	end
 end
@@ -238,7 +263,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "On this map, there are multiple passengers. Some want to go to school, some don't.\n\n(Press space bar to see their destinations)"
+	tutorialSteps[k].message = "On this map, there are some kids. As it is with students, some want to go to school, some would rather not.\nAs trAIn programmers, it is not our job to judge that, though...\n(Press space bar to see their destinations)"
 	tutorialSteps[k].event =  startCreatingPassengers(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -329,7 +354,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You've completed the third tutorial, well done!\nWith this tutorial, you've covered all the basics. Click 'More Ideas' for your first real challenge!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("1) Try to make the first train only transport passengers who want to go to the East and make train 2 only transport all passengers wanting to go West. To do this:\nIn ai.foundPassenger: check if train.ID is 1 (if train.ID == 1 then). Then, check if passengers[1]'s destX is smaller than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. Do the reverse if the train's ID is 2.\nIf possible, use a while loop:\ni=1\nwhile passenger[i] do\n..."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("1) Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassenger: check if train.ID is 1. Then, check if passengers[1]'s destX is smaller than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West.\nIMPORTANT: #passengers is the length of the list!!\nRemember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	

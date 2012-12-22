@@ -71,6 +71,8 @@ function connectPiece(i, j)
 	dir = math.random(4)
 	local k = 0
 	local triedDir1,triedDir2,triedDir3,triedDir4 = false, false, false, false
+	
+	ok,err = pcall(function()
 	while k < 2 do
 		
 		if dir == 1 then
@@ -134,6 +136,16 @@ function connectPiece(i, j)
 			dir = 1
 		end
 		k = k + 1
+	end
+	end)
+	if not ok then
+		msg = err .. "\ni:" .. i .. "\nj:" .. j
+		for x = -1,1 do
+			if curMap[x] then
+				msg = msg .. "\ncurMap[i+" .. x .. "] " .. TSerial.pack(curMap[i])
+			end
+		end
+		error(msg)
 	end
 	
 	-- if it ends up here, it failed to connect using just straight connections.

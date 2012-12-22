@@ -27,7 +27,7 @@ function simulation.init()
 	trainList[4] = {}
 	
 	passengerList = {}
-	liveSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LIVE MATCH"))/2
+	liveSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LIVE MATCH")) - 20
 	liveSymbolY = 15
 	
 	vipClockImages = {}
@@ -435,6 +435,14 @@ function simulation.show(dt)
 		--love.graphics.setColor(0,0,0, 100)
 	
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-30, -TILE_SIZE*(simulationMap.height+2)/2+30)
+		
+		
+		love.graphics.setColor(30, 10, 0, 250)
+		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2-3)
+		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2+3)
+		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2+3)
+		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2-3)
+		
 		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 		love.graphics.setColor(255,255,255, 255)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
@@ -472,17 +480,20 @@ function simulation.show(dt)
 		
 		love.graphics.pop()
 		
+	
+		if showQuickHelp then quickHelp.show() end
+		if showConsole then console.show() end
+	
+		stats.displayStatus()
+		
+		
 		liveSymbolBlinkTime = liveSymbolBlinkTime + dt*2
 		love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
 		love.graphics.setFont(FONT_BUTTON)
 		love.graphics.print("LIVE MATCH", liveSymbolX-2, liveSymbolY+6)
 		love.graphics.setColor(255,255,255,205*math.sin(liveSymbolBlinkTime)^2+50)
 		love.graphics.print("LIVE MATCH", liveSymbolX, liveSymbolY)
-	
-		if showQuickHelp then quickHelp.show() end
-		if showConsole then console.show() end
-	
-		stats.displayStatus()
+		
 	end
 end
 
@@ -622,8 +633,14 @@ function simulation.passengerShowAll(dt)
 					p.x = p.x + dX*dt*PASSENGER_SPEED
 					p.y = p.y + dY*dt*PASSENGER_SPEED
 				end
-				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
-				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+				
+				--if p.train.tileX == p.tileX and p.train.tileY == p.tileY then
+					--x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+					--y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+				--else
+					x = p.x - p.image:getWidth()/2 + p.tileX*TILE_SIZE
+					y = p.y - p.image:getHeight()/2	 + p.tileY*TILE_SIZE
+				--end
 			elseif p.gettingOff and p.train.curSpeed == 0 then
 				d = vecDist(p.x, p.y, p.xEnd, p.yEnd)
 				dX = (p.xEnd-p.x)/d

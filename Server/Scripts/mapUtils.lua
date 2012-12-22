@@ -114,12 +114,15 @@ function connectPiece(i, j)
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i + 1
 				print("currently @ ", i, j)
+				local status, err = pcall(function()
 				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
 					print("found connection!")
 					return
 				end
+				end)
+				if not status then error("Failed @ ", i, j, err) end
 			end
 			triedDir3 = true
 			dir = 4

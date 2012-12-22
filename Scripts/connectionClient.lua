@@ -8,7 +8,16 @@ local printLineNumber = 0
 
 local packetNumber = 0
 
+local rememberPort = 0
+
 function connection.startClient(ip, port)
+
+	if ip and port then
+		rememberPort = port
+	else
+		port = rememberPort
+		ip = FALLBACK_MAIN_SERVER_IP
+	end
 
 	if connectionThread then
 		connectionThread:set("quit", true)
@@ -65,6 +74,9 @@ function connection.handleConnection()
 	str = connectionThread:get("statusErr")
 	if str then
 		statusMsg.new(str, true)
+		
+		--try again, with fallback IP:
+		connection.startClient()
 	end
 	str = connectionThread:get("statusMsg")
 	if str then

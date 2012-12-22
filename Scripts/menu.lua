@@ -156,7 +156,7 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "New", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45
-	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil, nil, nil, nil, "Start a random match on a random map using random AIs from your folder")
+	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil, nil, nil, nil, "Start a random match on a random map using random AIs from your 'AI' folder")
 	y = y + 60
 	menuButtons.buttonSettings = button:new(x, y, "Settings", menu.settings, nil)
 	y = y + 45

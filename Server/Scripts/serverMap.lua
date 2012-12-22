@@ -137,6 +137,7 @@ function map.generate(width, height, seed)
 		err = mapGenerateThread:get("error")
 		if err then
 			print("THREAD error (map generation): ", err)
+			love.event.quit()
 			return
 		end
 	end

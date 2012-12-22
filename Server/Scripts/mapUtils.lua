@@ -81,7 +81,7 @@ function connectPiece(i, j)
 			while i > 1 and not triedDir1 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i - 1
-				if curMap[i][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+				if curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
 					print("found connection!")
@@ -122,7 +122,9 @@ function connectPiece(i, j)
 					return
 				end
 				end)
-				if not status then error("Failed @ ".. i ..", " .. j .. ": " .. err .. "\n" .. TSerial.pack(curMap)) end
+				if not status then error("Failed @ ".. i ..", " .. j .. "\n(" .. curMap[i+1] .. "," .. curMap[i] .. "," .. curMap[i] .. ")\n" .. err .. "\n" .. TSerial.pack(curMap))
+				else return
+				end
 			end
 			triedDir3 = true
 			dir = 4

@@ -2,6 +2,7 @@
 -- connections:
 
 MAIN_SERVER_IP = "127.0.0.1"
+--MAIN_SERVER_IP = "192.168.178.4"
 PORT = 5556
 
 --

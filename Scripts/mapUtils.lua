@@ -81,7 +81,7 @@ function connectPiece(i, j)
 			while i > 1 and not triedDir1 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i - 1
-				if curMap[i][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+				if curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
 					print("found connection!")

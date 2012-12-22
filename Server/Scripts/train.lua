@@ -303,6 +303,7 @@ end
 
 function moveSingleTrain(tr, t)
 	if tr.path then
+		print("train:", tr, tr.curSpeed, "@" .. curMap.time)
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:

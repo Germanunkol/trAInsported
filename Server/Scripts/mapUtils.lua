@@ -67,13 +67,11 @@ end
 -- it tries out another direction.
 -- If all 4 directions have been tested, then it places down a rail across the entiry map. This makes sure that the next try succeeds.
 function connectPiece(i, j)
-	print("attempt to connect:", i, j)
 	startI, startJ = i,j
 	dir = math.random(4)
 	local k = 0
 	local triedDir1,triedDir2,triedDir3,triedDir4 = false, false, false, false
 	while k < 2 do
-		print("attempt:", k, dir)
 		
 		if dir == 1 then
 			removeTs()
@@ -84,7 +82,6 @@ function connectPiece(i, j)
 				if curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end
@@ -99,8 +96,7 @@ function connectPiece(i, j)
 				j = j - 1
 				if curMap[i-1][j] == "C" or curMap[i+1][j] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
-					-- found a connection!
-					print("found connection!")
+					-- found a connection!1
 					return
 				end
 			end
@@ -113,17 +109,10 @@ function connectPiece(i, j)
 			while i < curMap.height and not triedDir3 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i + 1
-				print("currently @ ", i, j)
-				local status, err = pcall(function()
 				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
-				end
-				end)
-				if not status then error("Failed @ ".. i ..", " .. j .. "\n(" .. curMap[i+1] .. "," .. curMap[i] .. "," .. curMap[i] .. ")\n" .. err .. "\n" .. TSerial.pack(curMap))
-				else return
 				end
 			end
 			triedDir3 = true
@@ -138,7 +127,6 @@ function connectPiece(i, j)
 				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end

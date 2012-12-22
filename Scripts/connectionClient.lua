@@ -14,10 +14,11 @@ function connection.startClient(ip, port)
 
 	if ip and port then
 		rememberPort = port
-	else
+	elseif rememberPort then
 		port = rememberPort
 		ip = FALLBACK_MAIN_SERVER_IP
-	end
+		rememberPort = nil
+	else return end
 
 	if connectionThread then
 		connectionThread:set("quit", true)

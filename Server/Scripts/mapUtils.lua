@@ -122,7 +122,7 @@ function connectPiece(i, j)
 					return
 				end
 				end)
-				if not status then error("Failed @ ", i, j, err) end
+				if not status then error("Failed @ ".. i ", " .. j .. ": " .. err .. "\n" .. TSerial.pack(curMap)) end
 			end
 			triedDir3 = true
 			dir = 4

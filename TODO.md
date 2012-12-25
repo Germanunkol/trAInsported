@@ -71,3 +71,6 @@ tut 4:
 - buy code lines using in-game cash
 - handicapped people
 - option to transport 
+
+**Bugs**
+- generator can generate empty maps

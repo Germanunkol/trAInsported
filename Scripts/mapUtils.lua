@@ -110,7 +110,8 @@ function connectPiece(i, j)
 		if dir == 3 then
 			removeTs()
 			i, j = startI, startJ
-			while i < curMap.height and not triedDir3 do
+			ok, err = pcall(function()
+			while i < curMap.width and not triedDir3 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				i = i + 1
 				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
@@ -120,13 +121,15 @@ function connectPiece(i, j)
 					return
 				end
 			end
+			end)
+			if not ok then error(err .. "\ni " .. i .. "\nj " .. j) end
 			triedDir3 = true
 			dir = 4
 		end
 		if dir == 4 then
 			removeTs()
 			i, j = startI, startJ
-			while j < curMap.width and not triedDir4 do
+			while j < curMap.height and not triedDir4 do
 				if not curMap[i][j] then curMap[i][j] = "T" end
 				j = j + 1
 				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" then
@@ -156,13 +159,13 @@ end
 -- generates random rectangles of rail on the map.
 function generateRailRectangles()
 
-	local num = 3 + math.random(10)+ math.ceil(curMap.height/2)
+	local num = 6 + math.random(10)+ math.ceil(curMap.height/2)
 	local k = 0
 	while k < num do
-		local rectWidth = math.random(curMap.width/2)+2
-		local rectHeight = math.random(curMap.height/2)+2
-		local i = math.random(curMap.width-2)
-		local j = math.random(curMap.height-2)
+		local rectWidth = math.random(curMap.width)
+		local rectHeight = math.random(curMap.height)
+		local i = math.random(-curMap.width/2, curMap.width/2)
+		local j = math.random(-curMap.height/2, curMap.height/2)
 	
 		local x = 0
 		while x <= rectWidth do

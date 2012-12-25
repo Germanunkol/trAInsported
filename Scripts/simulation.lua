@@ -437,11 +437,12 @@ function simulation.show(dt)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-30, -TILE_SIZE*(simulationMap.height+2)/2+30)
 		
 		
-		love.graphics.setColor(30, 10, 0, 250)
+		--[[love.graphics.setColor(30, 10, 0, 250)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2-3)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2+3)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2+3)
 		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2-3)
+		]]--
 		
 		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 		love.graphics.setColor(255,255,255, 255)

@@ -335,8 +335,7 @@ end
 
 function moveSingleTrain(tr, t)
 	if tr.path then
-	
-		print("train:", tr, tr.curSpeed, "@" .. curMap.time)
+
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:
@@ -349,8 +348,6 @@ function moveSingleTrain(tr, t)
 		end
 		
 		while tr.curDistTraveled > tr.path[#tr.path].length do
-		
-			print("b")
 			--tr.blocked = true
 			tr.curDistTraveled = tr.curDistTraveled - tr.path[#tr.path].length	-- remember overshoot!
 			local nextX, nextY = tr.tileX, tr.tileY
@@ -377,9 +374,7 @@ function moveSingleTrain(tr, t)
 				map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
 				
 			else
-			print("c")
 				if tr.timeBlocked > MAX_BLOCK_TIME then
-				print("d")
 					
 					stats.trainBlockedTime( tr.aiID, tr.ID, tr.timeBlocked )
 					tr.timeBlocked = 0
@@ -393,27 +388,22 @@ function moveSingleTrain(tr, t)
 			if tr.dir == "N" then
 				nextY = nextY - 1
 				cameFromDir = "S"
-				--print("moved north")
 			end
 			if tr.dir == "S" then
 				nextY = nextY + 1
 				cameFromDir = "N"
-				--print("moved south")
 			end
 			if tr.dir == "W" then
 				nextX = nextX - 1
 				cameFromDir = "E"
-				--print("moved west")
 			end
 			if tr.dir == "E" then
 				nextX = nextX + 1
 				cameFromDir = "W"
-				--print("moved east")
 			end
 			
 			if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
 				
-				print("e")
 				if tr.blocked then removeBlockedTrain(tr) end
 				map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
 				
@@ -478,10 +468,8 @@ function moveSingleTrain(tr, t)
 				end
 				
 			else
-			print("f")
 				tr.curDistTraveled = 0
 				if not tr.blocked then
-					print("train is blocked, adding!", tr.tileX, tr.tileY, tr.ID, tr.aiID)
 					addBlockedTrain(tr)
 					tr.blocked = true
 				end
@@ -514,7 +502,6 @@ function moveSingleTrain(tr, t)
 		
 		
 		if not tr.blocked then
-		print("g")
 			dx = tr.path[tr.curNode+1].x - tr.path[tr.curNode].x
 			dy = tr.path[tr.curNode+1].y - tr.path[tr.curNode].y
 			
@@ -746,9 +733,13 @@ function train.showAll()
 			
 			if DEBUG_OVERLAY then
 				for i = 1,#tr.path do
-					brightness = 1-(#tr.path-i)/#tr.path
+					--brightness = 1-(#tr.path-i)/#tr.path
 					love.graphics.setColor(255,0,0,255)
-					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, brightness*4+3)
+					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, 3)
+					if i > 1 then
+						love.graphics.setColor(255,150,150,255)
+						love.graphics.line(tr.tileX*TILE_SIZE+tr.path[i-1].x,  tr.tileY*TILE_SIZE+tr.path[i-1].y, tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y)
+					end
 				end
 			
 				love.graphics.setColor(255,255,0,255)

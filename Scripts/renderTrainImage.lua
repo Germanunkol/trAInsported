@@ -1,12 +1,15 @@
 -- to be run as a seperate thread!
 
 thisThread = love.thread.getThread()
+
+package.path = "Scripts/?.lua;" .. package.path
+
 thisThread:set("status", "started")
 require("love.image")
 require("love.filesystem")
-require("Scripts/misc")
-require("Scripts/TSerial")
-require("Scripts/imageManipulation")
+require("misc")
+require("TSerial")
+require("imageManipulation")
 seed = thisThread:demand("seed")
 col = TSerial.unpack(thisThread:demand("colour"))
 

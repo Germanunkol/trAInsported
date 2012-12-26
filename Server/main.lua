@@ -20,6 +20,7 @@ timeUntilNextMatch = 0*1
 
 function love.load()
 	io.close()
+	love.event.quit()
 	--[[menu.thread = love.thread.newThread("menuThread", "Scripts/menuThread.lua")
 	menu.thread:start()
 	menu.msgNumber = 0

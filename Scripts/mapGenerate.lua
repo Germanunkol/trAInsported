@@ -1,6 +1,9 @@
 thisThread = love.thread.getThread()
-require("Scripts/mapUtils")
-require("Scripts/TSerial")
+
+package.path = "Scripts/?.lua;" .. package.path
+
+require("mapUtils")
+require("TSerial")
 
 width = thisThread:demand("width")
 height = thisThread:demand("height")

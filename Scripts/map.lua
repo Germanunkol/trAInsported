@@ -1,4 +1,4 @@
-require("Scripts/mapUtils")
+require("mapUtils")
 
 local map = {}
 
@@ -546,8 +546,8 @@ function map.init()
 	pathNW[7] = {x=0,y=48}
 	]]--
 	
-	radiusSmall = 48
-	radiusLarge = 80
+	local radiusSmall = 48
+	local radiusLarge = 80
 	
 	pathNE = {}
 	for i = 0,10 do
@@ -658,6 +658,117 @@ function map.init()
 	end
 	
 	
+	--------------------------------
+	-- U-TURNS:
+	
+	local radiusUTurn = 49
+	pathSS = {}
+	--U-turn:
+	for i = 0,39 do
+		angDeg = - i*9 + 90
+		x = radiusUTurn*math.cos(angDeg*math.pi/180) + TILE_SIZE/2
+		y = TILE_SIZE/2 + radiusUTurn*math.sin(angDeg*math.pi/180)
+		pathSS[i+1] = {x=x, y=y}
+	end
+	-- overlay entry curve with curve above:
+	for i = 1, 10 do
+		pathSS[i].x = (1-(i-1)/10)*pathSE[i].x + (i-1)/10*pathSS[i].x
+		pathSS[i].y = (1-(i-1)/10)*pathSE[i].y + (i-1)/10*pathSS[i].y
+	end
+	-- overlay exit curve with curve above:
+	for i = 1, 11 do
+		pathSS[i+29].x = (i-1)/10*pathWS[i].x + (1-(i-1)/10)*pathSS[i+29].x
+		pathSS[i+29].y = (i-1)/10*pathWS[i].y + (1-(i-1)/10)*pathSS[i+29].y
+	end
+	pathSS.length = 0
+	pathSS[1].length = 0
+	for i = 2, #pathSS do
+		pathSS.length = pathSS.length + math.sqrt((pathSS[i-1].x - pathSS[i].x)^2 + (pathSS[i-1].y - pathSS[i].y)^2)
+		pathSS[i].length = pathSS.length
+	end
+	
+	
+	pathWW = {}
+	--U-turn:
+	for i = 0,39 do
+		angDeg = - i*9 + 180
+		x = radiusUTurn*math.cos(angDeg*math.pi/180) + TILE_SIZE/2
+		y = TILE_SIZE/2 + radiusUTurn*math.sin(angDeg*math.pi/180)
+		pathWW[i+1] = {x=x, y=y}
+	end
+	-- overlay entry curve with curve above:
+	for i = 1, 10 do
+		pathWW[i].x = (1-(i-1)/10)*pathWS[i].x + (i-1)/10*pathWW[i].x
+		pathWW[i].y = (1-(i-1)/10)*pathWS[i].y + (i-1)/10*pathWW[i].y
+	end
+	-- overlay exit curve with curve above:
+	for i = 1, 11 do
+		pathWW[i+29].x = (i-1)/10*pathNW[i].x + (1-(i-1)/10)*pathWW[i+29].x
+		pathWW[i+29].y = (i-1)/10*pathNW[i].y + (1-(i-1)/10)*pathWW[i+29].y
+	end
+	pathWW.length = 0
+	pathWW[1].length = 0
+	for i = 2, #pathWW do
+		pathWW.length = pathWW.length + math.sqrt((pathWW[i-1].x - pathWW[i].x)^2 + (pathWW[i-1].y - pathWW[i].y)^2)
+		pathWW[i].length = pathWW.length
+	end
+	
+	
+	pathNN = {}
+	--U-turn:
+	for i = 0,39 do
+		angDeg = - i*9 - 90
+		x = radiusUTurn*math.cos(angDeg*math.pi/180) + TILE_SIZE/2
+		y = TILE_SIZE/2 + radiusUTurn*math.sin(angDeg*math.pi/180)
+		pathNN[i+1] = {x=x, y=y}
+	end
+	-- overlay entry curve with curve above:
+	for i = 1, 10 do
+		pathNN[i].x = (1-(i-1)/10)*pathNW[i].x + (i-1)/10*pathNN[i].x
+		pathNN[i].y = (1-(i-1)/10)*pathNW[i].y + (i-1)/10*pathNN[i].y
+	end
+	-- overlay exit curve with curve above:
+	for i = 1, 11 do
+		pathNN[i+29].x = (i-1)/10*pathEN[i].x + (1-(i-1)/10)*pathNN[i+29].x
+		pathNN[i+29].y = (i-1)/10*pathEN[i].y + (1-(i-1)/10)*pathNN[i+29].y
+	end
+	pathNN.length = 0
+	pathNN[1].length = 0
+	for i = 2, #pathNN do
+		pathNN.length = pathNN.length + math.sqrt((pathNN[i-1].x - pathNN[i].x)^2 + (pathNN[i-1].y - pathNN[i].y)^2)
+		pathNN[i].length = pathNN.length
+	end
+	
+	
+	pathEE = {}
+	--U-turn:
+	for i = 0,39 do
+		angDeg = - i*9
+		x = radiusUTurn*math.cos(angDeg*math.pi/180) + TILE_SIZE/2
+		y = TILE_SIZE/2 + radiusUTurn*math.sin(angDeg*math.pi/180)
+		pathEE[i+1] = {x=x, y=y}
+	end
+	-- overlay entry curve with curve above:
+	for i = 1, 10 do
+		pathEE[i].x = (1-(i-1)/10)*pathEN[i].x + (i-1)/10*pathEE[i].x
+		pathEE[i].y = (1-(i-1)/10)*pathEN[i].y + (i-1)/10*pathEE[i].y
+	end
+	-- overlay exit curve with curve above:
+	for i = 1, 11 do
+		pathEE[i+29].x = (i-1)/10*pathSE[i].x + (1-(i-1)/10)*pathEE[i+29].x
+		pathEE[i+29].y = (i-1)/10*pathSE[i].y + (1-(i-1)/10)*pathEE[i+29].y
+	end
+	pathEE.length = 0
+	pathEE[1].length = 0
+	for i = 2, #pathEE do
+		pathEE.length = pathEE.length + math.sqrt((pathEE[i-1].x - pathEE[i].x)^2 + (pathEE[i-1].y - pathEE[i].y)^2)
+		pathEE[i].length = pathEE.length
+	end
+	
+	
+	
+	-- old, manual:
+	--[[
 	pathSS = {}
 	pathSS[1] = {x=79, y=128}
 	pathSS[2] = {x=86, y=106}
@@ -672,12 +783,6 @@ function map.init()
 	pathSS[11] = {x=25, y=90}
 	pathSS[12] = {x=41, y=106}
 	pathSS[13] = {x=48, y=128}
-	pathSS.length = 0
-	pathSS[1].length = 0
-	for i = 2, #pathSS do
-		pathSS.length = pathSS.length + math.sqrt((pathSS[i-1].x - pathSS[i].x)^2 + (pathSS[i-1].y - pathSS[i].y)^2)
-		pathSS[i].length = pathSS.length
-	end
 	
 	pathWW = {}
 	pathWW[1] = {x=0, y=79}
@@ -741,6 +846,7 @@ function map.init()
 		pathEE.length = pathEE.length + math.sqrt((pathEE[i-1].x - pathEE[i].x)^2 + (pathEE[i-1].y - pathEE[i].y)^2)
 		pathEE[i].length = pathEE.length
 	end
+	]]--
 end
 
 function map.getRailPath(tileX, tileY, dir, prevDir)

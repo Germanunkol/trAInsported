@@ -1,33 +1,38 @@
-require("Scripts/TSerial")
-ai = require("Scripts/ai")
-console = require("Scripts/console")
-require("Scripts/imageManipulation")
-require("Scripts/ui")
-require("Scripts/misc")
-require("Scripts/input")
-quickHelp = require("Scripts/quickHelp")
-button = require("Scripts/button")
-menu = require("Scripts/menu")
-msgBox = require("Scripts/msgBox")
-tutorialBox = require("Scripts/tutorialBox")
-codeBox = require("Scripts/codeBox")
-map = require("Scripts/map")
-train = require("Scripts/train")
-functionQueue = require("Scripts/functionQueue")
-pSpeach = require("Scripts/passengerSpeach")
-passenger = require("Scripts/passenger")
-stats = require("Scripts/statistics")
-clouds = require("Scripts/clouds")
-loadingScreen = require("Scripts/loadingScreen")
-connection = require("Scripts/connectionClient")
-require("Scripts/globals")
-simulation = require("Scripts/simulation")
-statusMsg = require("Scripts/statusMsg")
-versionCheck = require("Scripts/versionCheck")
+package.path = "Scripts/?.lua;" .. package.path
+
+
+require("TSerial")
+ai = require("ai")
+console = require("console")
+require("imageManipulation")
+require("ui")
+require("misc")
+require("input")
+quickHelp = require("quickHelp")
+button = require("button")
+menu = require("menu")
+msgBox = require("msgBox")
+tutorialBox = require("tutorialBox")
+codeBox = require("codeBox")
+map = require("map")
+train = require("train")
+functionQueue = require("functionQueue")
+pSpeach = require("passengerSpeach")
+passenger = require("passenger")
+stats = require("statistics")
+clouds = require("clouds")
+loadingScreen = require("loadingScreen")
+connection = require("connectionClient")
+require("globals")
+simulation = require("simulation")
+statusMsg = require("statusMsg")
+versionCheck = require("versionCheck")
 
 numTrains = 0
 
 version = "0.11"
+
+DEBUG_OVERLAY = true
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
@@ -69,17 +74,16 @@ showQuickHelp = false
 showConsole = true
 initialising = true
 
-function love.load()
+function love.load(args)
 
+	for k, arg in pairs(args) do
+		if arg == "-D" then
+			print("Starting in dedicated Server mode!")
+			print("TODO: start dedicated server here!")
+			love.event.quit()
+		end
+	end
 
-	myTable = {
-		x_Pos = 10,
-		y_Pos = 20
-	}
-	
-	-- calculate the average:
-	result = (myTable.x_Pos + myTable.y_Pos)/2
-	print(result)
 
 	initialising = true
 	loadingScreen.reset()	

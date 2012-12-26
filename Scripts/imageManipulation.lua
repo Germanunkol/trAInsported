@@ -1,4 +1,4 @@
-require("Scripts/misc")
+require("misc")
 
 
 function blur( imgData, radius, thread, percentage, maxPercentage )

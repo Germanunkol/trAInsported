@@ -1,8 +1,8 @@
 thisThread = love.thread.getThread()
 require("love.image")
 require("love.filesystem")
-require("Scripts/imageManipulation")
-require("Scripts/misc")
+require("imageManipulation")
+require("misc")
 
 thisThread:set("percentage", 0)
 

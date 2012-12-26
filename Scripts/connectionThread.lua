@@ -1,8 +1,10 @@
 thisThread = love.thread.getThread()
-require("Scripts/mapUtils")
-require("Scripts/TSerial")
+
+package.path = "Scripts/?.lua;" .. package.path
+require("mapUtils")
+require("TSerial")
 require("socket")
-require("Scripts/misc")
+require("misc")
 
 ip = thisThread:demand("ip")
 port = thisThread:demand("port")

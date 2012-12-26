@@ -11,7 +11,7 @@ local aiUserData = {		--default fallbacks in case a function is not created by t
 	enoughMoney = function () print("Implement a function \"ai.enoughMoney\" if you want to get notifications when you have enough money to buy a new train!") end
 }
 
-local sandbox = require("Scripts/sandbox")
+local sandbox = require("sandbox")
 
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 10000

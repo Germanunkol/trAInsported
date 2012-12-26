@@ -30,7 +30,7 @@ To do for trAInsported:
 [x]	Add VIPs
 [x]	Add Hotspots
 - Randomize order in which players get to move
-- Beautify rails	(shadows?), increase # of waypoints
+- Beautify rails (shadows?), increase # of waypoints
 [x] buy new trains
 [x] rework train movement: make it pixel-independet and make it work with percentages.
 - Add statistics for passengers at round end
@@ -56,8 +56,11 @@ tut 4:
 [x]	clouds
 [x] trees
 - water
-[x]	rework all visuals
 - Urban setting
+- weather?
+- rails with sidewalks
+- speed controls
+- don't let passengers stand on the rails.
 
 **Misc**
 - Add tipps
@@ -66,11 +69,15 @@ tut 4:
 - make sure globals.lua is the same for server and client!
 - train movment on client is now no longer allowing overshoot -> same for server!
 - possibly make server and client use the same files?!
+[x] tooltips
+- rewards!!
 
 **Maybe**
 - buy code lines using in-game cash
 - handicapped people
 - option to transport 
+- modify payment method in-game?
+- two or three rail types?
 
 **Bugs**
-- generator can generate empty maps
+- generator can generate empty maps?

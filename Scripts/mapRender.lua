@@ -1,10 +1,11 @@
-
 thisThread = love.thread.getThread()
+
+package.path = "Scripts/?.lua;" .. package.path
 
 require("love.image")
 require("love.filesystem")
-require("Scripts/TSerial")
-require("Scripts/imageManipulation")
+require("TSerial")
+require("imageManipulation")
 curMap = TSerial.unpack(thisThread:demand("curMap"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 TILE_SIZE = thisThread:demand("TILE_SIZE")

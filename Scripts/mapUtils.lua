@@ -164,33 +164,51 @@ function generateRailRectangles()
 	while k < num do
 		local rectWidth = math.random(curMap.width)
 		local rectHeight = math.random(curMap.height)
-		local i = math.random(-curMap.width/2, curMap.width/2)
-		local j = math.random(-curMap.height/2, curMap.height/2)
-	
-		local x = 0
-		while x <= rectWidth do
-			if i+x <= curMap.width then
-				if curMap[i+x] then
+		local i = math.floor(math.random(1, curMap.width) - rectWidth/2)
+		local j = math.floor(math.random(1, curMap.height) - rectHeight/2)
+		
+		-- top rail:
+		if j >= 1 and j <= curMap.height then
+			local x = 0
+			while x < rectWidth do
+				if i+x >= 1 and i+x <= curMap.width then
 					curMap[i+x][j] = "R"
-					if j+rectHeight <= curMap.height then
-						curMap[i+x][j+rectHeight] = "R"
-					end
 				end
+				x = x + 1
 			end
-			x = x + 1
 		end
 		
-		local y = 0
-		while y <= rectHeight do
-			if j+y <= curMap.height then
-				if curMap[i] then
-					curMap[i][j+y] = "R"
-					if i+rectWidth <= curMap.width then
-						curMap[i+rectWidth][j+y] = "R"
-					end
+		-- bottom rail:
+		if j+rectHeight >= 1 and j+rectHeight <= curMap.height then
+			local x = 0
+			while x < rectWidth do
+				if i+x >= 1 and i+x <= curMap.width then
+					curMap[i+x][j+rectHeight] = "R"
 				end
+				x = x + 1
 			end
-			y = y + 1
+		end
+		
+		-- left rail:
+		if i >= 1 and i <= curMap.width then
+			local y = 0
+			while y < rectHeight do
+				if j+y >= 1 and j+y <= curMap.height then
+					curMap[i][j+y] = "R"
+				end
+				y = y + 1
+			end
+		end
+		
+		-- right rail:
+		if i+rectWidth >= 1 and i+rectWidth <= curMap.width then
+			local y = 0
+			while y < rectHeight do
+				if j+y >= 1 and j+y <= curMap.height then
+					curMap[i+rectWidth][j+y] = "R"
+				end
+				y = y + 1
+			end
 		end
 		
 		k = k+1

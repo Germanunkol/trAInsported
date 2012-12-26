@@ -1,4 +1,4 @@
-function love.conf(t)
+function love.conf(t, args)
 	t.screen.width = 1920*0.75
 	t.screen.height = 1080*0.75
 	t.screen.fullscreen = false
@@ -16,4 +16,9 @@ function love.conf(t)
     t.modules.mouse = false      -- Enable the mouse module (boolean)
     t.modules.sound = false      -- Enable the sound module (boolean)
     t.modules.physics = false    -- Enable the physics module (boolean)
+    
+    print("args:", t)
+    for k, x in pairs(t) do
+    	print("", k, x)
+    end
 end

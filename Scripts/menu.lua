@@ -180,7 +180,7 @@ end
 --		SETUP NEW MATCH:
 --------------------------------------------------------------
 
-checkMarkImg = love.graphics.newImage("Images/CheckMark.png")
+checkMarkImg = love.graphics.newImage("/Images/CheckMark.png")
 
 local chosenAIs = {}
 local chosenHeight, chosenWidth = 0, 0

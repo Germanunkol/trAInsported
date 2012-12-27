@@ -24,7 +24,7 @@ if DEDICATED then
 	
 	timeFactor = 3
 
-	function love.load()
+	function love.load(args)
 		print("Starting in dedicated Server mode!")
 		
 		io.close()

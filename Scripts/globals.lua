@@ -1,8 +1,7 @@
 
 -- connections:
 
-MAIN_SERVER_IP = "127.0.0.1"
-FALLBACK_MAIN_SERVER_IP = "192.168.178.4"
+FALLBACK_SERVER_IP = "127.0.0.1"
 PORT = 5556
 --
 
@@ -32,6 +31,9 @@ if not DEDICATED then
 	FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-LI.ttf", 17 )
 
 	LOGO_IMG = love.graphics.newImage("Images/Logo.png")
+	
+else
+	TIME_BETWEEN_MATCHES = 60
 end
 
 timeFactor = 1

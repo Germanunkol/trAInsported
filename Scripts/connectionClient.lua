@@ -16,7 +16,7 @@ function connection.startClient(ip, port)
 		rememberPort = port
 	elseif rememberPort then
 		port = rememberPort
-		ip = FALLBACK_MAIN_SERVER_IP
+		ip = FALLBACK_SERVER_IP
 		rememberPort = nil
 	else return end
 

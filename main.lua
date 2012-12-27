@@ -11,10 +11,43 @@ require("TSerial")
 pSpeach = require("passengerSpeach")
 
 
+if INVALID_PORT then
+	print("Invalid port number given.")
+	print("Usage: -p PORTNUMBER")
+	love.event.quit()
+else
+	if PORT_GIVEN then
+		PORT = PORT_GIVEN
+	end
+	print("Using port " .. PORT .. ".")
+end
+
+if INVALID_IP then
+	print("Invalid ip given.")
+	print("Usage: -t ###.###.###.### or -t localhost")
+	love.event.quit()
+else
+	print("Will attempt to connect to " .. FALLBACK_SERVER_IP)
+end
+
+
 if DEDICATED then
 	
 	------------------------------------------
 	-- DEDICATED Server (headless):
+
+	if INVALID_TIME then
+		print("Invalid match time given.")
+		print("Usage: -t TIME")
+		love.event.quit()
+	else
+		print("Using match time " .. TIME_BETWEEN_MATCHES .. " seconds.")
+	end
+
+	if SERVER_IP then
+		print("I do not know what to do with -ip in dedicated server mode.")
+		love.event.quit()
+	end
 
 	require("server")	-- main Server module. Handles server's communication with the client.
 	connectionThreadNum = 0
@@ -66,11 +99,10 @@ if DEDICATED then
 			if timeUntilNextMatch < 0 then
 				io.flush()
 				io.write( "Starting next match in 0.00 seconds.","\r")
-				print("\nSTARTING!")
 				
 				setupMatch()
 								
-				timeUntilNextMatch = TIME_BETWEEN_MATCHES or 60
+				timeUntilNextMatch = TIME_BETWEEN_MATCHES
 				connection.thread:set("nextMatch", timeUntilNextMatch)
 			else
 				io.flush()
@@ -95,6 +127,12 @@ else
 
 	------------------------------------------
 	-- Client (graphical):
+	
+	if TIME_BETWEEN_MATCHES then
+		print("I do not know what to do with -t in client mode.")
+		love.event.quit()
+	end
+	
 
 	-- load additional modules not needed by the server:
 	console = require("console")

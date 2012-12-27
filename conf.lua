@@ -14,6 +14,57 @@ for k, a in pairs(arg) do
 	end
 end
 
+
+-- Check if user has given a port number:
+for k, a in pairs(arg) do
+	if a == "-p" then
+		INVALID_PORT = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				p = tonumber(arg[k+1])
+				if p >= 0 and p <= 65535 then
+					PORT_GIVEN = p
+					INVALID_PORT = false
+				end
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
+	if a == "-t" then
+		INVALID_TIME = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				t = tonumber(arg[k+1])
+				if t > 10 then
+					TIME_BETWEEN_MATCHES = t
+					INVALID_IP = false
+				end
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
+	if a == "-ip" then
+		INVALID_IP = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				ip = arg[k+1]
+				if ip:find("%d%d?%d?\.%d%d?%d?\.%d%d?%d?\.%d%d?%d?") == 1 or ip == "localhost" then
+					SERVER_IP = ip
+					INVALID_IP = false
+				end
+			end
+		end
+		break
+	end
+end
+
+
 if not DEDICATED then
 
 	love.conf = function(t)
@@ -25,17 +76,7 @@ if not DEDICATED then
 		t.url = "http://www.indiedb.com/members/germanunkol"
 	end
 	
-
 else
-
-	for k, a in pairs(arg) do
-		if a == "-t" then
-			if type(k) == "number" and arg[k+1] and arg[k+1] then
-				TIME_BETWEEN_MATCHES = tonumber(arg[k+1])
-				break
-			end
-		end
-	end
 
 	love.conf = function(t)
 	

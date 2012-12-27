@@ -123,7 +123,7 @@ function menu.init(menuX, menuY)
 	trainImagesCreated = false
 	
 	--load connection to main server:
-	connection.startClient(MAIN_SERVER_IP, PORT)
+	connection.startClient(SERVER_IP or FALLBACK_SERVER_IP, PORT)
 	
 	--reset tutorial:
 	tutorial = {}

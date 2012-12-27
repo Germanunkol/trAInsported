@@ -134,10 +134,13 @@ end
 function statusMsg.new(txt, err)
 	currentErr = err
 	currentMsg = txt
-	currentTime = 3
+	currentTime = 6
 end
 
 function statusMsg.display(dt)
+	if currentTime < 3 and toolTip then
+		currentTime = 0
+	end
 	if currentTime > 0 then
 		currentTime = currentTime - dt
 		love.graphics.setColor(255,255,255,255)

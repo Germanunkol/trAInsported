@@ -68,6 +68,10 @@ function connection.handleConnection()
 		packetNumber = incrementID(packetNumber)
 	end
 	
+	-- if versions don't match, addUpdate might have stopped the connection, so make sure it's still up:
+	
+	if not connectionThread then return end
+	
 	str = connectionThread:get("statusErr")
 	if str then
 		statusMsg.new(str, true)

@@ -14,12 +14,12 @@ Then, the next step will be to get into the challenges. Once you've mastered the
 Setting up your own server:
 ------------------------------
 You can start your own dedicated server (see the section "Command Line Options" below). 
-This server will automatically start running matches. You can watch these matches by starting the game again, without the server option. Start with **-ip localhost** to connect to the server running on your PC.
+This server will automatically start running matches using random maps and the AIs located in your AI subfolder (if you don't want the game to . You can watch these matches by starting the game again, without the server option. Start with **-ip localhost** to connect to the server running on your PC.
 
 Command Line Options:
 ------------------------------
-Make sure to add these at the end, __after__ the folder or .love file. Otherwise love won't know to run the game.
-Example:
+Make sure to add these at the end, __after__ the folder or .love file. Otherwise the Löve engine won't know to run the game.
+Example:  
 **Linux:**
 ```bash
 /path/to/love /path/to/game --server -p 4242

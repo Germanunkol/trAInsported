@@ -1,4 +1,7 @@
 thisThread = love.thread.getThread()
+
+package.path = "Scripts/?.lua;" .. package.path
+
 require("love.image")
 require("love.filesystem")
 require("imageManipulation")

@@ -119,8 +119,8 @@ function simulation.addUpdate(text)
 		s,e = text:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(text:sub(e+1,#text))
 		if tbl[1] ~= VERSION then
-			statusMsg.new("Error: Could not match versions. Your version: " .. VERSION .. ", server's version: " .. tbl[1], true)
-			--simulation.stop()
+			statusMsg.new("Error: Could not match versions.\n(Your version: " .. VERSION .. ", server's version: " .. tbl[1] .. ")", true)
+			simulation.stop()
 		end
 	end
 end

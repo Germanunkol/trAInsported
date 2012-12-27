@@ -36,6 +36,9 @@ if DEDICATED then
 	------------------------------------------
 	-- DEDICATED Server (headless):
 
+	
+	-------------------------------
+	-- HANDLE COMMAND LINE OPTIONS
 	if INVALID_TIME then
 		print("Invalid match time given.")
 		print("Usage: -t TIME")
@@ -48,6 +51,7 @@ if DEDICATED then
 		print("I do not know what to do with -ip in dedicated server mode.")
 		love.event.quit()
 	end
+	-------------------------------
 
 	require("server")	-- main Server module. Handles server's communication with the client.
 	connectionThreadNum = 0
@@ -57,6 +61,9 @@ if DEDICATED then
 	
 	timeFactor = 3
 
+
+	-------------------------------
+	-- main function, runs at startup:
 	function love.load(args)
 		print("Starting in dedicated Server mode!")
 		
@@ -67,6 +74,9 @@ if DEDICATED then
 		initServer()
 	end
 	
+	
+	-------------------------------
+	-- runs every frame:
 	function love.update()
 		handleThreadMessages( connection )
 	
@@ -124,14 +134,20 @@ if DEDICATED then
 else
 
 
-
 	------------------------------------------
 	-- Client (graphical):
 	
+	-------------------------------
+	-- HANDLE COMMAND LINE OPTIONS
 	if TIME_BETWEEN_MATCHES then
 		print("I do not know what to do with -t in client mode.")
 		love.event.quit()
 	end
+	
+	if not SERVER_IP then
+		print("No IP given. Using default fallback IP: " .. FALLBACK_SERVER_IP)
+	end
+	-------------------------------
 	
 
 	-- load additional modules not needed by the server:

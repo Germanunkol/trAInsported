@@ -51,10 +51,10 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 
 		curMap = nil
 		
-		width = 4
-		height = 6
+		width = 10
+		height = 8
 		time = "day"
-		maxTime = 20
+		maxTime = 60*5
 		gameMode = GAME_TYPE_TIME
 		AIs = chosenAIs
 		

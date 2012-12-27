@@ -11,13 +11,24 @@ First, try getting into the tutorials. Once through them, have a look at the Doc
 
 Then, the next step will be to get into the challenges. Once you've mastered them, you're ready to upload your AI and watch it fight others on the online servers!
 
+Setting up your own server:
+------------------------------
+You can start your own dedicated server (see the section "Command Line Options" below). 
+This server will automatically start running matches. You can watch these matches by starting the game again, without the server option. Start with **-ip localhost** to connect to the server running on your PC.
+
 Command Line Options:
 ------------------------------
 Make sure to add these at the end, __after__ the folder or .love file. Otherwise love won't know to run the game.
+Example:
+```bash
+/path/to/love /path/to/game --server -p 4242
+C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
+```
 - Dedicated Server: **--server** or **--dedicated** or **-D**
 - [Server] Time between two matches on Server: **-t TIME** (TIME in seconds, minimum 10)
 - [Client] IP of server to connect to: **-ip ###.###.###.###** (Use localhost to connect to server on the same machine.)
-- [Client and Server] Port to use -> must be the same on client and server! **-p PORTNUMBER**
+- [Client and Server] Port to use -> must be the same on client and server! **-p PORTNUMBER** (Default port is 5556.)
+- [Client and Server] Needed on Windows if you want a console: **--console**
 Note that you'll need to edit the IP address of the client to make sure your client will find the server and watch its matches.
 
 Uninstalling:

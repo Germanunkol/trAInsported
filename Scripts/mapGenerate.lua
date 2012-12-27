@@ -4,6 +4,7 @@ package.path = "Scripts/?.lua;" .. package.path
 
 require("mapUtils")
 require("TSerial")
+require("misc")
 
 width = thisThread:demand("width")
 height = thisThread:demand("height")
@@ -42,7 +43,9 @@ end
 
 if not tutorialMap then
 
-	thisThread:set("status", "rails")
+	--thisThread:set("status", "rails")
+	
+	threadSendStatus( thisThread,"rails")
 	thisThread:set("percentage", 10)
 	generateRailRectangles()
 	thisThread:set("percentage", 20)
@@ -60,11 +63,15 @@ thisThread:set("percentage", 50)
 
 
 if not tutorialMap then
-	thisThread:set("status", "houses")
+	--thisThread:set("status", "houses")
+	
+	threadSendStatus( thisThread,"houses")
 	placeHouses()
 	thisThread:set("percentage", 60)
 
-	thisThread:set("status", "hotspots")
+	--thisThread:set("status", "hotspots")
+	
+	threadSendStatus( thisThread,"hotspots")
 	placeHotspots()
 	thisThread:set("percentage", 70)
 end

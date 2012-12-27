@@ -132,6 +132,8 @@ function makeTimeReadable(time)
 	return str
 end
 
+------------------------------------
+-- Thread utilities:
 function incrementID( num )
 	if num == 99999 then
 		num = 0
@@ -140,6 +142,17 @@ function incrementID( num )
 	end
 	return num
 end
+
+function threadSendStatus( t, status )
+	if not statusNum then
+		statusNum = 0
+	end
+	t:set("status".. statusNum, status)
+	statusNum = incrementID(statusNum)
+end
+
+------------------------------------
+
 
 
 function clamp(x, min, max)

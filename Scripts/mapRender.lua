@@ -6,6 +6,7 @@ require("love.image")
 require("love.filesystem")
 require("TSerial")
 require("imageManipulation")
+require("misc")
 curMap = TSerial.unpack(thisThread:demand("curMap"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 TILE_SIZE = thisThread:demand("TILE_SIZE")
@@ -157,7 +158,8 @@ function updatePercentage()
 	thisThread:set("percentage", renderingPercentage)
 end
 
-thisThread:set("status", "ground")
+--thisThread:set("status", "ground")
+threadSendStatus( thisThread,"ground")
 
 if curMap then
 	local renderingPercentage = 0
@@ -200,7 +202,8 @@ if curMap then
 		end
 	end
 	
-	thisThread:set("status", "houses and rails")
+	--thisThread:set("status", "houses and rails")
+	threadSendStatus( thisThread,"houses and rails")
 	
 	local houseType = 0
 	for i = 0,curMap.width+1,1 do
@@ -252,7 +255,8 @@ if curMap then
 	end
 	
 	if not NO_TREES then
-		thisThread:set("status", "bushes")
+		--thisThread:set("status", "bushes")
+		threadSendStatus( thisThread,"bushes")
 
 		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
 			for j = 0,curMap.height+1,1 do
@@ -270,7 +274,9 @@ if curMap then
 			end
 		end
 	
-		thisThread:set("status", "trees")
+--		thisThread:set("status", "trees")
+		
+		threadSendStatus( thisThread,"trees")
 	
 		local treetype = 0
 		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc

@@ -279,11 +279,20 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
 		
+		mapGenerateStatusNum = 0
+		
 	else
 		percent = mapGenerateThread:get("percentage")
 		if percent and loadingScreen then
 			loadingScreen.percentage("Generating Map", percent)
 		end
+		
+		status = mapGenerateThread:get("status" .. mapGenerateStatusNum)
+		if status and loadingScreen then
+			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
+			loadingScreen.addSubSection("Generating Map", status)
+		end
+		
 		status = mapGenerateThread:get("status")
 		if status == "done" then
 			print("Generating done!")
@@ -307,8 +316,8 @@ function map.generate(width, height, seed, tutorialMap)
 			end
 			
 			return curMap
-		elseif status and loadingScreen then
-			loadingScreen.addSubSection("Generating Map", status)
+--		elseif status and loadingScreen then
+--			loadingScreen.addSubSection("Generating Map", status)
 		end
 	end
 end
@@ -1143,6 +1152,9 @@ function map.render(map)
 		mapRenderThread:set("curMap", TSerial.pack( map ) )
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
+		
+		mapRenderThreadStatusNum = 0
+		
 		if tutorial and tutorial.noTrees then
 			mapRenderThread:set("NO_TREES", true)
 		end
@@ -1151,6 +1163,12 @@ function map.render(map)
 		percent = mapRenderThread:get("percentage")
 		if percent then
 			loadingScreen.percentage("Rendering Map", percent)
+		end
+		
+		status = mapRenderThread:get("status" .. mapRenderThreadStatusNum)
+		if status then
+			mapRenderThreadStatusNum = incrementID(mapRenderThreadStatusNum)
+			loadingScreen.addSubSection("Rendering Map", status)
 		end
 		
 		status = mapRenderThread:get("status")
@@ -1174,9 +1192,8 @@ function map.render(map)
 			mapRenderThread = nil
 			
 			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
-		elseif status then
-			loadingScreen.addSubSection("Rendering Map", status)
 		end
+		
 	end
 end
 

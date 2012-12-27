@@ -190,6 +190,21 @@ function passenger.boardTrain(train, name)		-- try to board the train
 					stats.passengersPickedUp( train.aiID, train.ID )
 					ai.passengerBoarded(train, name)
 			
+					if DEDICATED then
+						if train.stop == 1 then
+							sendStr = "TRAIN_STOP:"
+							sendStr = sendStr .. train.aiID .. ","
+							sendStr = sendStr .. train.name .. ","
+							sendStr = sendStr .. train.stop .. ","
+							sendMapUpdate(sendStr)
+						end
+						sendStr = "P_PICKUP:"
+						sendStr = sendStr .. train.aiID .. ","
+						sendStr = sendStr .. train.name .. ","
+						sendStr = sendStr .. p.name .. ","
+						sendMapUpdate(sendStr)
+					end
+			
 					if tutorial and tutorial.passengerPickupEvent then
 						tutorial.passengerPickupEvent()
 					end
@@ -240,6 +255,26 @@ function passenger.leaveTrain(aiID)
 				if tutorial and tutorial.passengerDropoffWronglyEvent then
 					tutorial.passengerDropoffWronglyEvent()
 				end
+			end
+			
+			if DEDICATED then
+				if tr.stop == 1 then
+					sendStr = "TRAIN_STOP:"
+					sendStr = sendStr .. tr.aiID .. ","
+					sendStr = sendStr .. tr.name .. ","
+					sendStr = sendStr .. tr.stop .. ","
+					sendMapUpdate(sendStr)
+				end
+				sendStr = "P_DROPOFF:"
+				sendStr = sendStr .. tr.aiID .. ","
+				sendStr = sendStr .. tr.name .. ","
+				sendStr = sendStr .. tr.curPassenger.name .. ","
+				sendStr = sendStr .. tr.curPassenger.tileX .. ","
+				sendStr = sendStr .. tr.curPassenger.tileY .. ","
+				if tr.curPassenger.reachedDestination == true then
+					sendStr = sendStr .. "true,"
+				end
+				sendMapUpdate(sendStr)
 			end
 			
 			tr.curPassenger = nil

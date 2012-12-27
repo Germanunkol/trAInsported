@@ -130,6 +130,7 @@ function runUpdate(event, t1, t2)
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
 		
+		stats.clearWindows()
 		
 		GAME_TYPE = tonumber(tbl[2])
 		if GAME_TYPE == GAME_TYPE_TIME then
@@ -404,12 +405,13 @@ function runUpdate(event, t1, t2)
 			end
 		end
 		return
-	elseif event:find("END_ROUND:") == 1 then		-- created new Passenger
-		s,e = event:find("END_ROUND:")
-		print("END ROUND UPDATE!")
+		--stats.generateStatWindows()
+	elseif event:find("NEW_STAT:") == 1 then
+		s,e = event:find("NEW_STAT:")
+		stats.addStatWindow(event:sub(e+1,#event))
+	elseif event:find("END_ROUND:") == 1 then		-- MUST be last packet to send/receive!
 		roundEnded = true
 		stats.print()
-		stats.generateStatWindows()
 	end
 end
 
@@ -420,7 +422,18 @@ function simulation.update(dt)
 			break
 		end
 		if simulationMap and simulationMap.time >= packetList[i].time then
+		
 			runUpdate(packetList[i].event, packetList[i].time, simulationMap.time)
+			
+			if packetList[i].event:find("END_ROUND:") == 1 then		--last packet? make sure to run all other remaining packets!!
+				for k = 1,#packetList do
+					print(packetList[k].event)
+					runUpdate(packetList[k].event, packetList[k].time, simulationMap.time)
+				end
+				packetList = {}
+				return
+			end
+			
 			packetList[i] = nil
 			for j = i, #packetList do
 				packetList[j] = packetList[j+1]

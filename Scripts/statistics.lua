@@ -193,6 +193,7 @@ end
 
 local numStats = 0
 local statWindows = {}
+
 --	ai:
 --		most passengers picked up
 --	trains:
@@ -205,23 +206,93 @@ local statWindows = {}
 --		longest wait
 --		most dropped off (?)
 
-function addStatWindow(newStat)
-	print("adding....")
+function statistics.clearWindows()
+	statWindows = {}
+end
+
+function statistics.addStatWindow(newStat)
 	for i=1,numStats+1 do
 		if statWindows[i] == nil then
-			print("stat window added!")
-			newStat.displayTime = i-1
-			numVertical = math.floor(love.graphics.getHeight()/newStat.bg:getHeight())
+			if type(newStat) == "table" then
+				statWindows[i] = newStat
+			else
+				local tbl = seperateStrings(newStat)
+				printTable(tbl)
+				TITLE = tbl[1]
+				TXT = tbl[2]
+				ID = tonumber(tbl[3])
+				statWindows[i] = {}
+				statWindows[i].icons = {}
+				statWindows[i].title = TITLE
+				statWindows[i].text = TXT
+				if ID then
+					if TITLE == "Hospitality" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Fleetus Maximus" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=24, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Earned Your Pay" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Socialist" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Get lost..." then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+						statWindows[i].bg = statBoxNegative
+					end
+					if TITLE == "Capitalist" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+	
+					--trains:
+					if TITLE == "Busy little Bee!" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Home sweet Home" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
+						statWindows[i].bg = statBoxPositive
+					end
+					if TITLE == "Why don't you walk?" then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
+						statWindows[i].bg = statBoxNegative
+					end
+					if TITLE == "Line is busy..." then
+						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
+						table.insert(statWindows[i].icons, {img=IMAGE_STATS_TIME,x=50, y=20})
+						statWindows[i].bg = statBoxNegative
+					end
+				end
+			end
+			
+			statWindows[i].displayTime = i-1
+			numVertical = math.floor(love.graphics.getHeight()/statWindows[i].bg:getHeight())
 			yIndex = i-1
 			xIndex = 0
 			while yIndex > numVertical do
 				yIndex = yIndex - numVertical
 				xIndex = xIndex + 1
 			end
+		
+			statWindows[i].x = xIndex*statWindows[i].bg:getWidth()
+			statWindows[i].y = yIndex*statWindows[i].bg:getHeight()
 			
-			newStat.x = xIndex*newStat.bg:getWidth()
-			newStat.y = yIndex*newStat.bg:getHeight()
-			statWindows[i] = newStat
 			numStats = numStats + 1
 			break
 		end
@@ -229,10 +300,8 @@ function addStatWindow(newStat)
 end
 
 function statistics.generateStatWindows()
-
-	if DEDICATED then return end
 	
-	statWindows = {}
+	statistics.clearWindows()
 	allPossibleStats = {}
 	numStats = 0
 	-- ai: most passengers picked up:
@@ -365,7 +434,7 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons, ID=mostPickedUpID})
 	end
 	if mostTrainsID then
 		if mostTrains ~= 1 then
@@ -376,7 +445,7 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons, ID=mostTrainsID})
 	end
 	if mostTransportedID then
 		icons = {}
@@ -387,7 +456,7 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. aiStats[mostTransportedID].name .. " brought " .. mostTransported .. " passenger to her/his destinations."
 		end
-		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons, ID=mostTransportedID})
 	end
 	if mostNormalTransportedID then
 		icons = {}
@@ -398,7 +467,7 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. aiStats[mostNormalTransportedID].name .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
 		end
-		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons, ID=mostNormalTransportedID})
 	end
 	if mostWrongDestinationID then
 		icons = {}
@@ -409,14 +478,14 @@ function statistics.generateStatWindows()
 		else
 			text = "Player " .. aiStats[mostWrongDestinationID].name .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
 		end
-		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons})
+		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons, ID=mostWrongDestinationID})
 	end
 	if mostMoneyID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
 		text = "Player " .. aiStats[mostMoneyID].name .. " earned " .. mostMoney .. " credits."
-		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons, ID=mostMoneyID})
 	end
 	
 	--trains:
@@ -425,14 +494,14 @@ function statistics.generateStatWindows()
 		table.insert(icons, {img=train.getTrainImage(trMostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 		text = trMostPickedUpName .. " [" .. aiStats[trMostPickedUpID].name .. "] " .. " picked up more passengers than any other train."
-		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons, ID=trMostPickedUpID})
 	end
 	if trMostTransportedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trMostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		text = trMostTransportedName .. " [" .. aiStats[trMostTransportedID].name .. "] " .. " brought more passengers to their destination than any other train."
-		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons})
+		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons, ID=trMostTransportedID})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
@@ -443,14 +512,14 @@ function statistics.generateStatWindows()
 		else
 			text = trMostWrongDestinationName .. " [" .. aiStats[trMostWrongDestinationID].name .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
 		end
-		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons})
+		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons, ID=trMostWrongDestinationID})
 	end
 	if trLongestBlockedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
 		text = trLongestBlockedName .. " [" .. aiStats[trLongestBlockedID].name .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
-		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons})
+		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons, ID=trLongestBlockedID})
 	end
 	
 	for k, v in pairs(allPossibleStats) do
@@ -461,19 +530,20 @@ function statistics.generateStatWindows()
 	print(#allPossibleStats)
 	randomizeTable(allPossibleStats)
 
-print("SHOWING STATS!", #allPossibleStats)
 	i = 0
 	for k, v in pairs(allPossibleStats) do
 		if i >= 4 then
 			break
 		end
-		--if DEDICATED then
-			--sendStr = "NEW_STAT:"
-			--sendStr = sendStr .. 
-			--sendMapUpdate(sendStr)
-		--else
-			addStatWindow(v)
-		--end
+		if DEDICATED then
+			sendStr = "NEW_STAT:"
+			sendStr = sendStr .. v.title .. ","
+			sendStr = sendStr .. v.text .. ","
+			sendStr = sendStr .. (v.ID or "nil") .. ","
+			sendMapUpdate(sendStr)
+		else
+			statistics.addStatWindow(v)
+		end
 		i = i + 1
 	end
 end

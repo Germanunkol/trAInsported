@@ -1,5 +1,15 @@
+---------------------------------------------------------------------
+-- trAInsported main script.
+-- Run using /path/to/love /path/to/this/folder
+-- Add '--server' command line option to run in dedicated server mode.
+-- Created by Germanunkol (http://www.indiedb.com/members/Germanunkol)
+----------------------------------------------------------------------
+
+
+-- Add path to all other Scripts:
 package.path = "Scripts/?.lua;" .. package.path
 
+-- Add Scripts used by both client and server:
 require("globals")
 require("misc")
 passenger = require("passenger")
@@ -10,7 +20,8 @@ ai = require("ai")
 require("TSerial")
 pSpeach = require("passengerSpeach")
 
-
+-- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
+-- Handle these here:
 if INVALID_PORT then
 	print("Invalid port number given.")
 	print("Usage: -p PORTNUMBER")
@@ -31,6 +42,8 @@ else
 end
 
 
+
+
 if DEDICATED then
 	
 	------------------------------------------
@@ -44,6 +57,9 @@ if DEDICATED then
 		print("Usage: -t TIME")
 		love.event.quit()
 	else
+		if TIME_BETWEEN_MATCHES_GIVEN then
+			TIME_BETWEEN_MATCHES = TIME_BETWEEN_MATCHES_GIVEN
+		end
 		print("Using match time " .. TIME_BETWEEN_MATCHES .. " seconds.")
 	end
 
@@ -54,13 +70,12 @@ if DEDICATED then
 	-------------------------------
 
 	require("server")	-- main Server module. Handles server's communication with the client.
+	
 	connectionThreadNum = 0
 	connection = {}
 	moveTime = 0
 	timeUntilNextMatch = 0
-	
 	timeFactor = 3
-
 
 	-------------------------------
 	-- main function, runs at startup:
@@ -171,6 +186,9 @@ else
 	
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
 
+
+	-------------------------------
+	-- Main function, runs at startup:
 	function love.load(args)
 		numTrains = 0
 		DEBUG_OVERLAY = true
@@ -207,13 +225,9 @@ else
 		menu.init()
 	end
 
-
+	-------------------------------
+	-- Runs every frame:
 	function love.update(dt)
-		-- ai.run()
-		-- time = time + dt
-	
-		--mapMouseX, mapMouseY = coordinatesToMap(love.mouse.getPosition())
-			
 			
 		if initialising then
 			button.init()
@@ -353,6 +367,8 @@ else
 	
 	end
 
+	-------------------------------
+	-- Runs every frame, displays everything on the screen:
 	function love.draw()
 
 		if initialising then		--only runs once at startup, until all images are rendered.
@@ -423,6 +439,9 @@ else
 	
 end
 
+
+-------------------------------
+-- Called when closing the game:
 function love.quit()
 	print("Closing.")
 end

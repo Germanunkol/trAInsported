@@ -39,8 +39,8 @@ for k, a in pairs(arg) do
 			if arg[k+1] then
 				t = tonumber(arg[k+1])
 				if t > 10 then
-					TIME_BETWEEN_MATCHES = t
-					INVALID_IP = false
+					TIME_BETWEEN_MATCHES_GIVEN = t
+					INVALID_TIME = false
 				end
 			end
 		end

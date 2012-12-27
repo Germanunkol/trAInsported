@@ -1,10 +1,13 @@
-trAInsported
+**trAInsported**
 =====================
-This is a list of all functions that your AI should use. The first part lists the events which you should define. If you define them correctly, then the game will call them if certain events happen. For example, if you define "function ai.init()" then this function will be called when the round starts. When you define "function ai.chooseDirection()" then this function will be called when a train comes to a junction and wants to know which way to go.  
-The second part lists functions that you can call in your code, like "random", "getMoney" and "print".
+- - - - - - - - - - -
+This is a list of all functions that your AI should use. The first part lists the events which you should define. If you define them correctly, then the game will call them if certain events happen. For example, if you define "function ai.init()" then this function will be called when the round starts. Or, if your script has a function "function ai.chooseDirection()" then this function will be called whenever a train comes to a junction and wants to know which way to go.  
+The second part of this document lists functions that you can call in your code, like "random", "getMoney" and "print".
 
+Many of these are covered in the tutorials, so make sure to play them!
 
-#Callback Events#
+Callback Events
+--------------------
 
 ###function ai.init(map, money)###
 This event is called, at the beginning of the round. The current map is passed to it, so you can analize it, get it ready for pathfinding and search it for important junctions, Hotspots, shortest paths etc.  
@@ -237,7 +240,8 @@ Note: This function is NOT called when one of your own trains take a passenger a
 		end
 
 
-#Available Functions#
+Available Functions
+--------------------
 You can define your own functions inside your code.  
 This is a list of functions that are already specified and which you can call at any time. Be careful not to overuse them - they all take some time to compute and your code will be aborted if it takes too long!
 

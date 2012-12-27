@@ -22,6 +22,8 @@ Make sure to add these at the end, __after__ the folder or .love file. Otherwise
 Example:
 ```bash
 /path/to/love /path/to/game --server -p 4242
+```
+```dos
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```
 - Dedicated Server: **--server** or **--dedicated** or **-D**

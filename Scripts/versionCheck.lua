@@ -19,8 +19,8 @@ function versionCheck.start()
 			if s2 then
 				v = tmp:sub(1, s2-1)
 				print("Config file is version:",  v)
-				print("Game version:", version)
-				if v == version then
+				print("Game version:", VERSION)
+				if v == VERSION then
 					versionMatch = true
 					print("Versions match!")
 				end
@@ -30,7 +30,7 @@ function versionCheck.start()
 	
 	if not versionMatch then
 		local data = ""
-		data = data .. "version = " .. version .. "\r\n"
+		data = data .. "version = " .. VERSION .. "\r\n"
 		love.filesystem.write( configFile, data )
 	end
 end

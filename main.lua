@@ -157,7 +157,6 @@ else
 
 	function love.load(args)
 		numTrains = 0
-		version = "0.11"
 		DEBUG_OVERLAY = true
 
 		time = 0

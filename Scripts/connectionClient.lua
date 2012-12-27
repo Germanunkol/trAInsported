@@ -53,7 +53,6 @@ function connection.handleConnection()
 	
 	str = connectionThread:get("newMap")
 	if str then
-		print("old", curMap, map.startupProcess())
 		if not curMap and not map.startupProcess() then
 			mapImage = nil
 		end

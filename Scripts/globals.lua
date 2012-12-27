@@ -1,4 +1,6 @@
 
+VERSION = "0.11"
+
 -- connections:
 
 FALLBACK_SERVER_IP = "127.0.0.1"

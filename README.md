@@ -20,9 +20,11 @@ Command Line Options:
 ------------------------------
 Make sure to add these at the end, __after__ the folder or .love file. Otherwise love won't know to run the game.
 Example:
+**Linux:**
 ```bash
 /path/to/love /path/to/game --server -p 4242
 ```
+**Win**
 ```dos
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```

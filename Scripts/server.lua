@@ -40,6 +40,7 @@ end
 
 function sendRoundInfo()
 	sendStr = "ROUND_DETAILS:"
+	sendStr = sendStr .. VERSION .. ","
 	sendStr = sendStr .. GAME_TYPE .. ","
 	if GAME_TYPE == GAME_TYPE_TIME then
 		sendStr = sendStr .. ROUND_TIME .. ","

@@ -113,17 +113,29 @@ function simulation.addUpdate(text)
 	time = tonumber(text:sub(1, s-1))
 	text = text:sub(e+1, #text)
 	addPacket(text, time)
+	
+	
+	if text:find("ROUND_DETAILS:") == 1 then
+		s,e = text:find("ROUND_DETAILS:")
+		local tbl = seperateStrings(text:sub(e+1,#text))
+		if tbl[1] ~= VERSION then
+			statusMsg.new("Error: Could not match versions. Your version: " .. VERSION .. ", server's version: " .. tbl[1], true)
+			--simulation.stop()
+		end
+	end
 end
 
 function runUpdate(event, t1, t2)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
-		GAME_TYPE = tonumber(tbl[1])
+		
+		
+		GAME_TYPE = tonumber(tbl[2])
 		if GAME_TYPE == GAME_TYPE_TIME then
-			ROUND_TIME = tonumber(tbl[2])
+			ROUND_TIME = tonumber(tbl[3])
 		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-			MAX_NUM_PASSENGERS = tonumber(tbl[2])
+			MAX_NUM_PASSENGERS = tonumber(tbl[3])
 		end
 	elseif event:find("NEW_AI:") == 1 then
 		s,e = event:find("NEW_AI:")

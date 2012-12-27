@@ -145,6 +145,13 @@ function ai.init()
 			print("\tNo ai.init() function found for this AI")
 		end
 		crInit = nil
+		
+		if DEDICATED then
+			sendStr = "NEW_AI:"
+			sendStr = sendStr .. aiID .. ","
+			sendStr = sendStr .. aiList[aiID].name .. ","
+			sendMapUpdate(sendStr)
+		end
 	end
 end
 

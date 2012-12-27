@@ -2,11 +2,13 @@ local statistics = {}
 
 local aiStats = {}
 
-local IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
-local IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
-local IMAGE_STATS_DROPOFF_WRONG = love.graphics.newImage("Images/StatsIconDropOffWrong.png")
-local IMAGE_STATS_CASH = love.graphics.newImage("Images/StatsIconCash.png")
-local IMAGE_STATS_TIME = love.graphics.newImage("Images/StatsIconTime.png")
+if not DEDICATED then
+	IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
+	IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
+	IMAGE_STATS_DROPOFF_WRONG = love.graphics.newImage("Images/StatsIconDropOffWrong.png")
+	IMAGE_STATS_CASH = love.graphics.newImage("Images/StatsIconCash.png")
+	IMAGE_STATS_TIME = love.graphics.newImage("Images/StatsIconTime.png")
+end
 
 local statBoxPositive = nil
 local statBoxNegative = nil
@@ -14,7 +16,9 @@ local statBoxNegative = nil
 function statistics.setAIName(aiID, name)
 	if aiStats[aiID] then
 		aiStats[aiID].name = name
-		statistics.setAIColour(aiID, getPlayerColour(aiID))
+		if not DEDICATED then
+			statistics.setAIColour(aiID, getPlayerColour(aiID))
+		end
 	end
 end
 
@@ -202,8 +206,10 @@ local statWindows = {}
 --		most dropped off (?)
 
 function addStatWindow(newStat)
+	print("adding....")
 	for i=1,numStats+1 do
 		if statWindows[i] == nil then
+			print("stat window added!")
 			newStat.displayTime = i-1
 			numVertical = math.floor(love.graphics.getHeight()/newStat.bg:getHeight())
 			yIndex = i-1
@@ -223,6 +229,9 @@ function addStatWindow(newStat)
 end
 
 function statistics.generateStatWindows()
+
+	if DEDICATED then return end
+	
 	statWindows = {}
 	allPossibleStats = {}
 	numStats = 0
@@ -263,6 +272,7 @@ function statistics.generateStatWindows()
 	local trLongestBlockedName = nil
 	
 	for i = 1,#aiStats do
+	
 		if aiStats[i].pPickedUp and aiStats[i].pPickedUp >= mostPickedUp then
 			mostPickedUpID = i
 			if mostPickedUp == aiStats[i].pPickedUp then
@@ -448,14 +458,22 @@ function statistics.generateStatWindows()
 	end
 	
 	--randomize:
+	print(#allPossibleStats)
 	randomizeTable(allPossibleStats)
-	
+
+print("SHOWING STATS!", #allPossibleStats)
 	i = 0
 	for k, v in pairs(allPossibleStats) do
 		if i >= 4 then
 			break
 		end
-		addStatWindow(v)
+		--if DEDICATED then
+			--sendStr = "NEW_STAT:"
+			--sendStr = sendStr .. 
+			--sendMapUpdate(sendStr)
+		--else
+			addStatWindow(v)
+		--end
 		i = i + 1
 	end
 end
@@ -566,9 +584,11 @@ function statistics.start( ais )
 		aiStats[i].green = 255
 		aiStats[i].blue = 255
 	end
-	displayStatusBoxWidth = statBoxStatus:getWidth()
-	displayStatusX = love.graphics.getWidth()/2 - #aiStats/2*displayStatusBoxWidth
-	displayStatusY = love.graphics.getHeight() - statBoxStatus:getHeight() - 50
+	if not DEDICATED then
+		displayStatusBoxWidth = statBoxStatus:getWidth()
+		displayStatusX = love.graphics.getWidth()/2 - #aiStats/2*displayStatusBoxWidth
+		displayStatusY = love.graphics.getHeight() - statBoxStatus:getHeight() - 50
+	end
 end
 
 function statistics.init()

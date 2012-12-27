@@ -78,9 +78,13 @@ function simulation.runMap()
 	stats.start(4)
 	clouds.restart()
 	roundEnded = false
+	console.flush()
 end
 
 function simulation.stop()
+
+	connection.closeConnection()
+	
 	mapGenerateThread = nil
 	mapRenderThread = nil
 	mapImage = nil
@@ -101,7 +105,6 @@ function addPacket(text, time)
 end
 
 function simulation.addUpdate(text)
-	print("NEW UPDATE:", text)
 	s, e = text:find("|")
 	if not s then
 		print("ERROR: No time stamp found for packet!")
@@ -113,7 +116,6 @@ function simulation.addUpdate(text)
 end
 
 function runUpdate(event, t1, t2)
-	print("Running: " .. event)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
@@ -302,6 +304,7 @@ function runUpdate(event, t1, t2)
 		y = tbl[9]
 		xEnd = tbl[10]
 		yEnd = tbl[11]
+		speach = tbl[12]
 		if name and tileX and tileY then
 			tileX = tonumber(tileX)
 			tileY = tonumber(tileY)
@@ -313,9 +316,9 @@ function runUpdate(event, t1, t2)
 			yEnd = tonumber(yEnd)
 			vipTime = tonumber(vipTime)
 			if vip == "true" then 
-				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime}
+				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, speach=speach}
 			else
-				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY}
+				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, speach=speach}
 			end
 			table.insert(passengerList, p)
 			stats.newPassenger(p)
@@ -391,7 +394,7 @@ function runUpdate(event, t1, t2)
 		return
 	elseif event:find("END_ROUND:") == 1 then		-- created new Passenger
 		s,e = event:find("END_ROUND:")
-		
+		print("END ROUND UPDATE!")
 		roundEnded = true
 		stats.print()
 		stats.generateStatWindows()
@@ -430,11 +433,11 @@ function simulation.show(dt)
 	
 		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 		love.graphics.rotate(CAM_ANGLE)
-		love.graphics.setColor(30,10,5, 150)
 		--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 		--love.graphics.setColor(0,0,0, 100)
 	
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-30, -TILE_SIZE*(simulationMap.height+2)/2+30)
+		love.graphics.setColor(30,10,5, 150)
+		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-20, -TILE_SIZE*(simulationMap.height+2)/2+35)
 		
 		
 		--[[love.graphics.setColor(30, 10, 0, 250)
@@ -510,12 +513,17 @@ function simulation.trainShowAll()
 				end
 			end
 			if DEBUG_OVERLAY then
-				for i = 1,#tr.path do
-					brightness = 1-(#tr.path-i)/#tr.path
-					love.graphics.setColor(255,0,0,255)
-					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, brightness*4+3)
-				end
 			
+				for i = 1,#tr.path do
+					--brightness = 1-(#tr.path-i)/#tr.path
+					love.graphics.setColor(255,0,0,255)
+					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, 3)
+					if i > 1 then
+						love.graphics.setColor(255,150,150,255)
+						love.graphics.line(tr.tileX*TILE_SIZE+tr.path[i-1].x,  tr.tileY*TILE_SIZE+tr.path[i-1].y, tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y)
+					end
+				end
+		
 				love.graphics.setColor(255,255,0,255)
 				love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
 				love.graphics.setColor(128,255,0,255)

@@ -20,49 +20,6 @@ end
 
 local trainImagesCreated = false
 
-function startMatch( width, height, time, maxTime, gameMode, AIs )
-	--[[if mapRenderThread or mapGenerateThread then
-		print("Already generating new map!")
-		return
-	end]]--
-	
-	ROUND_TIME = math.floor(maxTime)
-	GAME_TYPE = gameMode
-
-	loadingScreen.reset()
-	loadingScreen.addSection("New Map")
-	loadingScreen.addSubSection("New Map", "Size: " .. width .. "x" .. height)
-	loadingScreen.addSubSection("New Map", "Time: Day")
-	if GAME_TYPE == GAME_TYPE_TIME then
-		loadingScreen.addSubSection("New Map", "Mode: Round Time (" .. ROUND_TIME .. "s)")
-	elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-		loadingScreen.addSubSection("New Map", "Mode: Transport enough Passengers")
-	end
-	
-	ai.restart()	-- make sure aiList is reset!
-	stats.start( #AIs )
-	train.init()
-	train.resetImages()
-	
-	print("found AI:", #AIs)
-	for i = 1, #AIs do
-		ok, msg = pcall(ai.new, "AI/" .. AIs[i])
-		if not ok then
-			print("Err: " .. msg)
-		else
-			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
-			train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
-		end
-	end
-	
-	map.new(width, height, math.random(1000))
-	
-	menu.exitOnly()
-end
-
-
-
-
 function randomMatch()
 	
 	simulation.stop()
@@ -90,7 +47,7 @@ function randomMatch()
 	
 	local time = width*height*10 + math.random(width*height*10)
 	
-	startMatch(width, height, 1, time, gameMode, chosenAIs)
+	setupMatch(width, height, 1, time, gameMode, chosenAIs)
 end
 
 menuButtons = {}
@@ -230,7 +187,7 @@ function normalMatch()
 	
 	maxTime = chosenWidth*chosenHeight*10 + math.random(chosenWidth*chosenHeight*10)
 	
-	startMatch( chosenWidth, chosenHeight, chosenTime, maxTime, chosenMode, AIs )
+	setupMatch( chosenWidth, chosenHeight, chosenTime, maxTime, chosenMode, AIs )
 end
 
 

@@ -23,7 +23,7 @@ function connection.startClient(ip, port)
 	if connectionThread then
 		connectionThread:set("quit", true)
 	end
-	connectionThread = love.thread.newThread("connectionThread" .. connectionsRunning, "Scripts/connectionThread.lua")
+	connectionThread = love.thread.newThread("connectionThread" .. connectionsRunning, "Scripts/connectionThreadClient.lua")
 	connectionThread:start()
 	connectionsRunning = connectionsRunning + 1 
 	if connectionThread then
@@ -44,10 +44,7 @@ function connection.handleConnection()
 	while lineFound do
 		str = connectionThread:get("print" .. printLineNumber)
 		if str then
-			printLineNumber = printLineNumber + 1
-			if printLineNumber == 99999 then
-				printLineNumber = 0
-			end
+			printLineNumber = incrementID(printLineNumber)
 			print("CONNECTION:", str)
 		else
 			lineFound = false
@@ -93,6 +90,13 @@ function connection.handleConnection()
 	err = connectionThread:get("error")
 	if err then
 		print("CONNECTION ERROR:", err)
+	end
+end
+
+function connection.closeConnection()
+	if connectionThread then
+	 	connectionThread:set("closeConnection", true)
+	 	connectionThread = nil
 	end
 end
 

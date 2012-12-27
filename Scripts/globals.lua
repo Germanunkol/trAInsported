@@ -4,8 +4,38 @@
 MAIN_SERVER_IP = "127.0.0.1"
 FALLBACK_MAIN_SERVER_IP = "192.168.178.4"
 PORT = 5556
-
 --
+
+if not DEDICATED then
+
+	PLAYERCOLOUR1 = {r=255,g=50,b=50}
+	PLAYERCOLOUR2 = {r=64,g=64,b=250}
+	PLAYERCOLOUR3 = {r=255,g=200,b=64}
+	PLAYERCOLOUR4 = {r=0,g=255,b=0}
+
+	PLAYERCOLOUR1_CONSOLE = {r=255,g=200,b=200}
+	PLAYERCOLOUR2_CONSOLE = {r=200,g=200,b=255}
+	PLAYERCOLOUR3_CONSOLE = {r=255,g=220,b=100}
+	PLAYERCOLOUR4_CONSOLE = {r=200,g=255,b=200}
+	
+	FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 19 )
+	FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
+	FONT_STANDARD = love.graphics.newFont("UbuntuFont/Ubuntu-B.ttf", 15 )
+	FONT_STAT_HEADING = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf",18 )
+	FONT_STAT_MSGBOX = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf",17 )
+	FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
+	FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 14)
+	FONT_COORDINATES = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 25 )
+
+	FONT_CODE_PLAIN = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf", 17 )
+	FONT_CODE_BOLD = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 17 )
+	FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-LI.ttf", 17 )
+
+	LOGO_IMG = love.graphics.newImage("Images/Logo.png")
+end
+
+timeFactor = 1
+TILE_SIZE = 128
 
 STARTUP_MONEY = 25
 

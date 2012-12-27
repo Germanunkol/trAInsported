@@ -7,21 +7,29 @@ passengerPositions = {}
 local numPassengersTotal = 1
 numPassengersDroppedOff = 0
 
-passengerImage = love.graphics.newImage("Images/Passenger.png")
-passengerVIPImage = love.graphics.newImage("Images/VIP.png")
-passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
+if not DEDICATED then
+	passengerImage = love.graphics.newImage("Images/Passenger.png")
+	passengerVIPImage = love.graphics.newImage("Images/VIP.png")
+	passengerVIPClock = love.graphics.newImage("Images/Timebar.png")
+	
+	PASSENGER_IMAGE_WIDTH = passengerImage:getWidth()
+	PASSENGER_IMAGE_HEIGHT = passengerImage:getHeight()
+else
+	PASSENGER_IMAGE_WIDTH = 20
+	PASSENGER_IMAGE_HEIGHT = 19
+end
 
 function randPassengerPos()
 	local x, y = 0,0
 	local randPos = math.random(4)
 	if randPos == 1 then
-		x, y = passengerImage:getWidth(), passengerImage:getHeight()
+		x, y = PASSENGER_IMAGE_WIDTH, PASSENGER_IMAGE_HEIGHT
 	elseif randPos == 2 then
-		x, y = TILE_SIZE - passengerImage:getWidth(), passengerImage:getHeight()
+		x, y = TILE_SIZE - PASSENGER_IMAGE_WIDTH, PASSENGER_IMAGE_HEIGHT
 	elseif randPos == 3 then
-		x, y = passengerImage:getWidth(), TILE_SIZE - passengerImage:getHeight()
+		x, y = PASSENGER_IMAGE_WIDTH, TILE_SIZE - PASSENGER_IMAGE_HEIGHT
 	elseif randPos == 4 then
-		x, y = TILE_SIZE - passengerImage:getWidth(), TILE_SIZE - passengerImage:getHeight()
+		x, y = TILE_SIZE - PASSENGER_IMAGE_WIDTH, TILE_SIZE - PASSENGER_IMAGE_HEIGHT
 	end
 	x = x + math.sin(os.time()+love.timer.getDelta())*15
 	y = y + math.cos(os.time()+love.timer.getDelta())*15
@@ -102,7 +110,9 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 					passengerList[i].name = passengerList[i].name .. "[VIP]"
 					passengerList[i].markZ = love.timer.getDelta()
 					passengerList[i].vipTime = MAX_VIP_TIME
-					passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
+					if not DEDICATED then
+						passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
+					end
 					local num = math.random(#vipSpeach)
 					if vipSpeach[num] then		-- just to make sure
 						passengerList[i].speach = vipSpeach[num]
@@ -115,12 +125,32 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 				end
 				if not passengerList[i].speach then
 					passengerList[i].speach = " "
-					print("ERROR: no Speach found for passenger " .. passengerList[i].name)
-				else
-					print(passengerList[i].name .. " (" .. passengerList[i].x .. "," .. passengerList[i].y .. ") : '" .. passengerList[i].speach .. "'")
 				end
 				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
+				
+				if DEDICATED then
+					sendStr = "P_NEW:"
+					sendStr = sendStr .. passengerList[i].name .. ","
+					if passengerList[i].vip then
+						sendStr = sendStr .. "true,"
+						sendStr = sendStr .. passengerList[i].vipTime .. ","
+					else
+						sendStr = sendStr .. "false,"
+						sendStr = sendStr .. "0,"
+					end
+					sendStr = sendStr .. passengerList[i].tileX .. ","
+					sendStr = sendStr .. passengerList[i].tileY .. ","
+					sendStr = sendStr .. passengerList[i].destX .. ","
+					sendStr = sendStr .. passengerList[i].destY .. ","
+					sendStr = sendStr .. passengerList[i].x .. ","
+					sendStr = sendStr .. passengerList[i].y .. ","
+					sendStr = sendStr .. passengerList[i].xEnd .. ","
+					sendStr = sendStr .. passengerList[i].yEnd .. ","
+					sendStr = sendStr .. passengerList[i].speach .. ","
+					sendMapUpdate(sendStr)
+				end
+				
 				numPassengersTotal = numPassengersTotal + 1
 				
 				stats.newPassenger(passengerList[i], curMap.roundTime)
@@ -219,9 +249,11 @@ end
 
 function passenger.init( max )
 
-	vipClockImages = {}
-	for i = 1,11,1 do
-		vipClockImages[i] = love.graphics.newQuad( (i-1)*32,0, 32, 32, 352, 32 )
+	if not DEDICATED then
+		vipClockImages = {}
+		for i = 1,11,1 do
+			vipClockImages[i] = love.graphics.newQuad( (i-1)*32,0, 32, 32, 352, 32 )
+		end
 	end
 
 	MAX_NUM_PASSENGERS = max or 0
@@ -239,126 +271,209 @@ function passenger.init( max )
 	end
 end
 
-function passenger.showAll(dt)
-	local x, y = 0,0
-	love.graphics.setColor(255,255,255,255)
-	for k, p in pairs(passengerList) do
-		if p.train then		-- if I'm riding a train
-			if not p.onTrain then	-- getting on
-				if p.train.curSpeed == 0 then
-					d = vecDist(p.x, p.y, p.train.x, p.train.y)
-					dX = (p.train.x-p.x)/d
-					dY = (p.train.y-p.y)/d
+if DEDICATED then
+
+	function passenger.showAll(dt)
+		local x, y = 0,0
+		--love.graphics.setColor(255,255,255,255)
+		for k, p in pairs(passengerList) do
+			if p.train then		-- if I'm riding a train
+				if not p.onTrain then	-- getting on
+					if p.train.curSpeed == 0 then
+						d = vecDist(p.x, p.y, p.train.x, p.train.y)
+						dX = (p.train.x-p.x)/d
+						dY = (p.train.y-p.y)/d
+						p.x = p.x + dX*dt*PASSENGER_SPEED
+						p.y = p.y + dY*dt*PASSENGER_SPEED
+				
+						if d < vecDist(p.x, p.y, p.train.x, p.train.y) then
+							p.onTrain = true
+							p.train.stop = p.train.stop - 1
+							if p.train.stop == 0 then
+								sendStr = "TRAIN_STOP:"
+								sendStr = sendStr .. p.train.aiID .. ","
+								sendStr = sendStr .. p.train.name .. ","
+								sendStr = sendStr .. p.train.stop .. ","
+								sendMapUpdate(sendStr)
+							end
+						end
+					end
+					x = p.x - 10 + p.train.tileX*TILE_SIZE
+					y = p.y - 9.5 + p.train.tileY*TILE_SIZE
+				elseif p.gettingOff and p.train.curSpeed == 0 then
+					d = vecDist(p.x, p.y, p.xEnd, p.yEnd)
+					dX = (p.xEnd-p.x)/d
+					dY = (p.yEnd-p.y)/d
 					p.x = p.x + dX*dt*PASSENGER_SPEED
 					p.y = p.y + dY*dt*PASSENGER_SPEED
-				
-					if d < vecDist(p.x, p.y, p.train.x, p.train.y) then
-						p.onTrain = true
+			
+					x = p.x - 10 + p.train.tileX*TILE_SIZE
+					y = p.y - 9.5 + p.train.tileY*TILE_SIZE
+			
+					if d < vecDist(p.x, p.y, p.xEnd, p.yEnd) then
 						p.train.stop = p.train.stop - 1
-					end
-				end
-				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
-				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
-			elseif p.gettingOff and p.train.curSpeed == 0 then
-				d = vecDist(p.x, p.y, p.xEnd, p.yEnd)
-				dX = (p.xEnd-p.x)/d
-				dY = (p.yEnd-p.y)/d
-				p.x = p.x + dX*dt*PASSENGER_SPEED
-				p.y = p.y + dY*dt*PASSENGER_SPEED
-			
-				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
-				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
-			
-				if d < vecDist(p.x, p.y, p.xEnd, p.yEnd) then
-					p.train.stop = p.train.stop - 1
-					p.onTrain = false
-					p.train = nil
-					p.gettingOff = false
+						if p.train.stop == 0 then
+							sendStr = "TRAIN_STOP:"
+							sendStr = sendStr .. p.train.aiID .. ","
+							sendStr = sendStr .. p.train.name .. ","
+							sendStr = sendStr .. p.train.stop .. ","
+							sendMapUpdate(sendStr)
+						end
 					
-					if p.reachedDestination then
-						passengerList[k] = nil
-					else		-- put them back into the list to make sure they can be picked up again!
-						table.insert( passengerPositions[p.tileX][p.tileY], p )
+						p.onTrain = false
+						p.train = nil
+						p.gettingOff = false
+					
+						if p.reachedDestination then
+							passengerList[k] = nil
+						else		-- put them back into the list to make sure they can be picked up again!
+							table.insert( passengerPositions[p.tileX][p.tileY], p )
+						end
 					end
+				else	-- if I'm riding the train
+					p.x = p.train.x
+					p.y = p.train.y
+					x = p.x - 19 + p.train.tileX*TILE_SIZE
+					y = p.y - 9.5 + p.train.tileY*TILE_SIZE
 				end
-			else	-- if I'm riding the train
-				p.x = p.train.x
-				p.y = p.train.y
-				x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
-				y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+			else	-- if I'm just standing around...
+				x = p.tileX*TILE_SIZE + p.x - 10
+				y = p.tileY*TILE_SIZE + p.y - 9.5
 			end
-		else	-- if I'm just standing around...
-			x = p.tileX*TILE_SIZE + p.x - p.image:getWidth()/2
-			y = p.tileY*TILE_SIZE + p.y - p.image:getHeight()/2
-		end
 		
-		if p.vip then
-			love.graphics.setColor(255,255,255,200)
-			p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
-			num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
-			love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
-			if p.vipTime < -15 then
-				p.vip = false
+			if p.vip then
+				p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
+				--num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
+				--love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
+				if p.vipTime < -15 then
+					p.vip = false
+				end
 			end
+			
 		end
+	end
+else
+	function passenger.showAll(dt)
+		local x, y = 0,0
+		love.graphics.setColor(255,255,255,255)
+		for k, p in pairs(passengerList) do
+			if p.train then		-- if I'm riding a train
+				if not p.onTrain then	-- getting on
+					if p.train.curSpeed == 0 then
+						d = vecDist(p.x, p.y, p.train.x, p.train.y)
+						dX = (p.train.x-p.x)/d
+						dY = (p.train.y-p.y)/d
+						p.x = p.x + dX*dt*PASSENGER_SPEED
+						p.y = p.y + dY*dt*PASSENGER_SPEED
+				
+						if d < vecDist(p.x, p.y, p.train.x, p.train.y) then
+							p.onTrain = true
+							p.train.stop = p.train.stop - 1
+						end
+					end
+					x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+					y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+				elseif p.gettingOff and p.train.curSpeed == 0 then
+					d = vecDist(p.x, p.y, p.xEnd, p.yEnd)
+					dX = (p.xEnd-p.x)/d
+					dY = (p.yEnd-p.y)/d
+					p.x = p.x + dX*dt*PASSENGER_SPEED
+					p.y = p.y + dY*dt*PASSENGER_SPEED
+			
+					x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+					y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+			
+					if d < vecDist(p.x, p.y, p.xEnd, p.yEnd) then
+						p.train.stop = p.train.stop - 1
+						p.onTrain = false
+						p.train = nil
+						p.gettingOff = false
+					
+						if p.reachedDestination then
+							passengerList[k] = nil
+						else		-- put them back into the list to make sure they can be picked up again!
+							table.insert( passengerPositions[p.tileX][p.tileY], p )
+						end
+					end
+				else	-- if I'm riding the train
+					p.x = p.train.x
+					p.y = p.train.y
+					x = p.x - p.image:getWidth()/2 + p.train.tileX*TILE_SIZE
+					y = p.y - p.image:getHeight()/2	 + p.train.tileY*TILE_SIZE
+				end
+			else	-- if I'm just standing around...
+				x = p.tileX*TILE_SIZE + p.x - p.image:getWidth()/2
+				y = p.tileY*TILE_SIZE + p.y - p.image:getHeight()/2
+			end
 		
-		-- draw passenger:
-		if not p.reachedDestination then
-			if p.train and p.onTrain and not p.gettingOff then
-				if love.keyboard.isDown(" ") then 
-					love.graphics.setColor(255,255,128,100)
-					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
+			if p.vip then
+				love.graphics.setColor(255,255,255,200)
+				p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
+				num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
+				love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
+				if p.vipTime < -15 then
+					p.vip = false
+				end
+			end
+		
+			-- draw passenger:
+			if not p.reachedDestination then
+				if p.train and p.onTrain and not p.gettingOff then
+					if love.keyboard.isDown(" ") then 
+						love.graphics.setColor(255,255,128,100)
+						love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
+					end
+				else
+					if love.keyboard.isDown(" ") then 
+						love.graphics.setColor(64,128,255,200)
+						love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
+					end
+					love.graphics.setColor(0,0,0,120)
+					love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+					love.graphics.setColor(64,128,255,255)
+				
+					love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 				end
 			else
-				if love.keyboard.isDown(" ") then 
-					love.graphics.setColor(64,128,255,200)
-					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
-				end
 				love.graphics.setColor(0,0,0,120)
 				love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
-				love.graphics.setColor(64,128,255,255)
-				
+				love.graphics.setColor(64,255,128,255) -- draw passenger green if he's reached his destination.
 				love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 			end
-		else
-			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
-			love.graphics.setColor(64,255,128,255) -- draw passenger green if he's reached his destination.
-			love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
+		
+			p.renderX, p.renderY = x,y
+		
+			--love.graphics.setColor(255,255,255,100)
+			--love.graphics.print(p.name, x, y + 20)
 		end
-		
-		p.renderX, p.renderY = x,y
-		
-		--love.graphics.setColor(255,255,255,100)
-		--love.graphics.print(p.name, x, y + 20)
 	end
-end
 
-function passenger.showVIPs(dt)
-	love.graphics.setColor(255,255,255,255)
-	for k, p in pairs(passengerList) do
-		if p.vip then
+	function passenger.showVIPs(dt)
+		love.graphics.setColor(255,255,255,255)
+		for k, p in pairs(passengerList) do
+			if p.vip then
 			
-			p.markZ = p.markZ + dt*5
-			c = math.sin(p.markZ)^2
-			love.graphics.draw(passengerVIPImage, p.renderX + 4, p.renderY - 15 - 10*c, 0, 1+c/10, 1+c/10)
+				p.markZ = p.markZ + dt*5
+				c = math.sin(p.markZ)^2
+				love.graphics.draw(passengerVIPImage, p.renderX + 4, p.renderY - 15 - 10*c, 0, 1+c/10, 1+c/10)
+			end
 		end
 	end
-end
 
-function passenger.showSelected()
-	love.graphics.setFont(FONT_SMALL)
+	function passenger.showSelected()
+		love.graphics.setFont(FONT_SMALL)
 	
-	for k, p in pairs(passengerList) do
-		if p.selected > 0 then
-	love.graphics.setColor(255,255,255)
-				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
-	love.graphics.setColor(0,0,0)
-				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
-				p.selected = p.selected - dt
-				if p.vip then
-					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
-				end
+		for k, p in pairs(passengerList) do
+			if p.selected > 0 then
+		love.graphics.setColor(255,255,255)
+					love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
+		love.graphics.setColor(0,0,0)
+					love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
+					p.selected = p.selected - dt
+					if p.vip then
+						love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
+					end
+			end
 		end
 	end
 end

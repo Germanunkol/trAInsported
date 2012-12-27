@@ -15,6 +15,10 @@ function console.show()
 end
 
 function console.add( text, colour )
+	if DEDICATED then
+		return
+	end
+	
 	local str = ""
 	if colour == nil then colour = {r=255,g=255,b=255} end
 	
@@ -44,6 +48,10 @@ function console.add( text, colour )
 	consoleStartLine = math.floor(math.max(#consoleLines - console.numLines, 1))
 end
 
+function console.flush()
+	consoleLines = {}
+	consoleStartLine = 1
+end
 
 function console.toggle()
 	if showConsole then

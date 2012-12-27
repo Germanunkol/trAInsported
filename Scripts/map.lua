@@ -9,7 +9,9 @@ TILE_SIZE = 128		-- DO NOT CHANGE! (unless you change all the images as well)
 local curMapOccupiedTiles = {}	-- stores if a certain path on a tile is already being used by another train
 local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is already being used by another train
 
-IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
+if not DEDICATED then
+	IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
+end
 
 local status = nil
 
@@ -27,27 +29,77 @@ function map.startupProcess()
 	end
 end
 
-function map.new(width, height, seed, tutorialMap)
-	--[[if mapRenderThread or mapGenerateThread then
+function setupMatch( width, height, time, maxTime, gameMode, AIs )
+	if mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
-	end]]--
+	end
 	
-	seed = seed or 1
+	if DEDICATED then		-- let server choose parameteres for game:
 	
-	newMapStarting = true
-	mapRenderPercent = nil
-	mapGeneratePercent = nil
---	math.randomseed(1)
-	numTrains = 0
-	mapSeed = seed
+		aiFiles = ai.findAvailableAIs()
 	
-	console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
+		local chosenAIs = {}
 	
-	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+		aiID = 1
+		for k, aiName in pairs(aiFiles) do
+			if aiID <= 4 then
+				chosenAIs[aiID] = aiName
+				aiID = aiID + 1
+			end
+		end
+
+		curMap = nil
+		
+		width = 4
+		height = 6
+		time = "day"
+		maxTime = 20
+		gameMode = GAME_TYPE_TIME
+		AIs = chosenAIs
+		
+		--IMPORTANT!
+		if connection.thread then
+			connection.thread:set("reset", "true")	-- reset all packets that have been sent last round!
+		end
+		
+	else
 	
-	map.generate(width,height,love.timer.getDelta()*os.time()*math.random()*100000, tutorialMap)
-	--map.generate(5,5,2)
+		loadingScreen.reset()
+		loadingScreen.addSection("New Map")
+		loadingScreen.addSubSection("New Map", "Size: " .. width .. "x" .. height)
+		loadingScreen.addSubSection("New Map", "Time: Day")
+		if GAME_TYPE == GAME_TYPE_TIME then
+			loadingScreen.addSubSection("New Map", "Mode: Round Time (" .. ROUND_TIME .. "s)")
+		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+			loadingScreen.addSubSection("New Map", "Mode: Transport enough Passengers")
+		end
+		
+		train.resetImages()
+		
+		menu.exitOnly()
+	end
+	
+	ROUND_TIME = math.floor(maxTime)
+	GAME_TYPE = gameMode
+	ai.restart()	-- make sure aiList is reset!
+	stats.start( #AIs )
+	train.init()
+	
+	print("found AI:", #AIs)
+	for i = 1, #AIs do
+		ok, msg = pcall(ai.new, "AI/" .. AIs[i])
+		if not ok then
+			print("Err: " .. msg)
+		else
+			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
+			if not DEDICATED then
+				train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
+			end
+		end
+	end
+	
+	map.generate(width, height, math.random(1000))
 	
 end
 
@@ -55,25 +107,38 @@ end
 function runMap(restart)
 	newMapStarting = false
 	if curMap then
-		MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
+	
+		if console and console.flush then
+			console.flush()
+		end
 		
 		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
 		
 		math.randomseed(mapSeed)
 		
 		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
-		--populateMap()
-		ai.init()
 		
-		clouds.restart()
+		ai.init()
+		 
+		if not DEDICATED then
+			clouds.restart()
+			
+			MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
+			
+			menu.ingame()
+			
+			resetTimeFactor()		-- set back to 1.
+			
+		else
+			sendRoundInfo()
+		end
+		
+		clearAllOccupations()
+		
 		curMap.time = 0		-- start map timer.
 		
-		resetTimeFactor()		-- set back to 1.
 		
 		roundEnded = false
-		
-		menu.ingame()
-		
 		
 		-- If there's a tutorial callback registered by the current map, then start that now!
 		if tutorial then
@@ -167,8 +232,24 @@ local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
 function map.generate(width, height, seed, tutorialMap)
 	if not mapGenerateThread then
-		simulation.stop()
+	
 		print("Generating map!")
+	
+		newMapStarting = true
+		mapRenderPercent = nil
+		mapGeneratePercent = nil
+		numTrains = 0
+		mapSeed = seed
+	
+		if not DEDICATED then
+			console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
+	
+			love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+			
+			simulation.stop()
+			
+			loadingScreen.addSection("Generating Map")
+		end
 	
 		mapImage,mapShadowImage,mapObjectImage = nil,nil,nil
 		
@@ -198,11 +279,9 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
 		
-		loadingScreen.addSection("Generating Map")
-		
 	else
 		percent = mapGenerateThread:get("percentage")
-		if percent then
+		if percent and loadingScreen then
 			loadingScreen.percentage("Generating Map", percent)
 		end
 		status = mapGenerateThread:get("status")
@@ -214,17 +293,28 @@ function map.generate(width, height, seed, tutorialMap)
 			curMapOccupiedTiles = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedTiles"))
 			curMapOccupiedExits = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedExits"))
 			
-			loadingScreen.percentage("Generating Map", 100)
+			if loadingScreen then
+				loadingScreen.percentage("Generating Map", 100)
+			end
 			map.print("Finished Map:")
 			mapGenerateThread = nil
 			collectgarbage("collect")
-			map.render(curMap)			
+			if not DEDICATED then
+				map.render(curMap)
+			else
+				sendMap()		-- important! send before running the map!
+				runMap()
+			end
 			
 			return curMap
-		elseif status then
+		elseif status and loadingScreen then
 			loadingScreen.addSubSection("Generating Map", status)
 		end
 	end
+end
+
+function map.generating()
+	if mapGenerateThread then return true end
 end
 
 
@@ -765,88 +855,6 @@ function map.init()
 		pathEE[i].length = pathEE.length
 	end
 	
-	
-	
-	-- old, manual:
-	--[[
-	pathSS = {}
-	pathSS[1] = {x=79, y=128}
-	pathSS[2] = {x=86, y=106}
-	pathSS[3] = {x=102, y=90}
-	pathSS[4] = {x=111, y=72}
-	pathSS[5] = {x=110, y=47}
-	pathSS[6] = {x=88, y=22}
-	pathSS[7] = {x=63, y=15}
-	pathSS[8] = {x=39, y=22}
-	pathSS[9] = {x=17, y=47}
-	pathSS[10] = {x=16, y=72}
-	pathSS[11] = {x=25, y=90}
-	pathSS[12] = {x=41, y=106}
-	pathSS[13] = {x=48, y=128}
-	
-	pathWW = {}
-	pathWW[1] = {x=0, y=79}
-	pathWW[2] = {x=21, y=86}
-	pathWW[3] = {x=37, y=102}
-	pathWW[4] = {x=55, y=111}
-	pathWW[5] = {x=80, y=110}
-	pathWW[6] = {x=105, y=88}
-	pathWW[7] = {x=112, y=63}
-	pathWW[8] = {x=105, y=39}
-	pathWW[9] = {x=80, y=17}
-	pathWW[10] = {x=55, y=16}
-	pathWW[11] = {x=37, y=25}
-	pathWW[12] = {x=21, y=41}
-	pathWW[13] = {x=0, y=48}
-	pathWW.length = 0
-	pathWW[1].length = 0
-	for i = 2, #pathWW do
-		pathWW.length = pathWW.length + math.sqrt((pathWW[i-1].x - pathWW[i].x)^2 + (pathWW[i-1].y - pathWW[i].y)^2)
-		pathWW[i].length = pathWW.length
-	end
-	
-	pathNN = {}
-	pathNN[1] = {x=48, y=0}
-	pathNN[2] = {x=41, y=21}
-	pathNN[3] = {x=25, y=37}
-	pathNN[4] = {x=16, y=55}
-	pathNN[5] = {x=17, y=80}
-	pathNN[6] = {x=39, y=105}
-	pathNN[7] = {x=64, y=112}
-	pathNN[8] = {x=88, y=105}
-	pathNN[9] = {x=110, y=80}
-	pathNN[10] = {x=111, y=55}
-	pathNN[11] = {x=102, y=37}
-	pathNN[12] = {x=86, y=21}
-	pathNN[13] = {x=79, y=0}
-	pathNN.length = 0
-	pathNN[1].length = 0
-	for i = 2, #pathNN do
-		pathNN.length = pathNN.length + math.sqrt((pathNN[i-1].x - pathNN[i].x)^2 + (pathNN[i-1].y - pathNN[i].y)^2)
-		pathNN[i].length = pathNN.length
-	end
-	
-	pathEE = {}
-	pathEE[1] = {x=128, y=48}
-	pathEE[2] = {x=106, y=41}
-	pathEE[3] = {x=90, y=25}
-	pathEE[4] = {x=72, y=16}
-	pathEE[5] = {x=47, y=17}
-	pathEE[6] = {x=22, y=39}
-	pathEE[7] = {x=15, y=64}
-	pathEE[8] = {x=22, y=88}
-	pathEE[9] = {x=47, y=110}
-	pathEE[10] = {x=72, y=111}
-	pathEE[11] = {x=90, y=102}
-	pathEE[12] = {x=106, y=86}
-	pathEE[13] = {x=128, y=79}
-	pathEE.length = 0
-	pathEE[1].length = 0
-	for i = 2, #pathEE do
-		pathEE.length = pathEE.length + math.sqrt((pathEE[i-1].x - pathEE[i].x)^2 + (pathEE[i-1].y - pathEE[i].y)^2)
-		pathEE[i].length = pathEE.length
-	end
-	]]--
 end
 
 function map.getRailPath(tileX, tileY, dir, prevDir)
@@ -1210,7 +1218,7 @@ function map.show()
 	--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 	--love.graphics.setColor(0,0,0, 100)
 	
-	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2-30, -TILE_SIZE*(curMap.height+2)/2+30)
+	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+35)
 	-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 	love.graphics.setColor(255,255,255, 255)
 	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
@@ -1294,7 +1302,7 @@ function map.handleEvents(dt)
 end
 
 function map.endRound()
-	if tutorial.endRound then
+	if tutorial and tutorial.endRound then
 		tutorial.endRound()
 	end
 	roundEnded = true
@@ -1302,6 +1310,9 @@ function map.endRound()
 	stats.generateStatWindows()
 	passengerTimePassed = 0
 	newTrainQueueTime = 0
+	if DEDICATED then
+		sendMapUpdate("END_ROUND:")
+	end
 end
 
 

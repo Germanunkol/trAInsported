@@ -1,15 +1,4 @@
 
-timeFactorIndex = 5
-timeFactorList = {0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 40, 90}
-
-function resetTimeFactor()
-	for k, v in pairs(timeFactorList) do
-		if v == 1 then
-			timeFactorIndex = k
-		end
-	end
-	timeFactor = timeFactorList[timeFactorIndex]
-end
 
 function love.mousepressed(x, y, b)
 	--if curMap and mapImage then

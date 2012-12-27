@@ -20,7 +20,9 @@ local train_mt = { __index = train }
 
 local trainList = {}
 
-trainImageBorder = love.graphics.newImage("Images/Train1Boarded.png")
+if not DEDICATED then
+	trainImageBorder = love.graphics.newImage("Images/Train1Boarded.png")
+end
 
 local trainImages = {}
 local trainImageThreads = {}
@@ -58,10 +60,12 @@ function train.init()
 end
 
 function train.resetImages()
+	print("RESETTING TRAIN IMG")
 	trainImages = {}
 end
 
 function train.setTrainImage( img, ID )
+	print("SETTING TRAIN IMG", ID)
 	trainImages[ID] = img
 end
 
@@ -187,8 +191,12 @@ function train:new( aiID, x, y, dir )
 		if not trainList[aiID][i] then
 			--local imageOff = createButtonOff(width, height, label)
 			--local imageOver = createButtonOver(width, height, label)
-			local image = trainImages[aiID]
-			trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, button_mt)
+			if not DEDICATED then
+				local image = trainImages[aiID]
+				trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, train_mt)
+			else
+				trainList[aiID][i] = setmetatable({ID = i, aiID = aiID}, train_mt)
+			end
 			
 			--print("Placing new train at:", x, y)
 			--print("\tHeading:", dir)
@@ -240,6 +248,16 @@ function train:new( aiID, x, y, dir )
 			trainList[aiID][i].curSpeed = 0
 			trainList[aiID][i].stop = 0
 			
+			if DEDICATED then
+				sendStr = "NEW_TRAIN:"
+				sendStr = sendStr .. aiID .. ","
+				sendStr = sendStr .. trainList[aiID][i].name .. ","
+				sendStr = sendStr .. trainList[aiID][i].tileX .. ","
+				sendStr = sendStr .. trainList[aiID][i].tileY .. ","
+				sendStr = sendStr .. dir .. ","
+				sendMapUpdate(sendStr)
+			end
+			
 			if path and path[1] then		--place at the center of the current piece.
 				curPathNode = math.ceil((#path-1)/2)
 				trainList[aiID][i].curDistTraveled = path[curPathNode].length
@@ -281,7 +299,6 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].y = math.random(100)
 			end
 			
-			print("NEW TRAIN!!")
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
 			return trainList[aiID][i]
 		end
@@ -334,13 +351,14 @@ function getAngleByDir( dir )
 end
 
 function moveSingleTrain(tr, t)
-	if tr.path then
 
+	if tr.path then
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:
 		--d = math.sqrt(dx ^ 2 + dy ^ 2)
 		tr.curDistTraveled = tr.curDistTraveled + t*TRAIN_SPEED*tr.curSpeed
+		--print(tr.curDistTraveled, t, TRAIN_SPEED, tr.curSpeed)
 		if tr.stop == 0 then	--accellerate
 			tr.curSpeed = math.min(tr.curSpeed+TRAIN_ACCEL*t, 1)
 		else
@@ -348,6 +366,7 @@ function moveSingleTrain(tr, t)
 		end
 		
 		while tr.curDistTraveled > tr.path[#tr.path].length do
+		
 			--tr.blocked = true
 			tr.curDistTraveled = tr.curDistTraveled - tr.path[#tr.path].length	-- remember overshoot!
 			local nextX, nextY = tr.tileX, tr.tileY
@@ -454,6 +473,17 @@ function moveSingleTrain(tr, t)
 					-- dy = (tr.path[tr.curNode+1].y - tr.y)
 					--normalize:
 					-- d = math.sqrt(dx ^ 2 + dy ^ 2)
+					
+				end
+				
+				if DEDICATED then
+					sendStr = "TRAIN_CONT:"
+					sendStr = sendStr .. tr.aiID .. ","
+					sendStr = sendStr .. tr.name .. ","
+					sendStr = sendStr .. tr.tileX .. ","
+					sendStr = sendStr .. tr.tileY .. ","
+					sendStr = sendStr .. tr.dir .. ","
+					sendMapUpdate(sendStr)
 				end
 				
 				if tr.curPassenger and tr.curPassenger.onTrain then
@@ -507,7 +537,7 @@ function moveSingleTrain(tr, t)
 			
 			d = math.sqrt(dx ^ 2 + dy ^ 2)
 			
-			curDist = (tr.curDistTraveled - tr.path[tr.curNode].length)/(d)
+			curDist = (tr.curDistTraveled - tr.path[tr.curNode].length)/d
 			tr.x = tr.path[tr.curNode].x + dx*curDist
 			tr.y = tr.path[tr.curNode].y + dy*curDist
 			
@@ -518,190 +548,11 @@ function moveSingleTrain(tr, t)
 			tr.smoothAngle = (tr.angle-tr.prevAngle)*curDist + tr.prevAngle
 		end
 		
-		--[[
-		
-		-- if traveling would bring me past the node:
-		if d <= distToMove then
-			distToMove = distToMove - d
-			if tr.path[tr.curNode+2] then
-				tr.curNode = tr.curNode + 1
-				
-				dx = (tr.path[tr.curNode+1].x - tr.x)
-				dy = (tr.path[tr.curNode+1].y - tr.y)
-				--normalize:
-				d = math.sqrt(dx ^ 2 + dy ^ 2)
-				
-				tr.prevAngle = tr.angle
-				
-				tr.prevAngle = tr.angle
-				if tr.path[tr.curNode+2] then
-					if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-						tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-					else
-						tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-					end
-				else
-					tr.angle = getAngleByDir(tr.dir)
-				end
-				if tr.prevAngle - tr.angle < -math.pi then
-					tr.prevAngle = tr.prevAngle + 2*math.pi
-				end
-				if tr.prevAngle - tr.angle > math.pi then
-					tr.prevAngle = tr.prevAngle - 2*math.pi
-				end
-			else
-				
-				local nextX, nextY = tr.tileX, tr.tileY
-				local cameFromDir = ""
-				
-				if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
-					
-					tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.nextDir = nil
-					
-					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-						tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
-					end
-					
-					if tr.nextDir == nil then	-- fallback: if choosing the next dir went wrong or if there's only one direction to go in:
-						if tr.possibleDirs["N"] then tr.nextDir = "N"
-						elseif tr.possibleDirs["S"] then tr.nextDir = "S"
-						elseif tr.possibleDirs["E"] then tr.nextDir = "E"
-						else tr.nextDir = "W"
-						end
-					end
-					
-					map.resetTileOccupied(tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)	-- free up previously blocked path! Important, otherwise everthing could block.
-					
-				else
-					if tr.timeBlocked > MAX_BLOCK_TIME then
-						
-						tr.timeBlocked = 0
-						
-						if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
-							tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
-						end
-					end
-				end
-				
-				if tr.dir == "N" then
-					nextY = nextY - 1
-					cameFromDir = "S"
-					--print("moved north")
-				end
-				if tr.dir == "S" then
-					nextY = nextY + 1
-					cameFromDir = "N"
-					--print("moved south")
-				end
-				if tr.dir == "W" then
-					nextX = nextX - 1
-					cameFromDir = "E"
-					--print("moved west")
-				end
-				if tr.dir == "E" then
-					nextX = nextX + 1
-					cameFromDir = "W"
-					--print("moved east")
-				end
-				
-				if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
-					
-					if tr.blocked then removeBlockedTrain(tr) end
-					map.resetTileExitOccupied(tr.tileX, tr.tileY, tr.dir)
-					
-					tr.timeBlocked = 0
-					tr.blocked = false
-					
-					--print("reset:", tr.tileX, tr.tileY, tr.cameFromDir, tr.dir)
-					
-					--print("set:", nextX, nextY, cameFromDir, tr.nextDir)
-					map.setTileOccupied(nextX, nextY, cameFromDir, tr.nextDir)
-					tr.freedTileOccupation = false
-					
-					tr.cameFromDir = cameFromDir
-					
-					tr.tileX, tr.tileY = nextX, nextY
-				
-					tr.path = map.getRailPath(tr.tileX, tr.tileY, tr.nextDir, tr.dir)
-					
-					tr.dir = tr.nextDir
-				
-					if tr.path then
-					
-						tr.curNode = 1
-						
-						tr.prevAngle = tr.angle
-						if tr.path[tr.curNode+2] then
-							if tr.path[tr.curNode+2].x >= tr.path[tr.curNode].x then
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) + math.pi/2
-							else
-								tr.angle = math.atan((tr.path[tr.curNode+2].y - tr.path[tr.curNode].y)/(tr.path[tr.curNode+2].x - tr.path[tr.curNode].x)) - math.pi/2
-							end
-						else
-							tr.angle = getAngleByDir(tr.dir)
-						end
-						if tr.prevAngle - tr.angle < -math.pi then
-							tr.prevAngle = tr.prevAngle + 2*math.pi
-						end
-						if tr.prevAngle - tr.angle > math.pi then
-							tr.prevAngle = tr.prevAngle - 2*math.pi
-						end
-					
-						tr.x = tr.path[tr.curNode].x
-						tr.y = tr.path[tr.curNode].y
-					
-						dx = (tr.path[tr.curNode+1].x - tr.x)
-						dy = (tr.path[tr.curNode+1].y - tr.y)
-						--normalize:
-						d = math.sqrt(dx ^ 2 + dy ^ 2)
-					end
-					
-					if tr.curPassenger then
-						if tr.curPassenger.destX == tr.tileX and tr.curPassenger.destY == tr.tileY then	-- I'm entering my passenger's destination!
-							ai.foundDestination(tr)
-						end
-					end
-									
-					p = passenger.find(tr.tileX, tr.tileY)
-					if p then
-						ai.foundPassengers(tr, p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
-					end
-					
-				else
-					if not tr.blocked then
-						addBlockedTrain(tr)
-						tr.blocked = true
-					end
-				end
-			end
-		end
-		
-		if not tr.blocked then
-			--tr.dxPrevSign = (dx < 0)
-			--tr.dyPrevSign = (dy < 0)
-		
-			fullDist = math.sqrt((tr.path[tr.curNode+1].x - tr.path[tr.curNode].x)^2 +(tr.path[tr.curNode+1].y - tr.path[tr.curNode].y)^2)
-		
-			partCovered = clamp(1-d/fullDist, 0, 1)	-- the part of the path between the nodes that has been traveled
-		
-			dx = dx/d
-			dy = dy/d
-			
-		
-			tr.smoothAngle = (tr.angle-tr.prevAngle)*partCovered + tr.prevAngle
-		
-			tr.x = tr.x + t*dx*TRAIN_SPEED
-			tr.y = tr.y + t*dy*TRAIN_SPEED
-		end
-		]]--
-		
 	end
 end
 
-function train.moveAll()
-	t = love.timer.getDelta()*timeFactor
+function train.moveAll(passedTime)
+	t = passedTime or love.timer.getDelta()*timeFactor
 	for k, tr in ipairs(blockedTrains) do	-- move blocked trains first! The longer they've been blocked, the earlier the move.
 		moveSingleTrain(tr, t)
 		tr.hasMoved = true
@@ -724,60 +575,88 @@ function train.getBlockedTrains()
 	return blockedTrains
 end
 
-function train.showAll()
 
-	love.graphics.setFont(FONT_CONSOLE)
+function train.printAll()
+	print("Trains:", curMap.time)
+	
+	if curMap then
+		for j = 0, curMap.height+1 do
+			str = ""
+			for i = 0, curMap.width+1 do
+				if i == 0 or j == 0 or i > curMap.width or j > curMap.height then
+					str = str .. "- "
+				elseif map.getIsTileOccupied(i, j) then
+					str = str .. "T "
+				else
+					str = str .. "- "
+				end
+			end
+			print(str)
+		end
+	end
 	for k, list in pairs(trainList) do
 		for k, tr in pairs(list) do
-			--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
-			
-			if DEBUG_OVERLAY then
-				for i = 1,#tr.path do
-					--brightness = 1-(#tr.path-i)/#tr.path
-					love.graphics.setColor(255,0,0,255)
-					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, 3)
-					if i > 1 then
-						love.graphics.setColor(255,150,150,255)
-						love.graphics.line(tr.tileX*TILE_SIZE+tr.path[i-1].x,  tr.tileY*TILE_SIZE+tr.path[i-1].y, tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y)
-					end
-				end
-			
-				love.graphics.setColor(255,255,0,255)
-				love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
-				love.graphics.setColor(128,255,0,255)
-				love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE+tr.y, 5)
-			end
-			
-			love.graphics.setColor(255,255,255,255)
-			x = tr.tileX*TILE_SIZE + tr.x
-			y = tr.tileY*TILE_SIZE + tr.y
-			scale = 1
-			
-			if vecDist(x, y, mapMouseX, mapMouseY) < 20 then
-				scale = 3
-			end
-			
-			love.graphics.setColor(0,0,0,120)
-			love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-			
-			love.graphics.setColor(255,255,255,255)
-			love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-			if tr.curPassenger and tr.curPassenger.onTrain and not tr.curPassenger.gettingOff then
-				love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
-			end
-			--love.graphics.print( tr.name, x, y+30)
-			if tr.timeBlocked > 0 then
-				love.graphics.print( tr.timeBlocked, x, y+30)
-			end
+			print(tr.name, tr.x, tr.y)
 		end
 	end
 end
 
-function train.checkSelection()
-	x,y = love.mouse.getPosition()
-		-- love.graphics.scale(camZ)
-		-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-end
 
+if not DEDICATED then
+	function train.showAll()
+
+		love.graphics.setFont(FONT_CONSOLE)
+		for k, list in pairs(trainList) do
+			for k, tr in pairs(list) do
+				--love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
+			
+				if DEBUG_OVERLAY then
+					for i = 1,#tr.path do
+						--brightness = 1-(#tr.path-i)/#tr.path
+						love.graphics.setColor(255,0,0,255)
+						love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y, 3)
+						if i > 1 then
+							love.graphics.setColor(255,150,150,255)
+							love.graphics.line(tr.tileX*TILE_SIZE+tr.path[i-1].x,  tr.tileY*TILE_SIZE+tr.path[i-1].y, tr.tileX*TILE_SIZE+tr.path[i].x,  tr.tileY*TILE_SIZE+tr.path[i].y)
+						end
+					end
+			
+					love.graphics.setColor(255,255,0,255)
+					love.graphics.rectangle( "fill", tr.tileX*TILE_SIZE,  tr.tileY*TILE_SIZE, 10, 10)
+					love.graphics.setColor(128,255,0,255)
+					love.graphics.circle( "fill", tr.tileX*TILE_SIZE+tr.x, tr.tileY*TILE_SIZE+tr.y, 5)
+				end
+			
+				love.graphics.setColor(255,255,255,255)
+				x = tr.tileX*TILE_SIZE + tr.x
+				y = tr.tileY*TILE_SIZE + tr.y
+				scale = 1
+			
+				if vecDist(x, y, mapMouseX, mapMouseY) < 20 then
+					scale = 3
+				end
+			
+				love.graphics.setColor(0,0,0,120)
+				love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+			
+				love.graphics.setColor(255,255,255,255)
+				love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+				if tr.curPassenger and tr.curPassenger.onTrain and not tr.curPassenger.gettingOff then
+					love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
+				end
+				--love.graphics.print( tr.name, x, y+30)
+				if tr.timeBlocked > 0 then
+					love.graphics.print( tr.timeBlocked, x, y+30)
+				end
+			end
+		end
+	end
+
+	function train.checkSelection()
+		x,y = love.mouse.getPosition()
+			-- love.graphics.scale(camZ)
+			-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+	end
+end
 
 return train

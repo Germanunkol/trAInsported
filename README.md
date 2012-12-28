@@ -29,8 +29,8 @@ Example:
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```
 - Dedicated Server: **--server** or **--dedicated** or **-D**
-- [Server] Time between two matches on Server: **-t TIME** (TIME in seconds, minimum 10)
 - [Client] IP of server to connect to: **-ip ###.###.###.###** (Use localhost to connect to server on the same machine.)
+- [Server] Time between two matches on Server: **-t TIME** (TIME in seconds, minimum 10. If this is lower than the time a match takes then the game will start a new match immediately after the current match ended - no earlier.)
 - [Client and Server] Port to use -> must be the same on client and server! **-p PORTNUMBER** (Default port is 5556.)
 - [Client and Server] Needed on Windows if you want a console: **--console**
 Note that you'll need to edit the IP address of the client to make sure your client will find the server and watch its matches.

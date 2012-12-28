@@ -152,6 +152,8 @@ function statistics.newPassenger( passenger )
 	if curMap then t = curMap.time
 	elseif simulationMap then
 		t = simulationMap.time
+	else
+		t = 0
 	end
 	passengerStats[passenger.name] = {}
 	passengerStats[passenger.name].timeSpawned = t		-- save the current time
@@ -165,6 +167,8 @@ function statistics.passengerPickedUp( passenger )
 	if curMap then t = curMap.time
 	elseif simulationMap then
 		t = simulationMap.time
+	else
+		t = 0
 	end
 	passengerStats[passenger.name].timeWaited = passengerStats[passenger.name].timeWaited + (t - (passengerStats[passenger.name].timeLastDroppedOff or passengerStats[passenger.name].timeSpawned))
 	if passengerStats[passenger.name].timeFirstPickedUp == nil then		-- have I been picked up before?
@@ -175,11 +179,14 @@ function statistics.passengerPickedUp( passenger )
 end
 
 function statistics.passengerDroppedOff( passenger )
-local t = 0
+	local t = 0
 	if curMap then t = curMap.time
 	elseif simulationMap then
 		t = simulationMap.time
+	else
+		t = 0
 	end
+	
 	passengerStats[passenger.name].timeLastDroppedOff = t
 	passengerStats[passenger.name].timeOnRails = passengerStats[passenger.name].timeOnRails + (t - passengerStats[passenger.name].timeLastPickup)
 	if passenger.tileX == passenger.destX and passenger.tileY == passenger.destY then

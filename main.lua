@@ -60,7 +60,7 @@ if DEDICATED then
 		if TIME_BETWEEN_MATCHES_GIVEN then
 			TIME_BETWEEN_MATCHES = TIME_BETWEEN_MATCHES_GIVEN
 		end
-		print("Using match time " .. TIME_BETWEEN_MATCHES .. " seconds.")
+		print("Will start a new match every " .. TIME_BETWEEN_MATCHES .. " seconds.")
 	end
 
 	if SERVER_IP then

@@ -8,7 +8,7 @@
 
 -- Check if game this is running in dedicated server mode:
 for k, a in pairs(arg) do
-	if a == "-D" or a == "--dedicated" or a == "--server" then
+	if a == "-d" or a == "--dedicated" or a == "--server" then
 		DEDICATED = true
 		break
 	end

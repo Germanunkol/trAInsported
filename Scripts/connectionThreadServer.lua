@@ -52,8 +52,8 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 	if curMapStr then
 		client:send("MAP: " .. curMapStr .. "\n")
 		for i = 1, #sendPacketsList do
-			print(client[1], "SENT:","U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
-			client:send("U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
+			print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
+			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 		end
 	else
 		print(client[1], "SENT:","NEXT_MATCH:" .. timeUntilNextMatch)
@@ -131,20 +131,22 @@ while true do
 	msg = thisThread:get("packet" .. packetNumber)
 	if msg then
 	
+		newPacketID = sendPackets.getPacketNum() + 1
+	
 		for k, cl in pairs(clientList) do
-			ok, err = cl:send("U:" .. msg .. "\n")		-- send update to clients.
-			print(cl[1], "SENT:","U:" .. msg)
+			ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
+			print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
 		end
 		packetNumber = incrementID(packetNumber)
 		
 		s, e = msg:find("|")
 		if not s then
-			print("ERROR: no timestamp found for packet! Aborting.")
+			print("ERROR: no timestamp found in packet! Aborting.")
 			return
 		end
 		time = tonumber(msg:sub(1, s-1))
 		msg = msg:sub(e+1, #msg)
-		sendPackets.add(msg, time)
+		sendPackets.add(newPacketID,msg, time)
 		
 	end
 	

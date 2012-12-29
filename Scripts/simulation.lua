@@ -19,6 +19,7 @@ function simulation.init()
 	
 	loadingScreen.reset()
 	packetList = {}
+	simulation.nextPacket = 1
 	
 	trainList = {}
 	trainList[1] = {}
@@ -93,27 +94,36 @@ function simulation.stop()
 	map.endRound()
 end
 
-
+--[[
 function sortByTime(a,b)
 	--print(a, b, a.event, b.event)
 	if a and b and a.time and b.time and a.time < b.time then return true end
 end
+]]--
 
-function addPacket(text, time)
-	table.insert(packetList, {time=time, event = text})
-	table.sort(packetList, sortByTime)
+function addPacket(ID, text, time)
+	packetList[ID] = {time=time, event = text}
+	--table.sort(packetList, sortByTime)
 end
 
 function simulation.addUpdate(text)
 	s, e = text:find("|")
 	if not s then
-		print("ERROR: No time stamp found for packet!")
+		print("ERROR: No ID found in packet!")
 		return
 	end
-	time = tonumber(text:sub(1, s-1))
-	text = text:sub(e+1, #text)
-	addPacket(text, time)
 	
+	ID = tonumber(text:sub(1, e-1))
+	text = text:sub(e+1, #text)
+
+	s, e = text:find("|")
+	if not s then
+		print("ERROR: No time stamp found in packet!")
+		return
+	end
+	time = tonumber(text:sub(1, e-1))
+	text = text:sub(e+1, #text)
+	addPacket(ID, text, time)
 	
 	if text:find("ROUND_DETAILS:") == 1 then
 		s,e = text:find("ROUND_DETAILS:")
@@ -336,6 +346,7 @@ function runUpdate(event, t1, t2)
 			table.insert(passengerList, p)
 			stats.newPassenger(p)
 		end
+		print("CREATED: " .. name .. " @ ", tileX, tileY )
 		return
 	elseif event:find("P_PICKUP:") == 1 then		-- created new Passenger
 		s,e = event:find("P_PICKUP:")
@@ -348,7 +359,6 @@ function runUpdate(event, t1, t2)
 			ID = tonumber(ID)
 			for k, tr in pairs(trainList[ID]) do
 				if tr.name == name then
-				
 					for k, p in pairs(passengerList) do
 						if p.name == pName then
 							p.train = tr
@@ -357,6 +367,8 @@ function runUpdate(event, t1, t2)
 							p.gettingOff = false
 							print("PASSENGER " .. p.name .. " boarded " .. name, simulationMap.time)
 							
+							found = true
+							
 							stats.passengerPickedUp(p)
 							stats.passengersPickedUp(ID, tr.ID)
 						end
@@ -364,7 +376,9 @@ function runUpdate(event, t1, t2)
 				end
 			end
 		end
-		if not found then print("ERROR! did not find ", ID, name, pName) end
+		if not found then print("ERROR! did not find ", ID, name, pName)
+			love.event.quit()
+		end
 		return
 	elseif event:find("P_DROPOFF:") == 1 then		-- created new Passenger
 		s,e = event:find("P_DROPOFF:")
@@ -420,6 +434,7 @@ end
 
 function simulation.update(dt)
 
+	--[[
 	for i = 1, #packetList do
 		if not packetList[i] then
 			break
@@ -445,6 +460,30 @@ function simulation.update(dt)
 			break
 		end
 	end
+	]]--
+	
+	
+	-- check if there's a packet to be run. If there is one, check again if there's more.
+	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
+		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
+		
+		--last packet? make sure to run all other remaining packets!! (Otherwise statistics wouldn't be shown.)
+		if packetList[simulation.nextPacket].event:find("END_ROUND:") == 1 then
+			for k = simulation.nextPacket,#packetList do
+				print(packetList[k].event)
+				runUpdate(packetList[k].event, packetList[k].time, simulationMap.time)
+			end
+			packetList = {}
+			return
+		end
+		
+		-- do not run again!
+		packetList[simulation.nextPacket] = nil
+		
+		simulation.nextPacket = simulation.nextPacket + 1
+	end
+	
+	
 	--if changed then
 	--	table.sort(packetList, sortByTime)
 	--end

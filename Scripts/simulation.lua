@@ -96,7 +96,7 @@ end
 
 function sortByTime(a,b)
 	--print(a, b, a.event, b.event)
-	if a.time < b.time then return true end
+	if a and b and a.time and b.time and a.time < b.time then return true end
 end
 
 function addPacket(text, time)
@@ -343,6 +343,7 @@ function runUpdate(event, t1, t2)
 		ID = tbl[1]
 		name = tbl[2]		--train's name
 		pName = tbl[3]
+		local found = false
 		if ID and name and pName then
 			ID = tonumber(ID)
 			for k, tr in pairs(trainList[ID]) do
@@ -354,7 +355,7 @@ function runUpdate(event, t1, t2)
 							tr.curPassenger = p
 							p.onTrain = false
 							p.gettingOff = false
-							print("PASSENGER " .. p.name .. " boarded " .. name)
+							print("PASSENGER " .. p.name .. " boarded " .. name, simulationMap.time)
 							
 							stats.passengerPickedUp(p)
 							stats.passengersPickedUp(ID, tr.ID)
@@ -363,6 +364,7 @@ function runUpdate(event, t1, t2)
 				end
 			end
 		end
+		if not found then print("ERROR! did not find ", ID, name, pName) end
 		return
 	elseif event:find("P_DROPOFF:") == 1 then		-- created new Passenger
 		s,e = event:find("P_DROPOFF:")
@@ -387,10 +389,11 @@ function runUpdate(event, t1, t2)
 								tr.curPassenger = nil
 							end
 							
+							print("PASSENGER " .. p.name .. " left " .. name, simulationMap.time)
+							
 							stats.passengerDroppedOff( p )
 							stats.droppedOff(ID, tr.ID)
 							
-							print("PASSENGER " .. p.name .. " left " .. name)
 							if reachedDestination == "true" then
 								p.reachedDestination = true
 								stats.broughtToDestination(ID, tr.ID, p.vip)
@@ -421,7 +424,7 @@ function simulation.update(dt)
 		if not packetList[i] then
 			break
 		end
-		if simulationMap and simulationMap.time >= packetList[i].time then
+		if simulationMap and packetList[i].time and simulationMap.time >= packetList[i].time then
 		
 			runUpdate(packetList[i].event, packetList[i].time, simulationMap.time)
 			

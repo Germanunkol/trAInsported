@@ -23,7 +23,9 @@ clientList = {}
 print = function(...)
 	sendStr = ""
 	for i = 1, #arg do
-		sendStr = sendStr .. arg[i] .. "\t"
+		if arg[i] then
+			sendStr = sendStr .. arg[i] .. "\t"
+		end
 	end
 	thisThread:set("msg" .. msgNumber, sendStr)
 	msgNumber = incrementID(msgNumber)
@@ -50,9 +52,11 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 	if curMapStr then
 		client:send("MAP: " .. curMapStr .. "\n")
 		for i = 1, #sendPacketsList do
+			print(client[1], "SENT:","U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 		end
 	else
+		print(client[1], "SENT:","NEXT_MATCH:" .. timeUntilNextMatch)
 		client:send("NEXT_MATCH:" .. timeUntilNextMatch .. "\n")
 	end
 end
@@ -113,6 +117,7 @@ while true do
 		
 		for k, cl in pairs(clientList) do
 			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
+			print(cl[1], "SENT:","MAP:" .. curMapStr)
 		end
 		
 	end
@@ -128,6 +133,7 @@ while true do
 	
 		for k, cl in pairs(clientList) do
 			ok, err = cl:send("U:" .. msg .. "\n")		-- send update to clients.
+			print(cl[1], "SENT:","U:" .. msg)
 		end
 		packetNumber = incrementID(packetNumber)
 		

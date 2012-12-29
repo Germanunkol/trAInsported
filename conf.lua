@@ -49,15 +49,15 @@ for k, a in pairs(arg) do
 end
 
 for k, a in pairs(arg) do
-	if a == "-ip" then
+	if a == "-h" then
 		INVALID_IP = true
 		if type(k) == "number" then
 			if arg[k+1] then
 				ip = arg[k+1]
-				if ip:find("%d%d?%d?\.%d%d?%d?\.%d%d?%d?\.%d%d?%d?") == 1 or ip == "localhost" then
+				--if ip:find("%d%d?%d?\.%d%d?%d?\.%d%d?%d?\.%d%d?%d?") == 1 or ip == "localhost" then
 					SERVER_IP = ip
 					INVALID_IP = false
-				end
+				--end
 			end
 		end
 		break

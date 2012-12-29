@@ -29,7 +29,7 @@ Example:
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```
 - Dedicated Server: **--server** or **--dedicated** or **-D**
-- [Client] IP of server to connect to: **-ip ###.###.###.###** (Use localhost to connect to server on the same machine.)
+- [Client] IP/address of server to connect to: **-h IP_OR_URL** (Use localhost to connect to server on the same machine. You can also use an URL to connect to if you have a server running on some web-machine. If this is the case, make sure to use the -p command to specify which port you want to connect to - and make sure to port-forward that port if the game server is sitting behind a router.)
 - [Server] Time between two matches on Server: **-t TIME** (TIME in seconds, minimum 10. If this is lower than the time a match takes then the game will start a new match immediately after the current match ended - no earlier.)
 - [Client and Server] Port to use -> must be the same on client and server! **-p PORTNUMBER** (Default port is 5556.)
 - [Client and Server] Needed on Windows if you want a console: **--console**

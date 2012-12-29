@@ -5,7 +5,6 @@
 -- Created by Germanunkol (http://www.indiedb.com/members/Germanunkol)
 ----------------------------------------------------------------------
 
-
 -- Add path to all other Scripts:
 package.path = "Scripts/?.lua;" .. package.path
 
@@ -35,7 +34,7 @@ end
 
 if INVALID_IP then
 	print("Invalid ip given.")
-	print("Usage: -t ###.###.###.### or -t localhost")
+	print("Usage: -h ###.###.###.### or -h localhost or -h ADDRESS")
 	love.event.quit()
 else
 	print("Will attempt to connect to " .. FALLBACK_SERVER_IP)
@@ -143,7 +142,7 @@ if DEDICATED then
 	
 	console = {}
 	function console.add(text, color)
-		print("CONSOLE:", text)
+		-- print("CONSOLE:", text)
 	end
 		
 else

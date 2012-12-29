@@ -54,7 +54,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		width = 10
 		height = 8
 		time = "day"
-		maxTime = 60*5
+		maxTime = 300
 		gameMode = GAME_TYPE_TIME
 		AIs = chosenAIs
 		

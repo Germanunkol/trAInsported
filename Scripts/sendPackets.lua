@@ -7,7 +7,7 @@ function sortByTime(a,b)
 end
 
 function sendPackets.add(text, time)
-	print(time, text)
+	-- print(time, text)
 	table.insert(sendPacketsList, {time=time, event = text})
 	table.sort(sendPacketsList, sortByTime)
 end

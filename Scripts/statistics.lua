@@ -164,7 +164,8 @@ end
 
 function statistics.passengerPickedUp( passenger )
 	local t = 0
-	if curMap then t = curMap.time
+	if curMap then
+		t = curMap.time
 	elseif simulationMap then
 		t = simulationMap.time
 	else
@@ -180,7 +181,8 @@ end
 
 function statistics.passengerDroppedOff( passenger )
 	local t = 0
-	if curMap then t = curMap.time
+	if curMap then
+		t = curMap.time
 	elseif simulationMap then
 		t = simulationMap.time
 	else

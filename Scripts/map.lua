@@ -54,8 +54,13 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		width = 10
 		height = 8
 		time = "day"
-		maxTime = 300
-		gameMode = GAME_TYPE_TIME
+		if CL_ROUND_TIME then
+			maxTime = CL_ROUND_TIME
+		else
+			maxTime = FALLBACK_ROUND_TIME
+		end
+		
+		gameMode = math.random(2)
 		AIs = chosenAIs
 		
 		--IMPORTANT!
@@ -79,6 +84,8 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		
 		menu.exitOnly()
 	end
+	
+	
 	
 	ROUND_TIME = math.floor(maxTime)
 	GAME_TYPE = gameMode
@@ -1311,8 +1318,8 @@ function map.handleEvents(dt)
 		if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
 			map.endRound()
 		end
-		 
-		if curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME then
+		
+		if (curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME) or CL_ROUND_TIME and (curMap.time >= CL_ROUND_TIME) then
 			map.endRound()
 		end
 	end

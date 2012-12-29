@@ -26,44 +26,49 @@ if INVALID_PORT then
 	print("Usage: -p PORTNUMBER")
 	love.event.quit()
 else
-	if PORT_GIVEN then
-		PORT = PORT_GIVEN
+	if CL_PORT then
+		PORT = CL_PORT
 	end
 	print("Using port " .. PORT .. ".")
 end
 
-if INVALID_IP then
-	print("Invalid ip given.")
-	print("Usage: -h ###.###.###.### or -h localhost or -h ADDRESS")
-	love.event.quit()
-else
-	print("Will attempt to connect to " .. FALLBACK_SERVER_IP)
-end
-
-
-
 
 if DEDICATED then
-	
 	------------------------------------------
 	-- DEDICATED Server (headless):
 
 	
 	-------------------------------
-	-- HANDLE COMMAND LINE OPTIONS
-	if INVALID_TIME then
+	-- HANDLE COMMAND LINE OPTIONS:
+	
+	if INVALID_MATCH_TIME then
 		print("Invalid match time given.")
-		print("Usage: -t TIME")
+		print("Usage: -m TIME (where TIME is greater than or equal to 10)")
 		love.event.quit()
 	else
-		if TIME_BETWEEN_MATCHES_GIVEN then
-			TIME_BETWEEN_MATCHES = TIME_BETWEEN_MATCHES_GIVEN
+		if CL_ROUND_TIME then
+			print("Rounds will take " .. CL_ROUND_TIME .. " seconds.")
+		else
+			print("Rounds will take " .. FALLBACK_ROUND_TIME .. " seconds.")
 		end
-		print("Will start a new match every " .. TIME_BETWEEN_MATCHES .. " seconds.")
 	end
 
-	if SERVER_IP then
-		print("I do not know what to do with -ip in dedicated server mode.")
+	if INVALID_DELAY_TIME then
+		print("Invalid cooldown time given.")
+		print("Usage: -c TIME (where TIME is greater than or equal to 0)")
+		love.event.quit()
+	else
+		if CL_TIME_BETWEEN_MATCHES then
+			TIME_BETWEEN_MATCHES = CL_TIME_BETWEEN_MATCHES
+		else
+			TIME_BETWEEN_MATCHES = 0
+		end
+		print("Will start a new match after waiting for " .. TIME_BETWEEN_MATCHES .. " seconds.")
+	end
+	
+	
+	if CL_SERVER_IP then
+		print("I do not know what to do with -ip or -h or --host in dedicated server mode.")
 		love.event.quit()
 	end
 	-------------------------------
@@ -74,6 +79,7 @@ if DEDICATED then
 	connection = {}
 	moveTime = 0
 	timeUntilNextMatch = 0
+	timeUntilMatchEnd = 0
 	timeFactor = 3
 
 	-------------------------------
@@ -97,43 +103,72 @@ if DEDICATED then
 		if map.generating() then
 			map.generate()
 		end
-		dt = love.timer.getDelta()
-		timeUntilNextMatch = timeUntilNextMatch - dt	
-			
+		dt = love.timer.getDelta()	
+		
 		if not roundEnded and curMap then
 			train.moveAll(dt*timeFactor)
 			curMap.time = curMap.time + dt*timeFactor
-		else
 			
-			
-			-- display time until next match:
-			rounded = math.floor(timeUntilNextMatch*100)/100
-			s,e = string.find(rounded, "%.")
-			if not s then
-				rounded = rounded .. ".00"
-			else
-				if string.len(rounded) - e == 1 then
-					rounded = rounded .. "0"
+			timeUntilMatchEnd = timeUntilMatchEnd - dt
+		elseif not map.generating() then
+		
+			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:
+				timeUntilMatchEnd = timeUntilMatchEnd - dt
+				-- display time until next match:
+				rounded = math.floor(timeUntilMatchEnd*100)/100
+				s,e = string.find(rounded, "%.")
+				if not s then
+					rounded = rounded .. ".00"
+				else
+					if string.len(rounded) - e == 1 then
+						rounded = rounded .. "0"
+					end
 				end
-			end			
-			io.write( "Starting next match in " .. rounded .. " seconds.","\r")
-			
-			
-			-- possibly start next match:
-			if timeUntilNextMatch < 0 then
-				io.flush()
-				io.write( "Starting next match in 0.00 seconds.","\r")
-				
-				setupMatch()
-								
-				timeUntilNextMatch = TIME_BETWEEN_MATCHES
-				connection.thread:set("nextMatch", timeUntilNextMatch)
+				if rounded > 0 then
+					io.write( "Waiting for round to end: " .. rounded .. " seconds.","\r") io.flush()
+				else
+					io.write( "Waiting for round to end: 0.00 seconds.","\r") io.flush()
+				end
+				if timeUntilMatchEnd <= 0 then
+					print("")		--jump to newline!
+				end
 			else
-				io.flush()
+			
+				-- wait for delay to be over
+				timeUntilNextMatch = timeUntilNextMatch - dt
+			
+				-- display time until next match:
+				rounded = math.floor(timeUntilNextMatch*100)/100
+				s,e = string.find(rounded, "%.")
+				if not s then
+					rounded = rounded .. ".00"
+				else
+					if string.len(rounded) - e == 1 then
+						rounded = rounded .. "0"
+					end
+				end			
+				io.write( "Starting next match in " .. rounded .. " seconds.","\r")
+			
+				-- possibly start next match:
+				if timeUntilNextMatch < 0 then
+				
+					print("")		--jump to newline!
+					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
+					timeUntilNextMatch = TIME_BETWEEN_MATCHES
+					io.flush()
+					io.write( "Starting next match in 0.00 seconds.","\r")
+				
+					setupMatch()
+								
+					connection.thread:set("nextMatch", timeUntilNextMatch)
+				else
+					io.flush()
+				end
 			end
 		end
 		if curMap then
 			if not roundEnded then
+				timeUntilMatchEnd = timeUntilMatchEnd - dt
 				map.handleEvents(dt)
 				passenger.showAll(dt*timeFactor)
 			end
@@ -153,8 +188,23 @@ else
 	
 	-------------------------------
 	-- HANDLE COMMAND LINE OPTIONS
+	
+	if INVALID_IP then
+		print("Invalid ip given.")
+		print("Usage: -h ###.###.###.### or -h localhost or -h ADDRESS")
+		love.event.quit()
+	else
+		print("Will attempt to connect to " .. FALLBACK_SERVER_IP)
+	end
+	
+	
+	if CL_ROUND_TIME then
+		print("I do not know what to do with match time in client mode.")
+		love.event.quit()
+	end
+	
 	if TIME_BETWEEN_MATCHES then
-		print("I do not know what to do with -t in client mode.")
+		print("I do not know what to do with delay time in client mode.")
 		love.event.quit()
 	end
 	

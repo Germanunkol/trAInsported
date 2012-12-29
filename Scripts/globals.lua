@@ -36,6 +36,7 @@ if not DEDICATED then
 	
 else
 	TIME_BETWEEN_MATCHES = 60
+	FALLBACK_ROUND_TIME = 300
 end
 
 timeFactor = 1

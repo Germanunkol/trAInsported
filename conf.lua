@@ -5,11 +5,16 @@
 --------------------------------
 -- by Germanunkol
 
+-- Options:
+-- -d
+-- 
+
 
 -- Check if game this is running in dedicated server mode:
 for k, a in pairs(arg) do
 	if a == "-d" or a == "--dedicated" or a == "--server" then
 		DEDICATED = true
+		arg[k] = nil
 		break
 	end
 end
@@ -17,15 +22,17 @@ end
 
 -- Check if user has given a port number:
 for k, a in pairs(arg) do
-	if a == "-p" then
+	if a == "-p" or a == "--port" then
 		INVALID_PORT = true
 		if type(k) == "number" then
 			if arg[k+1] then
 				p = tonumber(arg[k+1])
 				if p >= 0 and p <= 65535 then
-					PORT_GIVEN = p
+					CL_PORT = p
 					INVALID_PORT = false
 				end
+				arg[k+1] = nil
+				arg[k] = nil
 			end
 		end
 		break
@@ -33,15 +40,17 @@ for k, a in pairs(arg) do
 end
 
 for k, a in pairs(arg) do
-	if a == "-t" then
-		INVALID_TIME = true
+	if a == "--match_time" or a == "-m" then
+		INVALID_MATCH_TIME = true
 		if type(k) == "number" then
 			if arg[k+1] then
 				t = tonumber(arg[k+1])
 				if t > 10 then
-					TIME_BETWEEN_MATCHES_GIVEN = t
-					INVALID_TIME = false
+					CL_ROUND_TIME = t
+					INVALID_MATCH_TIME = false
 				end
+				arg[k+1] = nil
+				arg[k] = nil
 			end
 		end
 		break
@@ -49,15 +58,35 @@ for k, a in pairs(arg) do
 end
 
 for k, a in pairs(arg) do
-	if a == "-h" then
+	if a == "--cooldown" or a == "-c" then
+		INVALID_DELAY_TIME = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				t = tonumber(arg[k+1])
+				if t >= 0 then
+					CL_TIME_BETWEEN_MATCHES = t
+					INVALID_DELAY_TIME = false
+				end
+				arg[k+1] = nil
+				arg[k] = nil
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
+	if a == "--host" or a == "-h" or a == "--ip" then
 		INVALID_IP = true
 		if type(k) == "number" then
 			if arg[k+1] then
 				ip = arg[k+1]
 				--if ip:find("%d%d?%d?\.%d%d?%d?\.%d%d?%d?\.%d%d?%d?") == 1 or ip == "localhost" then
-					SERVER_IP = ip
+					CL_SERVER_IP = ip
 					INVALID_IP = false
 				--end
+				arg[k+1] = nil
+				arg[k] = nil
 			end
 		end
 		break
@@ -79,10 +108,6 @@ if not DEDICATED then
 else
 
 	love.conf = function(t)
-	
-		if not TIME_BETWEEN_MATCHES then
-			TIME_BETWEEN_MATCHES = 60
-		end
 	
 		t.screen.width = 50
 		t.screen.height = 25

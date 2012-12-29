@@ -14,7 +14,7 @@ Then, the next step will be to get into the challenges. Once you've mastered the
 Setting up your own server:
 ------------------------------
 You can start your own dedicated server (see the section "Command Line Options" below). 
-This server will automatically start running matches using random maps and the AIs located in your AI subfolder (if you don't want the game to . You can watch these matches by starting the game again, without the server option. Start with **-ip localhost** to connect to the server running on your PC.
+This server will automatically start running matches using random maps and the AIs located in your AI subfolder (if you don't want the game to . You can watch these matches by starting the game again, without the server option. Start with **--host localhost** to connect to the server running on your PC.
 
 Command Line Options:
 ------------------------------
@@ -28,10 +28,10 @@ Example:
 ```dos
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```
-- Dedicated Server: **--server** or **--dedicated** or **-D**
-- [Client] IP/address of server to connect to: **-h IP_OR_URL** (Use localhost to connect to server on the same machine. You can also use an URL to connect to if you have a server running on some web-machine. If this is the case, make sure to use the -p command to specify which port you want to connect to - and make sure to port-forward that port if the game server is sitting behind a router.)
-- [Server] Time between two matches on Server: **-t TIME** (TIME in seconds, minimum 10. If this is lower than the time a match takes then the game will start a new match immediately after the current match ended - no earlier.)
-- [Client and Server] Port to use -> must be the same on client and server! **-p PORTNUMBER** (Default port is 5556.)
+- **-d** or **--server** or **--dedicated**: Start in dedicated server mode.
+- [Client] **-h IP_OR_URL** or **--host IP_OR_URL** or **--ip IP_OR_URL**: IP/address of server to connect to. (Use localhost to connect to server on the same machine. You can also use an URL to connect to if you have a server running on some web-machine. If this is the case, make sure to use the - [Client and Server] **-p PORTNUMBER** or **--port PORTNUMBER**:  Port to use -> must be the same on client and server.(Default port is 5556.) Make sure to forward that port if the game server is sitting behind a router.)
+- [Server] **-m TIME** or **--match_time TIME**: Time a match will take.
+- [Server] **-c TIME** or **--cooldown TIME**: Time between two matches on Server. (TIME in seconds, minimum 10.)
 - [Client and Server] Needed on Windows if you want a console: **--console**
 Note that you'll need to edit the IP address of the client to make sure your client will find the server and watch its matches.
 

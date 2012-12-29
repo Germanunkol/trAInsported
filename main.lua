@@ -124,7 +124,7 @@ if DEDICATED then
 						rounded = rounded .. "0"
 					end
 				end
-				if rounded > 0 then
+				if tonumber(rounded) > 0 then
 					io.write( "Waiting for round to end: " .. rounded .. " seconds.","\r") io.flush()
 				else
 					io.write( "Waiting for round to end: 0.00 seconds.","\r") io.flush()
@@ -208,7 +208,7 @@ else
 		love.event.quit()
 	end
 	
-	if not SERVER_IP then
+	if not CL_SERVER_IP then
 		print("No IP given. Using default fallback IP: " .. FALLBACK_SERVER_IP)
 	end
 	-------------------------------

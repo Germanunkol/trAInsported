@@ -5,7 +5,7 @@ Getting started:
 ------------------------------
 Case 1: You have a binary of the game. Double-click it and run -> voila!
 
-Case 2: You have a .love version of the game, you'll need to install the awesome Löve2D game engine. Get it at love2d.org (this game was developed for Löve2D Version 0.8.0).
+Case 2: You have a .love version of the game, you'll need to install the awesome Löve2D game engine. Get it at love2d.org (this game was developed for Löve2D Version 0.8.0). Then double click the .love file.
 
 First, try getting into the tutorials. Once through them, have a look at the Documentation.html file in this folder.
 

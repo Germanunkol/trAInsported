@@ -41,6 +41,13 @@ if INVALID_MYSQL then
 	love.event.quit()
 end
 
+if INVALID_MYSQL_DATABASE then
+	print("Wrong usage of --mysqlDB!")
+	print("Correct would be: --mysqlDB DATABASE")
+	print("Default database is 'trAInsported'.")
+	love.event.quit()
+end
+
 if DEDICATED then
 	------------------------------------------
 	-- DEDICATED Server (headless):
@@ -80,6 +87,13 @@ if DEDICATED then
 		print("Will attempt to connect to database as " .. CL_MYSQL_NAME .. "@"..CL_MYSQL_HOST .. ".")
 	end
 	
+	if CL_MYSQL_DATABASE then	-- supplied a database name?
+		MYSQL_DATABASE = CL_MYSQL_DATABASE
+		print("Using database: '" .. MYSQL_DATABASE "'.")
+	else
+		print("No database name given. Using default database: '" .. MYSQL_DATABASE .. "' (Change with --mysqlDB).")
+	end
+	
 	if CL_SERVER_IP then
 		print("I do not know what to do with -ip or -h or --host in dedicated server mode.")
 		love.event.quit()
@@ -100,6 +114,8 @@ if DEDICATED then
 	-- main function, runs at startup:
 	function love.load(args)
 		print("Starting in dedicated Server mode!")
+		
+		log.findTable()		-- look for table in database.
 		
 		io.close()
 

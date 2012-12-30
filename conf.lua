@@ -123,14 +123,29 @@ for k, a in pairs(arg) do
 					CL_MYSQL_PORT = login[4]	-- could be nil!
 					INVALID_MYSQL = false
 				end
-				--arg[k+1] = nil
-				--arg[k] = nil
+				arg[k+1] = nil
+				arg[k] = nil
 			end
 		end
 		break
 	end
 end
 
+for k, a in pairs(arg) do
+	if a == "--mysqlDB" then
+		INVALID_MYSQL_DATABASE = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				ip = arg[k+1]
+				CL_MYSQL_DATABASE = ip
+				INVALID_MYSQL_DATABASE = false
+				arg[k+1] = nil
+				arg[k] = nil
+			end
+		end
+		break
+	end
+end
 
 for k, a in pairs(arg) do
 	if a == "--render" then

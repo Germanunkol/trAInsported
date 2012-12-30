@@ -42,6 +42,8 @@ if not DEDICATED then
 else
 	TIME_BETWEEN_MATCHES = 60
 	FALLBACK_ROUND_TIME = 300
+	
+	MYSQL_DATABASE = "trAInsported"
 end
 
 timeFactor = 1

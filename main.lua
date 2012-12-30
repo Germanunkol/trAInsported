@@ -89,7 +89,7 @@ if DEDICATED then
 	
 	if CL_MYSQL_DATABASE then	-- supplied a database name?
 		MYSQL_DATABASE = CL_MYSQL_DATABASE
-		print("Using database: '" .. MYSQL_DATABASE "'.")
+		print("Using database: '" .. MYSQL_DATABASE .. "'.")
 	else
 		print("No database name given. Using default database: '" .. MYSQL_DATABASE .. "' (Change with --mysqlDB).")
 	end

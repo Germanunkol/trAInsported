@@ -64,9 +64,8 @@ function log.findTable()
 					found = true
 				else
 					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40));")		-- see if the "ais" table exists. if not, attempt to create it:
-				
-					result = cursor:fetch()
-					if result then
+					
+					if cursor then
 						found = true
 					end
 					cursor:close()

@@ -35,14 +35,22 @@ function log.neWinner(ID)
 						print("Didn't find " .. aiList[ID].name .. " in Database. Attempting to add.")
 						cursor = conn:execute("INSERT INTO ais Value('" .. aiList[ID].name .. "','Unknown',0,0,0);")
 						if type(cursor) == "table" then
+							print("result:")
+							printTable(cursor)
 							cursor:close()
+						else
+							print("result",cursor)
 						end
 					end
 					
 					cursor = conn:execute("UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[ID].name .. "';")
 --					UPDATE persondata SET age=age+1;
 					if type(cursor) == "table" then
+						print("result:")
+						printTable(cursor)
 						cursor:close()
+					else
+						print("result",cursor)
 					end
 					conn:close()
 				else

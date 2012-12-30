@@ -26,15 +26,22 @@ function log.neWinner(ID)
 				conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 				if conn then
 					print("connection successful!")
-					cursor = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[ID].name .. "';")
-					result = cursor:fetch()
-					cursor:close()
+					result = nil
+					cursor,err = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[ID].name .. "';")
+					if not cursor then
+						print(err)
+					else
+						result = cursor:fetch()
+						cursor:close()
+					end
 					if result then
 						print("Found " .. aiList[ID].name .. " in Database!")						
 					else
 						print("Didn't find " .. aiList[ID].name .. " in Database. Attempting to add.")
-						cursor = conn:execute("INSERT INTO ais Value('" .. aiList[ID].name .. "','Unknown',0,0,0);")
-						if type(cursor) == "table" then
+						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[ID].name .. "','Unknown',0,0,0'"  .. aiList[ID].name .. ".lua');")
+						if not cursor then
+							print(err)
+						elseif type(cursor) == "table" then
 							print("result:")
 							printTable(cursor)
 							cursor:close()
@@ -43,9 +50,11 @@ function log.neWinner(ID)
 						end
 					end
 					
-					cursor = conn:execute("UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[ID].name .. "';")
+					cursor,err = conn:execute("UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[ID].name .. "';")
 --					UPDATE persondata SET age=age+1;
-					if type(cursor) == "table" then
+					if not cursor then
+						print(err)
+					elseif type(cursor) == "table" then
 						print("result:")
 						printTable(cursor)
 						cursor:close()

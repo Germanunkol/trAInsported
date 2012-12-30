@@ -38,7 +38,7 @@ function log.neWinner(ID)
 						print("Found " .. aiList[ID].name .. " in Database!")						
 					else
 						print("Didn't find " .. aiList[ID].name .. " in Database. Attempting to add.")
-						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[ID].name .. "','Unknown',0,0,0'"  .. aiList[ID].name .. ".lua');")
+						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[ID].name .. "','Unknown',0,0,0,'"  .. aiList[ID].name .. ".lua');")
 						if not cursor then
 							print(err)
 						elseif type(cursor) == "table" then

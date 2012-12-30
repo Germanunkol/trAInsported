@@ -30,12 +30,20 @@ function log.neWinner(ID)
 					result = cursor:fetch()
 					cursor:close()
 					if result then
-						print("Found " .. aiList[ID].name .. " in Database!")
+						print("Found " .. aiList[ID].name .. " in Database!")						
 					else
 						print("Didn't find " .. aiList[ID].name .. " in Database. Attempting to add.")
-						cursor = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[ID].name .. "';")
+						cursor = conn:execute("INSERT INTO ais Value('" .. aiList[ID].name .. "','Unknown',0,0,0);")
+						if type(cursor) == "table" then
+							cursor:close()
+						end
 					end
-					--printTable(result:fetch())
+					
+					cursor = conn:execute("UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[ID].name .. "';")
+--					UPDATE persondata SET age=age+1;
+					if type(cursor) == "table" then
+						cursor:close()
+					end
 					conn:close()
 				else
 					print("Error connecting to MySQL. Does the database exist?")
@@ -64,9 +72,9 @@ function log.findTable()
 					found = true
 				else
 					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40));")		-- see if the "ais" table exists. if not, attempt to create it:
-					
 					if cursor then
 						found = true
+						print("Created table 'ais' in " .. MYSQL_DATABASE .. ".")
 					end
 					cursor:close()
 				end

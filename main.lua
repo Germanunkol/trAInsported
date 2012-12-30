@@ -18,6 +18,7 @@ stats = require("statistics")
 ai = require("ai")
 require("TSerial")
 pSpeach = require("passengerSpeach")
+log = require("databaseLog")
 
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:
@@ -32,6 +33,13 @@ else
 	print("Using port " .. PORT .. ".")
 end
 
+if INVALID_MYSQL then
+	print("Wrong usage of --mysql!")
+	print("Correct would be: --mysql login,password[,host[,port]]")
+	print("Example: --mysql testUser,myPassword")
+	print("Example 2: --mysql testUser,myPassword,192.158.1.20,6001")
+	love.event.quit()
+end
 
 if DEDICATED then
 	------------------------------------------
@@ -66,11 +74,17 @@ if DEDICATED then
 		print("Will start a new match after waiting for " .. TIME_BETWEEN_MATCHES .. " seconds.")
 	end
 	
+	if CL_MYSQL_PORT then
+		print("Will attempt to connect to database as " .. CL_MYSQL_NAME .. "@"..CL_MYSQL_HOST .. ":" .. CL_MYSQL_PORT .. ".")
+	elseif CL_MYSQL_HOST then
+		print("Will attempt to connect to database as " .. CL_MYSQL_NAME .. "@"..CL_MYSQL_HOST .. ".")
+	end
 	
 	if CL_SERVER_IP then
 		print("I do not know what to do with -ip or -h or --host in dedicated server mode.")
 		love.event.quit()
 	end
+	
 	-------------------------------
 
 	require("server")	-- main Server module. Handles server's communication with the client.
@@ -133,6 +147,12 @@ if DEDICATED then
 					print("")		--jump to newline!
 				end
 			else
+				if not winnerLogged then
+					if winnerID then
+						log.newWinner(winnerID)		-- write to database
+					end
+					winnerLogged = true
+				end
 			
 				-- wait for delay to be over
 				timeUntilNextMatch = timeUntilNextMatch - dt
@@ -241,7 +261,7 @@ else
 	function love.load(args)
 		numTrains = 0
 		DEBUG_OVERLAY = true
-
+		
 		time = 0
 		mouseLastX = 0
 		mouseLastY = 0

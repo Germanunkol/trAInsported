@@ -538,6 +538,10 @@ function statistics.generateStatWindows()
 	--randomize:
 	print(#allPossibleStats)
 	randomizeTable(allPossibleStats)
+	
+	-- determine the winner:
+	winnerID = mostTransportedID
+	--
 
 	i = 0
 	for k, v in pairs(allPossibleStats) do
@@ -560,7 +564,6 @@ end
 --------------------------------------------------------------
 --		SHOW STATS:
 --------------------------------------------------------------
-
 
 function statistics.display(globX, globY, dt)
 

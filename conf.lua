@@ -9,6 +9,23 @@
 -- -d
 -- 
 
+function seperateStrings(str)
+	tbl = {}
+	index = 1
+	
+	if str:sub(#str,#str) ~= "," then		-- gfind will not capture a substring unless there's a comma following
+		str = str .. ","
+	end
+	
+	for val in string.gfind(str, ".-,") do
+		tbl[index] = val:sub(1,#val-1)
+		pos = #val+1
+		index = index + 1
+	end
+	return tbl
+end
+
+
 
 -- Check if game this is running in dedicated server mode:
 for k, a in pairs(arg) do
@@ -87,6 +104,27 @@ for k, a in pairs(arg) do
 				--end
 				arg[k+1] = nil
 				arg[k] = nil
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
+	if a == "--mysql" then
+		INVALID_MYSQL = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				login = seperateStrings(arg[k+1])
+				if login[1] and login[2] then
+					CL_MYSQL_NAME = login[1]
+					CL_MYSQL_PASS = login[2]
+					CL_MYSQL_HOST = login[3] or "localhost"	-- could be nil!
+					CL_MYSQL_PORT = login[4]	-- could be nil!
+					INVALID_MYSQL = false
+				end
+				--arg[k+1] = nil
+				--arg[k] = nil
 			end
 		end
 		break

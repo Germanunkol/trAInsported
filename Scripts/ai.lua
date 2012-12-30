@@ -101,8 +101,6 @@ function ai.new(scriptName)
 		end
 	end
 	
-	log.neWinner(aiID)
-	
 	--set up the ai which the user's script will have access to:
 	sb = sandbox.createNew(aiID)
 	sb.ai = {}

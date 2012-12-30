@@ -16,7 +16,7 @@ end
 
 log = {}
 
-function log.neWinner(ID)
+function log.newWinner(ID)
 	if MYSQL then
 		if aiList[ID].name then
 			-- open MYSQL environment:

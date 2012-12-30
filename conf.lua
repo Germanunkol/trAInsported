@@ -132,6 +132,15 @@ for k, a in pairs(arg) do
 end
 
 
+for k, a in pairs(arg) do
+	if a == "--render" then
+		CL_FORCE_RENDER = true
+		arg[k] = nil
+		break
+	end
+end
+
+
 if not DEDICATED then
 
 	love.conf = function(t)

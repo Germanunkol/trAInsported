@@ -195,7 +195,7 @@ function gradient(imgData, centerX, centerY, radius, brightness)
 			r,g,b,a = imgData:getPixel(x,y)
 			if a > 0 then
 				dist = math.sqrt((x-centerX)^2+(y-centerY)^2)
-				factor = math.max(0, 1 - dist/radius)*25
+				factor = math.max(0, 1 - dist/radius)*brightness
 				a = clamp(a + factor, 0, 255)
 				r = clamp(r + factor, 0, 255)
 				g = clamp(g + factor, 0, 255)

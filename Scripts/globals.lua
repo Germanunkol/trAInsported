@@ -1,3 +1,8 @@
+----------------------------------
+-- Define global variables for both client and server.
+-- Most of these variables should not change during the game.
+----------------------------------
+
 
 VERSION = "0.12"
 

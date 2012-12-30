@@ -33,6 +33,7 @@ C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 - [Server] **-m TIME** or **--match_time TIME**: Time a match will take.
 - [Server] **-c TIME** or **--cooldown TIME**: Time between two matches on Server. (TIME in seconds, minimum 10.)
 - [Client and Server] Needed on Windows if you want a console: **--console**
+- [Client] **--render** Forces game to rerender all images at startup.
 Note that you'll need to edit the IP address of the client to make sure your client will find the server and watch its matches.
 
 Uninstalling:

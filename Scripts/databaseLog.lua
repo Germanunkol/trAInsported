@@ -26,12 +26,16 @@ function log.neWinner(ID)
 				conn = env:connect("trAInsported", CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 				if conn then
 					print("connection successful!")
-					result = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[ID].name .. "';")
-					print(result:fetch())
-					printTable(result:fetch())
-					result:close()
+					cursor = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[ID].name .. "';")
+					result = cursor:fetch()
+					if result then
+						print("Found " .. aiList[ID].name .. " in Database!")
+					else
+						print("Didn't find " .. aiList[ID].name .. " in Database.")
+					end
+					--printTable(result:fetch())
+					cursor:close()
 					conn:close()
-					
 				else
 					print("Error connecting to MySQL.")
 				end

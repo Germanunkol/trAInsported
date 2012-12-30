@@ -142,10 +142,10 @@ function button.init()
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
 	
 		ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOff = nil
 			loadingScreen.addSection("Rendering Deactivated Button")
-			buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/createImageBox.lua")
+			buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/renderImageBox.lua")
 			buttonOffThread:start()
 	
 			buttonOffThread:set("width", STND_BUTTON_WIDTH )
@@ -183,10 +183,10 @@ function button.init()
 	
 		ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
 		print(buttonOver)
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOver = nil
 			loadingScreen.addSection("Rendering Activated Button")
-			buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/createImageBox.lua")
+			buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/renderImageBox.lua")
 			buttonOverThread:start()
 	
 			buttonOverThread:set("width", STND_BUTTON_WIDTH )
@@ -194,6 +194,7 @@ function button.init()
 			buttonOverThread:set("shadow", true )
 			buttonOverThread:set("shadowOffsetX", 6 )
 			buttonOverThread:set("shadowOffsetY", 1 )
+			buttonOverThread:set("brightness", 100 )
 			buttonOverThread:set("colR", BUTTON_OVER_R )
 			buttonOverThread:set("colG", BUTTON_OVER_G )
 			buttonOverThread:set("colB", BUTTON_OVER_B )
@@ -227,10 +228,10 @@ function button.init()
 		
 		ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
 		print(buttonOffSmall)
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOffSmall = nil
 			loadingScreen.addSection("Rendering Deactivated Button (small)")
-			buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/createImageBox.lua")
+			buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/renderImageBox.lua")
 			buttonOffSmallThread:start()
 	
 			buttonOffSmallThread:set("width", SMALL_BUTTON_WIDTH )
@@ -268,10 +269,10 @@ function button.init()
 	
 		ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
 		print(buttonOverSmall)
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOverSmall = nil
 			loadingScreen.addSection("Rendering Activated Button (small)")
-			buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/createImageBox.lua")
+			buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/renderImageBox.lua")
 			buttonOverSmallThread:start()
 	
 			buttonOverSmallThread:set("width", SMALL_BUTTON_WIDTH )
@@ -279,6 +280,7 @@ function button.init()
 			buttonOverSmallThread:set("shadow", true )
 			buttonOverSmallThread:set("shadowOffsetX", 6 )
 			buttonOverSmallThread:set("shadowOffsetY", 1 )
+			buttonOverSmallThread:set("brightness", 100 )
 			buttonOverSmallThread:set("colR", BUTTON_OVER_R )
 			buttonOverSmallThread:set("colG", BUTTON_OVER_G )
 			buttonOverSmallThread:set("colB", BUTTON_OVER_B )

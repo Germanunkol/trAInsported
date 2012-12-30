@@ -28,10 +28,10 @@ function pSpeach.init()
 
 	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
 		ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			pSpeachBubble = nil
 			loadingScreen.addSection("Rendering Speach Bubble Box")
-			pSpeachBubbleThread = love.thread.newThread("pSpeachBubbleThread", "Scripts/createImageBox.lua")
+			pSpeachBubbleThread = love.thread.newThread("pSpeachBubbleThread", "Scripts/renderImageBox.lua")
 			pSpeachBubbleThread:start()
 	
 			pSpeachBubbleThread:set("width", BUBBLE_WIDTH )

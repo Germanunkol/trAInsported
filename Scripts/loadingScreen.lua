@@ -120,10 +120,10 @@ local bgBoxThread
 function loadingScreen.init()
 	if not bgBoxThread and not bgBox then		-- only start thread once!
 		ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			bgBox = nil
 			loadingScreen.addSection("Rendering Loading Box")
-			bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/createImageBox.lua")
+			bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/renderImageBox.lua")
 			bgBoxThread:start()
 	
 			bgBoxThread:set("width", BOX_WIDTH )
@@ -159,10 +159,10 @@ function loadingScreen.init()
 	
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
 		ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			bgBoxSmall = nil
 			loadingScreen.addSection("Rendering Loading Box (small)")
-			bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/createImageBox.lua")
+			bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/renderImageBox.lua")
 			bgBoxSmallThread:start()
 	
 			bgBoxSmallThread:set("width", BOX_WIDTH_SMALL )

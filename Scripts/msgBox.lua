@@ -124,10 +124,10 @@ function msgBox.init()
 	
 	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
 		ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			msgBoxBG = nil
 			loadingScreen.addSection("Rendering Message Box")
-			msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/createImageBox.lua")
+			msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/renderImageBox.lua")
 			msgBoxBGThread:start()
 	
 			msgBoxBGThread:set("width", MSG_BOX_WIDTH )

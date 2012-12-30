@@ -684,10 +684,10 @@ end
 function statistics.init()
 	if not statBoxPositiveThread and not statBoxPositive then		-- only start thread once!
 		ok, statBoxPositive = pcall(love.graphics.newImage, "statBoxPositive.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			statBoxPositive = nil
 			loadingScreen.addSection("Rendering Stat Box (green)")
-			statBoxPositiveThread = love.thread.newThread("statBoxPositiveThread", "Scripts/createImageBox.lua")
+			statBoxPositiveThread = love.thread.newThread("statBoxPositiveThread", "Scripts/renderImageBox.lua")
 			statBoxPositiveThread:start()
 	
 			statBoxPositiveThread:set("width", STAT_BOX_WIDTH )
@@ -723,10 +723,10 @@ function statistics.init()
 	
 	if not statBoxNegativeThread and not statBoxNegative then		-- only start thread once!
 		ok, statBoxNegative = pcall(love.graphics.newImage, "statBoxNegative.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			statBoxNegative = nil
 			loadingScreen.addSection("Rendering Stat Box (red)")
-			statBoxNegativeThread = love.thread.newThread("statBoxNegativeThread", "Scripts/createImageBox.lua")
+			statBoxNegativeThread = love.thread.newThread("statBoxNegativeThread", "Scripts/renderImageBox.lua")
 			statBoxNegativeThread:start()
 	
 			statBoxNegativeThread:set("width", STAT_BOX_WIDTH )
@@ -761,10 +761,10 @@ function statistics.init()
 	end
 	if not statBoxStatusThread and not statBoxStatus then		-- only start thread once!
 		ok, statBoxStatus = pcall(love.graphics.newImage, "statBoxStatus.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			statBoxStatus = nil
 			loadingScreen.addSection("Rendering Stat Box (status)")
-			statBoxStatusThread = love.thread.newThread("statBoxStatusThread", "Scripts/createImageBox.lua")
+			statBoxStatusThread = love.thread.newThread("statBoxStatusThread", "Scripts/renderImageBox.lua")
 			statBoxStatusThread:start()
 	
 			statBoxStatusThread:set("width", BOX_STATUS_WIDTH )
@@ -800,10 +800,10 @@ function statistics.init()
 
 	if not roundStatsThread and not roundStats then		-- only start thread once!
 		ok, roundStats = pcall(love.graphics.newImage, "roundStats.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			roundStats = nil
 			loadingScreen.addSection("Rendering Round Info Box")
-			roundStatsThread = love.thread.newThread("roundStatsThread", "Scripts/createImageBox.lua")
+			roundStatsThread = love.thread.newThread("roundStatsThread", "Scripts/renderImageBox.lua")
 			roundStatsThread:start()
 	
 			roundStatsThread:set("width", STAT_BOX_WIDTH )

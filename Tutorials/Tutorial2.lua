@@ -282,7 +282,7 @@ function tutorial.start()
 	
 	tutorial.noTrees = true		-- don't render trees!
 	
-	map.new(nil,nil,1,tutMap)
+	map.generate(nil,nil,1,tutMap)
 	
 	tutorial.createTutBoxes()
 	

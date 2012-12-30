@@ -7,10 +7,10 @@ local currentTime = 0
 function statusMsg.init()
 	if not statusMsgBoxThread and not statusMsgBox then		-- only start thread once!
 		ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			statusMsgBox = nil
 			loadingScreen.addSection("Rendering Status Msg Box")
-			statusMsgBoxThread = love.thread.newThread("statusMsgBoxThread", "Scripts/createImageBox.lua")
+			statusMsgBoxThread = love.thread.newThread("statusMsgBoxThread", "Scripts/renderImageBox.lua")
 			statusMsgBoxThread:start()
 	
 			statusMsgBoxThread:set("width", STAT_MSG_WIDTH )
@@ -46,10 +46,10 @@ function statusMsg.init()
 	
 	if not statusErrBoxThread and not statusErrBox then		-- only start thread once!
 		ok, statusErrBox = pcall(love.graphics.newImage, "statusErrBox.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			statusErrBox = nil
 			loadingScreen.addSection("Rendering Status Error Box")
-			statusErrBoxThread = love.thread.newThread("statusErrBoxThread", "Scripts/createImageBox.lua")
+			statusErrBoxThread = love.thread.newThread("statusErrBoxThread", "Scripts/renderImageBox.lua")
 			statusErrBoxThread:start()
 	
 			statusErrBoxThread:set("width", STAT_MSG_WIDTH )
@@ -85,10 +85,10 @@ function statusMsg.init()
 	
 	if not toolTipBoxThread and not toolTipBox then		-- only start thread once!
 		ok, toolTipBox = pcall(love.graphics.newImage, "toolTipBox.png")
-		if not ok or not versionCheck.getMatch() then
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			toolTipBox = nil
 			loadingScreen.addSection("Rendering Tool Tip Box")
-			toolTipBoxThread = love.thread.newThread("toolTipBoxThread", "Scripts/createImageBox.lua")
+			toolTipBoxThread = love.thread.newThread("toolTipBoxThread", "Scripts/renderImageBox.lua")
 			toolTipBoxThread:start()
 	
 			toolTipBoxThread:set("width", TOOL_TIP_WIDTH )

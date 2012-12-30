@@ -40,12 +40,13 @@ function connection.startServer()
 		print("Started server at: " .. PORT)
 	end
 	
-	ok, msg = pcall(function() {
-	-- set a timeout for accepting client connections
-	server:settimeout(.0001)
-	sendPackets.init()
-	})
-	if not ok the error("Failed to set up server. Maybe a connection is already running on this port? " .. err) end
+	ok, err = pcall(function()
+		-- set a timeout for accepting client connections
+		server:settimeout(.0001)
+		sendPackets.init()
+	end)
+	
+	if not ok then error("Failed to set up server. Maybe a connection is already running on this port?\n" .. err) end
 	
 	return true
 end

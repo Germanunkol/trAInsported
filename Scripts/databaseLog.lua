@@ -146,9 +146,11 @@ function log.findTable()
 			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 			if conn then
 				cursor = conn:execute("SHOW TABLES LIKE 'ais';")		-- see if the "ais" table exists. if not, attempt to create it:
-				
-				result = cursor:fetch()
-				cursor:close()
+				result = nil
+				if cursor then
+					result = cursor:fetch()
+					cursor:close()
+				end
 				if result then
 					found = true
 					print("Found table 'ais'. Success!")
@@ -157,8 +159,10 @@ function log.findTable()
 					if cursor then
 						found = true
 						print("Created table 'ais' in " .. MYSQL_DATABASE .. ".")
+						if type(cursor) == "table" then
+							cursor:close()
+						end
 					end
-					cursor:close()
 				end
 				conn:close()
 			else

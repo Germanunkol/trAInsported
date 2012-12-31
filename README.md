@@ -3,11 +3,11 @@ Trains Game
 
 Getting started:
 ------------------------------
-Case 1: You have a binary of the game. Double-click it and run -> voila!
+**Case 1:** You have a binary of the game. Double-click it and run -> voila!
 
-Case 2: You have a .love version of the game, you'll need to install the awesome Löve2D game engine. Get it at love2d.org (this game was developed for Löve2D Version 0.8.0). Then double click the .love file.
+**Case 2:** You have a .love version of the game, you'll need to install the awesome Löve2D game engine. Get it at love2d.org (this game was developed for Löve2D Version 0.8.0). Then double click the .love file.
 
-Case 3: You have the source of the game. Get the Löve2D engine and install it. Then open a console, type the path to the love engine (on unix, you might just need 'love', on windows you need the whole path to the Love.exe) and the path to the game folder after it (the one holding the main.lua file). See an example of this in the section **Command Line Options**!
+**Case 3:** You have the source of the game. Get the Löve2D engine and install it. Then open a console, type the path to the love engine (on unix, you might just need 'love', on windows you need the whole path to the Love.exe) and the path to the game folder after it (the one holding the main.lua file). See an example of this in the section **Command Line Options**!
 
 First, try getting into the tutorials. Once through them, have a look at the Documentation.html file in this folder.
 

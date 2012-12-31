@@ -540,7 +540,9 @@ function statistics.generateStatWindows()
 	randomizeTable(allPossibleStats)
 	
 	-- determine the winner:
-	winnerID = mostTransportedID
+	if mostTransportedID then
+		log.newWinner(mostTransportedID)		-- write to database
+	end
 	for i = 1,#aiStats do
 		log.newMatch(i)
 	end

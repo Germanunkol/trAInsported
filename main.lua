@@ -163,13 +163,7 @@ if DEDICATED then
 					print("")		--jump to newline!
 				end
 			else
-				if not winnerLogged then
-					if winnerID then
-						log.newWinner(winnerID)		-- write to database
-					end
-					winnerLogged = true
-				end
-			
+				
 				-- wait for delay to be over
 				timeUntilNextMatch = timeUntilNextMatch - dt
 			

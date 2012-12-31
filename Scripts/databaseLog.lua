@@ -17,12 +17,15 @@ end
 log = {}
 
 function log.newWinner(ID)
+	print("attempting to log winner")
 	if MYSQL then
+		print("mysql found")
 		if aiList[ID].name then
 			-- open MYSQL environment:
 			env = luasql.mysql()
 			
 			if env then
+				print("loaded mysql driver!")
 				conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 				if conn then
 					print("connection successful!")
@@ -87,6 +90,7 @@ function log.findTable()
 				cursor:close()
 				if result then
 					found = true
+					print("Found table 'ais'. Success!")
 				else
 					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40));")		-- see if the "ais" table exists. if not, attempt to create it:
 					if cursor then

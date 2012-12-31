@@ -541,6 +541,9 @@ function statistics.generateStatWindows()
 	
 	-- determine the winner:
 	winnerID = mostTransportedID
+	for i = 1,#aiStats do
+		log.newMatch(i)
+	end
 	--
 
 	i = 0

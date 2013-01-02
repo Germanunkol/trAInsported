@@ -302,12 +302,18 @@ function map.generate(width, height, seed, tutorialMap)
 		end
 		
 		status = mapGenerateThread:get("status" .. mapGenerateStatusNum)
+		
+		print("status 1", status)
+		
 		if status and loadingScreen then
 			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
 			loadingScreen.addSubSection("Generating Map", status)
 		end
 		
 		status = mapGenerateThread:get("status")
+		
+		print("status 2", status)
+		
 		if status == "done" then
 			print("Generating done!")
 			

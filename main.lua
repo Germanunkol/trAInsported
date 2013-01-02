@@ -133,7 +133,7 @@ if DEDICATED then
 		if map.generating() then
 			map.generate()
 		end
-		dt = love.timer.getDelta()	
+		dt = love.timer.getDelta()
 		
 		if not roundEnded and curMap then
 			train.moveAll(dt*timeFactor)

@@ -279,6 +279,8 @@ function map.generate(width, height, seed, tutorialMap)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
+		print("mapGenerateThread", mapGenerateThread)
+		
 		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
 		mapGenerateThread:start()
 		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
@@ -287,6 +289,7 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("seed", seed )
 		
 		mapGenerateStatusNum = 0
+		print("mapGenerateThread 2", mapGenerateThread)
 		
 	else
 		percent = mapGenerateThread:get("percentage")
@@ -299,7 +302,7 @@ function map.generate(width, height, seed, tutorialMap)
 			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
 			loadingScreen.addSubSection("Generating Map", status)
 		end
-		
+		print("test")
 		status = mapGenerateThread:get("status")
 		if status == "done" then
 			print("Generating done!")

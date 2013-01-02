@@ -7,6 +7,7 @@ require("TSerial")
 require("misc")
 
 width = thisThread:demand("width")
+
 height = thisThread:demand("height")
 seed = thisThread:demand("seed")
 tutorialMap = thisThread:get("tutorialMap")

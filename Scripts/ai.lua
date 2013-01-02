@@ -97,6 +97,8 @@ function ai.new(scriptName)
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
 			aiList[i].name = string.sub(scriptName, 4, #scriptName-4)
+			aiList[i].scriptName = scriptName
+			aiList[i].owner = "Unknown"
 			break
 		end
 	end

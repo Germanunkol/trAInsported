@@ -180,9 +180,14 @@ if DEDICATED then
 				io.write( "Starting next match in " .. rounded .. " seconds.","\r")
 			
 				-- possibly start next match:
-				if timeUntilNextMatch < 0 then
+				if timeUntilNextMatch <= 0 then
 				
 					print("")		--jump to newline!
+					
+					if #aiList > 0 then
+						log.matchResults()
+					end
+					
 					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
 					timeUntilNextMatch = TIME_BETWEEN_MATCHES
 					io.flush()

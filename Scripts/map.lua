@@ -35,6 +35,8 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		return
 	end
 	
+	winnerID = nil
+	
 	if DEDICATED then		-- let server choose parameteres for game:
 	
 		aiFiles = ai.findAvailableAIs()
@@ -274,8 +276,10 @@ function map.generate(width, height, seed, tutorialMap)
 		end
 
 	
-		if tutorialMap then print("Generating Map...", tutorialMap.width, tutorialMap.height)
-		else print("Generating Map...", width, height)
+		if tutorialMap then
+			print("Generating Map...", tutorialMap.width, tutorialMap.height)
+		else
+			print("Generating Map...", width, height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")

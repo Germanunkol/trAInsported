@@ -541,10 +541,7 @@ function statistics.generateStatWindows()
 	
 	-- determine the winner:
 	if mostTransportedID then
-		log.newWinner(mostTransportedID)		-- write to database
-	end
-	for i = 1,#aiStats do
-		log.newMatch(i)
+		winnerID = mostTransportedID		-- write to database
 	end
 	--
 

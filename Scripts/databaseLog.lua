@@ -137,6 +137,94 @@ function log.newMatch(ID)
 	end
 end
 
+function log.matchResults()
+	print("attempting to log match")
+	if MYSQL then
+		print("mysql found")
+		-- open MYSQL environment:
+		env = luasql.mysql()
+		
+		if env then
+			print("loaded mysql driver!")
+			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
+			if conn then
+				print("connection successful!")
+				
+				querry = "UPDATE ais SET matches=matches+1"
+				
+				first = true
+				for i = 1,#aiList do
+					result = false
+					exists = false
+					cursor,err = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[i].name .. "';")
+					if not cursor then
+						print(err)
+					else
+						result = cursor:fetch()
+						cursor:close()
+					end
+					if result then
+						print("Found " .. aiList[i].name .. " in Database!")
+						exists = true				
+					else
+						print("Didn't find " .. aiList[i].name .. " in Database. Attempting to add.")
+						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "',0,0,0,'"  .. aiList[i].name .. ".lua');")
+						if not cursor then
+							print(err)
+						elseif type(cursor) == "table" then
+							cursor:close()
+							exists = true
+						end
+					end
+					if exists then
+						if first then
+							first = false
+							querry = querry .. " WHERE (name LIKE " .. aiList[i].name .. " AND owner LIKE " .. aiList[i].owner .. ")"
+						else
+							querry = querry .. " OR (name LIKE " .. aiList[i].name .. " AND owner LIKE " .. aiList[i].owner .. ")"
+						end
+					end
+				end				
+				
+				querry = querry .. ";"
+				
+				print("Querry:", querry)
+				
+				cursor,err = conn:execute(querry)
+				if not cursor then
+					print(err)
+				elseif type(cursor) == "table" then
+					print("result:")
+					printTable(cursor)
+					cursor:close()
+				else
+					print("result",cursor)
+				end
+				
+				if winnerID and aiList[winnerID] then
+					querry = "UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[winnerID].name .. " AND owner LIKE " .. aiList[winnerID].owner .. ';"
+				
+					cursor,err = conn:execute(querry)
+					if not cursor then
+						print(err)
+					elseif type(cursor) == "table" then
+						cursor:close()
+					else
+						print("result",cursor)
+					end
+				end
+				
+				conn:close()
+			else
+				print("Error connecting to MySQL. Does the database exist?")
+			end
+			env:close()
+		else
+			print("Error opening MySQL environment.")
+		end
+	end
+end
+
 function log.findTable()
 	if MYSQL then
 	

@@ -536,12 +536,12 @@ function statistics.generateStatWindows()
 	end
 	
 	--randomize:
-	print(#allPossibleStats)
 	randomizeTable(allPossibleStats)
 	
 	-- determine the winner:
 	if mostTransportedID then
 		winnerID = mostTransportedID		-- write to database
+		print("WINNER FOUND!", winnerID)
 	end
 	--
 

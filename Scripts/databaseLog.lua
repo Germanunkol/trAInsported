@@ -179,9 +179,9 @@ function log.matchResults()
 					if exists then
 						if first then
 							first = false
-							querry = querry .. " WHERE (name LIKE " .. aiList[i].name .. " AND owner LIKE " .. aiList[i].owner .. ")"
+							querry = querry .. " WHERE (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						else
-							querry = querry .. " OR (name LIKE " .. aiList[i].name .. " AND owner LIKE " .. aiList[i].owner .. ")"
+							querry = querry .. " OR (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						end
 					end
 				end				
@@ -202,7 +202,7 @@ function log.matchResults()
 				end
 				
 				if winnerID and aiList[winnerID] then
-					querry = "UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[winnerID].name .. " AND owner LIKE " .. aiList[winnerID].owner .. ';"
+					querry = "UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[winnerID].name .. "' AND owner LIKE '" .. aiList[winnerID].owner .. "';"
 				
 					cursor,err = conn:execute(querry)
 					if not cursor then

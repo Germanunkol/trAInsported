@@ -141,10 +141,13 @@ function statistics.print()
 			]]--
 		end
 		
+		
+		--[[
 		for k, p in pairs(passengerStats) do
 			print("\t" .. k)
 			printTable(p, 2)
 		end
+		]]--
 	end
 end
 

@@ -305,7 +305,7 @@ function map.generate(width, height, seed, tutorialMap)
 		str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
 		while str do
 			print(str, mapGenerateMsgNumber)
-			if prevStr == str then
+			if prevStr == str and str == "I'm done!" then
 				print("same message twice")
 				love.event.quit()
 			end

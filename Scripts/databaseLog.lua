@@ -107,8 +107,10 @@ function log.matchResults()
 				cursor,err = conn:execute(querry)
 				if not cursor then
 					print(err)
-				else
+				elseif type(cursor) == "table" then
 					cursor:close()
+				else
+					print("result",cursor)
 				end
 		
 				-- fill the table:
@@ -118,6 +120,8 @@ function log.matchResults()
 						print(err)
 					elseif type(cursor) == "table" then
 						cursor:close()
+					else
+						print("result",cursor)
 					end
 				end
 				

@@ -93,43 +93,41 @@ function log.matchResults()
 					end
 				end
 				
+				
+				-- add a table holding the last match:
+				-- drop previous one:
+				querry = "DROP TABLE lastMatch;"
+				cursor,err = conn:execute(querry)
+				if not cursor then
+					print(err)
+				else
+					cursor:close()
+				end
+		
+				-- create a new one:
+				querry = "CREATE TABLE lastMatch (name VARCHAR(30), owner VARCHAR(30), pTransported INT);"
+				cursor,err = conn:execute(querry)
+				if not cursor then
+					print(err)
+				else
+					cursor:close()
+				end
+		
+				-- fill the table:
+				for i = 1,#aiList do
+					cursor, err = conn:execute("INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ";")
+					if not cursor then
+						print(err)
+					elseif type(cursor) == "table" then
+						cursor:close()
+					end
+				end
+				
+			
 				conn:close()
 			else
 				print("Error connecting to MySQL. Does the database exist?")
 			end
-			
-			
-			
-			
-			-- add a table holding the last match:
-			-- drop previous one:
-			querry = "DROP TABLE lastMatch;"
-			cursor,err = conn:execute(querry)
-			if not cursor then
-				print(err)
-			else
-				cursor:close()
-			end
-			
-			-- create a new one:
-			querry = "CREATE TABLE lastMatch (name VARCHAR(30), owner VARCHAR(30), pTransported INT);"
-			cursor,err = conn:execute(querry)
-			if not cursor then
-				print(err)
-			else
-				cursor:close()
-			end
-			
-			-- fill the table:
-			for i = 1,#aiList do
-				cursor, err = conn:execute("INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ";")
-				if not cursor then
-					print(err)
-				elseif type(cursor) == "table" then
-					cursor:close()
-				end
-			end
-			
 			
 			env:close()
 		else

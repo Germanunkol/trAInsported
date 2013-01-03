@@ -317,7 +317,7 @@ function map.generate(width, height, seed, tutorialMap)
 		-- then, check if there was an error:
 		err = mapGenerateThread:get("error")
 		if err then
-			print("THREAD error: " .. err)
+			print("MAP GENERATING THREAD error: " .. err)
 			love.event.quit()
 		end
 		

@@ -235,7 +235,6 @@ function populateMap()
 end
 ]]--
 
-
 local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
@@ -283,7 +282,6 @@ function map.generate(width, height, seed, tutorialMap)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
-		print("mapGenerateThread", mapGenerateThread)
 		
 		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
 		mapGenerateThread:start()
@@ -293,18 +291,33 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("seed", seed )
 		
 		mapGenerateStatusNum = 0
-		print("mapGenerateThread 2", mapGenerateThread)
 		
+		mapGenerateMsgNumber = 0
 	else
 		percent = mapGenerateThread:get("percentage")
 		if percent and loadingScreen then
 			loadingScreen.percentage("Generating Map", percent)
 		end
 		
+		
+		-- first, look for new messages:
+		str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
+		while str do
+			print(str)
+			mapGenerateMsgNumber = incrementID(mapGenerateMsgNumber)
+			str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
+		end
+		
+		-- then, check if there was an error:
+		err = mapGenerateThread:get("error")
+		if err then
+			print("THREAD error: " .. err)
+			love.event.quit()
+		end
+		
+		
 		status = mapGenerateThread:get("status" .. mapGenerateStatusNum)
-		
 		print("status 1", status)
-		
 		if status and loadingScreen then
 			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
 			loadingScreen.addSubSection("Generating Map", status)

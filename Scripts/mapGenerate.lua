@@ -12,6 +12,18 @@ height = thisThread:demand("height")
 seed = thisThread:demand("seed")
 tutorialMap = thisThread:get("tutorialMap")
 
+local msgNumber = 0
+print = function(...)
+	sendStr = ""
+	for i = 1, #arg do
+		if arg[i] then
+			sendStr = sendStr .. arg[i] .. "\t"
+		end
+	end
+	thisThread:set("msg" .. msgNumber, sendStr)
+	msgNumber = incrementID(msgNumber)
+end
+
 if tutorialMap then
 	tutorialMap = TSerial.unpack(tutorialMap)
 	width = tutorialMap.width
@@ -87,4 +99,6 @@ thisThread:set("curMapOccupiedTiles", TSerial.pack(curMapOccupiedTiles))
 thisThread:set("curMapOccupiedExits", TSerial.pack(curMapOccupiedExits))
 thisThread:set("status", "done")
 
-
+while(true) do
+	print("I'm done!")
+end

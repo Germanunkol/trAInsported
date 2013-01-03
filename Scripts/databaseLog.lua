@@ -115,7 +115,9 @@ function log.matchResults()
 		
 				-- fill the table:
 				for i = 1,#aiList do
-					cursor, err = conn:execute("INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ";")
+					querry = "INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ";"
+					print(querry)
+					cursor, err = conn:execute(querry)
 					if not cursor then
 						print(err)
 					elseif type(cursor) == "table" then

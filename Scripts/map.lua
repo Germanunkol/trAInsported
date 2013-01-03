@@ -293,6 +293,7 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateStatusNum = 0
 		
 		mapGenerateMsgNumber = 0
+		prevStr = nil
 	else
 		percent = mapGenerateThread:get("percentage")
 		if percent and loadingScreen then
@@ -305,6 +306,7 @@ function map.generate(width, height, seed, tutorialMap)
 		while str do
 			print(str, mapGenerateMsgNumber)
 			if prevStr == str then
+				print("same message twice")
 				love.event.quit()
 			end
 			prevStr = str

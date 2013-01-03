@@ -74,7 +74,6 @@ end
 calculateRailTypes()
 thisThread:set("percentage", 50)
 
-
 if not tutorialMap then
 	--thisThread:set("status", "houses")
 	
@@ -99,6 +98,5 @@ thisThread:set("curMapOccupiedTiles", TSerial.pack(curMapOccupiedTiles))
 thisThread:set("curMapOccupiedExits", TSerial.pack(curMapOccupiedExits))
 thisThread:set("status", "done")
 
-while(true) do
-	print("I'm done!")
-end
+print("I'm done!")
+return

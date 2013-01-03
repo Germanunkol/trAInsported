@@ -303,7 +303,11 @@ function map.generate(width, height, seed, tutorialMap)
 		-- first, look for new messages:
 		str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
 		while str do
-			print(str)
+			print(str, mapGenerateMsgNumber)
+			if prevStr == str then
+				love.event.quit()
+			end
+			prevStr = str
 			mapGenerateMsgNumber = incrementID(mapGenerateMsgNumber)
 			str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
 		end
@@ -340,13 +344,13 @@ function map.generate(width, height, seed, tutorialMap)
 			end
 			map.print("Finished Map:")
 			mapGenerateThread = nil
-			collectgarbage("collect")
 			if not DEDICATED then
 				map.render(curMap)
 			else
 				sendMap()		-- important! send before running the map!
 				runMap()
 			end
+			collectgarbage("collect")
 			
 			return curMap
 --		elseif status and loadingScreen then

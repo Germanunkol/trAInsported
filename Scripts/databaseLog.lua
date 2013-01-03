@@ -100,8 +100,6 @@ function log.matchResults()
 				cursor,err = conn:execute(querry)
 				if not cursor then
 					print(err)
-				else
-					cursor:close()
 				end
 		
 				-- create a new one:

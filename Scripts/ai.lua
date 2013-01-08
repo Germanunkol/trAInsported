@@ -98,19 +98,16 @@ function ai.new(scriptName)
 		if aiList[i] == nil then
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
-			local s,e, name = scriptName:find(".*/(.*)")
+			local s,e, name = scriptName:find(".*/(.*)%.lua")
 			print("NAME:",name)
 			
 			e = e or 0
-			aiList[i].name = string.sub(name, 1, #scriptName-4)
+			aiList[i].name = name
 			aiList[i].scriptName = scriptName
 			
 			local s,e, owner = scriptName:find(".*/(.-)/")
 			print("OWNER:",owner)
-			if not owner then
-				owner = "Unknown"
-			end
-			aiList[i].owner = "Unknown"
+			aiList[i].owner = owner or "Unknown"
 			break
 		end
 	end

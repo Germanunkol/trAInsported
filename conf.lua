@@ -9,6 +9,17 @@
 -- -d
 -- 
 
+function os.capture(cmd, raw)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  if raw then return s end
+  s = string.gsub(s, '^%s+', '')
+  s = string.gsub(s, '%s+$', '')
+  s = string.gsub(s, '[\n\r]+', ' ')
+  return s
+end
+
 function seperateStrings(str)
 	tbl = {}
 	index = 1
@@ -29,7 +40,7 @@ end
 
 -- Check if game this is running in dedicated server mode:
 for k, a in pairs(arg) do
-	if a == "-d" or a == "--dedicated" or a == "--server" then
+	if a == "-s" or a == "--dedicated" or a == "--server" then
 		DEDICATED = true
 		arg[k] = nil
 		break
@@ -50,6 +61,23 @@ for k, a in pairs(arg) do
 				end
 				arg[k+1] = nil
 				arg[k] = nil
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
+	if a == "--directory" or a == "-d" then
+		INVALID_DIRECTORY = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				if os.capture("uname") == "Linux" then
+					CL_DIRECTORY = arg[k+1]
+					INVALID_DIRECTORY = false;
+					arg[k+1] = nil
+					arg[k] = nil
+				end
 			end
 		end
 		break
@@ -98,10 +126,8 @@ for k, a in pairs(arg) do
 		if type(k) == "number" then
 			if arg[k+1] then
 				ip = arg[k+1]
-				--if ip:find("%d%d?%d?\.%d%d?%d?\.%d%d?%d?\.%d%d?%d?") == 1 or ip == "localhost" then
-					CL_SERVER_IP = ip
-					INVALID_IP = false
-				--end
+				CL_SERVER_IP = ip
+				INVALID_IP = false
 				arg[k+1] = nil
 				arg[k] = nil
 			end

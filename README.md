@@ -26,11 +26,11 @@ Example:
 ```bash
 /path/to/love /path/to/game --server -p 4242
 ```
-**Win**
+**Win:**
 ```dos
 C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 ```
-- **-d** or **--server** or **--dedicated**: Start in dedicated server mode.
+- **-s** or **--server** or **--dedicated**: Start in dedicated server mode.
 - **-h IP_OR_URL** or **--host IP_OR_URL** or **--ip IP_OR_URL**: IP address of server to connect to. You can also use an URL to connect if you have a server running on some web-machine. In both cases, make sure to open the ports on your server's router! [Client]
 - **-p PORTNUMBER** or **--port PORTNUMBER**:  Port to use -> must be the same on client and server. (Default port is 5556. Make sure to port-forward that port if the game server is sitting behind a router.) [Client and Server]
 - **-m TIME** or **--match_time TIME**: Time a match will take. [Server]
@@ -39,7 +39,7 @@ C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 - **--render** Forces game to rerender all images at startup. [Client]
 - **--mysql USER,PASSWORD[,HOST[,PORT]]** Will enable logging to a MySQL database if **--server** is activated. It will log into the MySQL server using **USER** and **PASSWORD**. Optionally, **HOST** and **PORT** can be given to connect to a remote server (default is localhost). You can use **--mysqlDB** to change the database to use. Otherwise, it will use the 'trAInsported' database. Note: You have to manually create the trAInsported Database beforehand, and make sure that USER has rights to create a table and edit a table on the database.[Server]
 - **--mysqlDB DATABASE** The game will connect to this database instead of the default one. The **USER** given by **--mysql** (see above) needs to have access to this database. [Server]
-
+- **-d DIR** or **--directory DIR**: Only available on Linux. Gives the path to the folder which holds the various user folders which in turn hold their AIs.
 Uninstalling:
 ------------------------------
 The game creates a folder called **trAInsported** in your local home folder. Depending on how you uninstall, you might have to remove this manually. They'll usually be in these locations (taken from love2d.org):

@@ -81,7 +81,12 @@ end
 
 function ai.new(scriptName)
 	print("Opening: " .. scriptName)
-	local ok, chunk = pcall(love.filesystem.read, scriptName )
+	--local ok, chunk = pcall(love.filesystem.read, scriptName
+	fh = io.open(scriptName,"r")
+	local ok, chunk = pcall(fh.read, fh, "*all" )
+	print("Chunk:", type(chunk), chunk)
+
+
 	if not ok then error("Could not open file: " .. chunk)
 		console.add("Failed to open file (" .. scriptName .. "): " .. msg, {r=255,g=50,b=50})
 	end
@@ -96,7 +101,9 @@ function ai.new(scriptName)
 		if aiList[i] == nil then
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
-			aiList[i].name = string.sub(scriptName, 4, #scriptName-4)
+			local s,e = scriptName:find(".*/")
+			e = e or 0
+			aiList[i].name = string.sub(scriptName, e+1, #scriptName-4)
 			aiList[i].scriptName = scriptName
 			aiList[i].owner = "Unknown"
 			break
@@ -125,6 +132,8 @@ function ai.new(scriptName)
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
+	
+	return aiList[aiID].name
 end
 
 
@@ -132,7 +141,7 @@ end
 function ai.init()
 	for aiID = 1, #aiList do
 		--the second coroutine loads the ai.init() function in the user's AI script:
-		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name)
+		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name, aiList[aiID].scriptName)
 		if aiList[aiID].init then
 			local crInit = coroutine.create(runAiFunctionCoroutine)
 			ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
@@ -358,20 +367,25 @@ function ai.getName(ID)
 end
 
 function ai.findAvailableAIs()
-	local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
-	for k, file in ipairs(files) do
-		if file:find("Backup.lua") then
-			files[k] = nil
-		else
-			s, e = file:find(".lua")
-			if e == #file then
-				print("AI found: " .. k .. ". " .. file)
-			else
+	if CL_DIRECTORY then
+		return findAIs(CL_DIRECTORY)
+	else
+		local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
+		for k, file in ipairs(files) do
+			if file:find("Backup.lua") then
 				files[k] = nil
+			else
+				s, e = file:find(".lua")
+				if e == #file then
+					print("AI found: " .. k .. ". " .. file)
+					files[k] = "AI/" .. files[k]
+				else
+					files[k] = nil
+				end
 			end
 		end
+		return files
 	end
-	return files
 end
 
 function ai.backupTutorialAI( fileName )

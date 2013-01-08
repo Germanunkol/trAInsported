@@ -329,8 +329,10 @@ function menu.newRound()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	jumped = false
-	for k, file in pairs(aiFiles) do
-		menuButtons[file] = button:newSmall(x, y, file:sub(1, #file-4), selectAI, file, nil, nil, "Choose this AI for the match?")
+	for k, fileName in pairs(aiFiles) do
+		local s,e = fileName:find(".*/")
+		e = e or 0
+		menuButtons[fileName] = button:newSmall(x, y, fileName:sub(e+1, #fileName-4), selectAI, fileName, nil, nil, "Choose this AI for the match?")
 		y = y + 37
 		if y > love.graphics.getWidth() - 150 then
 			if jumped then		-- no more space! Only one jump.

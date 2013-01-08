@@ -48,6 +48,13 @@ if INVALID_MYSQL_DATABASE then
 	love.event.quit()
 end
 
+if INVALID_DIRECTORY then
+	print("Wrong usage of --directory!")
+	print("--directory is only available on Linux Systems.")
+	print("Use:\n--directory /path/to/ais")
+	love.event.quit()
+end
+
 if DEDICATED then
 	------------------------------------------
 	-- DEDICATED Server (headless):
@@ -99,6 +106,55 @@ if DEDICATED then
 		love.event.quit()
 	end
 	
+	if CL_DIRECTORY then
+		
+		ok, lfs = pcall(require, "lfs")
+		if not ok then 
+			print("Error: Could not find Lua filesystem. Place install this to use the -d (or --directory) feature!")
+			CL_DIRECTORY = nil
+		else
+			function findAIs (path)
+				local i, files = 1, {}
+				ok, msg = pcall(lfs.dir, path)
+				if ok then 
+					for file in lfs.dir(path) do
+						print(file, path)
+						if file ~= "." and file ~= ".." then
+							local f = path..'/'..file
+							local attr = lfs.attributes (f)
+							assert (type(attr) == "table")
+							if attr.mode == "directory" then
+								--print ("Opening: \t "..f)
+								tempFiles = findAIs (f)
+								for k, tF in pairs(tempFiles) do
+									
+									files[i] = tF
+									i = i + 1
+								end
+							else
+								local s,e = f:find(".lua")
+								if e == #f then
+									--print("Found: \t" .. f)
+									files[i] = f
+									i = i + 1
+								end
+							  --  for name, value in pairs(attr) do
+								--    print (name, value)
+							   -- end
+							end
+						end
+					end
+				end
+				return files
+			end
+			
+		end
+		--t = findAIsInDir(CL_DIRECTORY)
+		--for k, f in pairs(t) do
+			--print(" ->",k, f)
+		--end
+	end
+	
 	-------------------------------
 
 	require("server")	-- main Server module. Handles server's communication with the client.
@@ -122,6 +178,7 @@ if DEDICATED then
 		map.init()
 
 		initServer()
+		
 	end
 	
 	

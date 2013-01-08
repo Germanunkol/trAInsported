@@ -39,7 +39,11 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	
 	if DEDICATED then		-- let server choose parameteres for game:
 	
+		print("FInding AIs")
 		aiFiles = ai.findAvailableAIs()
+		for k, aiName in pairs(aiFiles) do
+			print("FOUND AI:", k, aiName)
+		end
 	
 		local chosenAIs = {}
 	
@@ -47,6 +51,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		for k, aiName in pairs(aiFiles) do
 			if aiID <= 4 then
 				chosenAIs[aiID] = aiName
+				print("CHOSE AI:", aiName)
 				aiID = aiID + 1
 			end
 		end
@@ -95,13 +100,13 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	stats.start( #AIs )
 	train.init()
 	
-	print("found AI:", #AIs)
+	print("found AIs:", #AIs)
 	for i = 1, #AIs do
-		ok, msg = pcall(ai.new, "AI/" .. AIs[i])
+		ok, msg = pcall(ai.new, AIs[i])
 		if not ok then
 			print("Err: " .. msg)
 		else
-			stats.setAIName(i, AIs[i]:sub(1, #AIs[i]-4))
+			stats.setAIName(i, msg)
 			if not DEDICATED then
 				train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
 			end

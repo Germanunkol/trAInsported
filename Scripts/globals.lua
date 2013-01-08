@@ -3,7 +3,6 @@
 -- Most of these variables should not change during the game.
 ----------------------------------
 
-
 VERSION = "0.12"
 
 -- connections:

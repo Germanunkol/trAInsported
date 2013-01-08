@@ -102,11 +102,11 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	
 	print("found AIs:", #AIs)
 	for i = 1, #AIs do
-		ok, msg = pcall(ai.new, AIs[i])
+		ok, name, owner = pcall(ai.new, AIs[i])
 		if not ok then
-			print("Err: " .. msg)
+			print("Err: " .. name)
 		else
-			stats.setAIName(i, msg)
+			stats.setAIName(i, name, owner)
 			if not DEDICATED then
 				train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
 			end
@@ -179,11 +179,11 @@ function map.restart()
 	console.add("--- Restart ---", {r=255,g=50,b=50})
 	
 	for i = 1, #AIs do
-		ok, msg = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
+		ok, name, owner = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
 		if not ok then
-			print("Err: " .. msg)
+			print("Err: " .. name)
 		else
-			stats.setAIName(i, AIs[i])
+			stats.setAIName(i, name, owner)
 		end
 	end
 	

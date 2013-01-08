@@ -151,22 +151,23 @@ function runUpdate(event, t1, t2)
 	elseif event:find("NEW_AI:") == 1 then
 		s,e = event:find("NEW_AI:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
-		ID = tbl[1]
-		name = tbl[2]
+		local ID = tbl[1]
+		local name = tbl[2]
+		local owner = tbl[3]
 		if ID and name then
 			ID = tonumber(ID)
 			train.renderTrainImage( name, ID )
-			stats.setAIName(ID, name)
+			stats.setAIName(ID, name, owner )
 		end
 		return
 	elseif event:find("NEW_TRAIN:") == 1 then
 		s,e = event:find("NEW_TRAIN:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
-		ID = tbl[1]
-		name = tbl[2]
-		tileX = tbl[3]
-		tileY = tbl[4]
-		dir = tbl[5]
+		local ID = tbl[1]
+		local name = tbl[2]
+		local tileX = tbl[3]
+		local tileY = tbl[4]
+		local dir = tbl[5]
 		if ID and name and tileX and tileY and dir then
 			ID = tonumber(ID)
 			tileX = tonumber(tileX)

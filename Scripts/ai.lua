@@ -80,12 +80,9 @@ function runAiFunctionCoroutine(f, ... )
 end
 
 function ai.new(scriptName)
-	print("Opening: " .. scriptName)
 	--local ok, chunk = pcall(love.filesystem.read, scriptName
 	fh = io.open(scriptName,"r")
 	local ok, chunk = pcall(fh.read, fh, "*all" )
-	print("Chunk:", type(chunk), chunk)
-
 
 	if not ok then error("Could not open file: " .. chunk)
 		console.add("Failed to open file (" .. scriptName .. "): " .. msg, {r=255,g=50,b=50})
@@ -101,10 +98,18 @@ function ai.new(scriptName)
 		if aiList[i] == nil then
 			aiID = i
 			aiList[i] =	copyTable(aiUserData)
-			local s,e = scriptName:find(".*/")
+			local s,e, name = scriptName:find(".*/(.*)")
+			print("NAME:",name)
+			
 			e = e or 0
-			aiList[i].name = string.sub(scriptName, e+1, #scriptName-4)
+			aiList[i].name = string.sub(name, 1, #scriptName-4)
 			aiList[i].scriptName = scriptName
+			
+			local s,e, owner = scriptName:find(".*/(.-)/")
+			print("OWNER:",owner)
+			if not owner then
+				owner = "Unknown"
+			end
 			aiList[i].owner = "Unknown"
 			break
 		end
@@ -133,7 +138,7 @@ function ai.new(scriptName)
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
 	
-	return aiList[aiID].name
+	return aiList[aiID].name, aiList[aiID].owner
 end
 
 
@@ -160,6 +165,7 @@ function ai.init()
 			sendStr = "NEW_AI:"
 			sendStr = sendStr .. aiID .. ","
 			sendStr = sendStr .. aiList[aiID].name .. ","
+			sendStr = sendStr .. aiList[aiID].owner .. ","
 			sendMapUpdate(sendStr)
 		end
 	end

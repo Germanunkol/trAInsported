@@ -18,7 +18,7 @@ function chooseAIfromDB()
 	if MYSQL then
 		-- open MYSQL environment:
 		env = luasql.mysql()
-		math.randomseed(time())
+		
 		if env then
 			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 			if conn then

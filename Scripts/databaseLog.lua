@@ -52,10 +52,14 @@ function chooseAIfromDB()
 					local chosen = math.random(probability)
 					print("Choosing probability:", chosen)
 					local i = #row
+					local found = false
 					while i > 0 do
 						print("i",i, row[i].name, row[i].probability, row[i-1], chosen, chosen <= row[i].probability)
 						if row[i] then
-							if not row[i].chosen and chosen <= row[i].probability and (not row[i-1] or chosen > row[i-1].probability) then
+							if chosen <= row[i].probability then
+								found = true
+							end
+							if not row[i].chosen and found and (not row[i-1] or chosen > row[i-1].probability) then
 								row[i].chosen = true
 								toChoose = toChoose - 1
 								break

@@ -30,9 +30,8 @@ function chooseAIfromDB()
 				cursor,err = conn:execute("SELECT name,owner,matches FROM ais;")
 				local row, fileNames = {}, {}
 				local i = 1
-				local  = 0
-				local totalMatches = 0
 				local probability = 0
+				local totalMatches = 0
 				if cursor then
 					row[i] = cursor:fetch ({}, "a")
 					totalMatches = totalMatches + row[i].matches		-- count all matches

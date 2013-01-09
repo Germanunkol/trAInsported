@@ -55,6 +55,7 @@ function chooseAIfromDB()
 						if row[i] then
 							if row[i].probability < chosen and not row[i].chosen then
 								row[i].chosen = true
+								toChoose = toChoose - 1
 								break
 							end
 						end

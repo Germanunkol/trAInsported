@@ -371,8 +371,14 @@ end
 
 function ai.findAvailableAIs()
 	if CL_DIRECTORY then
-		chooseAIfromDB()
-		return randomizeTable(findAIs(CL_DIRECTORY), 4)
+		local fileNames = nil
+		if MYSQL then 
+			fileNames = chooseAIfromDB()
+		end
+		if not fileNames then
+			fileNames = randomizeTable(findAIs(CL_DIRECTORY), 4)
+		end
+		return fileNames
 	else
 		local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
 		for k, file in ipairs(files) do

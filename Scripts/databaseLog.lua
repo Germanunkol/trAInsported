@@ -42,10 +42,45 @@ function chooseAIfromDB()
 				for i = 1,#row do 
 					probability = probability + 100-100*row[i].matches/totalMatches
 					row[i].probability = probability
-					print("1.Found in Database",row[i].name, row[i].owner,row[i].matches, row[i].probability)
+					print("1. Found in Database",row[i].name, row[i].owner,row[i].matches, row[i].probability)
 				end
 				
 				
+				toChoose = math.min(4, #row)
+				print("Choosing " .. toChoose .. " AIs.")
+				while toChoose > 0 do
+					local chosen = math.random(probability)
+					local i = #row
+					while i > 0 do
+						if row[i] then
+							if row[i].probability < chosen and not row[i].chosen then
+								row[i].chosen = true
+								break
+							end
+						end
+						i = i - 1
+					end
+					if i == 0 then		-- none found. Go back through the list and choose the first possible one.
+						i = 1
+						while i < #row do
+							if not row[i].chosen then
+								row[i].chosen = true
+								break
+							end
+							i = i + 1
+						end
+					end
+				end
+				for i = 1,#row do 
+					if row[i].chosen then
+						table.insert( fileNames, CL_DIRECTORY .. "/" .. row[i].owner .. "/" .. row[i].name .. ".lua" )
+					end
+				end
+				
+				for i = 1, #fileNames do
+					print(i, fileNames[i])
+				end
+				return fileNames
 			end
 		end
 	else

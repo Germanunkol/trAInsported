@@ -53,8 +53,9 @@ function chooseAIfromDB()
 					print("Choosing probability:", chosen)
 					local i = #row
 					while i > 0 do
+						print("i",i)
 						if row[i] then
-							if row[i].probability < chosen and not row[i].chosen then
+							if chosen < row[i].probability and not row[i].chosen then
 								row[i].chosen = true
 								toChoose = toChoose - 1
 								break

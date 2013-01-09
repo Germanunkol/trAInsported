@@ -54,7 +54,7 @@ function chooseAIfromDB()
 					local i = #row
 					local found = false
 					while i > 0 do
-						print("i",i, row[i].name, row[i].probability, row[i-1], chosen, chosen <= row[i].probability)
+						print("i",i, row[i].name, row[i].probability, row[i-1], chosen <= row[i].probability)
 						if row[i] then
 							if chosen <= row[i].probability then
 								found = true
@@ -117,7 +117,7 @@ function log.matchResults()
 				for i = 1,#aiList do
 					result = false
 					exists = false
-					cursor,err = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[i].name .. "';")
+					cursor,err = conn:execute("SELECT name FROM ais WHERE name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "';")
 					if not cursor then
 						print(err)
 					else
@@ -127,7 +127,7 @@ function log.matchResults()
 					if result then
 						print("Found " .. aiList[i].name .. " in Database!")
 						exists = true				
-					else
+					--[[else
 						print("Didn't find " .. aiList[i].name .. " in Database. Attempting to add.")
 						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "',0,0,0,'"  .. aiList[i].name .. ".lua', NULL);")
 						if not cursor then
@@ -135,7 +135,7 @@ function log.matchResults()
 						elseif type(cursor) == "table" then
 							cursor:close()
 							exists = true
-						end
+						end]]--
 					end
 					if exists then
 						if first then

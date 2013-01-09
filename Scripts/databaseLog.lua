@@ -40,9 +40,9 @@ function chooseAIfromDB()
 					end
 				end
 				for i = 1,#row do 
-					probability = probability + 100-100*row[i].matches/totalMatches
+					probability = probability + (100-100*row[i].matches/totalMatches)^2
 					row[i].probability = probability
-					print("1. Found in Database",row[i].name, row[i].owner,row[i].matches, row[i].probability)
+					print("1. Found in Database", row[i].name, row[i].owner, row[i].matches, row[i].probability)
 				end
 				
 				

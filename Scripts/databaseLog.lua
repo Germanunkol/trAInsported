@@ -47,7 +47,7 @@ function log.matchResults()
 						exists = true				
 					else
 						print("Didn't find " .. aiList[i].name .. " in Database. Attempting to add.")
-						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "',0,0,0,'"  .. aiList[i].name .. ".lua');")
+						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "',0,0,0,'"  .. aiList[i].name .. ".lua', NULL);")
 						if not cursor then
 							print(err)
 						elseif type(cursor) == "table" then
@@ -158,7 +158,7 @@ function log.findTable()
 					found = true
 					print("Found table 'ais'. Success!")
 				else
-					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40));")		-- see if the "ais" table exists. if not, attempt to create it:
+					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40), timeCreated DATETIME);")		-- see if the "ais" table exists. if not, attempt to create it:
 					if cursor then
 						found = true
 						print("Created table 'ais' in " .. MYSQL_DATABASE .. ".")

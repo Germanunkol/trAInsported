@@ -627,7 +627,7 @@ function statistics.displayStatus()
 			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255)
 			love.graphics.draw(statBoxStatus, x, displayStatusY)
 			love.graphics.setColor(0,0,0,100)
-			love.graphics.draw(train.getTrainImage(i), x + 30, displayStatusY + 45)		-- shadow of train
+			love.graphics.draw(train.getTrainImage(i), x + 30, displayStatusY + 59)		-- shadow of train
 			love.graphics.setColor(255,255,255,255)
 			
 			love.graphics.setFont(FONT_STAT_HEADING)

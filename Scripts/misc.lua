@@ -242,6 +242,15 @@ function getScreenshot()
 	screen:encode(fileName)
 end
 
+function randomizeTable(tbl, n)
+	n = n or #tbl
+	for i = 1,n do
+		local j = math.random(i, n)
+		tbl[i], tbl[j] = tbl[j], tbl[i]
+	end
+	return tbl
+end
+
 function copyTable(tbl)
 	local newTbl = {}
 	for k, v in pairs(tbl) do
@@ -290,6 +299,7 @@ function randomizeTable(tbl)
 		index2 = math.random(#tbl)
 		tbl[index1], tbl[index2] = tbl[index2], tbl[index1]
 	end
+	return tbl
 end
 
 function matrixMultiply(mat, vec)

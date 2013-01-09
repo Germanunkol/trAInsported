@@ -41,10 +41,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	
 		print("FInding AIs")
 		aiFiles = ai.findAvailableAIs()
-		for k, aiName in pairs(aiFiles) do
-			print("FOUND AI:", k, aiName)
-		end
-	
+		
 		local chosenAIs = {}
 	
 		aiID = 1

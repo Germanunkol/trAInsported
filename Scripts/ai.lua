@@ -371,7 +371,7 @@ end
 
 function ai.findAvailableAIs()
 	if CL_DIRECTORY then
-		return findAIs(CL_DIRECTORY)
+		return randomizeTable(findAIs(CL_DIRECTORY), 4)
 	else
 		local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
 		for k, file in ipairs(files) do
@@ -380,14 +380,13 @@ function ai.findAvailableAIs()
 			else
 				s, e = file:find(".lua")
 				if e == #file then
-					print("AI found: " .. k .. ". " .. file)
 					files[k] = "AI/" .. files[k]
 				else
 					files[k] = nil
 				end
 			end
 		end
-		return files
+		return randomizeTable(files, 4)
 	end
 end
 

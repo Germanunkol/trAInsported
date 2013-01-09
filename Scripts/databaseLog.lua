@@ -35,7 +35,6 @@ function chooseAIfromDB()
 					row[i] = cursor:fetch ({}, "a")
 					while row[i] do
 						totalMatches = totalMatches + row[i].matches		-- count all matches
-						print("1.Found in Database",row[i].name, row[i].owner, row[i].probability)
 						i = i + 1
 						row[i] = cursor:fetch ({}, "a")
 					end
@@ -43,7 +42,7 @@ function chooseAIfromDB()
 				for i = 1,#row do 
 					probability = probability + 100-100*row[i].matches/totalMatches
 					row[i].probability = probability
-					print("2.Found in Database",row[i].name, row[i].owner, row[i].probability)
+					print("1.Found in Database",row[i].name, row[i].owner,row[i].matches, row[i].probability)
 				end
 				
 				

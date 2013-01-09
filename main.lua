@@ -180,7 +180,7 @@ if DEDICATED then
 
 		initServer()
 		
-		math.randomseed(time())
+		math.randomseed(os.time())
 	end
 	
 	

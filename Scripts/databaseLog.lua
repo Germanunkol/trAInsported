@@ -13,6 +13,45 @@ if CL_MYSQL_NAME then
 	end
 end
 
+function chooseAIfromDB()
+	if MYSQL then
+		print("mysql found")
+		-- open MYSQL environment:
+		env = luasql.mysql()
+		
+		if env then
+			print("loaded mysql driver!")
+			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
+			if conn then
+				print("connection successful!")
+				
+				result = false
+				exists = false
+				cursor,err = conn:execute("SELECT name,owner,matches FROM ais;")
+				local row, fileNames = {}, {}
+				local i = 1
+				local  = 0
+				local totalMatches = 0
+				local probability = 0
+				if cursor then
+					row[i] = cursor:fetch ({}, "a")
+					totalMatches = totalMatches + row[i].matches		-- count all matches
+					i = i + 1
+				end
+				for i = 1,#row do 
+					probability = probability + row[i].matches
+					row[i].probability = 100*probability/totalMatches
+					print(row[i].name, row[i].owner, row[i].probability)
+				end
+				
+				chosen = 
+				
+			end
+		end
+	else
+		return nil
+	end
+end
 
 log = {}
 

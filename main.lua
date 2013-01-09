@@ -63,13 +63,11 @@ if CL_DIRECTORY then
 		CL_DIRECTORY = nil
 	else
 		function findAIs (path)
-			print("Looking for AIs")
 			local i, files = 1, {}
 			ok, msg = pcall(lfs.dir, path)
 			if ok then 
 				for file in lfs.dir(path) do
 					if file ~= "." and file ~= ".." then
-						print(file, path)
 						local f = path..'/'..file
 						local attr = lfs.attributes (f)
 						assert (type(attr) == "table")
@@ -95,7 +93,6 @@ if CL_DIRECTORY then
 					end
 				end
 			end
-			print("returning:",files, #files)
 			return files
 		end
 		

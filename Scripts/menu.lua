@@ -27,7 +27,7 @@ function randomMatch()
 	local height = math.random(4,25)
 	
 	local aiFiles = ai.findAvailableAIs()
-	print("received:", aiFiles, #aiFiles)
+	
 	local chosenAIs = {}
 	
 	aiID = 1

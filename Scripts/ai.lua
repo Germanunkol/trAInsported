@@ -371,6 +371,7 @@ end
 
 function ai.findAvailableAIs()
 	if CL_DIRECTORY then
+		chooseAIfromDB()
 		return randomizeTable(findAIs(CL_DIRECTORY), 4)
 	else
 		local files = love.filesystem.enumerate("AI")		-- load AI subdirectory

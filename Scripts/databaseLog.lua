@@ -14,6 +14,7 @@ if CL_MYSQL_NAME then
 end
 
 function chooseAIfromDB()
+	print("Looking for AIs in DB!")
 	if MYSQL then
 		print("mysql found")
 		-- open MYSQL environment:
@@ -40,7 +41,7 @@ function chooseAIfromDB()
 				for i = 1,#row do 
 					probability = probability + row[i].matches
 					row[i].probability = 100*probability/totalMatches
-					print(row[i].name, row[i].owner, row[i].probability)
+					print("Found in Database",row[i].name, row[i].owner, row[i].probability)
 				end
 				
 				

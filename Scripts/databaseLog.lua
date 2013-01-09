@@ -48,7 +48,7 @@ function chooseAIfromDB()
 				
 				toChoose = math.min(4, #row)
 				print("Choosing " .. toChoose .. " AIs.")
-				while toChoose > 0 do
+				while toChoose > 1 do
 					local chosen = math.random(probability)
 					local i = #row
 					while i > 0 do
@@ -66,6 +66,7 @@ function chooseAIfromDB()
 						while i < #row do
 							if not row[i].chosen then
 								row[i].chosen = true
+								toChoose = toChoose - 1
 								break
 							end
 							i = i + 1

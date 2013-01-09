@@ -242,19 +242,23 @@ if DEDICATED then
 				
 					print("")		--jump to newline!
 					
-					if #aiList > 0 then
-						log.matchResults()
-					end
-					
 					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
 					timeUntilNextMatch = TIME_BETWEEN_MATCHES
 					io.flush()
 					io.write( "Starting next match in 0.00 seconds.","\r")
 				
 					setupMatch()
+					loggedMatch = false
 								
 					connection.thread:set("nextMatch", timeUntilNextMatch)
 				else
+					if not loggedMatch then
+						loggedMatch = true
+						if #aiList > 0 then
+							log.matchResults()
+						end
+					end
+				
 					io.flush()
 				end
 			end

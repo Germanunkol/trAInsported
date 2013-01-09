@@ -43,7 +43,6 @@ function chooseAIfromDB()
 					print(row[i].name, row[i].owner, row[i].probability)
 				end
 				
-				chosen = 
 				
 			end
 		end

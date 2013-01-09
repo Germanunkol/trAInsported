@@ -50,6 +50,7 @@ function chooseAIfromDB()
 				print("Choosing " .. toChoose .. " AIs.")
 				while toChoose > 0 do
 					local chosen = math.random(probability)
+					print("Choosing probability:", chosen)
 					local i = #row
 					while i > 0 do
 						if row[i] then

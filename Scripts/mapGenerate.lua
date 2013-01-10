@@ -1,17 +1,3 @@
-thisThread = love.thread.getThread()
-
-package.path = "Scripts/?.lua;" .. package.path
-
-require("mapUtils")
-require("TSerial")
-require("misc")
-
-width = thisThread:demand("width")
-
-height = thisThread:demand("height")
-seed = thisThread:demand("seed")
-tutorialMap = thisThread:get("tutorialMap")
-
 local msgNumber = 0
 print = function(...)
 	sendStr = ""
@@ -24,11 +10,36 @@ print = function(...)
 	msgNumber = incrementID(msgNumber)
 end
 
+print("1")
+thisThread = love.thread.getThread()
+
+print("2")
+
+package.path = "Scripts/?.lua;" .. package.path
+
+print("3")
+require("mapUtils")
+require("TSerial")
+require("misc")
+
+print("4")
+width = thisThread:demand("width")
+
+print("5")
+height = thisThread:demand("height")
+seed = thisThread:demand("seed")
+tutorialMap = thisThread:get("tutorialMap")
+
+print("6")
+
+
 if tutorialMap then
 	tutorialMap = TSerial.unpack(tutorialMap)
 	width = tutorialMap.width
 	height = tutorialMap.height
 end
+
+print("7")
 
 math.randomseed(seed)
 if not tutorialMap then curMap = {width=width, height=height, time=0} end
@@ -36,6 +47,8 @@ curMapOccupiedTiles = {}
 curMapOccupiedExits = {}
 curMapRailTypes = {}
 
+
+print("8")
 thisThread:set("percentage", 0)
 
 for i = 0,width+1 do
@@ -54,6 +67,7 @@ for i = 0,width+1 do
 	end
 end
 
+print("9")
 if not tutorialMap then
 
 	--thisThread:set("status", "rails")
@@ -71,6 +85,7 @@ else
 	curMap = tutorialMap
 end
 
+print("10")
 calculateRailTypes()
 thisThread:set("percentage", 50)
 

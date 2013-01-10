@@ -1,3 +1,6 @@
+
+thisThread = love.thread.getThread()
+
 local msgNumber = 0
 print = function(...)
 	sendStr = ""
@@ -10,8 +13,6 @@ print = function(...)
 	msgNumber = incrementID(msgNumber)
 end
 
-print("1")
-thisThread = love.thread.getThread()
 
 print("2")
 

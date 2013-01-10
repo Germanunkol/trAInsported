@@ -1,6 +1,12 @@
 
 thisThread = love.thread.getThread()
 
+package.path = "Scripts/?.lua;" .. package.path
+
+require("mapUtils")
+require("TSerial")
+require("misc")
+
 local msgNumber = 0
 print = function(...)
 	sendStr = ""
@@ -16,12 +22,6 @@ end
 
 print("2")
 
-package.path = "Scripts/?.lua;" .. package.path
-
-print("3")
-require("mapUtils")
-require("TSerial")
-require("misc")
 
 print("4")
 width = thisThread:demand("width")

@@ -71,6 +71,8 @@ tut 4:
 - possibly make server and client use the same files?!
 [x] tooltips
 - rewards!!
+- Make "Last Match" loggin use only one querry...
+- Log Date along with "Last Match".
 
 **Maybe**
 - buy code lines using in-game cash

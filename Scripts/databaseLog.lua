@@ -233,8 +233,9 @@ function chooseAIfromDB(numMatches)
 						conn:commit()		--send all at once.
 						
 						conn:setautocommit(true)
+						print(nil, "-> not found " .. count .. ", adding!")
 					else
-						print("\t->Found " .. count)
+						print(nil, "-> found " .. count)
 					end
 				end
 		

@@ -1,4 +1,7 @@
+file = love.filesystem.newFile( "threadLog.txt" )
+file:open("w")
 
+file:write("1")
 thisThread = love.thread.getThread()
 
 package.path = "Scripts/?.lua;" .. package.path
@@ -19,19 +22,21 @@ print = function(...)
 	msgNumber = incrementID(msgNumber)
 end
 
-
 print("2")
+file:write("2")
 
 
 print("4")
 width = thisThread:demand("width")
 
+file:write("5")
 print("5")
 height = thisThread:demand("height")
 seed = thisThread:demand("seed")
 tutorialMap = thisThread:get("tutorialMap")
 
 print("6")
+file:write("6")
 
 
 if tutorialMap then
@@ -41,6 +46,7 @@ if tutorialMap then
 end
 
 print("7")
+file:write("7")
 
 math.randomseed(seed)
 if not tutorialMap then curMap = {width=width, height=height, time=0} end
@@ -50,6 +56,7 @@ curMapRailTypes = {}
 
 
 print("8")
+file:write("8")
 thisThread:set("percentage", 0)
 
 for i = 0,width+1 do
@@ -69,6 +76,7 @@ for i = 0,width+1 do
 end
 
 print("9")
+file:write("9")
 if not tutorialMap then
 
 	--thisThread:set("status", "rails")
@@ -87,6 +95,7 @@ else
 end
 
 print("10")
+file:write("10")
 calculateRailTypes()
 thisThread:set("percentage", 50)
 
@@ -115,4 +124,5 @@ thisThread:set("curMapOccupiedExits", TSerial.pack(curMapOccupiedExits))
 thisThread:set("status", "done")
 
 print("I'm done!")
+file:write("Done")
 return

@@ -298,7 +298,7 @@ function map.generate(width, height, seed, tutorialMap)
 		prevStr = nil
 		print("mapGenerateThread", mapGenerateThread)
 	else
-		print("a", mapGenerateThread)
+	
 		percent = mapGenerateThread:get("percentage")
 		if percent and loadingScreen then
 			loadingScreen.percentage("Generating Map", percent)

@@ -90,7 +90,7 @@ for k, a in pairs(arg) do
 		if type(k) == "number" then
 			if arg[k+1] then
 				t = tonumber(arg[k+1])
-				if t > 10 then
+				if t >= 10 then
 					CL_ROUND_TIME = t
 					INVALID_MATCH_TIME = false
 				end

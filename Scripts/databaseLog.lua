@@ -188,6 +188,7 @@ end
 function chooseAIfromDB(numMatches)
 
 	returnAIs = {}
+	numMatches = numMatches or 1 
 	
 	if MYSQL then
 		-- open MYSQL environment:
@@ -205,10 +206,13 @@ function chooseAIfromDB(numMatches)
 					cursor,err = conn:execute("CREATE TABLE nextMatch (name VARCHAR(30), owner VARCHAR(30), matchNum INT);")
 					if err then
 						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ..  ":", err)
+					else
+						print("Created new 'nextMatch' Database.")
 					end
 				end
 			
 				-- check if enough entries exist in nextMatch. If not, add them.
+				print("Checking if there's " .. numMatches .. " matches in the 'nextMatch' table:")
 				for count = 1, numMatches + 1 do
 					cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=" .. count .. ";")
 					if not cursor then
@@ -224,6 +228,8 @@ function chooseAIfromDB(numMatches)
 						conn:commit()		--send all at once.
 						
 						conn:setautocommit(true)
+					else
+						print("\t->Found " .. count)
 					end
 				end
 		

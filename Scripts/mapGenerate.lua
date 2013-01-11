@@ -1,3 +1,5 @@
+require("love.filesystem")
+
 file = love.filesystem.newFile( "threadLog.txt" )
 file:open("w")
 

@@ -204,7 +204,7 @@ function chooseAIfromDB(numMatches)
 				if not cursor then
 					cursor,err = conn:execute("TABLE CREATE nextMatch (name VARCHAR(30), owner VARCHAR(30), matchNum INT);")
 					if err then
-						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ":", err)
+						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ..  ":", err)
 					end
 				end
 			

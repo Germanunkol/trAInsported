@@ -98,7 +98,6 @@ function chooseNewAIfromDB_filename()
 end
 
 function chooseNewAIfromDB_table()
-	print("Looking for AIs in DB!")
 	if MYSQL then
 		-- open MYSQL environment:
 		env = luasql.mysql()
@@ -106,7 +105,6 @@ function chooseNewAIfromDB_table()
 		if env then
 			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 			if conn then
-				print("Connected to DB.")
 				
 				result = false
 				exists = false
@@ -127,19 +125,15 @@ function chooseNewAIfromDB_table()
 					local p = (totalMatches/math.max(1,row[i].matches))
 					probability = probability + p*p
 					row[i].probability = probability
-					print("1. Found in Database", row[i].name, row[i].owner, row[i].matches, row[i].probability, p, totalMatches)
 				end
 				
 				
 				toChoose = math.min(4, #row)
-				print("Choosing " .. toChoose .. " AIs.")
 				while toChoose > 0 do
 					local chosen = math.random(probability)
-					print("Choosing probability:", chosen)
 					local i = #row
 					local found = false
 					while i > 0 do
-						print("i",i, row[i].name, row[i].probability, row[i-1], chosen <= row[i].probability)
 						if row[i] then
 							if chosen <= row[i].probability then
 								found = true
@@ -170,9 +164,6 @@ function chooseNewAIfromDB_table()
 					end
 				end
 				
-				for i = 1, #fileNames do
-					print(i, fileNames[i].name, fileNames[i].owner )
-				end
 				return fileNames
 			end
 		end
@@ -212,7 +203,7 @@ function chooseAIfromDB(numMatches)
 				end
 			
 				-- check if enough entries exist in nextMatch. If not, add them.
-				print("Checking if there's " .. numMatches .. " matches in the 'nextMatch' table:")
+				print("Checking if there's " .. numMatches + 1 .. " matches in the 'nextMatch' table:")
 				for count = 1, numMatches + 1 do
 					cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=" .. count .. ";")
 					
@@ -246,6 +237,7 @@ function chooseAIfromDB(numMatches)
 					while row do
 						found = true
 						table.insert(returnAIs, CL_DIRECTORY .. "/" .. row.owner .. "/" .. row.name .. ".lua")
+						print("Found: " .. CL_DIRECTORY .. "/" .. row.owner .. "/" .. row.name .. ".lua")
 					end
 				end
 			end

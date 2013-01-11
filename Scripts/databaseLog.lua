@@ -216,7 +216,9 @@ function chooseAIfromDB(numMatches)
 				for count = 1, numMatches + 1 do
 					cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=" .. count .. ";")
 					
-					row = assert(cursor:fetch ({}, "a"))
+					if cursor and type("cursor") ~= "number" then
+						row = cursor:fetch ({}, "a"))
+					end
 					print(cursor, err, row)
 					if not cursor or cursor == 0 or not row then
 					

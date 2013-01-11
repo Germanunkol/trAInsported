@@ -13,7 +13,7 @@ if CL_MYSQL_NAME then
 	end
 end
 
-function chooseAIfromDB()
+function chooseNewAIfromDB_filename()
 	print("Looking for AIs in DB!")
 	if MYSQL then
 		-- open MYSQL environment:
@@ -92,6 +92,159 @@ function chooseAIfromDB()
 				return fileNames
 			end
 		end
+	else
+		return nil
+	end
+end
+
+function chooseNewAIfromDB_table()
+	print("Looking for AIs in DB!")
+	if MYSQL then
+		-- open MYSQL environment:
+		env = luasql.mysql()
+		
+		if env then
+			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
+			if conn then
+				print("Connected to DB.")
+				
+				result = false
+				exists = false
+				cursor,err = conn:execute("SELECT name,owner,matches FROM ais ORDER BY matches;")
+				local row, fileNames = {}, {}
+				local i = 1
+				local probability = 0
+				local totalMatches = 0
+				if cursor then
+					row[i] = cursor:fetch ({}, "a")
+					while row[i] do
+						totalMatches = totalMatches + row[i].matches		-- count all matches
+						i = i + 1
+						row[i] = cursor:fetch ({}, "a")
+					end
+				end
+				for i = 1,#row do
+					local p = (totalMatches/math.max(1,row[i].matches))
+					probability = probability + p*p
+					row[i].probability = probability
+					print("1. Found in Database", row[i].name, row[i].owner, row[i].matches, row[i].probability, p, totalMatches)
+				end
+				
+				
+				toChoose = math.min(4, #row)
+				print("Choosing " .. toChoose .. " AIs.")
+				while toChoose > 0 do
+					local chosen = math.random(probability)
+					print("Choosing probability:", chosen)
+					local i = #row
+					local found = false
+					while i > 0 do
+						print("i",i, row[i].name, row[i].probability, row[i-1], chosen <= row[i].probability)
+						if row[i] then
+							if chosen <= row[i].probability then
+								found = true
+							end
+							if not row[i].chosen and found and (not row[i-1] or chosen > row[i-1].probability) then
+								row[i].chosen = true
+								toChoose = toChoose - 1
+								break
+							end
+						end
+						i = i - 1
+					end
+					if i == 0 then		-- none found. Go back through the list and choose the first possible one.
+						i = 1
+						while i < #row do
+							if not row[i].chosen then
+								row[i].chosen = true
+								toChoose = toChoose - 1
+								break
+							end
+							i = i + 1
+						end
+					end
+				end
+				for i = 1,#row do 
+					if row[i].chosen then
+						table.insert( fileNames, {owner=row[i].owner, name=row[i].name} )
+					end
+				end
+				
+				for i = 1, #fileNames do
+					print(i, fileNames[i].name, fileNames[i].owner )
+				end
+				return fileNames
+			end
+		end
+	else
+		return nil
+	end
+end
+
+
+
+-- Check if there's AIs stages for a match. If so, return them, the list of staged Matches.
+-- Also, make sure to add new AIs to the list.
+function chooseAIfromDB(numMatches)
+
+	returnAIs = {}
+	
+	if MYSQL then
+		-- open MYSQL environment:
+		env = luasql.mysql()
+		
+		local found = false
+	
+		if env then
+			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
+			if conn then
+			
+				-- first, check if the "nextMatch" table exists. If not, create it:
+				cursor,err = conn:execute("SELECT * FROM nextMatch")
+				if not cursor then
+					cursor,err = conn:execute("TABLE CREATE nextMatch (name VARCHAR(30), owner VARCHAR(30), matchNum INT);")
+					if err then
+						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ":", err)
+					end
+				end
+			
+				-- check if enough entries exist in nextMatch. If not, add them.
+				for count = 1, numMatches + 1 do
+					cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=" .. count .. ";")
+					if not cursor then
+					
+						newAIs = chooseNewAIfromDB_table()
+						conn:setautocommit(false)
+						
+						for k, a in pairs(newAIs) do
+							
+							cursor,err = conn:execute("INSERT INTO nextMatch VALUES('" .. a.name .. "', '" .. a.owner .. "', " .. count .. ");")
+						end
+						
+						conn:commit()		--send all at once.
+						
+						conn:setautocommit(true)
+					end
+				end
+		
+				cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=1;")
+				
+				if cursor then
+					row = cursor:fetch ({}, "a")
+					while row do
+						found = true
+						table.insert(returnAIs, CL_DIRECTORY .. "/" .. row.owner .. "/" .. row.name .. ".lua")
+					end
+				end
+			end
+		end
+	end
+
+	if found then
+		while #returnAIs > 4 do
+			returnAIs[#returnAIs] = nil
+		end
+		return returnAIs
 	else
 		return nil
 	end

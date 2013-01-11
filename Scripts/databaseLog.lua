@@ -215,8 +215,10 @@ function chooseAIfromDB(numMatches)
 				print("Checking if there's " .. numMatches .. " matches in the 'nextMatch' table:")
 				for count = 1, numMatches + 1 do
 					cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=" .. count .. ";")
-					print(cursor)
-					if not cursor or cursor == 0 then
+					
+					row = assert(cursor:fetch ({}, "a"))
+					print(cursor, err, row)
+					if not cursor or cursor == 0 or not row then
 					
 						newAIs = chooseNewAIfromDB_table()
 						conn:setautocommit(false)

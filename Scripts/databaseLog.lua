@@ -185,8 +185,9 @@ function log.matchResults()
 					print(err)
 				end
 		
+				print( conn:setautocommit(false) )
 				-- create a new one:
-				querry = "CREATE TABLE lastMatch (name VARCHAR(30), owner VARCHAR(30), pTransported INT);"
+				querry = "CREATE TABLE lastMatch (name VARCHAR(30), owner VARCHAR(30), pTransported INT, timeEnded DATETIME);"
 				cursor,err = conn:execute(querry)
 				if not cursor then
 					print(err)
@@ -198,17 +199,12 @@ function log.matchResults()
 		
 				-- fill the table:
 				for i = 1,#aiList do
-					querry = "INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ");"
+					querry = "INSERT INTO lastMatch VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "'," .. stats.getPassengersTransported(i) .. ", NOW());"
 					print(querry)
 					cursor, err = conn:execute(querry)
-					if not cursor then
-						print(err)
-					elseif type(cursor) == "table" then
-						cursor:close()
-					else
-						print("result",cursor)
-					end
 				end
+				
+				conn:commit()
 				
 			
 				conn:close()

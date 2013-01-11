@@ -202,7 +202,7 @@ function chooseAIfromDB(numMatches)
 				-- first, check if the "nextMatch" table exists. If not, create it:
 				cursor,err = conn:execute("SELECT * FROM nextMatch")
 				if not cursor then
-					cursor,err = conn:execute("TABLE CREATE nextMatch (name VARCHAR(30), owner VARCHAR(30), matchNum INT);")
+					cursor,err = conn:execute("CREATE TABLE nextMatch (name VARCHAR(30), owner VARCHAR(30), matchNum INT);")
 					if err then
 						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ..  ":", err)
 					end

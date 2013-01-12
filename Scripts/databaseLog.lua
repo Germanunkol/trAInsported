@@ -201,6 +201,24 @@ function chooseAIfromDB(numMatches)
 						print("Created new 'nextMatch' Database.")
 					end
 				end
+				
+				cursor,err = conn:execute("SELECT * FROM nextMatchTime")
+				if cursor then
+					cursor,err = conn:execute("DROP TABLE nextMatchTime")
+					if err then
+						print("Could not drop 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
+					else
+						print("Dropped 'nextMatchTime' Database.")
+					end
+				end
+				
+				cursor,err = conn:execute("CREATE TABLE nextMatchTime (time DATETIME);")
+				if err then
+					print("Could not create 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
+				else
+					print("Created new 'nextMatchTime' Database.")
+				end
+				
 			
 				-- check if enough entries exist in nextMatch. If not, add them.
 				print("Checking if there's " .. numMatches + 1 .. " matches in the 'nextMatch' table:")
@@ -247,6 +265,8 @@ function chooseAIfromDB(numMatches)
 				conn:setautocommit(false)
 				cursor,err = conn:execute("UPDATE nextMatch SET matchNum=matchNum-1;")
 				cursor,err = conn:execute("DELETE FROM nextMatch WHERE matchNum<0;")
+				cursor,err = conn:execute("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND);")
+				print("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND);")
 				conn:commit()		--send all at once.
 				
 				conn:setautocommit(true)

@@ -21,7 +21,7 @@ colB = thisThread:demand("colB")
 brightness = thisThread:get("brightness")
 alpha = thisThread:get("alpha")
 if not brightness then
-	brightness = 40
+	brightness = 35
 end
 if not alpha then
 	alpha = 150

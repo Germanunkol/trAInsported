@@ -133,7 +133,7 @@ if DEDICATED then
 		if CL_TIME_BETWEEN_MATCHES then
 			TIME_BETWEEN_MATCHES = CL_TIME_BETWEEN_MATCHES
 		else
-			TIME_BETWEEN_MATCHES = 0
+			TIME_BETWEEN_MATCHES = 10
 		end
 		print("Will start a new match after waiting for " .. TIME_BETWEEN_MATCHES .. " seconds.")
 	end

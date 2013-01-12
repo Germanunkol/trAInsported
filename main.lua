@@ -202,7 +202,11 @@ if DEDICATED then
 		elseif not map.generating() then
 		
 			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:
-				timeUntilMatchEnd = timeUntilMatchEnd - dt
+				if skipTimingOneFrame then
+					skipTimingOneFrame = false
+				else
+					timeUntilMatchEnd = timeUntilMatchEnd - dt
+				end
 				-- display time until next match:
 				rounded = math.floor(timeUntilMatchEnd*100)/100
 				s,e = string.find(rounded, "%.")
@@ -243,12 +247,16 @@ if DEDICATED then
 				
 					print("")		--jump to newline!
 					
-					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
-					timeUntilNextMatch = TIME_BETWEEN_MATCHES
 					io.flush()
 					io.write( "Starting next match in 0.00 seconds.","\r")
 				
 					setupMatch()
+					
+					skipTimingOneFrame = true		-- this frame took longer than usual because of logging? do not take it into account.
+					
+					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
+					timeUntilNextMatch = TIME_BETWEEN_MATCHES
+					
 					loggedMatch = false
 								
 					connection.thread:set("nextMatch", timeUntilNextMatch)

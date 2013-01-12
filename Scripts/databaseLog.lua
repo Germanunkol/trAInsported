@@ -203,21 +203,18 @@ function chooseAIfromDB(numMatches)
 				end
 				
 				cursor,err = conn:execute("SELECT * FROM nextMatchTime")
-				if cursor then
-					cursor,err = conn:execute("DROP TABLE nextMatchTime")
+				if not cursor then
+					cursor,err = conn:execute("CREATE TABLE nextMatchTime (time DATETIME);")
 					if err then
-						print("Could not drop 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
+						print("Could not create 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
 					else
-						print("Dropped 'nextMatchTime' table.")
+						print("Created new 'nextMatchTime' table.")
 					end
+				else
+					cursor,err = conn:execute("DELETE FROM nextMatchTime")
 				end
 				
-				cursor,err = conn:execute("CREATE TABLE nextMatchTime (time DATETIME);")
-				if err then
-					print("Could not create 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
-				else
-					print("Created new 'nextMatchTime' table.")
-				end
+				
 				
 			
 				-- check if enough entries exist in nextMatch. If not, add them.

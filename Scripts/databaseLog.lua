@@ -130,7 +130,7 @@ function chooseNewAIfromDB_table()
 				
 				toChoose = math.min(4, #row)
 				while toChoose > 0 do
-					local chosen = math.random(probability)
+					local chosen = math.random(math.max(probability), 1)
 					local i = #row
 					local found = false
 					while i > 0 do
@@ -181,6 +181,7 @@ function chooseAIfromDB(numMatches)
 	returnAIs = {}
 	numMatches = numMatches or 1 
 	
+		print("000")
 	if MYSQL then
 		-- open MYSQL environment:
 		env = luasql.mysql()

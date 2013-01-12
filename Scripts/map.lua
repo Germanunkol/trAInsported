@@ -39,7 +39,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	
 	if DEDICATED then		-- let server choose parameteres for game:
 	
-		print("FInding AIs")
+		print("Finding AIs")
 		aiFiles = ai.findAvailableAIs()
 		
 		local chosenAIs = {}

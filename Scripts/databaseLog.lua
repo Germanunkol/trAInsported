@@ -198,7 +198,7 @@ function chooseAIfromDB(numMatches)
 					if err then
 						print("Could not create 'nextMatch' table in " .. MYSQL_DATABASE ..  ":", err)
 					else
-						print("Created new 'nextMatch' Database.")
+						print("Created new 'nextMatch' table.")
 					end
 				end
 				
@@ -208,7 +208,7 @@ function chooseAIfromDB(numMatches)
 					if err then
 						print("Could not drop 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
 					else
-						print("Dropped 'nextMatchTime' Database.")
+						print("Dropped 'nextMatchTime' table.")
 					end
 				end
 				
@@ -216,7 +216,7 @@ function chooseAIfromDB(numMatches)
 				if err then
 					print("Could not create 'nextMatchTime' table in " .. MYSQL_DATABASE ..  ":", err)
 				else
-					print("Created new 'nextMatchTime' Database.")
+					print("Created new 'nextMatchTime' table.")
 				end
 				
 			
@@ -266,7 +266,7 @@ function chooseAIfromDB(numMatches)
 				cursor,err = conn:execute("UPDATE nextMatch SET matchNum=matchNum-1;")
 				cursor,err = conn:execute("DELETE FROM nextMatch WHERE matchNum<0;")
 				cursor,err = conn:execute("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND);")
-				print("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND);")
+				print("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND));")
 				conn:commit()		--send all at once.
 				
 				conn:setautocommit(true)

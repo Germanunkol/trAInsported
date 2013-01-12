@@ -265,8 +265,9 @@ function chooseAIfromDB(numMatches)
 				conn:setautocommit(false)
 				cursor,err = conn:execute("UPDATE nextMatch SET matchNum=matchNum-1;")
 				cursor,err = conn:execute("DELETE FROM nextMatch WHERE matchNum<0;")
-				cursor,err = conn:execute("INSERT INTO nextMatchTime VALUES(NOW() + INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND;")
-				print("INSERT INTO nextMatchTime VALUES(ADDTIME(NOW(),INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND));")
+				q = "INSERT INTO nextMatchTime VALUES(NOW() + INTERVAL " .. (CL_ROUND_TIME or FALLBACK_ROUND_TIME) + TIME_BETWEEN_MATCHES .. " SECOND;"
+				cursor,err = conn:execute(q)
+				print(q)
 				conn:commit()		--send all at once.
 				
 				conn:setautocommit(true)

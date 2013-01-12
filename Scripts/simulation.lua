@@ -136,6 +136,7 @@ function simulation.addUpdate(text)
 end
 
 function runUpdate(event, t1, t2)
+	print("RUNNING:", event, t1, t2)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
@@ -465,6 +466,7 @@ function simulation.update(dt)
 	
 	
 	-- check if there's a packet to be run. If there is one, check again if there's more.
+	print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], packetList[simulation.nextPacket].time, simulationMap.time)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
 		
@@ -480,7 +482,6 @@ function simulation.update(dt)
 		
 		-- do not run again!
 		packetList[simulation.nextPacket] = nil
-		
 		simulation.nextPacket = simulation.nextPacket + 1
 	end
 	

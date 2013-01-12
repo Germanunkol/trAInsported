@@ -273,12 +273,9 @@ if DEDICATED then
 				end
 			end
 		end
-		if curMap then
-			if not roundEnded then
-				timeUntilMatchEnd = timeUntilMatchEnd - dt
-				map.handleEvents(dt)
-				passenger.showAll(dt*timeFactor)
-			end
+		if curMap and not roundEnded then
+			map.handleEvents(dt)
+			passenger.showAll(dt*timeFactor)
 		end
 	end
 	

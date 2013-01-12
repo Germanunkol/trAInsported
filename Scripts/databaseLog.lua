@@ -248,6 +248,7 @@ function chooseAIfromDB(numMatches)
 		while #returnAIs > 4 do
 			returnAIs[#returnAIs] = nil
 		end
+		print("returning AIs:", #returnAIs)
 		return returnAIs
 	else
 		return nil

@@ -199,7 +199,7 @@ if DEDICATED then
 			curMap.time = curMap.time + dt*timeFactor
 			
 			timeUntilMatchEnd = timeUntilMatchEnd - dt
-			print(timeUntilMatchEnd)
+			
 		elseif not map.generating() then
 		
 			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:

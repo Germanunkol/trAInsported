@@ -246,7 +246,7 @@ function chooseAIfromDB(numMatches)
 				--move all entries up:
 				conn:setautocommit(false)
 				cursor,err = conn:execute("UPDATE nextMatch SET matchNum=matchNum-1;")
-				cursor,err = conn:execute("DELETE FROM nextMatch WHERE matchNum<1;")
+				cursor,err = conn:execute("DELETE FROM nextMatch WHERE matchNum<0;")
 				conn:commit()		--send all at once.
 				
 				conn:setautocommit(true)

@@ -61,6 +61,7 @@ tut 4:
 - rails with sidewalks
 - speed controls
 - don't let passengers stand on the rails.
+- Seasons change graphics?
 
 **Misc**
 - Add tipps
@@ -71,8 +72,9 @@ tut 4:
 - possibly make server and client use the same files?!
 [x] tooltips
 - rewards!!
-- Make "Last Match" loggin use only one querry...
-- Log Date along with "Last Match".
+[x] Make "Last Match" loggin use only one querry...
+[x] Log Date along with "Last Match" and display on website
+- 
 
 **Maybe**
 - buy code lines using in-game cash

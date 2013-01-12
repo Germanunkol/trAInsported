@@ -181,19 +181,16 @@ function chooseAIfromDB(numMatches)
 	returnAIs = {}
 	numMatches = numMatches or 1 
 	
-		print("000")
 	if MYSQL then
 		-- open MYSQL environment:
 		env = luasql.mysql()
 		
 		local found = false
 		
-		print("111")
 		if env then
 			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 			if conn then
 			
-		print("211")
 				-- first, check if the "nextMatch" table exists. If not, create it:
 				cursor,err = conn:execute("SELECT * FROM nextMatch")
 				if not cursor then
@@ -204,7 +201,6 @@ function chooseAIfromDB(numMatches)
 						print("Created new 'nextMatch' Database.")
 					end
 				end
-		print("311", cursor)
 			
 				-- check if enough entries exist in nextMatch. If not, add them.
 				print("Checking if there's " .. numMatches + 1 .. " matches in the 'nextMatch' table:")
@@ -242,6 +238,7 @@ function chooseAIfromDB(numMatches)
 						found = true
 						table.insert(returnAIs, CL_DIRECTORY .. "/" .. row.owner .. "/" .. row.name .. ".lua")
 						print("Found: " .. CL_DIRECTORY .. "/" .. row.owner .. "/" .. row.name .. ".lua")
+						row = cursor:fetch ({}, "a")
 					end
 				end
 			end

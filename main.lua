@@ -204,6 +204,12 @@ if DEDICATED then
 		
 			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:
 				timeUntilMatchEnd = timeUntilMatchEnd - dt
+				
+				if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 10 then
+					lastServerTimeUpdate = timeUntilMatchEnd
+					connection.thread:set("time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd)
+				end
+				
 				-- display time until next match:
 				rounded = math.floor(timeUntilMatchEnd*100)/100
 				s,e = string.find(rounded, "%.")
@@ -251,6 +257,8 @@ if DEDICATED then
 					
 					timeUntilMatchEnd = CL_ROUND_TIME or FALLBACK_ROUND_TIME
 					timeUntilNextMatch = TIME_BETWEEN_MATCHES
+					lastServerTimeUpdate = timeUntilMatchEnd
+					
 					
 					loggedMatch = false
 								
@@ -348,6 +356,8 @@ else
 		mapMouseX, mapMouseY = 0,0
 
 		timeFactor = 1
+		serverTime = 0
+		
 		curMap = false
 		showQuickHelp = false
 		showConsole = true
@@ -407,8 +417,24 @@ else
 				button.calcMouseHover()
 			end
 			
+			if serverTime then
+				serverTime = serverTime + dt		-- continue to count up the servertime, even if there's no update. This way, I can keep up with the server.
+			end
+			
 			if mapImage then
 				if simulationMap and not roundEnded then
+				
+					-- allow max of 5 seconds time difference:
+					if (serverTime and simulationMap.time + 5 < serverTime) or fastForward == true then
+						timeFactor = 10
+						fastForward = true
+						-- 2 seconds is okay:
+						if simulationMap.time + 2 > serverTime then
+							fastForward = false
+						end
+					else
+						timeFactor = 1
+					end
 					simulationMap.time = simulationMap.time + dt*timeFactor
 					simulation.update(dt*timeFactor)
 					if train.isRenderingImages() then
@@ -580,6 +606,12 @@ else
 			else
 				love.graphics.print('roundEnded: false', love.graphics.getWidth()-150,140)
 			end
+		end
+		
+		if simulationMap and fastForward then
+			love.graphics.setFont(FONT_HUGE)
+			love.graphics.setColor(255,255,255,255)
+			love.graphics.print("FAST FORWARD TO CATCH UP WITH SERVER", 0.5*(love.graphics.getWidth()- FONT_HUGE:getWidth("FAST FORWARD TO CATCH UP WITH SERVER")), 0.5*love.graphics.getHeight() -10)
 		end
 	
 	end

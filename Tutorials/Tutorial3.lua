@@ -59,6 +59,7 @@ local CODE_chooseDirectionWithPassenger1 = parseCode([[
 function ai.chooseDirection( train, directions )
 	if train.passenger == nil then
 		print( train.name .. " carries no passenger." )
+		-- go South because that's where the passengers are!
 		return "S"
 	else
 		print( train.name .. " carries " .. train.passenger )
@@ -229,7 +230,7 @@ end
 local codeBoxX, codeBoxY = 0,0
 local tutBoxX, tutBoxY = 0,0
 
-
+--[[
 function additionalInformation(text, code)
 	return function()
 		if not additionalInfoBox then
@@ -244,10 +245,11 @@ function additionalInformation(text, code)
 			end
 		end
 		if not cBox then
-			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_moreIdeas)
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, code)
 		end
 	end
 end
+]]--
 
 function tutorial.createTutBoxes()
 
@@ -257,7 +259,7 @@ function tutorial.createTutBoxes()
 	local k = 1
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Check!"
-	tutorialSteps[k].message = "The third Tutorial will teach you:\n\n1) How to make smarter choices depending on where your passengers want to go\n2)Using multiple trains."
+	tutorialSteps[k].message = "The third Tutorial will teach you:\n\n1) How to make smarter choices depending on where your passengers want to go\n2) Using multiple trains."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
@@ -271,14 +273,14 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Your job is to move the passengers where they want to go. We could just try out all the directions until we reach the passenger's destination, but we won't be much of a competition for other, smarter AIs. Instead, we'll try to check where our passengers want to go and then move accordingly."
+	tutorialSteps[k].message = "Your job is to move the passengers where they want to go.\nWe could just try out all the directions until we reach the passenger's destination, but then we wouldn't be much of a competition for other, smarter AIs. Instead, we'll try to check where our passengers want to go and then move accordingly."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "To do this, we will add two parameters to ai.chooseDirection, called 'train' and 'directions'.\nOpen up TutorialAI3.lua and add the code in the code box."
+	tutorialSteps[k].message = "To do this, we will add two parameters to function ai.chooseDirection, called 'train' and 'directions'.\nOpen up TutorialAI3.lua and add the code in the code box."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionFunction1)
 		end
@@ -288,7 +290,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The 'train' parameter will be automatically filled with a table representing the train. It has the following elements: ID, name, x and y.\nIf the train is currently transporting a passenger, then there's three more elements called called:\npassenger (the name of the passenger), passengerX and passengerY (the coordinates of where the passenger wants to go).\nAdd the code in the code box to your function."
+	tutorialSteps[k].message = "The 'train' parameter will be automatically filled with a table representing the train. It has the following elements: 'ID', 'name', 'x' and 'y'.\nIf the train is currently transporting a passenger, then there's three more elements in the table called:\n'passenger' (the name of the passenger), 'passengerX' and 'passengerY' (the coordinates of where the passenger wants to go).\nAdd the code in the code box to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionFunction2)
 		end
@@ -308,7 +310,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "If the train reaches the junction and has no passenger on board, it should go south. Add the code line accordingly."
+	tutorialSteps[k].message = "The next step will be: Whenever the train reaches the junction and has no passenger on board, it should go south. Add the code line accordingly."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionWithPassenger1)
 		end
@@ -318,7 +320,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "If there is a passenger on board, we'll compare the X-coordinates of the train's position and the passenger's destination. If the destination lies in the West (destination X is smaller than the train's X) then we'll go West. Otherwise, we'll go East.\nAdd the new parts to your function."
+	tutorialSteps[k].message = "If there is a passenger on board, we'll compare the X-coordinates of the train's current position (train.x) and the passenger's destination (train.passengerX). If the destination lies in the West (destination X is smaller than the train's X) then we'll go West. Otherwise, we'll go East.\nAdd the new parts to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionWithPassenger2)
 		end
@@ -354,7 +356,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You've completed the third tutorial, well done!\nWith this tutorial, you've covered all the basics. Click 'More Ideas' for your first real challenge!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("1) Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassenger: check if train.ID is 1. Then, check if passengers[1]'s destX is smaller than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West.\nIMPORTANT: #passengers is the length of the list!!\nRemember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassenger: check if train.ID is 1. Then, check if passengers[1]'s destX is smaller than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West.IMPORTANT: #passengers is the length of the list! Remember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
@@ -378,16 +380,21 @@ function startCreatingPassengers(k)
 end
 
 function waitingForPassengersEvent(k)
-	tutorial.reachedNewTileEvent = function(x, y)
-		if x == 5 then
-			tutorial.reachedEast = true
-		elseif x == 1 then
-			tutorial.reachedWest = true
-		end
-		if tutorial.reachedEast and tutorial.reachedWest then
-			if currentStep == k then	-- if I haven't gone back to a previous step
-				-- tutorial.reachedNewTileEvent = nil
-				nextTutorialStep()
+	return function()
+		
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_dropOffPassenger)
+	
+		tutorial.reachedNewTileEvent = function(x, y)
+			if x == 5 then
+				tutorial.reachedEast = true
+			elseif x == 1 then
+				tutorial.reachedWest = true
+			end
+			if tutorial.reachedEast and tutorial.reachedWest then
+				if currentStep == k then	-- if I haven't gone back to a previous step
+					-- tutorial.reachedNewTileEvent = nil
+					nextTutorialStep()
+				end
 			end
 		end
 	end

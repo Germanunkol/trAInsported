@@ -309,3 +309,29 @@ end
 function vecDist(x1,y1,x2,y2)
 	return math.sqrt((x1-x2)^2 + (y1-y2)^2)
 end
+
+function additionalInformation(text, code)
+	return function()
+		if not additionalInfoBox then
+			if currentTutBox then
+				TUT_BOX_X = currentTutBox.x
+				TUT_BOX_Y = currentTutBox.y
+			end
+			if TUT_BOX_Y + TUT_BOX_HEIGHT + 50 < love.graphics.getHeight() then		-- only show BELOW the current box if there's still space there...
+				additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y + TUT_BOX_HEIGHT +10, text, {})
+			else		-- Otherwise, show it ABOVE the current tut box!
+				additionalInfoBox = tutorialBox.new(TUT_BOX_X, TUT_BOX_Y - 10 - TUT_BOX_HEIGHT, text, {})
+			end
+		else
+			tutorialBox.remove(additionalInfoBox)
+			additionalInfoBox = nil
+			if code and cBox then
+				codeBox.remove(cBox)
+				cBox = nil
+			end
+		end
+		if code and not cBox then
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, code)
+		end
+	end
+end

@@ -466,14 +466,13 @@ function simulation.update(dt)
 	
 	
 	-- check if there's a packet to be run. If there is one, check again if there's more.
-	print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], packetList[simulation.nextPacket].time, simulationMap.time)
+	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], packetList[simulation.nextPacket].time, simulationMap.time)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
 		
 		--last packet? make sure to run all other remaining packets!! (Otherwise statistics wouldn't be shown.)
 		if packetList[simulation.nextPacket].event:find("END_ROUND:") == 1 then
 			for k = simulation.nextPacket,#packetList do
-				print(packetList[k].event)
 				runUpdate(packetList[k].event, packetList[k].time, simulationMap.time)
 			end
 			packetList = {}

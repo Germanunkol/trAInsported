@@ -4,7 +4,7 @@ To do for trAInsported:
 
 **Map (Editor)**
 - Tile map
-- Random environment pieces
+[x] Random environment pieces
 
 **Sandbox**
 - Events:
@@ -29,8 +29,8 @@ To do for trAInsported:
 **Game**
 [x]	Add VIPs
 [x]	Add Hotspots
-- Randomize order in which players get to move
-- Beautify rails (shadows?), increase # of waypoints
+- Randomize order in which players get to move?
+[x] increase # of waypoints
 [x] buy new trains
 [x] rework train movement: make it pixel-independet and make it work with percentages.
 - Add statistics for passengers at round end
@@ -58,30 +58,36 @@ tut 4:
 - water
 - Urban setting
 - weather?
+- Seasons change graphics?
 - rails with sidewalks
 - speed controls
 - don't let passengers stand on the rails.
-- Seasons change graphics?
 
 **Misc**
-- Add tipps
+- Add tipps?
 - No guarantee that game's outcome is always the same...
 [x] Status message box
-- make sure globals.lua is the same for server and client!
-- train movment on client is now no longer allowing overshoot -> same for server!
-- possibly make server and client use the same files?!
+[x] make sure globals.lua is the same for server and client!
+[x] train movment on client is now no longer allowing overshoot -> same for server!
+[x] possibly make server and client use the same files?!
 [x] tooltips
 - rewards!!
 [x] Make "Last Match" loggin use only one querry...
 [x] Log Date along with "Last Match" and display on website
-- 
+
 
 **Maybe**
-- buy code lines using in-game cash
+- buy code lines using in-game cash?
 - handicapped people
-- option to transport 
+- option to transport multiple passengers?
 - modify payment method in-game?
 - two or three rail types?
+- game mode where map is NOT passed to ai.init? (Fog of war?)
+- Repair costs?
+
+**Website**
+- rank of players?
 
 **Bugs**
-- generator can generate empty maps?
+[x] generator can generate empty maps?
+- default resolution... how to change?

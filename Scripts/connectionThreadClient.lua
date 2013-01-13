@@ -60,9 +60,6 @@ while true do
 	data, msg = client:receive()
 	if not msg then
 		print("RECEIVED: " .. data)
-		if data:find("NEW_AI") or data:find("MAP:") then
-			
-		end
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))
 		elseif data:find("U:") == 1 then
@@ -70,6 +67,9 @@ while true do
 		elseif data:find("NEXT_MATCH:") == 1 then
 			timeUntilNextMatch = tonumber(data:sub(12, #data))
 			thisThread:set("nextMatch", timeUntilNextMatch)
+		elseif data:find("T:") == 1 then
+			serverTime = tonumber(data:sub(3, #data))
+			thisThread:set("serverTime", serverTime)
 		end
 	else
 		print("error: " .. msg)

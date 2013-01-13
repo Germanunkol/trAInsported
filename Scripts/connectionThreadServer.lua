@@ -59,6 +59,10 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 			print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 		end
+		
+		if serverTime then
+			client:send("T: " .. serverTime .. "\n")
+		end
 	else
 		print(client[1], "SENT:","NEXT_MATCH:" .. timeUntilNextMatch)
 		client:send("NEXT_MATCH:" .. timeUntilNextMatch .. "\n")
@@ -121,6 +125,7 @@ while true do
 		
 		for k, cl in pairs(clientList) do
 			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
+			ok, err = cl:send("T:" .. 0 .. "\n")		-- send update to clients.
 			print(cl[1], "SENT:","MAP:" .. curMapStr)
 		end
 		
@@ -152,6 +157,14 @@ while true do
 		msg = msg:sub(e+1, #msg)
 		sendPackets.add(newPacketID,msg, time)
 		
+	end
+	
+	t = thisThread:get("time")		-- tell the clients at what time they should currently be.
+	if t then
+		serverTime = t
+		for k, cl in pairs(clientList) do
+			ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
+		end
 	end
 	
 end

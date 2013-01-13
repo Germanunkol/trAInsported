@@ -169,7 +169,7 @@ end
 local codeBoxX, codeBoxY = 0,0
 local tutBoxX, tutBoxY = 0,0
 
-
+--[[
 function additionalInformation(text)
 	return function()
 		if not additionalInfoBox then
@@ -184,7 +184,7 @@ function additionalInformation(text)
 			end
 		end
 	end
-end
+end]]--
 
 function tutorial.createTutBoxes()
 
@@ -229,7 +229,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Controls"
-	tutorialSteps[k].message = "\n\nIn this Tutorial, you'll learn about:\n1) Game Controls\n3) Buying trains\n2) Transporting your first passengers" 
+	tutorialSteps[k].message = "In this Tutorial, you'll learn about:\n1) Game Controls\n3) Buying trains\n2) Transporting your first passengers" 
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}

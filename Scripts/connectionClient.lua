@@ -68,6 +68,16 @@ function connection.handleConnection()
 		packetNumber = incrementID(packetNumber)
 	end
 	
+	
+	str = connectionThread:get("serverTime")
+	if str then
+		serverTime = tonumber(str)
+		print("Received new server time: " .. serverTime)
+		if simulationMap then
+			print("My time: " .. simulationMap.time)
+		end
+	end
+	
 	-- if versions don't match, addUpdate might have stopped the connection, so make sure it's still up:
 	
 	if not connectionThread then return end

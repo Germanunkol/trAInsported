@@ -31,7 +31,8 @@ if not DEDICATED then
 	FONT_CONSOLE = love.graphics.newFont( "UbuntuFont/Ubuntu-R.ttf", 13)
 	FONT_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 14)
 	FONT_COORDINATES = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 25 )
-
+	FONT_HUGE = FONT_COORDINATES
+	
 	FONT_CODE_PLAIN = love.graphics.newFont( "UbuntuFont/Ubuntu-M.ttf", 17 )
 	FONT_CODE_BOLD = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 17 )
 	FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-LI.ttf", 17 )

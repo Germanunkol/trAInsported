@@ -34,7 +34,7 @@ C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 - **-h IP_OR_URL** or **--host IP_OR_URL** or **--ip IP_OR_URL**: IP address of server to connect to. You can also use an URL to connect if you have a server running on some web-machine. In both cases, make sure to open the ports on your server's router! [Client]
 - **-p PORTNUMBER** or **--port PORTNUMBER**:  Port to use -> must be the same on client and server. (Default port is 5556. Make sure to port-forward that port if the game server is sitting behind a router.) [Client and Server]
 - **-m TIME** or **--match_time TIME**: Time a match will take. [Server]
-- **-c TIME** or **--cooldown TIME**: Time between two matches on Server. (TIME in seconds, minimum 10.) [Server]
+- **-c TIME** or **--cooldown TIME**: Time between two matches on Server. (TIME in seconds, minimum 10. - Note: if this is too low, watching clients won't be able to view the match results. 20 seconds is usually a good value.) [Server]
 - **--console** Needed on Windows if you want a console. On Unix-Systems, the standard console will be used for output. [Client and Server]
 - **--render** Forces game to rerender all images at startup. [Client]
 - **--mysql USER,PASSWORD[,HOST[,PORT]]** Will enable logging to a MySQL database if **--server** is activated. It will log into the MySQL server using **USER** and **PASSWORD**. Optionally, **HOST** and **PORT** can be given to connect to a remote server (default is localhost). You can use **--mysqlDB** to change the database to use. Otherwise, it will use the 'trAInsported' database. Note: You have to manually create the trAInsported Database beforehand, and make sure that USER has rights to create a table and edit a table on the database.[Server]

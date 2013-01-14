@@ -28,6 +28,8 @@ print("2")
 file:write("2\n")
 
 
+threadID = thisThread:demand("ID")
+file:write("Thread ID: " .. threadID .. "\n")
 print("4")
 width = thisThread:demand("width")
 

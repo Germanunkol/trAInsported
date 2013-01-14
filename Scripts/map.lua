@@ -288,20 +288,22 @@ function map.generate(width, height, seed, tutorialMap)
 			print("Generating Map...", width, height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
+		
+		mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
 		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
 		
-		mapGenerateThreadNumber = mapGenerateThreadNumber + 1
 		mapGenerateThread:start()
 		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
 		mapGenerateThread:set("width", width )
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
+		mapGenerateThread:set("ID", mapGenerateThreadNumber )
 		
 		mapGenerateStatusNum = 0
 		
 		mapGenerateMsgNumber = 0
 		prevStr = nil
-		print("mapGenerateThread", mapGenerateThread)
+		print("mapGenerateThread, ID", mapGenerateThread, mapGenerateThreadNumber)
 	else
 	
 		percent = mapGenerateThread:get("percentage")

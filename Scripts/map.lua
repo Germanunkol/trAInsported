@@ -352,6 +352,8 @@ function map.generate(width, height, seed, tutorialMap)
 				loadingScreen.percentage("Generating Map", 100)
 			end
 			map.print("Finished Map:")
+			mapGenerateThread:wait()
+			print("Threads joined!")
 			mapGenerateThread = nil
 			if not DEDICATED then
 				map.render(curMap)

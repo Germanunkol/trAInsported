@@ -136,7 +136,7 @@ function simulation.addUpdate(text)
 end
 
 function runUpdate(event, t1, t2)
-	print("RUNNING:", event, t1, t2)
+	print("RUNNING:", event, t1, t2, serverTime)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))

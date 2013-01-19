@@ -74,6 +74,7 @@ tut 4:
 - rewards!!
 [x] Make "Last Match" loggin use only one querry...
 [x] Log Date along with "Last Match" and display on website
+- screen resolution set at first start!
 
 
 **Maybe**

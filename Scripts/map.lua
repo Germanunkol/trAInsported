@@ -1223,6 +1223,7 @@ function map.render(map)
 			mapRenderThread:set("NO_TREES", true)
 		end
 		loadingScreen.addSection("Rendering Map")
+		renderingMapStartTime = os.time()
 	else
 		percent = mapRenderThread:get("percentage")
 		if percent then
@@ -1272,7 +1273,7 @@ function map.render(map)
 			
 			currentlyRenderingMap = false
 			-- mapRenderThread = nil
-			
+			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
 			
 			return groundData,shadowData,objectData

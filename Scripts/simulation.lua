@@ -505,7 +505,7 @@ function simulation.show(dt)
 		--love.graphics.setColor(0,0,0, 100)
 	
 		love.graphics.setColor(30,10,5, 150)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-20, -TILE_SIZE*(simulationMap.height+2)/2+35)
+		--love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-20, -TILE_SIZE*(simulationMap.height+2)/2+35)
 		
 		
 		--[[love.graphics.setColor(30, 10, 0, 250)
@@ -516,9 +516,25 @@ function simulation.show(dt)
 		]]--
 		
 		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
+		--love.graphics.setColor(255,255,255, 255)
+		--love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+		for i = 1, #mapImage do
+			for j = 1, #mapImage[i] do
+				if i == 1 or j == #mapImage[i] then
+					love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				end
+			end
+		end
+		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 		love.graphics.setColor(255,255,255, 255)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
-	
+		--love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+
+		for i = 1, #mapImage do
+			for j = 1, #mapImage[i] do
+				--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
+				love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			end
+		end
 	
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
 	
@@ -527,8 +543,15 @@ function simulation.show(dt)
 --		passenger.showVIPs(passedTime)
 	
 		love.graphics.setColor(255,255,255,255)
-		love.graphics.draw(mapShadowImage, 0,0)	
-		love.graphics.draw(mapObjectImage, 0,0)	
+		--love.graphics.draw(mapShadowImage, 0,0)
+		--love.graphics.draw(mapObjectImage, 0,0)
+		for i = 1, #mapShadowImage do
+			for j = 1, #mapShadowImage[i] do
+				--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
+				love.graphics.draw(mapShadowImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				love.graphics.draw(mapObjectImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			end
+		end
 	
 		map.renderHighlights(passedTime)
 	

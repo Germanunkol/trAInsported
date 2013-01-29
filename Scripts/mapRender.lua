@@ -15,32 +15,6 @@ require("globals")
 DEDICATED = rememberDedi
 
 
-curMap = TSerial.unpack(thisThread:demand("curMap"))
-curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
-TILE_SIZE = thisThread:demand("TILE_SIZE")
-
-NO_TREES = thisThread:get("NO_TREES")
-
-SEED = curMap.height*curMap.width
-
-for i = 1, curMap.width do
-	for j = 1, curMap.height do
-		if curMap[i][j] == "H" then
-			SEED = SEED + curMap.height*curMap.width*i*j
-		end
-		
-		if curMap[i][j] == "C" then
-			SEED = SEED + curMap.height*curMap.width*i*j
-		end
-	end
-end
-
-MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
-
-SEED = SEED % 9999
-
-math.randomseed(SEED)
-
 -- RAIL Pieces:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
 IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
@@ -102,7 +76,6 @@ IMAGE_TREE03_SHADOW = love.image.newImageData("Images/Tree3_Shadow.png")
 IMAGE_BUSH01 = love.image.newImageData("Images/Bush.png")
 IMAGE_BUSH01_SHADOW = love.image.newImageData("Images/Bush_Shadow.png")
 
-thisThread:set("percentage", -2)
 
 function getRailImage( railType )
 	--					N						S						W							E
@@ -168,219 +141,253 @@ function updatePercentage()
 	thisThread:set("percentage", renderingPercentage)
 end
 
---thisThread:set("status", "ground")
-threadSendStatus( thisThread,"ground")
 
+while true do
 
-function paste( dest, source, x, y )
-	i = math.max(x, 0)/TILE_SIZE
-	j = math.max(y, 0)/TILE_SIZE
-	imgID_X = math.floor(i/MAX_IMG_SIZE)
-	imgID_Y = math.floor(j/MAX_IMG_SIZE)
-	if dest[imgID_X][imgID_Y] ~= nil then
-		dest[imgID_X][imgID_Y]:paste( source, x-imgID_X*MAX_IMG_SIZE_PX, y-imgID_Y*MAX_IMG_SIZE_PX )
-	end
-end
+	curMap = TSerial.unpack(thisThread:demand("curMap"))
+	curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
+	TILE_SIZE = thisThread:demand("TILE_SIZE")
 
-if curMap then
-	local renderingPercentage = 0
-	highlightList = {}
-	thisThread:set("percentage", 0)
-	groundData = {}
-	shadowData = {}
-	objectData = {}
-	numImagesX = math.ceil((curMap.width+2)/MAX_IMG_SIZE)
-	numImagesY = math.ceil((curMap.height+2)/MAX_IMG_SIZE)
-	print("Number of images:", numImagesX, numImagesY, curMap.width, curMap.height)
-	for i = 0,numImagesX do
-		groundData[i] = {}
-		shadowData[i] = {}
-		objectData[i] = {}
-		for j = 0,numImagesY do
-			groundData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
-			shadowData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
-			objectData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
-		end
-	end
-	--shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
-	--objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
-	
-	if NO_TREES then
-		percentageStep = 100/((curMap.height+2)*(curMap.width+2))
-	else
-		percentageStep = 100/((curMap.height+2)*(curMap.width+2)*3)
-	end
-	
-	for i = 0,curMap.width+1,1 do
-		for j = 0,curMap.height+1,1 do
-			if i == 0 and j == 0 then
-				paste( groundData, IMAGE_GROUND_TOPLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif i == 0 and j == curMap.height+1 then
-				paste( groundData, IMAGE_GROUND_BOTTOMLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif i == curMap.width+1 and j == 0 then
-				paste( groundData, IMAGE_GROUND_TOPRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif i == curMap.width+1 and j == curMap.height+1 then
-				paste( groundData, IMAGE_GROUND_BOTTOMRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif i == 0 then
-				paste( groundData, IMAGE_GROUND_LEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif i == curMap.width+1 then
-				paste( groundData, IMAGE_GROUND_RIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif j == 0 then
-				paste( groundData, IMAGE_GROUND_TOP, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif j == curMap.height+1 then
-				paste( groundData, IMAGE_GROUND_BOTTOM, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			else
-				paste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			end
-			--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
-			--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
-			--updatePercentage()
-		end
-	end
-	
-	--thisThread:set("status", "houses and rails")
-	threadSendStatus( thisThread,"houses and rails")
-	
-	local houseType = 0
-	for i = 0,curMap.width+1,1 do
-		for j = 0,curMap.height+1,1 do
+	NO_TREES = thisThread:get("NO_TREES")
+
+	SEED = curMap.height*curMap.width
+
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
 			if curMap[i][j] == "H" then
-				randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
-				houseType = math.random(4)
-				
-				col = {r = math.random(40)-20, g = 0, b = 0}
-				print("pasting house")
-				if houseType == 1 then
-					transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData)
-					--paste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
-				elseif houseType == 2 then
-					transparentPaste( shadowData, IMAGE_HOUSE02_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
-					--paste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
-				elseif houseType == 3 then
-					transparentPaste( shadowData, IMAGE_HOUSE03_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
-					--paste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
-				elseif houseType == 4 then
-					transparentPaste( shadowData, IMAGE_HOUSE04_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
-					--paste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
-					transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
-				end
-			elseif curMap[i][j] == "S" then
-				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
-				transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 2})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
-				table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
-			elseif curMap[i][j] == "C" then
-				img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-				if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData ) end
-			elseif curMap[i][j] == "PS" then	-- pie store...
-				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
-				transparentPaste( objectData, IMAGE_HOTSPOT_PIESTORE, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
-			elseif curMap[i][j] == "HO" then	-- home
-				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
-				transparentPaste( objectData, IMAGE_HOTSPOT_HOME, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
-			elseif curMap[i][j] == "SC" then	-- school
-				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
-				transparentPaste( objectData, IMAGE_HOTSPOT_SCHOOL, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
-			elseif curMap[i][j] == "PL" then	-- playground
-				transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
-				transparentPaste( objectData, IMAGE_HOTSPOT_PLAYGROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
+				SEED = SEED + curMap.height*curMap.width*i*j
 			end
-			
-			updatePercentage()
+		
+			if curMap[i][j] == "C" then
+				SEED = SEED + curMap.height*curMap.width*i*j
+			end
 		end
 	end
-	
-	if not NO_TREES then
-		--thisThread:set("status", "bushes")
-		threadSendStatus( thisThread,"bushes")
 
-		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
+	MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
+
+	SEED = SEED % 9999
+
+	math.randomseed(SEED)
+
+	thisThread:set("percentage", -2)
+
+
+
+
+	--thisThread:set("status", "ground")
+	threadSendStatus( thisThread,"ground")
+
+
+	function paste( dest, source, x, y )
+		i = math.max(x, 0)/TILE_SIZE
+		j = math.max(y, 0)/TILE_SIZE
+		imgID_X = math.floor(i/MAX_IMG_SIZE)
+		imgID_Y = math.floor(j/MAX_IMG_SIZE)
+		if dest[imgID_X][imgID_Y] ~= nil then
+			dest[imgID_X][imgID_Y]:paste( source, x-imgID_X*MAX_IMG_SIZE_PX, y-imgID_Y*MAX_IMG_SIZE_PX )
+		end
+	end
+
+	if curMap then
+		local renderingPercentage = 0
+		highlightList = {}
+		thisThread:set("percentage", 0)
+		groundData = {}
+		shadowData = {}
+		objectData = {}
+		numImagesX = math.ceil((curMap.width+2)/MAX_IMG_SIZE)
+		numImagesY = math.ceil((curMap.height+2)/MAX_IMG_SIZE)
+		print("Number of images:", numImagesX, numImagesY, curMap.width, curMap.height)
+		for i = 0,numImagesX do
+			groundData[i] = {}
+			shadowData[i] = {}
+			objectData[i] = {}
+			for j = 0,numImagesY do
+				groundData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+				shadowData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+				objectData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+			end
+		end
+		--shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+		--objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+	
+		if NO_TREES then
+			percentageStep = 100/((curMap.height+2)*(curMap.width+2))
+		else
+			percentageStep = 100/((curMap.height+2)*(curMap.width+2)*3)
+		end
+	
+		for i = 0,curMap.width+1,1 do
 			for j = 0,curMap.height+1,1 do
-				if not curMap[i][j] and math.random(7) == 1 then
-					numTries = math.random(3)+1
-					for k = 1, numTries do
-						col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
-						randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-						transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
-						transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
+				if i == 0 and j == 0 then
+					paste( groundData, IMAGE_GROUND_TOPLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif i == 0 and j == curMap.height+1 then
+					paste( groundData, IMAGE_GROUND_BOTTOMLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif i == curMap.width+1 and j == 0 then
+					paste( groundData, IMAGE_GROUND_TOPRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif i == curMap.width+1 and j == curMap.height+1 then
+					paste( groundData, IMAGE_GROUND_BOTTOMRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif i == 0 then
+					paste( groundData, IMAGE_GROUND_LEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif i == curMap.width+1 then
+					paste( groundData, IMAGE_GROUND_RIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif j == 0 then
+					paste( groundData, IMAGE_GROUND_TOP, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif j == curMap.height+1 then
+					paste( groundData, IMAGE_GROUND_BOTTOM, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				else
+					paste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				end
+				--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
+				--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
+				--updatePercentage()
+			end
+		end
+	
+		--thisThread:set("status", "houses and rails")
+		threadSendStatus( thisThread,"houses and rails")
+	
+		local houseType = 0
+		for i = 0,curMap.width+1,1 do
+			for j = 0,curMap.height+1,1 do
+				if curMap[i][j] == "H" then
+					randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
+					houseType = math.random(4)
+				
+					col = {r = math.random(40)-20, g = 0, b = 0}
+					print("pasting house")
+					if houseType == 1 then
+						transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData)
+						--paste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
+					elseif houseType == 2 then
+						transparentPaste( shadowData, IMAGE_HOUSE02_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+						--paste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
+					elseif houseType == 3 then
+						transparentPaste( shadowData, IMAGE_HOUSE03_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+						--paste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
+					elseif houseType == 4 then
+						transparentPaste( shadowData, IMAGE_HOUSE04_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+						--paste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
+						transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 					end
+				elseif curMap[i][j] == "S" then
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
+					transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 2})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
+					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
+				elseif curMap[i][j] == "C" then
+					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+					if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData ) end
+				elseif curMap[i][j] == "PS" then	-- pie store...
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
+					transparentPaste( objectData, IMAGE_HOTSPOT_PIESTORE, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
+				elseif curMap[i][j] == "HO" then	-- home
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
+					transparentPaste( objectData, IMAGE_HOTSPOT_HOME, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
+				elseif curMap[i][j] == "SC" then	-- school
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
+					transparentPaste( objectData, IMAGE_HOTSPOT_SCHOOL, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
+				elseif curMap[i][j] == "PL" then	-- playground
+					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
+					transparentPaste( objectData, IMAGE_HOTSPOT_PLAYGROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
 				end
 			
 				updatePercentage()
 			end
 		end
 	
---		thisThread:set("status", "trees")
-		
-		threadSendStatus( thisThread,"trees")
-	
-		local treetype = 0
-		for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
-			for j = 0,curMap.height+1,1 do
-				if not curMap[i][j] and math.random(3) == 1 then
-					numTries = math.random(5)+1
-					for k = 1, numTries do
-						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-						treetype = math.random(3)
-					
-						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
-						if treetype == 1 then
-							transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
-							transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
-						elseif treetype == 2 then
-							transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
-							transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
-						else
-							transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
-							transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
+		if not NO_TREES then
+			--thisThread:set("status", "bushes")
+			threadSendStatus( thisThread,"bushes")
+
+			for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
+				for j = 0,curMap.height+1,1 do
+					if not curMap[i][j] and math.random(7) == 1 then
+						numTries = math.random(3)+1
+						for k = 1, numTries do
+							col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
+							randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+							transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
+							transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 						end
 					end
-				end
 			
-				updatePercentage()
+					updatePercentage()
+				end
 			end
-		end
-	end
 	
+	--		thisThread:set("status", "trees")
+		
+			threadSendStatus( thisThread,"trees")
 	
-	thisThread:set("dimensionX", numImagesX)
-	thisThread:set("dimensionY", numImagesY)
-	for i = 0, numImagesX do
-		for j = 0, numImagesY do
-			thisThread:set("groundData:" .. i+1 .. "," .. j+1, groundData[i][j])
-			thisThread:set("shadowData:" .. i+1 .. "," .. j+1, shadowData[i][j])
-			thisThread:set("objectData:" .. i+1 .. "," .. j+1, objectData[i][j])
-		end
-	end
-	
-	-- thisThread:set("shadowData", shadowData)
-	-- thisThread:set("objectData", objectData)
-	thisThread:set("highlightList", TSerial.pack(highlightList))
-	
-	thisThread:set("status", "done")
-	--[[for i = 0,curMap.height+1,1 do
-		for j = 0,curMap.width+1,1 do
-			if curMap[i][j] == "H" then
-				data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			elseif curMap[i][j] == "S" then
-				data:paste( IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
-			else
-				data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
-				if curMap[i][j] == "C" then
-					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
-					if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
-					--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
-					--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
+			local treetype = 0
+			for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
+				for j = 0,curMap.height+1,1 do
+					if not curMap[i][j] and math.random(3) == 1 then
+						numTries = math.random(5)+1
+						for k = 1, numTries do
+							randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+							treetype = math.random(3)
+					
+							col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+							if treetype == 1 then
+								transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
+								transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
+							elseif treetype == 2 then
+								transparentPaste( shadowData, IMAGE_TREE02_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
+								transparentPaste( objectData, IMAGE_TREE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
+							else
+								transparentPaste( shadowData, IMAGE_TREE03_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
+								transparentPaste( objectData, IMAGE_TREE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)
+							end
+						end
+					end
+			
+					updatePercentage()
 				end
 			end
 		end
-	end]]--
-end
+	
+	
+		thisThread:set("dimensionX", numImagesX)
+		thisThread:set("dimensionY", numImagesY)
+		for i = 0, numImagesX do
+			for j = 0, numImagesY do
+				thisThread:set("groundData:" .. i+1 .. "," .. j+1, groundData[i][j])
+				thisThread:set("shadowData:" .. i+1 .. "," .. j+1, shadowData[i][j])
+				thisThread:set("objectData:" .. i+1 .. "," .. j+1, objectData[i][j])
+			end
+		end
+	
+		-- thisThread:set("shadowData", shadowData)
+		-- thisThread:set("objectData", objectData)
+		thisThread:set("highlightList", TSerial.pack(highlightList))
+	
+		thisThread:set("status", "done")
+		--[[for i = 0,curMap.height+1,1 do
+			for j = 0,curMap.width+1,1 do
+				if curMap[i][j] == "H" then
+					data:paste( IMAGE_HOUSE, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				elseif curMap[i][j] == "S" then
+					data:paste( IMAGE_HOTSPOT1, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				else
+					data:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+					if curMap[i][j] == "C" then
+						img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
+						if img then data:paste( img, (i)*TILE_SIZE, (j)*TILE_SIZE ) end
+						--transparentPaste( data, img, (j)*TILE_SIZE, (i)*TILE_SIZE ) end
+						--love.graphics.draw(img, (j-1)*TILE_SIZE, (i-1)*TILE_SIZE) end
+					end
+				end
+			end
+		end]]--
+	end
 
-return
+end
 

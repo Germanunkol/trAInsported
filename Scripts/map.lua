@@ -288,11 +288,12 @@ function map.generate(width, height, seed, tutorialMap)
 			print("Generating Map...", width, height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
+		if not mapGenerateThread then
+			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
+			mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
+			mapGenerateThread:start()
+		end
 		
-		mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
-		mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
-		
-		mapGenerateThread:start()
 		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
 		mapGenerateThread:set("width", width )
 		mapGenerateThread:set("height", height )
@@ -300,6 +301,7 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("ID", mapGenerateThreadNumber )
 		
 		mapGenerateStatusNum = 0
+		currentlyGeneratingMap = true
 		
 		mapGenerateMsgNumber = 0
 		prevStr = nil
@@ -352,9 +354,10 @@ function map.generate(width, height, seed, tutorialMap)
 				loadingScreen.percentage("Generating Map", 100)
 			end
 			map.print("Finished Map:")
-			mapGenerateThread:wait()
+			--mapGenerateThread:wait()
+			currentlyGeneratingMap = false
 			print("Threads joined!")
-			mapGenerateThread = nil
+			--mapGenerateThread = nil
 			if not DEDICATED then
 				map.render(curMap)
 			else
@@ -371,7 +374,7 @@ function map.generate(width, height, seed, tutorialMap)
 end
 
 function map.generating()
-	if mapGenerateThread then return true end
+	if currentlyGeneratingMap then return true end
 end
 
 
@@ -1189,11 +1192,20 @@ local highlightListQuads = {}
 mapThread = nil
 mapThreadPercentage = 0
 
+-- Peter's beitrag:
+--[[
+if(!(crash == true)){
+crash();
+}
+
+-- micha's übersetzung:
+if not crash then crash() end
+]]--
 --
 function map.render(map)
 	if not mapRenderThread or map ~= nil then		-- if a new map is given, render this new map!
 		print("Rendering Map...")
-		mapRenderThread = love.thread.newThread("mapRenderingThread" ..mapRenderThreadNumber, "Scripts/mapRender.lua")
+		mapRenderThread = love.thread.newThread("mapRenderingThread" .. mapRenderThreadNumber, "Scripts/mapRender.lua")
 		mapRenderThreadNumber = mapRenderThreadNumber + 1
 		mapRenderThread:start()
 		map = map or curMap

@@ -47,7 +47,6 @@ else
 end
 
 timeFactor = 1
-TILE_SIZE = 128
 
 STARTUP_MONEY = 25
 
@@ -100,6 +99,15 @@ tutDescriptions[3] = [[The first junction! Basic decision making.]]
 
 
 -- sizes:
+
+
+TILE_SIZE = 128
+MAX_IMG_SIZE = 5
+MAP_MINIMUM_SIZE = 4
+MAP_MAXIMUM_SIZE = 50
+
+
+-- UI sizes:
 
 STND_BUTTON_WIDTH = 150
 STND_BUTTON_HEIGHT = 35

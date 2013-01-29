@@ -23,8 +23,8 @@ local trainImagesCreated = false
 function randomMatch()
 	
 	simulation.stop()
-	local width = math.random(4,25)
-	local height = math.random(4,25)
+	local width = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
+	local height = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
 	
 	local aiFiles = ai.findAvailableAIs()
 	
@@ -349,7 +349,8 @@ function menu.newRound()
 	table.insert(menuDividers, {x=x, y = defaultMenuY, txt="Width and Height:"})
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
-	for width = 4, 26,2 do
+	stepSize = math.floor((MAP_MAXIMUM_SIZE-MAP_MINIMUM_SIZE)/10)
+	for width = MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE, stepSize  do
 		widthButtons[width] = button:newSmall(x, y, tostring(width), selectWidth, width, nil, nil, "Set map width")
 		heightButtons[width] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, tostring(width), selectHeigth, width, nil, nil, "Set map height")
 		y = y + 37

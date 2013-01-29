@@ -41,57 +41,135 @@ function blur( imgData, radius, thread, percentage, maxPercentage )
 	return imgDataBlur
 end
 
-function transparentPaste(imgDataDest, imgDataSource, posX, posY, colOffset, mask)
+function transparentPaste(imgDataDest, imgDataSource, posX, posY, colOffset, mask, overflowed)
+
+	local originalImageDest = imgDataDest
+	local originalMask = mask
+	local originalPosX = posX
+	local originalPosY = posY
+	
+	local overflowX = false
+	local overflowY = false
+	local underflowX = false
+	local underflowY = false
+	local imgID_X = 0
+	local imgID_Y = 0
+	
+	if type(imgDataDest) == "table" or type(mask) == "table" then
+		imgID_X = math.floor(math.max(posX, 0)/TILE_SIZE/MAX_IMG_SIZE)
+		imgID_Y = math.floor(math.max(posY, 0)/TILE_SIZE/MAX_IMG_SIZE)
+		if type(imgDataDest) == "table" then
+			imgDataDest = imgDataDest[imgID_X][imgID_Y]
+			posX = posX - imgID_X*MAX_IMG_SIZE*TILE_SIZE
+			posY = posY - imgID_Y*MAX_IMG_SIZE*TILE_SIZE
+		end
+		if type(mask) == "table" then
+			mask = mask[imgID_X][imgID_Y]
+		end
+	end
+	
 	posX = posX or 0
 	posY = posY or 0
 	--imgDataResult = love.image.newImageData(imgDataDest:getWidth(), imgDataDest:getHeight())
-	maxX = math.min(imgDataDest:getWidth()-1, imgDataSource:getWidth()-1+posX)
-	maxY = math.min(imgDataDest:getHeight()-1, imgDataSource:getHeight()-1+posY)
+	local maxX = math.min(imgDataDest:getWidth()-1, imgDataSource:getWidth()-1+posX)
+	local maxY = math.min(imgDataDest:getHeight()-1, imgDataSource:getHeight()-1+posY)
+	if type(originalImageDest) == "table" then
+		if maxX - posX < imgDataSource:getWidth() then
+			if posX <= 0 then
+				underflowX = true
+			else
+				overflowX = true
+			end
+		end
+		if maxY - posY < imgDataSource:getHeight() then
+			if posY <= 0 then
+				underflowY = true
+			else
+				overflowY = true
+			end
+		end
+	
+		if overflowX and originalImageDest[imgID_X+1] then
+			--print("ALERT: OVERFLOW at " .. imgID_X .. "," .. imgID_Y .. ":", posX, posY)
+			if originalImageDest[imgID_X+1][imgID_Y] then
+				--print("\tGo to:", imgID_X+1, imgID_Y)
+				transparentPaste(originalImageDest[imgID_X+1][imgID_Y], imgDataSource, posX -MAX_IMG_SIZE*TILE_SIZE, posY, colOffset, originalMask[imgID_X+1][imgID_Y], true)
+			end
+			if underflowY and originalImageDest[imgID_X+1][imgID_Y-1] then
+				--print("\tGo to:", imgID_X+1, imgID_Y-1)
+				transparentPaste(originalImageDest[imgID_X+1][imgID_Y-1], imgDataSource, posX -MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE + posY, colOffset, originalMask[imgID_X+1][imgID_Y-1], true)
+			end
+			if overflowY and originalImageDest[imgID_X+1][imgID_Y+1] then
+				--print("\tGo to:", imgID_X+1, imgID_Y+1)
+				transparentPaste(originalImageDest[imgID_X+1][imgID_Y+1], imgDataSource, posX -MAX_IMG_SIZE*TILE_SIZE, posY - MAX_IMG_SIZE*TILE_SIZE, colOffset, originalMask[imgID_X+1][imgID_Y+1], true)
+			end
+		end
+		if underflowX and originalImageDest[imgID_X-1] then
+			--print("ALERT: UNDERFLOW at " .. imgID_X .. "," .. imgID_Y .. ":", posX, posY)
+			if originalImageDest[imgID_X-1][imgID_Y] then
+				--print("\tGo to:", imgID_X-1, imgID_Y)
+				transparentPaste(originalImageDest[imgID_X-1][imgID_Y], imgDataSource, MAX_IMG_SIZE*TILE_SIZE + posX, posY, colOffset, originalMask[imgID_X-1][imgID_Y], true)
+			end
+			if underflowY and originalImageDest[imgID_X-1][imgID_Y-1] then
+				--print("\tGo to:", imgID_X-1, imgID_Y-1)
+				transparentPaste(originalImageDest[imgID_X-1][imgID_Y-1], imgDataSource, MAX_IMG_SIZE*TILE_SIZE + posX, MAX_IMG_SIZE*TILE_SIZE + posY, colOffset, originalMask[imgID_X-1][imgID_Y-1], true)
+			end
+			if overflowY and originalImageDest[imgID_X-1][imgID_Y+1] then
+				--print("\tGo to:", imgID_X-1, imgID_Y+1)
+				transparentPaste(originalImageDest[imgID_X-1][imgID_Y+1], imgDataSource, MAX_IMG_SIZE*TILE_SIZE + posX, posY - MAX_IMG_SIZE*TILE_SIZE, colOffset, originalMask[imgID_X-1][imgID_Y+1], true)
+			end
+		end
+		if overflowY and originalImageDest[imgID_X][imgID_Y+1] then
+			--print("\tGo to:", imgID_X, imgID_Y)
+			transparentPaste(originalImageDest[imgID_X][imgID_Y+1], imgDataSource, posX, posY - MAX_IMG_SIZE*TILE_SIZE, colOffset, originalMask[imgID_X][imgID_Y+1], true)
+		end
+		if underflowY and originalImageDest[imgID_X][imgID_Y-1] then
+			--print("\tGo to:", imgID_X, imgID_Y-1)
+			transparentPaste(originalImageDest[imgID_X][imgID_Y-1], imgDataSource, posX, posY - MAX_IMG_SIZE*TILE_SIZE, colOffset, originalMask[imgID_X][imgID_Y-1], true)
+		end
+	end
+	
 	for x = posX,maxX do
 		for y = posY,maxY do
 			if x >= 0 and y >= 0 then
-				if mask then rMask,gMask,bMask,aMask = mask:getPixel(x,y)
+				if mask then
+					ok, rMask,gMask,bMask,aMask = pcall(getPixel, mask, x, y)
+					if not ok then aMask = 10 end
 				else
 					aMask = 10
 				end
+				aMask = 10
 				if aMask > 0 then
-					rDest,gDest,bDest,aDest = imgDataDest:getPixel(x,y)
-					--if x >= posX and x-posX < imgDataSource:getWidth() and y >= posY and y-posY < imgDataSource:getHeight() then
+				
 					rSource,gSource,bSource,aSource = imgDataSource:getPixel(x-posX,y-posY)
-					if colOffset then
-						rSource = clamp(rSource + colOffset.r, 0, 255)
-						gSource = clamp(gSource + colOffset.g, 0, 255)
-						bSource = clamp(bSource + colOffset.b, 0, 255)
-					end
 					if aSource > 0 then
-						rSource,gSource,bSource,aSource = rSource/255,gSource/255,bSource/255,aSource/255
-						--r = rDest/255*aDest + rSource/255*aSource
-						--g = gDest/255*aDest + gSource/255*aSource
-						--b = bDest/255*aDest + bSource/255*aSource
-			
-			
-						rDest,gDest,bDest,aDest = rDest/255,gDest/255,bDest/255,aDest/255
-			
-						--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
-						--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
-						--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
-						--a = math.min(1, aSource + aDest)
-			
-						--r = rDest*aDest + rSource*aSource*(1-aDest) --math.min(255, rSource + rDest)
-						--g = gDest*aDest + gSource*aSource*(1-aDest) --math.min(255, gSource + gDest)
-						--b = bDest*aDest + bSource*aSource*(1-aDest) --math.min(255, bSource + bDest)
-						a = aSource + aDest*(1-aSource)
-						if a > 0 then
-							r = (rSource*aSource+rDest*aDest*(1-aSource))/a
-							g = (gSource*aSource+gDest*aDest*(1-aSource))/a
-							b = (bSource*aSource+bDest*aDest*(1-aSource))/a
-						else
-							r,g,b = 0,0,0
+					
+						rDest,gDest,bDest,aDest = imgDataDest:getPixel(x,y)
+						--if x >= posX and x-posX < imgDataSource:getWidth() and y >= posY and y-posY < imgDataSource:getHeight() then
+						if colOffset then
+							rSource = clamp(rSource + colOffset.r, 0, 255)
+							gSource = clamp(gSource + colOffset.g, 0, 255)
+							bSource = clamp(bSource + colOffset.b, 0, 255)
 						end
+						if aSource > 0 then
+							rSource,gSource,bSource,aSource = rSource/255,gSource/255,bSource/255,aSource/255
 			
-						r,g,b,a = r*255,g*255,b*255,a*255
 			
-						imgDataDest:setPixel(x, y, r, g, b, a)
+							rDest,gDest,bDest,aDest = rDest/255,gDest/255,bDest/255,aDest/255
+						
+							a = aSource + aDest*(1-aSource)
+							if a > 0 then
+								r = (rSource*aSource+rDest*aDest*(1-aSource))/a
+								g = (gSource*aSource+gDest*aDest*(1-aSource))/a
+								b = (bSource*aSource+bDest*aDest*(1-aSource))/a
+							else
+								r,g,b = 0,0,0
+							end
+			
+							r,g,b,a = r*255,g*255,b*255,a*255
+			
+							imgDataDest:setPixel(x, y, r, g, b, a)
+						end
 					end
 				end
 			end

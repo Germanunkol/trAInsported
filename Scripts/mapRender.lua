@@ -7,6 +7,14 @@ require("love.filesystem")
 require("TSerial")
 require("imageManipulation")
 require("misc")
+
+-- load "globals" in dedicated mode, only get variables:
+rememberDedi = DEDICATED
+DEDICATED = true
+require("globals")
+DEDICATED = rememberDedi
+
+
 curMap = TSerial.unpack(thisThread:demand("curMap"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 TILE_SIZE = thisThread:demand("TILE_SIZE")
@@ -26,6 +34,8 @@ for i = 1, curMap.width do
 		end
 	end
 end
+
+MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
 
 SEED = SEED % 9999
 
@@ -161,13 +171,39 @@ end
 --thisThread:set("status", "ground")
 threadSendStatus( thisThread,"ground")
 
+
+function paste( dest, source, x, y )
+	i = math.max(x, 0)/TILE_SIZE
+	j = math.max(y, 0)/TILE_SIZE
+	imgID_X = math.floor(i/MAX_IMG_SIZE)
+	imgID_Y = math.floor(j/MAX_IMG_SIZE)
+	if dest[imgID_X][imgID_Y] ~= nil then
+		dest[imgID_X][imgID_Y]:paste( source, x-imgID_X*MAX_IMG_SIZE_PX, y-imgID_Y*MAX_IMG_SIZE_PX )
+	end
+end
+
 if curMap then
 	local renderingPercentage = 0
 	highlightList = {}
 	thisThread:set("percentage", 0)
-	groundData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- ground map
-	shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
-	objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+	groundData = {}
+	shadowData = {}
+	objectData = {}
+	numImagesX = math.ceil((curMap.width+2)/MAX_IMG_SIZE)
+	numImagesY = math.ceil((curMap.height+2)/MAX_IMG_SIZE)
+	print("Number of images:", numImagesX, numImagesY, curMap.width, curMap.height)
+	for i = 0,numImagesX do
+		groundData[i] = {}
+		shadowData[i] = {}
+		objectData[i] = {}
+		for j = 0,numImagesY do
+			groundData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+			shadowData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+			objectData[i][j] = love.image.newImageData(MAX_IMG_SIZE*TILE_SIZE, MAX_IMG_SIZE*TILE_SIZE)		-- ground map
+		end
+	end
+	--shadowData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
+	--objectData = love.image.newImageData((curMap.width+2)*TILE_SIZE, (curMap.height+2)*TILE_SIZE)		-- objects map
 	
 	if NO_TREES then
 		percentageStep = 100/((curMap.height+2)*(curMap.width+2))
@@ -178,23 +214,23 @@ if curMap then
 	for i = 0,curMap.width+1,1 do
 		for j = 0,curMap.height+1,1 do
 			if i == 0 and j == 0 then
-				groundData:paste( IMAGE_GROUND_TOPLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_TOPLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif i == 0 and j == curMap.height+1 then
-				groundData:paste( IMAGE_GROUND_BOTTOMLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_BOTTOMLEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif i == curMap.width+1 and j == 0 then
-				groundData:paste( IMAGE_GROUND_TOPRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_TOPRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif i == curMap.width+1 and j == curMap.height+1 then
-				groundData:paste( IMAGE_GROUND_BOTTOMRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_BOTTOMRIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif i == 0 then
-				groundData:paste( IMAGE_GROUND_LEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_LEFT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif i == curMap.width+1 then
-				groundData:paste( IMAGE_GROUND_RIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_RIGHT, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif j == 0 then
-				groundData:paste( IMAGE_GROUND_TOP, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_TOP, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			elseif j == curMap.height+1 then
-				groundData:paste( IMAGE_GROUND_BOTTOM, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND_BOTTOM, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			else
-				groundData:paste( IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
+				paste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
 			end
 			--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
 			--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
@@ -213,17 +249,22 @@ if curMap then
 				houseType = math.random(4)
 				
 				col = {r = math.random(40)-20, g = 0, b = 0}
+				print("pasting house")
 				if houseType == 1 then
 					transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData)
+					--paste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 					transparentPaste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 				elseif houseType == 2 then
 					transparentPaste( shadowData, IMAGE_HOUSE02_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+					--paste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 					transparentPaste( objectData, IMAGE_HOUSE02, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 				elseif houseType == 3 then
 					transparentPaste( shadowData, IMAGE_HOUSE03_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+					--paste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 					transparentPaste( objectData, IMAGE_HOUSE03, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 				elseif houseType == 4 then
 					transparentPaste( shadowData, IMAGE_HOUSE04_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData )
+					--paste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
 					transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 				end
 			elseif curMap[i][j] == "S" then
@@ -306,9 +347,19 @@ if curMap then
 		end
 	end
 	
-	thisThread:set("groundData", groundData)
-	thisThread:set("shadowData", shadowData)
-	thisThread:set("objectData", objectData)
+	
+	thisThread:set("dimensionX", numImagesX)
+	thisThread:set("dimensionY", numImagesY)
+	for i = 0, numImagesX do
+		for j = 0, numImagesY do
+			thisThread:set("groundData:" .. i+1 .. "," .. j+1, groundData[i][j])
+			thisThread:set("shadowData:" .. i+1 .. "," .. j+1, shadowData[i][j])
+			thisThread:set("objectData:" .. i+1 .. "," .. j+1, objectData[i][j])
+		end
+	end
+	
+	-- thisThread:set("shadowData", shadowData)
+	-- thisThread:set("objectData", objectData)
 	thisThread:set("highlightList", TSerial.pack(highlightList))
 	
 	thisThread:set("status", "done")

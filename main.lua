@@ -507,6 +507,9 @@ else
 				
 					--if simulation.isRunning() then
 						mapImage,mapShadowImage,mapObjectImage = map.render()
+						if mapImage then
+						print("received mapImage:", mapImage)
+						end
 					--else
 						--simulationMapImage,mapShadowImage,mapObjectImage = map.render()
 					--end

@@ -272,13 +272,13 @@ function map.generate(width, height, seed, tutorialMap)
 		if not height then height = 4 end
 		if not seed then seed = 1 end
 		
-		if width < 4 then
-			print("Minimum width is 4!")
-			width = 4
+		if width < MAP_MINIMUM_SIZE then
+			print("Minimum width is " .. MAP_MINIMUM_SIZE "!")
+			width = MAP_MINIMUM_SIZE
 		end
-		if height < 4 then
-			print("Minimum height is 4!")
-			height = 4
+		if height < MAP_MINIMUM_SIZE then
+			print("Minimum height is " .. MAP_MINIMUM_SIZE "!")
+			height = MAP_MINIMUM_SIZE
 		end
 
 	
@@ -1226,11 +1226,27 @@ function map.render(map)
 			local groundData = nil
 			local shadowData = nil
 			local objectData = nil
-			groundData = mapRenderThread:get("groundData")
-			shadowData = mapRenderThread:get("shadowData")
-			objectData = mapRenderThread:get("objectData")
+			local dimensionX = mapRenderThread:get("dimensionX")
+			local dimensionY = mapRenderThread:get("dimensionY")
+			groundData = {}
+			shadowData = {}
+			objectData = {}
+			for i = 1, dimensionX do
+				groundData[i] = {}
+				shadowData[i] = {}
+				objectData[i] = {}
+				for j = 1, dimensionY do
+					tmp = mapRenderThread:get("groundData:" .. i .. "," .. j)
+					groundData[i][j] = love.graphics.newImage(tmp)
+					tmp = mapRenderThread:get("shadowData:" .. i .. "," .. j)
+					shadowData[i][j] = love.graphics.newImage(tmp)
+					tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
+					objectData[i][j] = love.graphics.newImage(tmp)
+				end
+			end
+			--shadowData = mapRenderThread:get("shadowData")
+			--objectData = mapRenderThread:get("objectData")
 			highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
-
 			for i = 1,20 do
 				highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
 			end
@@ -1239,7 +1255,9 @@ function map.render(map)
 			
 			mapRenderThread = nil
 			
-			return love.graphics.newImage(groundData),love.graphics.newImage(shadowData),love.graphics.newImage(objectData)
+			
+			
+			return groundData,shadowData,objectData
 		end
 		
 	end
@@ -1247,6 +1265,7 @@ end
 
 
 function map.renderHighlights(dt)
+	love.graphics.setColor(255,255,255)
 	for k, hl in pairs(highlightList) do
 		if math.ceil(hl.frame) >= 1 and math.ceil(hl.frame) <= #highlightListQuads then
 			love.graphics.drawq(IMAGE_HOTSPOT_HIGHLIGHT, highlightListQuads[math.ceil(hl.frame)], hl.x, hl.y)
@@ -1283,11 +1302,23 @@ function map.show()
 	--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 	--love.graphics.setColor(0,0,0, 100)
 	
-	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+35)
+	for i = 1, #mapImage do
+		for j = 1, #mapImage[i] do
+			if i == 1 or j == #mapImage[i] then
+				love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			end
+		end
+	end
 	-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 	love.graphics.setColor(255,255,255, 255)
-	love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+	--love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
+	for i = 1, #mapImage do
+		for j = 1, #mapImage[i] do
+			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
+			love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+		end
+	end
 
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
@@ -1300,8 +1331,15 @@ function map.show()
 	passenger.showVIPs(passedTime)
 
 	love.graphics.setColor(255,255,255,255)
-	love.graphics.draw(mapShadowImage, 0,0)	
-	love.graphics.draw(mapObjectImage, 0,0)	
+	--love.graphics.draw(mapShadowImage, 0,0)
+	--love.graphics.draw(mapObjectImage, 0,0)
+	for i = 1, #mapShadowImage do
+		for j = 1, #mapShadowImage[i] do
+			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
+			love.graphics.draw(mapShadowImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			love.graphics.draw(mapObjectImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+		end
+	end
 
 	map.renderHighlights(passedTime)
 	

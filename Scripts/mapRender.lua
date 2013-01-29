@@ -172,8 +172,9 @@ while true do
 
 	thisThread:set("percentage", -2)
 
-
-
+	percentageStep = 0
+	renderingPercentage = 0
+	statusNum = nil	--restart
 
 	--thisThread:set("status", "ground")
 	threadSendStatus( thisThread,"ground")
@@ -190,7 +191,6 @@ while true do
 	end
 
 	if curMap then
-		local renderingPercentage = 0
 		highlightList = {}
 		thisThread:set("percentage", 0)
 		groundData = {}

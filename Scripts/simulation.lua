@@ -86,8 +86,8 @@ function simulation.stop()
 
 	connection.closeConnection()
 	
-	mapGenerateThread = nil
-	mapRenderThread = nil
+	--mapGenerateThread = nil
+	--mapRenderThread = nil
 	mapImage = nil
 	simulationRunning = false
 	simulationMap = nil

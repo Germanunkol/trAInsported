@@ -493,23 +493,23 @@ else
 					camY = clamp(camY + floatPanY*dt, -MAX_PAN, MAX_PAN)
 				end
 			elseif map.startupProcess() then
-				if mapGenerateThread then
+				if map.generating() then
 					err = mapGenerateThread:get("error")
 					if err then
 						print("Error in thread", err)
 					end
 					curMap = map.generate()
-				elseif mapRenderThread then
+				elseif map.rendering() then
 					err = mapRenderThread:get("error")
 					if err then
 						print("Error in thread", err)
 					end
 				
 					--if simulation.isRunning() then
-						mapImage,mapShadowImage,mapObjectImage = map.render()
-						if mapImage then
+					mapImage,mapShadowImage,mapObjectImage = map.render()
+					if mapImage then
 						print("received mapImage:", mapImage)
-						end
+					end
 					--else
 						--simulationMapImage,mapShadowImage,mapObjectImage = map.render()
 					--end
@@ -518,7 +518,7 @@ else
 					train.renderTrainImage()
 				end
 			
-				if not train.isRenderingImages() and not mapGenerateThread and not mapRenderThread then	-- done rendering everything!
+				if not train.isRenderingImages() and not map.generating() and not map.rendering() then	-- done rendering everything!
 					if not simulation.isRunning() then
 						runMap()	-- start the map!
 					else
@@ -532,7 +532,6 @@ else
 			end
 		
 		
-	
 			if not roundEnded then
 				train.moveAll()
 				if curMap then
@@ -571,7 +570,7 @@ else
 			if not hideLogo then
 				love.graphics.draw(LOGO_IMG, (love.graphics.getWidth()-LOGO_IMG:getWidth())/2, love.graphics.getHeight()-LOGO_IMG:getHeight()- 50)
 			end
-			if mapGenerateThread or mapRenderThread then -- or trainGenerateThreads > 0 then
+			if map.generating() or map.rendering() then -- or trainGenerateThreads > 0 then
 				loadingScreen.render()
 			else
 				simulation.displayTimeUntilNextMatch(nil, dt)

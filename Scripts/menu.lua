@@ -161,10 +161,6 @@ function normalMatch()
 		statusMsg.new("Invalid game mode!", true)
 		return
 	end
-	--[[if mapRenderThread or mapGenerateThread then
-		print("Already generating new map!")
-		return
-	end]]--
 	for k, aiName in pairs(chosenAIs) do
 		if not menuTrainImages[k] then
 			statusMsg.new("Still rendering train images...\nTry again in a few seconds.", true)

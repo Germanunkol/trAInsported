@@ -30,7 +30,7 @@ function map.startupProcess()
 end
 
 function setupMatch( width, height, time, maxTime, gameMode, AIs )
-	if mapRenderThread or mapGenerateThread then
+	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		return
 	end
@@ -241,7 +241,7 @@ local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
 function map.generate(width, height, seed, tutorialMap)
-	if not mapGenerateThread then
+	if not map.generating() then
 	
 		-- empty log file:
 		file = love.filesystem.newFile( "threadLog.txt" )
@@ -356,7 +356,6 @@ function map.generate(width, height, seed, tutorialMap)
 			map.print("Finished Map:")
 			--mapGenerateThread:wait()
 			currentlyGeneratingMap = false
-			print("Threads joined!")
 			--mapGenerateThread = nil
 			if not DEDICATED then
 				map.render(curMap)
@@ -376,6 +375,7 @@ end
 function map.generating()
 	if currentlyGeneratingMap then return true end
 end
+
 
 
 --------------------------------------------------------------
@@ -1202,18 +1202,22 @@ crash();
 if not crash then crash() end
 ]]--
 --
+
 function map.render(map)
-	if not mapRenderThread or map ~= nil then		-- if a new map is given, render this new map!
+	if not currentlyRenderingMap or map ~= nil then		-- if a new map is given, render this new map!
 		print("Rendering Map...")
-		mapRenderThread = love.thread.newThread("mapRenderingThread" .. mapRenderThreadNumber, "Scripts/mapRender.lua")
-		mapRenderThreadNumber = mapRenderThreadNumber + 1
-		mapRenderThread:start()
+		if not mapRenderThread then
+			mapRenderThread = love.thread.newThread("mapRenderingThread" .. mapRenderThreadNumber, "Scripts/mapRender.lua")
+			mapRenderThreadNumber = mapRenderThreadNumber + 1
+			mapRenderThread:start()
+		end
 		map = map or curMap
 		mapRenderThread:set("curMap", TSerial.pack( map ) )
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
 		
 		mapRenderThreadStatusNum = 0
+		currentlyRenderingMap = true
 		
 		if tutorial and tutorial.noTrees then
 			mapRenderThread:set("NO_TREES", true)
@@ -1265,7 +1269,9 @@ function map.render(map)
 			
 			loadingScreen.percentage("Rendering Map", 100)
 			
-			mapRenderThread = nil
+			
+			currentlyRenderingMap = false
+			-- mapRenderThread = nil
 			
 			
 			
@@ -1274,6 +1280,11 @@ function map.render(map)
 		
 	end
 end
+
+function map.rendering()
+	if currentlyRenderingMap then return true end
+end
+
 
 
 function map.renderHighlights(dt)

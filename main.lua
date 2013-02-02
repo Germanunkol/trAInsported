@@ -59,7 +59,7 @@ if CL_DIRECTORY then
 		
 	ok, lfs = pcall(require, "lfs")
 	if not ok then 
-		print("Error: Could not find Lua filesystem. Place install this to use the -d (or --directory) feature!")
+		print("Error: Could not find Lua filesystem. Please install this to use the -d (or --directory) feature!")
 		CL_DIRECTORY = nil
 	else
 		function findAIs (path)

@@ -285,8 +285,8 @@ function map.generate(width, height, seed, tutorialMap)
 			print("Generating Map...", width, height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
-			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same
-		if not mapGenerateThread then name twice!
+			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
+		if not mapGenerateThread then 
 			mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
 			mapGenerateThread:start()
 		end

@@ -244,9 +244,6 @@ function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
 		-- empty log file:
-		file = love.filesystem.newFile( "threadLog.txt" )
-		file:open("w")
-		file:close()
 		
 		print("Generating map!")
 	

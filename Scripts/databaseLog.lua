@@ -157,7 +157,7 @@ function chooseNewAIfromDB_table()
 					if i == 0 then		-- none found. Go back through the list and choose the first possible one.
 						i = 1
 				print("8")
-						while i < #row do
+						while i <= #row do
 							if not row[i].chosen then
 								row[i].chosen = true
 								toChoose = toChoose - 1

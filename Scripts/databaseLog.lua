@@ -244,6 +244,7 @@ function chooseAIfromDB(numMatches)
 						print(nil, "-> found " .. count)
 					end
 				end
+				print("done")
 		
 				cursor,err = conn:execute("SELECT name,owner FROM nextMatch WHERE matchNum=1;")
 				

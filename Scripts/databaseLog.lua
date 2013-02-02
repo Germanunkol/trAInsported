@@ -98,18 +98,14 @@ function chooseNewAIfromDB_filename()
 end
 
 function chooseNewAIfromDB_table()
-	print("1")
 	if MYSQL then
 		-- open MYSQL environment:
 		env = luasql.mysql()
 		
-	print("2")
 		if env then
-	print("3")
 			conn = env:connect(MYSQL_DATABASE, CL_MYSQL_NAME, CL_MYSQL_PASS, CL_MYQSL_HOST, CL_MYSQL_PORT)
 			if conn then
 				
-	print("4")
 				result = false
 				exists = false
 				cursor,err = conn:execute("SELECT name,owner,matches FROM ais ORDER BY matches;")
@@ -134,12 +130,10 @@ function chooseNewAIfromDB_table()
 				
 				toChoose = math.min(4, #row)
 				
-				print("5", toChoose)
 				while toChoose > 0 do
 					local chosen = math.random(math.max(probability, 1))
 					local i = #row
 					local found = false
-				print("6", chosen)
 					while i > 0 do
 						if row[i] then
 							if chosen <= row[i].probability then
@@ -153,10 +147,8 @@ function chooseNewAIfromDB_table()
 						end
 						i = i - 1
 					end
-				print("7")
 					if i == 0 then		-- none found. Go back through the list and choose the first possible one.
 						i = 1
-				print("8")
 						while i <= #row do
 							if not row[i].chosen then
 								row[i].chosen = true
@@ -166,7 +158,6 @@ function chooseNewAIfromDB_table()
 							i = i + 1
 						end
 					end
-				print("9")
 				end
 				for i = 1,#row do 
 					if row[i].chosen then

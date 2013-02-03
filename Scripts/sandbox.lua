@@ -52,6 +52,7 @@ function sandbox.createNew(aiID)
 	sb.pcall = pcall
 
 	sb.random = math.random
+	sb.sqrt = math.sqrt
 	sb.dropPassenger = passenger.leaveTrain(aiID)
 	sb.buyTrain = train.buyNew(aiID)
 	sb.getMoney = stats.getMoneyAI(aiID)

@@ -36,6 +36,12 @@ function randPassengerPos()
 	return x, y
 end
 
+function passenger.clearList()
+	for i,p in pairs(passengerList) do
+		passengerList[i] = nil
+	end
+end
+
 function passenger.new( givenX, givenY, givenDestX, givenDestY )
 	
 	if givenX then dontCreateVIP = true end
@@ -167,7 +173,7 @@ end
 function passenger.find(x, y)
 	local foundPassengers = {}
 	for k, p in pairs(passengerPositions[x][y]) do
-		table.insert(foundPassengers, p.name)
+		table.insert(foundPassengers, {name=p.name, destX=p.destX, destY=p.destY})
 	end
 	if #foundPassengers == 0 then
 		return nil
@@ -248,7 +254,7 @@ function passenger.leaveTrain(aiID)
 				numPassengersDroppedOff = numPassengersDroppedOff + 1
 				
 				if tutorial and tutorial.passengerDropoffCorrectlyEvent then
-					tutorial.passengerDropoffCorrectlyEvent()
+					tutorial.passengerDropoffCorrectlyEvent( tr.curPassenger.tileX, tr.curPassenger.tileY )
 				end
 			else
 				ai.newPassenger(tr.curPassenger)

@@ -286,11 +286,15 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 		end
 	end
 	
+	print("result?", result)
 	-- if a passenger name was returned, then try to let this passenger board the train:
 	if result and not train.curPassenger then		-- ... but only if the train does not currently carry a passenger.
-		for k, name in pairs(p) do
-			if name == result then
-				passenger.boardTrain(train, name)
+		print("result")
+		for k, pass in pairs(p) do
+			print(k, pass, result)
+			if pass.name == result.name then
+				passenger.boardTrain(train, pass.name)
+				print("boarded")
 				break
 			end
 		end

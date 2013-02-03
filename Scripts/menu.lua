@@ -111,7 +111,7 @@ function menu.init(menuX, menuY)
 	y = defaultMenuY
 	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
-	menuButtons.buttonNew = button:new(x, y, "New", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
+	menuButtons.buttonNew = button:new(x, y, "Compete", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45
 	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil, nil, nil, nil, "Start a random match on a random map using random AIs from your 'AI' folder")
 	y = y + 60

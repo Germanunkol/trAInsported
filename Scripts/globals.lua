@@ -93,9 +93,9 @@ CODE_BOX_Y = 75
 
 tutDescriptions = {}
 tutDescriptions[1] = [[Start here! Basic introduction to the game.]]
-tutDescriptions[2] = [[Teaches you all the basics you need to know about the Lua scripting language.]]
+tutDescriptions[2] = [[Teaches you all the stuff you need to know about the Lua scripting language.]]
 tutDescriptions[3] = [[The first junction! Basic decision making.]]
-
+tutDescriptions[4] = [[Be faster! Choose your customers smartly - or watch your AI get pwned by competition.]]
 
 
 -- sizes:

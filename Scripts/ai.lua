@@ -276,7 +276,9 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 				tr.passengerX = train.curPassenger.destX
 				tr.passengerY = train.curPassenger.destY
 			end
-			local pCopy = copyTable(p)				-- don't let the ai change the original list of passengers!
+			
+			-- don't let the ai change the original list of passengers!
+			local pCopy = copyTable(p)				
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundPassengers, tr, pCopy)
 			if not ok or coroutine.status(cr) ~= "dead" then

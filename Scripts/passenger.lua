@@ -290,6 +290,12 @@ function passenger.leaveTrain(aiID)
 	end
 end
 
+function passenger.printAll()
+	for k, p in pairs(passengerList) do
+		print(k, p, p.name, p.tileX, p.tileY, p.destX, p.destY)
+	end
+end
+
 function passenger.init( max )
 
 	if not DEDICATED then

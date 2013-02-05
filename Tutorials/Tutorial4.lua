@@ -58,7 +58,7 @@ function ai.foundPassengers( train, passengers )
 	pass = nil	-- reset from earlier calls
 	dist = 100	-- start with a high distance
 	i = 1	--start with first passenger
-	while i < #passengers do -- for every passenger
+	while i <= #passengers do -- for every passenger
 		d = distance(train.x, train.y,
 			passengers[i].destX, passenger[i].destY)
 		if d < dist then  -- if it's the shorted dist so far, save it.
@@ -255,7 +255,6 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "At the end of the loop, the passenger with the shortest distance has been stored in 'pass'. This is the passenger we want to pick up, so add the lines of code shown in the code box to the end of your function ai.foundPassengers (after the while loop)."
 	tutorialSteps[k].event =  function()
-			handleDropOff()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_foundPassengers2)
 		end
 	tutorialSteps[k].buttons = {}
@@ -266,13 +265,10 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].message = "Of course, we still need to drop off passengers when've reached the destination.\nAdd this final piece of code, then reload."
-	tutorialSteps[k].event =  function()
-			handleDropOff()
-			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_dropOffPassenger)
-		end
+	tutorialSteps[k].event = handleDropOff(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The tutorial will continue when you've transported 4 passengers correctly. If something doesn't work yet, feel free to go back and fix it."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The tutorial will continue when you've transported 4 passengers correctly.\nWhen you transport the wrong passenger, the next set of passengers won't be created -> so make sure to always pick up the one with the shortes traveling distance.\nIf something doesn't work yet, just go back and fix it, then reload."), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
@@ -316,37 +312,49 @@ function startCreatingPassengers(k)
 	end
 end
 
-function handleDropOff()
-	tutorial.passengerDropoffCorrectlyEvent = function(x, y)
-		print("dropped off @", x, y)
-		passenger.clearList()
-		if x == 7 and y == 3 then
-			passenger.new(7,6, 1,7)
-			passenger.new(7,6, 2,7)
-			passenger.new(7,6, 3,7)
-			passenger.new(7,6, 4,7)
-			passenger.new(7,6, 5,7)
-		elseif x == 5 and y == 7 then
-			passenger.new(3,7, 1,1)
-			passenger.new(3,7, 1,2)
-			passenger.new(3,7, 1,3)
-			passenger.new(3,7, 1,4)
-			passenger.new(3,7, 1,5)
-		elseif x == 1 and y == 5 then
-			passenger.new(1,3, 3,1)
-			passenger.new(1,3, 4,1)
-			passenger.new(1,3, 5,1)
-			passenger.new(1,3, 6,1)
-			passenger.new(1,3, 7,1)
-		elseif x == 3 and y == 1 then
-			passenger.new(6,1, 7,3)
-			passenger.new(6,1, 7,4)
-			passenger.new(6,1, 7,5)
-			passenger.new(6,1, 7,6)
-			passenger.new(6,1, 7,7)
-			passengerDropoffCorrectlyEvent = nil
+function handleDropOff(k)
+	pCount = 0
+	return function()
+		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_dropOffPassenger)
+		tutorial.passengerDropoffCorrectlyEvent = function(x, y)
+			print("dropped off @", x, y)
+			pCount = pCount + 1
+			if pCount >= 4 then
+				if currentStep == k then
+					passengerDropoffCorrectlyEvent = nil
+					nextTutorialStep()
+				end
+			end
+			passenger.printAll()
+			passenger.clearList()
+			if x == 7 and y == 3 then
+				passenger.new(7,6, 1,7)
+				passenger.new(7,6, 2,7)
+				passenger.new(7,6, 3,7)
+				passenger.new(7,6, 4,7)
+				passenger.new(7,6, 5,7)
+			elseif x == 5 and y == 7 then
+				passenger.new(3,7, 1,1)
+				passenger.new(3,7, 1,2)
+				passenger.new(3,7, 1,3)
+				passenger.new(3,7, 1,4)
+				passenger.new(3,7, 1,5)
+			elseif x == 1 and y == 5 then
+				passenger.new(1,3, 3,1)
+				passenger.new(1,3, 4,1)
+				passenger.new(1,3, 5,1)
+				passenger.new(1,3, 6,1)
+				passenger.new(1,3, 7,1)
+			elseif x == 3 and y == 1 then
+				passenger.new(6,1, 7,3)
+				passenger.new(6,1, 7,4)
+				passenger.new(6,1, 7,5)
+				passenger.new(6,1, 7,6)
+				passenger.new(6,1, 7,7)
+			end
+			print("dropped off done.")
+			passenger.printAll()
 		end
-		print("dropped off done.")
 	end
 end
 

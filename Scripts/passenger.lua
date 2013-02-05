@@ -38,7 +38,9 @@ end
 
 function passenger.clearList()
 	for i,p in pairs(passengerList) do
-		passengerList[i] = nil
+		if not p.train then
+			passengerList[i] = nil
+		end
 	end
 end
 

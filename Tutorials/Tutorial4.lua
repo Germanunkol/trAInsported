@@ -345,8 +345,8 @@ function handleDropOff()
 			passenger.new(6,1, 7,6)
 			passenger.new(6,1, 7,7)
 			passengerDropoffCorrectlyEvent = nil
-		
 		end
+		print("dropped off done.")
 	end
 end
 

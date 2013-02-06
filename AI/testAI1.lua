@@ -53,7 +53,7 @@ function ai.init(map, money)
 	y = random(map.height)
 	while money >= 25 do		-- 25c is cost of one train
 		buyTrain(x, y)
-		money = money - 1
+		money = money - 25
 	end
 end
 

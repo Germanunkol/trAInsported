@@ -1248,11 +1248,11 @@ function map.render(map)
 				objectData[i] = {}
 				for j = 1, dimensionY do
 					tmp = mapRenderThread:get("groundData:" .. i .. "," .. j)
-					groundData[i][j] = love.graphics.newImage(tmp)
+					if tmp then	groundData[i][j] = love.graphics.newImage(tmp) end
 					tmp = mapRenderThread:get("shadowData:" .. i .. "," .. j)
-					shadowData[i][j] = love.graphics.newImage(tmp)
+					if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
 					tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
-					objectData[i][j] = love.graphics.newImage(tmp)
+					if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
 				end
 			end
 			--shadowData = mapRenderThread:get("shadowData")
@@ -1280,7 +1280,11 @@ function map.rendering()
 	if currentlyRenderingMap then return true end
 end
 
-
+function map.abortRendering()
+	if mapRenderThread then
+		mapRenderThread:set("reset", true)
+	end
+end
 
 function map.renderHighlights(dt)
 	love.graphics.setColor(255,255,255)

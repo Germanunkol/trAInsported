@@ -4,6 +4,7 @@
 ----------------------------------
 
 VERSION = "1"
+TRAINSPORTED = true	-- this allows the AI files to be run.
 
 -- connections:
 

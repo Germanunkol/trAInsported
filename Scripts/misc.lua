@@ -101,7 +101,6 @@ function parseCode(str)
 		l = l + 1
 	end
 	
-	printTable(text)
 	return text
 end
 
@@ -293,11 +292,14 @@ function readOnlyTable(table)
    });
 end
 
-function randomizeTable(tbl)	
+function randomizeTable(tbl)
 	for i = 1,#tbl do
-		index1 = math.random(#tbl)
-		index2 = math.random(#tbl)
-		tbl[index1], tbl[index2] = tbl[index2], tbl[index1]
+		print(#tbl)
+		if #tbl > 1 then
+			index1 = math.random(#tbl)
+			index2 = math.random(#tbl)
+			tbl[index1], tbl[index2] = tbl[index2], tbl[index1]
+		end
 	end
 	return tbl
 end

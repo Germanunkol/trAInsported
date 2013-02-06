@@ -30,10 +30,7 @@ function map.startupProcess()
 end
 
 function setupMatch( width, height, time, maxTime, gameMode, AIs )
-	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then
-		print("Already generating new map!")
-		return
-	end
+	
 	
 	winnerID = nil
 	
@@ -369,8 +366,6 @@ end
 function map.generating()
 	if currentlyGeneratingMap then return true end
 end
-
-
 
 --------------------------------------------------------------
 --		MAP TILE OCCUPATION:
@@ -1242,25 +1237,28 @@ function map.render(map)
 			groundData = {}
 			shadowData = {}
 			objectData = {}
-			for i = 1, dimensionX do
-				groundData[i] = {}
-				shadowData[i] = {}
-				objectData[i] = {}
-				for j = 1, dimensionY do
-					tmp = mapRenderThread:get("groundData:" .. i .. "," .. j)
-					if tmp then	groundData[i][j] = love.graphics.newImage(tmp) end
-					tmp = mapRenderThread:get("shadowData:" .. i .. "," .. j)
-					if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
-					tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
-					if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
+			if dimensionX and dimensionY then
+				for i = 1, dimensionX do
+					groundData[i] = {}
+					shadowData[i] = {}
+					objectData[i] = {}
+					for j = 1, dimensionY do
+						tmp = mapRenderThread:get("groundData:" .. i .. "," .. j)
+						if tmp then	groundData[i][j] = love.graphics.newImage(tmp) end
+						tmp = mapRenderThread:get("shadowData:" .. i .. "," .. j)
+						if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
+						tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
+						if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
+					end
+				end
+				
+				highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
+				for i = 1,20 do
+					highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
 				end
 			end
 			--shadowData = mapRenderThread:get("shadowData")
 			--objectData = mapRenderThread:get("objectData")
-			highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
-			for i = 1,20 do
-				highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
-			end
 			
 			loadingScreen.percentage("Rendering Map", 100)
 			
@@ -1278,12 +1276,6 @@ end
 
 function map.rendering()
 	if currentlyRenderingMap then return true end
-end
-
-function map.abortRendering()
-	if mapRenderThread then
-		mapRenderThread:set("reset", true)
-	end
 end
 
 function map.renderHighlights(dt)

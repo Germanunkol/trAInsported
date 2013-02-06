@@ -22,7 +22,14 @@ local trainImagesCreated = false
 
 function randomMatch()
 	
+	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then
+		print("Already generating new map!")
+		statusMsg.new("Already generating new map! Wait for process to finish...", true)
+		return
+	end
+	
 	simulation.stop()
+	
 	local width = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
 	local height = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
 	
@@ -303,6 +310,12 @@ function menu.renderTrainImages()
 end
 
 function menu.newRound()
+
+	if map.rendering() or map.generating() then
+		statusMsg.new("Wait for rendering to finish...", true)
+		return
+	end
+
 	simulation.stop()
 
 	menu.removeAll()
@@ -410,9 +423,13 @@ end
 
 
 function menu.executeTutorial(fileName)
-	tutorialData = love.filesystem.load("Tutorials/" .. fileName)
-	local result = tutorialData() -- execute the chunk
-	tutorial.start()
+	if not map.generating() and not map.rendering() then
+		tutorialData = love.filesystem.load("Tutorials/" .. fileName)
+		local result = tutorialData() -- execute the chunk
+		tutorial.start()
+	else
+		statusMsg.new("Wait for rendering to finish...", true)
+	end
 end
 
 function menu.tutorials()

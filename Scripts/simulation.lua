@@ -51,12 +51,6 @@ function simulation.init()
 	calculateRailTypes(simulationMap)
 	
 	if not curMap then --and map.startupProcess() then
-		if map.rendering() then
-			map.abortRendering()
-			while map.rendering() do
-			
-			end
-		end
 		map.render(simulationMap)
 		newMapStarting = true
 	end

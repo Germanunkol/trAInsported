@@ -8,17 +8,30 @@
 -- Add path to all other Scripts:
 package.path = "Scripts/?.lua;" .. package.path
 
+--[[
+_require = require
+
+function require(fileName)
+	ok, module = pcall(_require(fileName))
+	if not ok then
+		ok, module = pcall(_require("Scripts/" ..fileName))
+	end
+	return module
+end
+]]--
+
 -- Add Scripts used by both client and server:
-require("globals")
-require("misc")
-passenger = require("passenger")
-train = require("train")
-map = require("map")
-stats = require("statistics")
-ai = require("ai")
-require("TSerial")
-pSpeach = require("passengerSpeach")
-log = require("databaseLog")
+--require("globals")
+require("Scripts/globals")
+require("Scripts/misc")
+passenger = require("Scripts/passenger")
+train = require("Scripts/train")
+map = require("Scripts/map")
+stats = require("Scripts/statistics")
+ai = require("Scripts/ai")
+require("Scripts/TSerial")
+pSpeach = require("Scripts/passengerSpeach")
+log = require("Scripts/databaseLog")
 
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:
@@ -158,7 +171,7 @@ if DEDICATED then
 	
 	-------------------------------
 
-	require("server")	-- main Server module. Handles server's communication with the client.
+	require("Scripts/server")	-- main Server module. Handles server's communication with the client.
 	
 	connectionThreadNum = 0
 	connection = {}
@@ -321,23 +334,23 @@ else
 	
 
 	-- load additional modules not needed by the server:
-	console = require("console")
-	require("imageManipulation")
-	require("ui")
-	require("input")
-	quickHelp = require("quickHelp")
-	button = require("button")
-	menu = require("menu")
-	msgBox = require("msgBox")
-	tutorialBox = require("tutorialBox")
-	codeBox = require("codeBox")
-	functionQueue = require("functionQueue")
-	clouds = require("clouds")
-	loadingScreen = require("loadingScreen")
-	connection = require("connectionClient")
-	simulation = require("simulation")
-	statusMsg = require("statusMsg")
-	versionCheck = require("versionCheck")
+	console = require("Scripts/console")
+	require("Scripts/imageManipulation")
+	require("Scripts/ui")
+	require("Scripts/input")
+	quickHelp = require("Scripts/quickHelp")
+	button = require("Scripts/button")
+	menu = require("Scripts/menu")
+	msgBox = require("Scripts/msgBox")
+	tutorialBox = require("Scripts/tutorialBox")
+	codeBox = require("Scripts/codeBox")
+	functionQueue = require("Scripts/functionQueue")
+	clouds = require("Scripts/clouds")
+	loadingScreen = require("Scripts/loadingScreen")
+	connection = require("Scripts/connectionClient")
+	simulation = require("Scripts/simulation")
+	statusMsg = require("Scripts/statusMsg")
+	versionCheck = require("Scripts/versionCheck")
 	
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
 

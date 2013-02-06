@@ -32,7 +32,7 @@ function ai.init(map, money)
 	print("I got " .. money .. " credits to spend!!")
 	print("map size:", map.height, map.width)
 	rememberMap = map
-	str = {}
+--[[	str = {}
 	for j = 1, map.height do
 		str[j] = ""
 		for i = 1, map.width do
@@ -47,6 +47,7 @@ function ai.init(map, money)
 	for i = 1, #str do
 		print(str[i])
 	end
+	]]--
 	
 	x = random(map.width)
 	y = random(map.height)
@@ -59,7 +60,7 @@ end
 
 function printTable(table, lvl)
 	lvl = lvl or 0
-if lvl > 2 then return end
+	if lvl > 2 then return end
 	for k, v in pairs(table) do
 		if type(v) == "table" then
 			--printTable(table, lvl + 1)
@@ -125,6 +126,7 @@ function chooseRandom(train, possibleDirections)
 end
 
 function ai.chooseDirection(train, possibleDirections)
+	print("I have: " .. getMoney())
 	-- choose a direction that makes sense.
 	-- otherwise, return a random direction:
 	return chooseSmart(train, possibleDirections) or chooseRandom(train, possibleDirections)
@@ -139,7 +141,7 @@ function ai.foundPassengers(train, passengers)
 	
 	for k, p in pairs(passengers) do
 		print(p)
-		if p:find("VIP") then
+		if p.name:find("VIP") then
 			print("found VIP!")
 			if train.passenger then
 				dropPassenger(train)
@@ -153,6 +155,10 @@ end
 function ai.foundDestination(train)
 	print("get off!")
 	dropPassenger(train)
+end
+
+function ai.passengerBoarded(train, passenger)
+	print("I see you! " .. train.ID .. " " .. passenger)
 end
 
 function ai.newPassenger(name, x, y, destX, destY)

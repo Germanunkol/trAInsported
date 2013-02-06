@@ -141,7 +141,7 @@ function ai.foundPassengers(train, passengers)
 	
 	for k, p in pairs(passengers) do
 		print(p)
-		if p:find("VIP") then
+		if p.name:find("VIP") then
 			print("found VIP!")
 			if train.passenger then
 				dropPassenger(train)

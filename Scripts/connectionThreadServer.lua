@@ -3,10 +3,10 @@ thisThread = love.thread.getThread()
 PORT = thisThread:demand("PORT")
 
 local socket = require("socket")
-require("Scripts/TSerial")
-require("Scripts/misc")
+require("TSerial")
+require("misc")
 
-sendPackets = require("Scripts/sendPackets")
+sendPackets = require("sendPackets")
 
 local msgNumber = 0
 local statusNumber = 0

@@ -1,4 +1,4 @@
-require("mapUtils")
+require("Scripts/mapUtils")
 
 local map = {}
 
@@ -243,8 +243,6 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-		-- empty log file:
-		
 		print("Generating map!")
 	
 		newMapStarting = true

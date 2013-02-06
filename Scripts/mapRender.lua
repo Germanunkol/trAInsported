@@ -198,7 +198,6 @@ while true do
 		objectData = {}
 		numImagesX = math.ceil((curMap.width+2)/MAX_IMG_SIZE)
 		numImagesY = math.ceil((curMap.height+2)/MAX_IMG_SIZE)
-		print("Number of images:", numImagesX, numImagesY, curMap.width, curMap.height)
 		for i = 0,numImagesX do
 			groundData[i] = {}
 			shadowData[i] = {}
@@ -256,7 +255,6 @@ while true do
 					houseType = math.random(4)
 				
 					col = {r = math.random(40)-20, g = 0, b = 0}
-					print("pasting house")
 					if houseType == 1 then
 						transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData)
 						--paste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
@@ -275,7 +273,6 @@ while true do
 						transparentPaste( objectData, IMAGE_HOUSE04, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 					end
 				elseif curMap[i][j] == "S" then
-					print("pasting hotspot")
 					transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
 					transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
 					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
@@ -283,7 +280,6 @@ while true do
 					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
 					table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
 				elseif curMap[i][j] == "C" then
-					print("pasting rail")
 					img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
 					if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData ) end
 				elseif curMap[i][j] == "PS" then	-- pie store...
@@ -315,7 +311,6 @@ while true do
 						for k = 1, numTries do
 							col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
 							randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-							print("pasting bush")
 							transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
 							transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 						end
@@ -339,7 +334,6 @@ while true do
 							treetype = math.random(3)
 					
 							col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
-							print("pasting tree")
 							if treetype == 1 then
 								transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
 								transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)

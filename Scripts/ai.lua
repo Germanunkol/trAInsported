@@ -11,7 +11,7 @@ local aiUserData = {		--default fallbacks in case a function is not created by t
 	enoughMoney = function () print("Implement a function \"ai.enoughMoney\" if you want to get notifications when you have enough money to buy a new train!") end
 }
 
-local sandbox = require("sandbox")
+local sandbox = require("Scripts/sandbox")
 
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 10000
@@ -288,12 +288,9 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 		end
 	end
 	
-	print("result?", result)
 	-- if a passenger name was returned, then try to let this passenger board the train:
 	if result and not train.curPassenger then		-- ... but only if the train does not currently carry a passenger.
-		print("result")
 		for k, pass in pairs(p) do
-			print(k, pass, result)
 			if pass.name == result.name then
 				passenger.boardTrain(train, pass.name)
 				print("boarded")

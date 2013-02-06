@@ -55,6 +55,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 
 		curMap = nil
 		
+		print("CHoosing map size:", MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		width = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		height = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		time = "day"
@@ -243,7 +244,6 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-		print("Generating map!")
 	
 		newMapStarting = true
 		mapRenderPercent = nil
@@ -278,9 +278,9 @@ function map.generate(width, height, seed, tutorialMap)
 
 	
 		if tutorialMap then
-			print("Generating Map...", tutorialMap.width, tutorialMap.height)
+			print("Generating new tutorial map. With: " .. tutorialMap.width .. " Height: " .. tutorialMap.height)
 		else
-			print("Generating Map...", width, height)
+			print("Generating new map. With: " .. width .. " Height: " .. height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
@@ -300,7 +300,6 @@ function map.generate(width, height, seed, tutorialMap)
 		
 		mapGenerateMsgNumber = 0
 		prevStr = nil
-		print("mapGenerateThread, ID", mapGenerateThread, mapGenerateThreadNumber)
 	else
 	
 		percent = mapGenerateThread:get("percentage")

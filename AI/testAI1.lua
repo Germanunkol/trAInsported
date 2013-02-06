@@ -2,8 +2,8 @@
 rememberPassengers = {}
 rememberMap = nil
 
-function ai.lol()
-	a = math.random()
+function ai.init()
+	print("Hi, I'm TestAI1.")
 end
 
 function printTable(table, lvl)

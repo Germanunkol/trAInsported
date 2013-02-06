@@ -59,6 +59,8 @@ if INVALID_MAPSIZE then
 	print("Range is " .. MAP_MINIMUM_SIZE + 1 .. " to 100.")
 	print("Example: --mapsize 30")
 	love.event.quit()
+elseif MAP_SIZE then
+	MAP_MAXIMUM_SIZE = MAP_SIZE
 end
 
 if INVALID_MYSQL_DATABASE then

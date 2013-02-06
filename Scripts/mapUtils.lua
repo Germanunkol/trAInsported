@@ -67,13 +67,11 @@ end
 -- it tries out another direction.
 -- If all 4 directions have been tested, then it places down a rail across the entiry map. This makes sure that the next try succeeds.
 function connectPiece(i, j)
-	print("attempt to connect:", i, j)
 	startI, startJ = i,j
 	dir = math.random(4)
 	local k = 0
 	local triedDir1,triedDir2,triedDir3,triedDir4 = false, false, false, false
 	while k < 2 do
-		print("attempt:", k, dir)
 		
 		if dir == 1 then
 			removeTs()
@@ -84,7 +82,6 @@ function connectPiece(i, j)
 				if curMap[i-1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end
@@ -100,7 +97,6 @@ function connectPiece(i, j)
 				if curMap[i-1][j] == "C" or curMap[i+1][j] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end
@@ -117,7 +113,6 @@ function connectPiece(i, j)
 				if curMap[i+1][j] == "C" or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end
@@ -135,7 +130,6 @@ function connectPiece(i, j)
 				if curMap[i+1][j] == "C" or curMap[i-1][j] == "C" or curMap[i][j+1] == "C" then
 					if not curMap[i][j] then curMap[i][j] = "T" end
 					-- found a connection!
-					print("found connection!")
 					return
 				end
 			end
@@ -147,7 +141,6 @@ function connectPiece(i, j)
 	
 	-- if it ends up here, it failed to connect using just straight connections.
 	-- place straight line at random position, which will always be able to connect:
-	print("Couldn't connect pieces! Adding straight rail.")
 	yPos = math.random(curMap.height)
 	
 	for i = 1,curMap.width do

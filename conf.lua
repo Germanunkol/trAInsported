@@ -74,7 +74,7 @@ for k, a in pairs(arg) do
 			if arg[k+1] then
 				s = tonumber(arg[k+1])
 				if s >= 5 and s <= 100 then
-					MAP_MAXIMUM_SIZE = s
+					MAP_SIZE = s
 					INVALID_MAPSIZE = false
 				end
 				arg[k+1] = nil

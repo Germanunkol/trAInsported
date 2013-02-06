@@ -20,20 +20,16 @@ print = function(...)
 	msgNumber = incrementID(msgNumber)
 end
 
-print("2")
 
 while true do
 																			
 	threadID = thisThread:demand("ID")
-	print("4")
 	width = thisThread:demand("width")
 
-	print("5")
 	height = thisThread:demand("height")
 	seed = thisThread:demand("seed")
 	tutorialMap = thisThread:get("tutorialMap")
 
-	print("6")
 
 
 	if tutorialMap then
@@ -42,7 +38,6 @@ while true do
 		height = tutorialMap.height
 	end
 
-	print("7")
 
 	math.randomseed(seed)
 	if not tutorialMap then curMap = {width=width, height=height, time=0} end
@@ -51,7 +46,6 @@ while true do
 	curMapRailTypes = {}
 
 
-	print("8")
 	thisThread:set("percentage", 0)
 
 	for i = 0,width+1 do
@@ -69,8 +63,7 @@ while true do
 			end
 		end
 	end
-
-	print("9")
+	
 	if not tutorialMap then
 
 		--thisThread:set("status", "rails")
@@ -88,7 +81,6 @@ while true do
 		curMap = tutorialMap
 	end
 
-	print("10")
 	calculateRailTypes()
 	thisThread:set("percentage", 50)
 
@@ -115,6 +107,4 @@ while true do
 	thisThread:set("curMapOccupiedTiles", TSerial.pack(curMapOccupiedTiles))
 	thisThread:set("curMapOccupiedExits", TSerial.pack(curMapOccupiedExits))
 	thisThread:set("status", "done")
-
-	print("I'm done!")
 end

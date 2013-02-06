@@ -56,7 +56,6 @@ function sandbox.createNew(aiID)
 	sb.dropPassenger = passenger.leaveTrain(aiID)
 	sb.buyTrain = train.buyNew(aiID)
 	sb.getMoney = stats.getMoneyAI(aiID)
-	TRAINSPORTED = true
 	return sb
 end
 

@@ -1,4 +1,11 @@
 
+--Prevent standalone execution:
+if not TRAINSPORTED then
+	print("To prevent players from harm, this file may only be executed by the trAInsported game.")
+	return
+end
+
+
 rememberPassengers = {}
 rememberMap = nil
 

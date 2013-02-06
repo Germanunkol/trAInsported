@@ -13,13 +13,10 @@ require("imageManipulation")
 seed = thisThread:demand("seed")
 col = TSerial.unpack(thisThread:demand("colour"))
 
-
-
 trainImage = love.image.newImageData("Images/Train1.png")
 trainImageLower = love.image.newImageData("Images/Train1Lower.png")
 
 trainImagePlayerData = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
-
 
 trainImagePlayerDataLower = love.image.newImageData(trainImage:getWidth(), trainImage:getHeight())
 

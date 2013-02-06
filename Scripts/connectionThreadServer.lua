@@ -62,7 +62,7 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 	if curMapStr then
 		client:send("MAP: " .. curMapStr .. "\n")
 		for i = 1, #sendPacketsList do
-			print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
+			--print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 		end
 		
@@ -70,7 +70,7 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 			client:send("T: " .. serverTime .. "\n")
 		end
 	else
-		print(client[1], "SENT:","NEXT_MATCH:" .. timeUntilNextMatch)
+		--print(client[1], "SENT:","NEXT_MATCH:" .. timeUntilNextMatch)
 		client:send("NEXT_MATCH:" .. timeUntilNextMatch .. "\n")
 	end
 end
@@ -132,7 +132,7 @@ while true do
 		for k, cl in pairs(clientList) do
 			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
 			ok, err = cl:send("T:" .. 0 .. "\n")		-- send update to clients.
-			print(cl[1], "SENT:","MAP:" .. curMapStr)
+			--print(cl[1], "SENT:","MAP:" .. curMapStr)
 		end
 		
 	end
@@ -150,7 +150,7 @@ while true do
 	
 		for k, cl in pairs(clientList) do
 			ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
-			print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
+			--print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
 		end
 		packetNumber = incrementID(packetNumber)
 		

@@ -54,6 +54,13 @@ if INVALID_MYSQL then
 	love.event.quit()
 end
 
+if INVALID_MAPSIZE then
+	print("Wrong usage of --mapsize!")
+	print("Range is " .. MAP_MINIMUM_SIZE + 1 .. " to 100.")
+	print("Example: --mapsize 30")
+	love.event.quit()
+end
+
 if INVALID_MYSQL_DATABASE then
 	print("Wrong usage of --mysqlDB!")
 	print("Correct would be: --mysqlDB DATABASE")

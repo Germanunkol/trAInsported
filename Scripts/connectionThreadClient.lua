@@ -32,7 +32,6 @@ function newPacket(text)
 	packetNumber = incrementID(packetNumber)
 end
 
-print("Hello from inside the connection thread!")
 
 print("Attempting to connect to:", ip .. ":" .. port)
 ok, client = pcall(socket.connect, ip, port)
@@ -59,7 +58,7 @@ while true do
 	
 	data, msg = client:receive()
 	if not msg then
-		print("RECEIVED: " .. data)
+		-- print("RECEIVED: " .. data)
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))
 		elseif data:find("U:") == 1 then

@@ -68,6 +68,24 @@ for k, a in pairs(arg) do
 end
 
 for k, a in pairs(arg) do
+	if a == "--mapsize" then
+		INVALID_MAPSIZE = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				s = tonumber(arg[k+1])
+				if s >= 5 and s <= 100 then
+					MAP_MAXIMUM_SIZE = s
+					INVALID_MAPSIZE = false
+				end
+				arg[k+1] = nil
+				arg[k] = nil
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
 	if a == "--directory" or a == "-d" then
 		INVALID_DIRECTORY = true
 		if type(k) == "number" then

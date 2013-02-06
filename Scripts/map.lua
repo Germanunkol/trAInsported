@@ -55,8 +55,8 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 
 		curMap = nil
 		
-		width = 10
-		height = 8
+		width = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
+		height = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		time = "day"
 		if CL_ROUND_TIME then
 			maxTime = CL_ROUND_TIME

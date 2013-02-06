@@ -58,7 +58,6 @@ function transparentPaste(imgDataDest, imgDataSource, posX, posY, colOffset, mas
 	if type(imgDataDest) == "table" or type(mask) == "table" then
 		imgID_X = math.floor(math.max(posX, 0)/TILE_SIZE/MAX_IMG_SIZE)
 		imgID_Y = math.floor(math.max(posY, 0)/TILE_SIZE/MAX_IMG_SIZE)
-		print("pasting into tile:", imgID_X, imgID_Y)
 		if type(imgDataDest) == "table" then
 			imgDataDest = imgDataDest[imgID_X][imgID_Y]
 			posX = posX - imgID_X*MAX_IMG_SIZE*TILE_SIZE
@@ -78,19 +77,15 @@ function transparentPaste(imgDataDest, imgDataSource, posX, posY, colOffset, mas
 		if maxX - posX < imgDataSource:getWidth()-1 then
 			if posX <= 0 then
 				underflowX = true
-				print("\tunderflow X", posX, maxX, imgDataSource:getWidth(), imgDataDest:getWidth(), imgDataSource:getWidth()-1+posX)
 			else
 				overflowX = true
-				print("\toverflow X", posX, maxX, imgDataSource:getWidth())
 			end
 		end
 		if maxY - posY < imgDataSource:getHeight()-1 then
 			if posY <= 0 then
 				underflowY = true
-				print("\tunderflow Y", posX, maxX, imgDataSource:getHeight())
 			else
 				overflowY = true
-				print("\toverflow Y", posX, maxX, imgDataSource:getHeight())
 			end
 		end
 	

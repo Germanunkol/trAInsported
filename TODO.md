@@ -92,3 +92,4 @@ tut 4:
 **Bugs**
 [x] generator can generate empty maps?
 - default resolution... how to change?
+- sometimes Simulation does not render new map for some reason.

@@ -1,11 +1,11 @@
-require("love.filesystem")
-
 thisThread = love.thread.getThread()
-
+require("love.filesystem")
 package.path = "Scripts/?.lua;" .. package.path
 
-require("mapUtils")
-require("TSerial")
+pcall(require, "mapUtils")
+pcall(require, "Scripts/mapUtils")
+pcall(require, "TSerial")
+pcall(require, "Scripts/TSerial")
 require("misc")
 
 local msgNumber = 0

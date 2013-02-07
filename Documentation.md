@@ -1,10 +1,21 @@
 **trAInsported**
 =====================
 - - - - - - - - - - -
-This is a list of all functions that your AI should use. The first part lists the events which you should define. If you define them correctly, then the game will call them if certain events happen. For example, if you define "function ai.init()" then this function will be called when the round starts. Or, if your script has a function "function ai.chooseDirection()" then this function will be called whenever a train comes to a junction and wants to know which way to go.  
+This is a list of all functions that your AI should use.  
+  
+Before you read this, check out the tutorials in-game!  
+
+For more information, visit the website:  
+[Official trAInsported Website](http://trainsportedgame.no-ip.org)
+
+- - - - - - - - - - -
+This document is split up into two parts.  
+The first part lists the events which you should define. If you define them correctly, then the game will call them if certain events happen. For example, if you define "function ai.init()" then this function will be called when the round starts. Or, if your script has a function "function ai.chooseDirection()" then this function will be called whenever a train comes to a junction and wants to know which way to go.  
 The second part of this document lists functions that you can call in your code, like "random", "getMoney" and "print".
 
 Many of these are covered in the tutorials, so make sure to play them!
+
+
 
 Callback Events
 --------------------

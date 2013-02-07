@@ -102,6 +102,7 @@ end
 ]]--
 
 function addPacket(ID, text, time)
+	print(ID, text, time)
 	packetList[ID] = {time=time, event = text}
 	--table.sort(packetList, sortByTime)
 end
@@ -113,7 +114,7 @@ function simulation.addUpdate(text)
 		return
 	end
 	
-	ID = tonumber(text:sub(1, e-1))
+	local ID = tonumber(text:sub(1, e-1))
 	text = text:sub(e+1, #text)
 
 	s, e = text:find("|")
@@ -315,6 +316,7 @@ function runUpdate(event, t1, t2)
 		end
 		return
 	elseif event:find("P_NEW:") == 1 then		-- created new Passenger
+		print(event)
 		s,e = event:find("P_NEW:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
 		name = tbl[1]

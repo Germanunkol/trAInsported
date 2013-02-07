@@ -85,6 +85,7 @@ tut 4:
 - two or three rail types?
 - game mode where map is NOT passed to ai.init? (Fog of war?)
 - Repair costs?
+- Split up rendering of map images into multiple threads?
 
 **Website**
 - rank of players?

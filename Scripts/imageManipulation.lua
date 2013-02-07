@@ -1,5 +1,5 @@
-require("misc")
-
+pcall(require, "misc")
+pcall(require, "Scripts/misc")
 
 function blur( imgData, radius, thread, percentage, maxPercentage )
 	radius = radius or 1

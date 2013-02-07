@@ -4,14 +4,18 @@ package.path = "Scripts/?.lua;" .. package.path
 
 require("love.image")
 require("love.filesystem")
-require("TSerial")
-require("imageManipulation")
-require("misc")
+pcall(require, "TSerial")
+pcall(require, "Scripts/TSerial")
+pcall(require, "imageManipulation")
+pcall(require, "Scripts/imageManipulation")
+pcall(require, "misc")
+pcall(require, "Scripts/misc")
 
 -- load "globals" in dedicated mode, only get variables:
 rememberDedi = DEDICATED
 DEDICATED = true
-require("globals")
+pcall(require, "globals")
+pcall(require, "Scripts/globals")
 DEDICATED = rememberDedi
 
 

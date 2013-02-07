@@ -4,8 +4,10 @@ package.path = "Scripts/?.lua;" .. package.path
 
 require("love.image")
 require("love.filesystem")
-require("imageManipulation")
-require("misc")
+pcall(require, "imageManipulation")
+pcall(require, "Scripts/imageManipulation")
+pcall(require, "misc")
+pcall(require, "Scripts/misc")
 
 thisThread:set("percentage", 0)
 

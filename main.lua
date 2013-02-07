@@ -389,6 +389,10 @@ else
 		love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
 
 		versionCheck.start()
+		
+		-- create AI subfolder:
+		love.filesystem.mkdir("AI")
+		
 	end
 
 	function finishStartupProcess()

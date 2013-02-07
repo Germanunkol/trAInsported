@@ -117,7 +117,7 @@ function runMap(restart)
 	newMapStarting = false
 	if curMap then
 	
-		if console and console.flush then
+		if console and console.flush and not restart then
 			console.flush()
 		end
 		
@@ -171,6 +171,9 @@ function map.restart()
 	train.init()
 	
 	clearAllOccupations()
+	
+	console.flush()
+	
 	console.add("--- Restart ---", {r=255,g=50,b=50})
 	
 	for i = 1, #AIs do

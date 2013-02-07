@@ -12,6 +12,25 @@ function resetTimeFactor()
 	timeFactor = timeFactorList[timeFactorIndex]
 end
 
+---------------------------------------
+-- scan a directory and return all the file names in as a table of strings:
+
+function scandir(directory)
+	local i, t, popen = 0, {}, io.popen
+	for filename in popen('ls -a "'..directory..'"'):lines() do
+		i = i + 1
+		t[i] = filename
+	end
+	if i == 0 then	-- am I on windows?
+		for filename in popen('dir "'..directory..'" /b /ad'):lines() do
+			i = i + 1
+			t[i] = filename
+		end
+	end
+	return t
+end
+---------------------------------------
+
 
 
 function findOneOf(str, s, ...)

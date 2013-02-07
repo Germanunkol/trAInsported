@@ -6,7 +6,8 @@ pcall(require, "mapUtils")
 pcall(require, "Scripts/mapUtils")
 pcall(require, "TSerial")
 pcall(require, "Scripts/TSerial")
-require("misc")
+pcall(require, "misc")
+pcall(require, "Scripts/misc")
 
 local msgNumber = 0
 print = function(...)

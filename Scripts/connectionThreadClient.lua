@@ -1,15 +1,31 @@
 thisThread = love.thread.getThread()
 
-package.path = "Scripts/?.lua;" .. package.path
-require("mapUtils")
-require("TSerial")
-require("socket")
-require("misc")
+--package.path = "Scripts/?.lua;" .. package.path
+require("love.filesystem")
+
+pcall(require,"mapUtils")
+pcall(require,"Scripts/mapUtils")
+pcall(require,"TSerial")
+pcall(require,"Scripts/TSerial")
+pcall(require,"misc")
+pcall(require,"socket")
+
+require("Scripts/misc")
+
 
 ip = thisThread:demand("ip")
 port = thisThread:demand("port")
 
 sendMsgNumber = 0
+
+function incrementID( num )
+	if num == 99999 then
+		num = 0
+	else
+		num = num + 1
+	end
+	return num
+end
 
 printLineNumber = 0
 print = function( ... )
@@ -25,6 +41,10 @@ print = function( ... )
 	
 	printLineNumber = incrementID(printLineNumber)
 end
+
+
+
+
 
 packetNumber = 0
 function newPacket(text)

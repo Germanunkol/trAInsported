@@ -383,14 +383,20 @@ function ai.findAvailableAIs()
 		end
 		return fileNames
 	else
-		local files = love.filesystem.enumerate("AI")		-- load AI subdirectory
+		--local files = love.filesystem.enumerate(love.filesystem.getSaveDirectory() .. "/AI")		-- load AI subdirectory
+		
+		local directory = love.filesystem.getWorkingDirectory() .. "/AI"
+		print("Looking for AIs in:", directory)
+		--local directory = love.filesystem.getWorkingDirectory()
+		--local files = findAIs(directory)
+		local files = scandir(directory)
 		for k, file in ipairs(files) do
 			if file:find("Backup.lua") then
 				files[k] = nil
 			else
 				s, e = file:find(".lua")
 				if e == #file then
-					files[k] = "AI/" .. files[k]
+					files[k] = directory .. "/" .. files[k]
 				else
 					files[k] = nil
 				end
@@ -415,7 +421,7 @@ end
 
 function ai.createNewTutAI( fileName, fileContent)
 	ai.backupTutorialAI( fileName )
-	file = io.open("AI/" .. fileName, "w")
+	file = io.open(love.filesystem.getWorkingDirectory() .. "/AI/" .. fileName, "w")
 	if file then
 		file:write(fileContent)
 		file:close()

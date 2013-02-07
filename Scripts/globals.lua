@@ -104,7 +104,7 @@ tutDescriptions[4] = [[Be faster! Choose your customers smartly - or watch your 
 TILE_SIZE = 128
 MAX_IMG_SIZE = 5
 MAP_MINIMUM_SIZE = 4
-MAP_MAXIMUM_SIZE = 50
+MAP_MAXIMUM_SIZE = 30
 
 
 -- UI sizes:

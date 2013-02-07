@@ -15,7 +15,6 @@ function console.show()
 end
 
 function console.add( text, colour )
-	print("CONSOLE:", text)
 	if DEDICATED then
 		return
 	end

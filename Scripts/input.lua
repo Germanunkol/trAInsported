@@ -66,20 +66,22 @@ function coordinatesToMap(x, y)
 end
 
 function love.keypressed(key, unicode)
-	if key == "f12" then
-		debug.debug()
-	elseif key == "f5" then
+	print(key, unicode)
+	--if key == "f12" then
+		--debug.debug()
+	--else
+	if key == "f5" then
 		getScreenshot()
 	elseif key == "f1" then
 		quickHelp.toggle()
-	elseif key == "c" then
+	elseif unicode == 99 then--key == "c" then
 		console.toggle()
-	elseif key == "+" then
+	elseif unicode == 43 then -- key == "+" then
 		if not simulation.isRunning() then
 			timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
 		end
 		timeFactor = timeFactorList[timeFactorIndex]
-	elseif key == "-" then
+	elseif unicode == 45 then --key == "-" then
 		if not simulation.isRunning() then
 			timeFactorIndex = math.max(timeFactorIndex - 1, 1)
 		end

@@ -68,7 +68,7 @@ function simulation.displayTimeUntilNextMatch(time, dt)
 		timeUntilNextMatch = time
 	else
 		if timeUntilNextMatch >= 0 then
-			statusMsg.new("Next match starts in: " .. makeTimeReadable(timeUntilNextMatch), false)
+			--statusMsg.new("Next match starts in: " .. makeTimeReadable(timeUntilNextMatch), false)
 			timeUntilNextMatch = timeUntilNextMatch - dt
 		end
 	end

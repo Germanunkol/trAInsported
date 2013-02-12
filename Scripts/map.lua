@@ -1231,6 +1231,7 @@ function map.render(map)
 		status = mapRenderThread:get("status")
 		if status == "done" then
 			print("Rendering done!")
+			attemptingToConnect = false 	-- no longer show loading screen!
 			
 			local groundData = nil
 			local shadowData = nil

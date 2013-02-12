@@ -3,8 +3,8 @@ local menu = {}
 local buttonExit = nil
 local buttonRandomMatch = nil
 
-local defaultMenuX = 10
-local defaultMenuY = 30
+defaultMenuX = 10
+defaultMenuY = 30
 
 local numAIsChosen = 0
 local mapSizeX = 0
@@ -28,7 +28,6 @@ function randomMatch()
 		return
 	end
 	
-	simulation.stop()
 	
 	local width = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
 	local height = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
@@ -113,9 +112,14 @@ function menu.init(menuX, menuY)
 		defaultMenuY = menuY
 	end
 	
+	simulation.stop()
+	attemptingToConnect = false 	-- no longer show loading screen!
+	
 	menu.removeAll()
 	x = defaultMenuX
 	y = defaultMenuY
+	menuButtons.buttonSimulation = button:new(x, y, "Live", menu.simulation, nil, nil, nil, nil, "Watch the live online matches!")
+	y = y + 60
 	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "Compete", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
@@ -128,9 +132,6 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	
 	trainImagesCreated = false
-	
-	--load connection to main server:
-	connection.startClient(CL_SERVER_IP or FALLBACK_SERVER_IP, PORT)
 	
 	--reset tutorial:
 	tutorial = {}
@@ -316,8 +317,6 @@ function menu.newRound()
 		return
 	end
 
-	simulation.stop()
-
 	menu.removeAll()
 	hideLogo = true
 	numAIsChosen = 0
@@ -382,6 +381,34 @@ function menu.newRound()
 	
 end
 
+
+
+--------------------------------------------------------------
+--		SIMULATION START:
+--------------------------------------------------------------
+
+function menu.simulation()
+	menu.removeAll()
+	hideLogo = true
+	x = defaultMenuX
+	y = defaultMenuY
+	menuButtons.buttonSimulationExit = button:new(x, y, "Exit", confirmCloseGame, nil)
+	y = y + 45
+	
+	if not map.generating() and not map.rendering() then
+		--load connection to main server:
+		loadingScreen.reset()
+		attemptingToConnect = true
+		loadingScreen.addSection("Connecting")
+		loadingScreen.addSubSection("Connecting", "Server: " .. (CL_SERVER_IP or FALLBACK_SERVER_IP))
+		connection.startClient(CL_SERVER_IP or FALLBACK_SERVER_IP, PORT)
+	else
+		loadingScreen.addSubSection("Connecting", "Failed!")
+		print("Error: already rendering a map - can't start simulation")
+		statusMsg.new("Wait for rendering to finish... then retry.", true)
+	end
+	
+end
 
 --------------------------------------------------------------
 --		SETTINGS MENU:

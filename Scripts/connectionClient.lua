@@ -103,6 +103,14 @@ function connection.handleConnection()
 	err = connectionThread:get("error")
 	if err then
 		print("CONNECTION ERROR:", err)
+		if err:find("Could not connect!") then
+			if menuButtons.buttonSimulationExit then		-- change button to go to "back".
+				x = defaultMenuX
+				y = defaultMenuY + 45
+				loadingScreen.addSubSection("Connecting", "Failed!")
+				menuButtons.buttonAbortSimulation = button:new(x, y, "Return", menu.init, nil, nil, nil, nil, "Return to main menu")
+			end
+		end
 	end
 end
 

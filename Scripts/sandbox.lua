@@ -22,6 +22,7 @@ end
 local function safeprint(aiID)
 	return function (...)
 		str = "[" .. ai.getName(aiID) .. "]"
+		arg = { ... }
 		for k, v in ipairs(arg) do
 			if not v then print("trying to print nil value!")
 			else

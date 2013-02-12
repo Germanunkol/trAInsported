@@ -28,6 +28,7 @@ clientList = {}
 
 print = function(...)
 	sendStr = ""
+	local arg = { ... }
 	for i = 1, #arg do
 		if arg[i] then
 			sendStr = sendStr .. arg[i] .. "\t"

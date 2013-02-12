@@ -256,6 +256,10 @@ function train:new( aiID, x, y, dir )
 				sendStr = sendStr .. trainList[aiID][i].tileY .. ","
 				sendStr = sendStr .. dir .. ","
 				sendMapUpdate(sendStr)
+			else
+				trainList[aiID][i].sound = love.audio.newSource("Sound/TrainOnTracks.wav")
+				trainList[aiID][i].sound:setLooping(true)
+				trainList[aiID][i].sound:play()
 			end
 			
 			if path and path[1] then		--place at the center of the current piece.

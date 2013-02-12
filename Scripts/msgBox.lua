@@ -35,6 +35,7 @@ function msgBoxEvent(messageBox, eventToCall)
 end
 
 function msgBox:new(x, y, msg, ... )
+	local arg = { ... }
 	text = wrap(msg, msgBoxBG:getWidth()-30, FONT_STAT_MSGBOX)
 	
 	for i=1,#msgBoxList+1,1 do

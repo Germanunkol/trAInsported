@@ -12,16 +12,16 @@ function resetTimeFactor()
 	timeFactor = timeFactorList[timeFactorIndex]
 end
 
+
 ---------------------------------------
 -- scan a directory and return all the file names in as a table of strings:
-
 function scandir(directory)
 	local i, t, popen = 0, {}, io.popen
 	for filename in popen('ls -a "'..directory..'"'):lines() do
 		i = i + 1
 		t[i] = filename
 	end
-	if i == 0 then	-- am I on windows?
+	if i == 0 then	-- am I on windowze?
 		for filename in popen('dir "'..directory..'" /b /ad'):lines() do
 			i = i + 1
 			t[i] = filename
@@ -36,6 +36,7 @@ end
 function findOneOf(str, s, ...)
 	start = s or 1
 	local results = {}
+	local arg = { ... }
 	for i=1,#arg do
 		local s,e, pattern = str:find("(" .. arg[i] .. ")", start)
 		if s then

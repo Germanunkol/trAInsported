@@ -385,7 +385,13 @@ function ai.findAvailableAIs()
 	else
 		--local files = love.filesystem.enumerate(love.filesystem.getSaveDirectory() .. "/AI")		-- load AI subdirectory
 		
-		local directory = love.filesystem.getWorkingDirectory() .. "/AI"
+		local directory = love.filesystem.getWorkingDirectory()
+		
+		if directory:find("/") == 1 then
+			directory = directory .. "/AI/"
+		else
+			directory = directory .. "\\AI\\"
+		end
 		print("Looking for AIs in:", directory)
 		--local directory = love.filesystem.getWorkingDirectory()
 		--local files = findAIs(directory)
@@ -396,12 +402,14 @@ function ai.findAvailableAIs()
 			else
 				s, e = file:find(".lua")
 				if e == #file then
-					files[k] = directory .. "/" .. files[k]
+					files[k] = directory .. files[k]
 				else
 					files[k] = nil
 				end
 			end
 		end
+		
+		
 		return randomizeTable(files, 4)
 	end
 end
@@ -422,6 +430,9 @@ end
 function ai.createNewTutAI( fileName, fileContent)
 	ai.backupTutorialAI( fileName )
 	file = io.open(love.filesystem.getWorkingDirectory() .. "/AI/" .. fileName, "w")
+	if not file then
+		file = io.open(love.filesystem.getWorkingDirectory() .. "\\AI\\" .. fileName, "w")
+	end
 	if file then
 		file:write(fileContent)
 		file:close()

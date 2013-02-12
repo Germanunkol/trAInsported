@@ -30,6 +30,7 @@ end
 printLineNumber = 0
 print = function( ... )
 	str = ""
+	local arg = { ... }
 	for i=1,#arg do
 		if arg[i] then
 			str = str .. arg[i] .. "\t"

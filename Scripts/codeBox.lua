@@ -11,7 +11,6 @@ function codeBoxEvent(box, eventToCall)
 end
 
 function codeBox.new(x, y, msg, col)
-	--arg = arg[1]
 
 	--text = wrap(msg, codeBoxBG:getWidth()-30, FONT_BUTTON)
 	for i=1,#codeBoxList+1,1 do

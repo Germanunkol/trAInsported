@@ -66,7 +66,6 @@ function coordinatesToMap(x, y)
 end
 
 function love.keypressed(key, unicode)
-	print(key, unicode)
 	--if key == "f12" then
 		--debug.debug()
 	--else

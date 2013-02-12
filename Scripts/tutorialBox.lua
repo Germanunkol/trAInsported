@@ -11,6 +11,7 @@ function tutorialBoxEvent(box, eventToCall)
 end
 
 function tutorialBox.new(x, y, msg, ... )
+	local arg = { ... }
 	arg = arg[1]
 
 	--text = wrap(msg, tutorialBoxBG:getWidth()-30, FONT_BUTTON)

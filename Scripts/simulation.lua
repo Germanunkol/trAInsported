@@ -17,7 +17,7 @@ function simulation.init()
 	train.init()
 	passenger.init()
 	
-	loadingScreen.reset()
+	--loadingScreen.reset()
 	packetList = {}
 	simulation.nextPacket = 1
 	
@@ -80,6 +80,7 @@ function simulation.runMap()
 	clouds.restart()
 	roundEnded = false
 	console.flush()
+	menu.ingame()
 end
 
 function simulation.stop()

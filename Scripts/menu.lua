@@ -113,7 +113,11 @@ function menu.init(menuX, menuY)
 	end
 	
 	simulation.stop()
+	if connectionThread then
+		connectionThread:set("quit", true)
+	end
 	attemptingToConnect = false 	-- no longer show loading screen!
+	loadingScreen.reset()
 	
 	menu.removeAll()
 	x = defaultMenuX
@@ -387,27 +391,55 @@ end
 --		SIMULATION START:
 --------------------------------------------------------------
 
+function menu.startSimulation(IP)
+	if connectionThread then
+		statusMsg.new("Already attempting to start connection.", true)
+	else
+		if not map.generating() and not map.rendering() then
+			--load connection to main server:
+			loadingScreen.reset()
+			
+			attemptingToConnect = true
+			loadingScreen.addSection("Connecting")
+			loadingScreen.addSubSection("Connecting", "Server: " .. IP)
+			connection.startClient(IP, PORT)
+		else
+			loadingScreen.addSubSection("Connecting", "Failed!")
+			print("Error: already rendering a map - can't start simulation")
+			statusMsg.new("Wait for rendering to finish... then retry.", true)
+		end
+	end
+end
+
 function menu.simulation()
 	menu.removeAll()
 	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
-	menuButtons.buttonSimulationExit = button:new(x, y, "Exit", confirmCloseGame, nil)
-	y = y + 45
 	
-	if not map.generating() and not map.rendering() then
-		--load connection to main server:
-		loadingScreen.reset()
-		attemptingToConnect = true
-		loadingScreen.addSection("Connecting")
-		loadingScreen.addSubSection("Connecting", "Server: " .. (CL_SERVER_IP or FALLBACK_SERVER_IP))
-		connection.startClient(CL_SERVER_IP or FALLBACK_SERVER_IP, PORT)
+	if CL_SERVER_IP then
+		menuButtons.buttonSimulationExit = button:new(x, y, "Exit", confirmCloseGame, nil)
+		y = y + 45
+	
+		if not map.generating() and not map.rendering() then
+			--load connection to main server:
+			--loadingScreen.reset()
+			attemptingToConnect = true
+			loadingScreen.addSection("Connecting")
+			loadingScreen.addSubSection("Connecting", "Server: " .. (CL_SERVER_IP or FALLBACK_SERVER_IP))
+			connection.startClient(CL_SERVER_IP or FALLBACK_SERVER_IP, PORT)
+		else
+			loadingScreen.addSubSection("Connecting", "Failed!")
+			print("Error: already rendering a map - can't start simulation")
+			statusMsg.new("Wait for rendering to finish... then retry.", true)
+		end
 	else
-		loadingScreen.addSubSection("Connecting", "Failed!")
-		print("Error: already rendering a map - can't start simulation")
-		statusMsg.new("Wait for rendering to finish... then retry.", true)
+		menuButtons.buttonSimulationReturn = button:new(x, y, "Return", menu.init, nil, nil, nil, nil, "Go back to main menu")
+		y = y + 60
+		menuButtons.buttonSimulationMain = button:new(x, y, "Main Server", menu.startSimulation, MAIN_SERVER_IP, nil, nil, nil, "Connect to the main server. Must be connected to the internet!")
+		y = y + 45
+		menuButtons.buttonSimulationLocal = button:new(x, y, "Localhost",  menu.startSimulation, FALLBACK_SERVER_IP, nil, nil, nil, "Connect to a server running on this machine.")
 	end
-	
 end
 
 --------------------------------------------------------------

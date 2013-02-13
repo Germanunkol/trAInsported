@@ -2,23 +2,33 @@ local connection = {}
 
 local connectionsRunning = 0
 
-local connectionThread
+connectionThread = nil
 
 local printLineNumber = 0
 
 local packetNumber = 0
 
-local rememberPort = 0
+--local rememberPort = 0
 
 function connection.startClient(ip, port)
 
-	if ip and port then
+	th = love.thread.getThreads()
+	i = 0
+	for k, t in pairs(th) do
+		i = i + 1
+	end
+
+	print("treads: ", i)
+
+	--[[if ip and port then
 		rememberPort = port
 	elseif rememberPort then
 		port = rememberPort
 		ip = FALLBACK_SERVER_IP
 		rememberPort = nil
-	else return end
+	else return end]]--
+	if not port then port = PORT end
+	if not ip then return end
 
 	if connectionThread then
 		connectionThread:set("quit", true)
@@ -104,12 +114,14 @@ function connection.handleConnection()
 	if err then
 		print("CONNECTION ERROR:", err)
 		if err:find("Could not connect!") then
+			print("could not connect error")
 			if menuButtons.buttonSimulationExit then		-- change button to go to "back".
 				x = defaultMenuX
 				y = defaultMenuY + 45
-				loadingScreen.addSubSection("Connecting", "Failed!")
 				menuButtons.buttonAbortSimulation = button:new(x, y, "Return", menu.init, nil, nil, nil, nil, "Return to main menu")
 			end
+			connection.closeConnection()
+			loadingScreen.addSubSection("Connecting", "Failed!")
 		end
 	end
 end

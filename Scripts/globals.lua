@@ -8,6 +8,7 @@ VERSION = "1"
 -- connections:
 
 FALLBACK_SERVER_IP = "127.0.0.1"
+MAIN_SERVER_IP = "trainsportedgame.no-ip.org"
 PORT = 5556
 --
 

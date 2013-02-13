@@ -72,7 +72,6 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		
 	else
 	
-		loadingScreen.reset()
 		loadingScreen.addSection("New Map")
 		loadingScreen.addSubSection("New Map", "Size: " .. width .. "x" .. height)
 		loadingScreen.addSubSection("New Map", "Time: Day")

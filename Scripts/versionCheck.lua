@@ -1,14 +1,13 @@
 local versionCheck = {}
 
-local configFile = "trAInsported.conf"
 
 function versionCheck.start()
 
 	versionMatch = nil
 
-	exists = love.filesystem.exists( configFile )
+	exists = love.filesystem.exists( CONFIG_FILE )
 	if exists then
-		local file = love.filesystem.newFile( configFile )
+		local file = love.filesystem.newFile( CONFIG_FILE )
 		file:open('r')
 		local data = file:read()
 		--print("config file:", data)
@@ -31,7 +30,7 @@ function versionCheck.start()
 	if not versionMatch then
 		local data = ""
 		data = data .. "version = " .. VERSION .. "\r\n"
-		love.filesystem.write( configFile, data )
+		love.filesystem.write( CONFIG_FILE, data )
 	end
 end
 

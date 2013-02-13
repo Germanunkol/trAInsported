@@ -14,8 +14,8 @@ local aiUserData = {		--default fallbacks in case a function is not created by t
 local sandbox = require("Scripts/sandbox")
 
 -- maximum times that the script may run (in seconds)
-local MAX_LINES_LOADING = 10000
-local MAX_LINES_EXECUTING = 10000
+local MAX_LINES_LOADING = 50000
+local MAX_LINES_EXECUTING = 20000
 
 local coLoad = nil
 linesUsed = 0
@@ -81,6 +81,7 @@ end
 
 function ai.new(scriptName)
 	--local ok, chunk = pcall(love.filesystem.read, scriptName
+	print("scriptName", scriptName)
 	fh = io.open(scriptName,"r")
 	local ok, chunk = pcall(fh.read, fh, "*all" )
 
@@ -385,24 +386,16 @@ function ai.findAvailableAIs()
 	else
 		--local files = love.filesystem.enumerate(love.filesystem.getSaveDirectory() .. "/AI")		-- load AI subdirectory
 		
-		local directory = love.filesystem.getWorkingDirectory()
-		
-		if directory:find("/") == 1 then
-			directory = directory .. "/AI/"
-		else
-			directory = directory .. "\\AI\\"
-		end
-		print("Looking for AIs in:", directory)
 		--local directory = love.filesystem.getWorkingDirectory()
 		--local files = findAIs(directory)
-		local files = scandir(directory)
+		local files = scandir(AI_DIRECTORY)
 		for k, file in ipairs(files) do
 			if file:find("Backup.lua") then
 				files[k] = nil
 			else
 				s, e = file:find(".lua")
 				if e == #file then
-					files[k] = directory .. files[k]
+					files[k] = AI_DIRECTORY .. files[k]
 				else
 					files[k] = nil
 				end
@@ -415,23 +408,23 @@ function ai.findAvailableAIs()
 end
 
 function ai.backupTutorialAI( fileName )
-	if love.filesystem.exists( "AI/" .. fileName ) then
-		contents = love.filesystem.read( "AI/" .. fileName )
-		love.filesystem.remove( "AI/" .. fileName )
-		
-		file = io.open("AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua","w")
 
+	if io.open( AI_DIRECTORY .. fileName ) then
+		local file = io.open( AI_DIRECTORY .. fileName, "r")
+		local contents = file:read("*all")
+		
+		file = io.open( AI_DIRECTORY .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua","w")
 		file:write(contents)
 		file:close()
-		os.remove("AI/" .. fileName)
 	end
+
 end
 
 function ai.createNewTutAI( fileName, fileContent)
 	ai.backupTutorialAI( fileName )
-	file = io.open(love.filesystem.getWorkingDirectory() .. "/AI/" .. fileName, "w")
+	file = io.open( AI_DIRECTORY .. fileName, "w")
 	if not file then
-		file = io.open(love.filesystem.getWorkingDirectory() .. "\\AI\\" .. fileName, "w")
+		file = io.open( AI_DIRECTORY .. fileName, "w")
 	end
 	if file then
 		file:write(fileContent)

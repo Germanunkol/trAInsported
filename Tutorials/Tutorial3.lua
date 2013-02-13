@@ -195,7 +195,7 @@ function tutorial.start()
 	
 	ai.restart()	-- make sure aiList is reset!
 	
-	ok, msg = pcall(ai.new, "AI/" .. aiFileName)
+	ok, msg = pcall(ai.new, AI_DIRECTORY .. aiFileName)
 	if not ok then
 		print("Err: " .. msg)
 	else
@@ -454,6 +454,7 @@ end
 
 
 function tutorial.roundStats()
+	love.graphics.setColor(255,255,255,255)
 	x = love.graphics.getWidth()-roundStats:getWidth()-20
 	y = 20
 	love.graphics.draw(roundStats, x, y)

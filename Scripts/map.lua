@@ -176,7 +176,7 @@ function map.restart()
 	console.add("--- Restart ---", {r=255,g=50,b=50})
 	
 	for i = 1, #AIs do
-		ok, name, owner = pcall(ai.new, "AI/" .. AIs[i] .. ".lua")
+		ok, name, owner = pcall(ai.new, AI_DIRECTORY .. AIs[i] .. ".lua")
 		if not ok then
 			print("Err: " .. name)
 		else

@@ -203,6 +203,8 @@ if DEDICATED then
 		initServer()
 		
 		math.randomseed(os.time())
+		
+		AI_DIRECTORY = "AI/"
 	end
 	
 	
@@ -366,6 +368,10 @@ else
 	-------------------------------
 	-- Main function, runs at startup:
 	function love.load(args)
+	
+		-- load screen resolution from config file:
+		setupScreenResolution()
+	
 		numTrains = 0
 		DEBUG_OVERLAY = true
 		
@@ -389,7 +395,15 @@ else
 		love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
 
 		versionCheck.start()
-
+		
+		love.filesystem.mkdir("AI")
+		
+		AI_DIRECTORY = love.filesystem.getSaveDirectory()
+		if AI_DIRECTORY:find("/") == 1 then
+			AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
+		else
+			AI_DIRECTORY = AI_DIRECTORY .. "\\AI\\"
+		end
 	end
 
 	function finishStartupProcess()

@@ -142,7 +142,7 @@ function tutorial.start()
 	
 	ai.restart()	-- make sure aiList is reset!
 	
-	ok, msg = pcall(ai.new, "AI/" .. aiFileName)
+	ok, msg = pcall(ai.new, AI_DIRECTORY .. aiFileName)
 	if not ok then
 		print("Err: " .. msg)
 	else
@@ -185,6 +185,7 @@ function additionalInformation(text)
 		end
 	end
 end]]--
+
 
 function tutorial.createTutBoxes()
 
@@ -243,11 +244,11 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Good. Let's keep going.\n\nThe game has a subfolder called 'AI'.\nIn it, you'll find a new file that I just generated. It's called 'TutorialAI1.lua'.\nOpen this file in any text editor of your choice and read it."
+	tutorialSteps[k].message = "Good. Let's keep going.\n\nThe game has created a subfolder called 'AI' at '" .. AI_DIRECTORY .. "'\nIn it, you'll find a new file that I just generated. It's called 'TutorialAI1.lua'.\nOpen this file in any text editor of your choice and read it."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The folder is located at: " .. love.filesystem.getWorkingDirectory() .. "/AI\n\n(Any normal text editor should do, but there's some which will help you when writing code. See the documentation for details).\nIf you can't find the file in the folder, make sure the game is located in a place where you have writing permissions!"), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The folder is located at: " .. AI_DIRECTORY .. "\n\n(Any normal text editor should do, but there's some which will help you when writing code. See the documentation for details).\nIf you can't find the file in the folder, make sure the game is located in a place where you have writing permissions!"), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -282,7 +283,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Buying the first train!"
-	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n(Press 'M' to see all coordinates!)\nWhen done, save and click 'Reload'."
+	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n(Press and hold 'M' to see all coordinates!)\nWhen done, save and click 'Reload'."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -513,6 +514,7 @@ function dropOffPassengerEvent(k)
 end
 
 function tutorial.roundStats()
+	love.graphics.setColor(255,255,255,255)
 	x = love.graphics.getWidth()-roundStats:getWidth()-20
 	y = 20
 	love.graphics.draw(roundStats, x, y)

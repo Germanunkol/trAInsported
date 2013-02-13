@@ -446,6 +446,37 @@ end
 --		SETTINGS MENU:
 --------------------------------------------------------------
 
+
+function selectResolution(res)
+
+	-- attempt to change screen resolution:
+	success = love.graphics.setMode( res.x, res.y, false, false )
+	
+	if not success then
+		print("failed to set resolution!")
+	else
+		local content = love.filesystem.read(CONFIG_FILE)
+		
+		if content then
+			local s,e = content:find("resolution_x ?= ?.-\n")
+			if s then
+				content = content:sub(1,s-1) .. content:sub(e+1, #content)
+			end
+		 	s,e = content:find("resolution_y ?= ?.-\n")
+			if s then
+				content = content:sub(1,s-1) .. content:sub(e+1, #content)
+			end
+		else
+			content = ""
+		end
+		
+		content = content .. "resolution_x = " .. res.x .. "\n"
+		content = content .. "resolution_y = " .. res.y .. "\n"
+		
+		love.filesystem.write(CONFIG_FILE, content)
+	end
+end
+
 function menu.settings()
 	menu.removeAll()
 	hideLogo = true
@@ -453,6 +484,27 @@ function menu.settings()
 	y = defaultMenuY
 	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
 	y = y + 45
+	
+	x = x + 200
+	y = defaultMenuY
+	table.insert(menuDividers, {x = x, y = defaultMenuY, txt = "Screen size:"})
+	x = x + 20
+	y = y + bgBoxSmall:getHeight()+5
+	jumped = false
+	
+	for k = 1, #RESOLUTIONS do
+		res = RESOLUTIONS[k]
+		menuButtons[k] = button:newSmall(x, y, res.x .. "x" .. res.y, selectResolution, res, nil, nil, "Change resolution")
+		y = y + 37
+		if y > love.graphics.getWidth() - 150 then
+			if jumped then		-- no more space! Only one jump.
+				break
+			end
+			x = x + SMALL_BUTTON_WIDTH + 40
+			y = defaultMenuY + bgBoxSmall:getHeight()+5
+			jumped = true
+		end
+	end
 end
 
 

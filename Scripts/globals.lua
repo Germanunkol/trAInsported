@@ -3,13 +3,18 @@
 -- Most of these variables should not change during the game.
 ----------------------------------
 
+-- General:
 VERSION = "1"
+CONFIG_FILE = "trAInsported.conf"
+DEFAULT_RES_X = 1024
+DEFAULT_RES_Y = 600
 
--- connections:
 
+-- Connections:
 FALLBACK_SERVER_IP = "127.0.0.1"
 MAIN_SERVER_IP = "trainsportedgame.no-ip.org"
 PORT = 5556
+
 --
 
 if not DEDICATED then
@@ -84,6 +89,18 @@ POSSIBLE_TIMES_TOOLTIPS = {"Normal setup, average amount of passengers", "Lots o
 POSSIBLE_MODES = {"Time", "Passengers"}
 POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
 
+RESOLUTIONS = {}
+RESOLUTIONS[1] = {x=640, y=480}
+RESOLUTIONS[2] = {x=800, y=600}
+RESOLUTIONS[3] = {x=1024, y=768}
+RESOLUTIONS[5] = {x=1280, y=960}
+RESOLUTIONS[4] = {x=1280, y=1024}
+RESOLUTIONS[6] = {x=1440, y=960}
+RESOLUTIONS[7] = {x=1600, y=1200}
+RESOLUTIONS[8] = {x=1680, y=1050}
+RESOLUTIONS[9] = {x=1920, y=1024}
+RESOLUTIONS[10] = {x=1920, y=1200}
+RESOLUTIONS[11] = {x=2048, y=1536}
 
 -- tutorial:
 

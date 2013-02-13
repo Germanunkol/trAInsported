@@ -17,6 +17,7 @@ function tutorialBox.new(x, y, msg, ... )
 	--text = wrap(msg, tutorialBoxBG:getWidth()-30, FONT_BUTTON)
 	for i=1,#tutorialBoxList+1,1 do
 		if not tutorialBoxList[i] then
+		
 			tutorialBoxList[i] = setmetatable({x=x, y=y, width=tutorialBoxBG:getWidth(), height=tutorialBoxBG:getHeight(), text=msg, bg=tutorialBoxBG, index = i, buttons={}}, tutorialBox_mt)
 			local priority = 1		-- same importance as anything else
 			for j = 1, #arg, 1 do

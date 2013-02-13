@@ -9,6 +9,8 @@ local msgBox_mt = { __index = msgBox }
 
 local msgBoxBG
 
+msgBoxSound = love.audio.newSource("Sound/Message.mp3")
+
 function wrap(str, limit, font)
 	indent = indent or ""
 	indent1 = indent1 or indent
@@ -41,6 +43,8 @@ function msgBox:new(x, y, msg, ... )
 	for i=1,#msgBoxList+1,1 do
 		if not msgBoxList[i] then
 		
+			msgBoxSound:play()
+			
 			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), height=msgBoxBG:getHeight(), bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do

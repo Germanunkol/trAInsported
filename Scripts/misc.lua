@@ -61,13 +61,13 @@ function setupScreenResolution()
 	end
 
 	if x and y then
-		success = love.graphics.setMode( x, y, false, false )
+		success = love.graphics.setMode( x, y, true, true )
 		if success then return end
 	end
 	
 	-- backup:
 	print("Setting resolution to default values because no configuration has been found: ", DEFAULT_RES_X .. "x" .. DEFAULT_RES_Y)
-	love.graphics.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y, false, false )
+	love.graphics.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y, true, true )
 end
 ---------------------------------------
 

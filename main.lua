@@ -373,7 +373,7 @@ else
 		setupScreenResolution()
 	
 		numTrains = 0
-		DEBUG_OVERLAY = true
+		--DEBUG_OVERLAY = true
 		
 		time = 0
 		mouseLastX = 0

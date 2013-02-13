@@ -450,7 +450,7 @@ end
 function selectResolution(res)
 
 	-- attempt to change screen resolution:
-	success = love.graphics.setMode( res.x, res.y, false, false )
+	success = love.graphics.setMode( res.x, res.y, true, true )
 	
 	if not success then
 		print("failed to set resolution!")

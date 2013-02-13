@@ -60,7 +60,7 @@ function ai.foundPassengers( train, passengers )
 	i = 1	--start with first passenger
 	while i <= #passengers do -- for every passenger
 		d = distance(train.x, train.y,
-			passengers[i].destX, passenger[i].destY)
+			passengers[i].destX, passengers[i].destY)
 		if d < dist then  -- if it's the shorted dist so far, save it.
 			dist = d
 			pass = passengers[i]
@@ -73,12 +73,10 @@ end
 local CODE_foundPassengers2 = parseCode([[
 function ai.foundPassengers( train, passengers )
 	...
-	while i < #passengers do -- for every passenger
+	while i <= #passengers do -- for every passenger
 		...
 	end
-	if pass then
-		return pass
-	end
+	return pass
 end
 ]])
 
@@ -253,7 +251,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "At the end of the loop, the passenger with the shortest distance has been stored in 'pass'. This is the passenger we want to pick up, so add the lines of code shown in the code box to the end of your function ai.foundPassengers (after the while loop)."
+	tutorialSteps[k].message = "At the end of the loop, the passenger with the shortest distance has been stored in 'pass'. This is the passenger we want to pick up, so add the line of code shown in the code box to the end of your function ai.foundPassengers (after the while loop)."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_foundPassengers2)
 		end
@@ -271,9 +269,17 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The tutorial will continue when you've transported 4 passengers correctly.\nWhen you transport the wrong passenger, the next set of passengers won't be created -> so make sure to always pick up the one with the shortes traveling distance.\nIf something doesn't work yet, just go back and fix it, then reload."), inBetweenSteps = true}
 	k = k + 1
 	
+	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the fourth tutorial! Now you should be ready to start the challenges.\nYou can also let specific AIs compete using the 'New Match' entry in the main menu.\n When you think you're ready, make sure to upload the AI to the website and watch it compete in live, online matches! If you're stuck, check out the wiki!"
+	tutorialSteps[k].message = "You've completed the fourth tutorial! Now you should be ready to start the challenges.\nYou can also let specific AIs compete using the 'New Match' entry in the main menu.\nIf you're stuck, check out the wiki on " .. MAIN_SERVER_IP .. "!\nThere is also a full Documentation of all the ai functions available in the .love file. Simply use a zip-program to extract it!"
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "When you think you're ready, make sure to upload the AI to the website (" .. MAIN_SERVER_IP .. ") and watch it compete in live, online matches! Make sure to get to the top of the highscore list!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Before you go on to the challenges, here's some advice:\n1) Many maps can be played with the most basic AI. However, only more advanced AIs will stand a chance against competition.\n2) Try to beat maps with AIs you already coded. Only change them if they don't win.\n3) NEVER pick up zombies.", CODE_moreIdeas), inBetweenSteps = true}
@@ -383,7 +389,7 @@ function tutorial.roundStats()
 	y = 20
 	love.graphics.draw(roundStats, x, y)
 	
-	love.graphics.print("Tutorial 4: Choose wisely!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 3: Be smart!")/2, y+10)
+	love.graphics.print("Tutorial 4: Choose wisely!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 4: Choose wisely!")/2, y+10)
 	love.graphics.print(currentStepTitle, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(currentStepTitle)/2, y+30)
 end
 
@@ -399,7 +405,7 @@ function tutorial.handleEvents(dt)
 end
 
 fileContent = [[
--- Tutorial 3: Be smart!
+-- Tutorial 4: Close is good!
 
 function ai.init()
 	buyTrain(1,1, 'E')

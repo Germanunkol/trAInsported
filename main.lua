@@ -606,6 +606,9 @@ else
 		else
 			if not hideLogo then
 				love.graphics.draw(LOGO_IMG, (love.graphics.getWidth()-LOGO_IMG:getWidth())/2, love.graphics.getHeight()-LOGO_IMG:getHeight()- 50)
+				love.graphics.setColor(255,255,255,100)
+				love.graphics.setFont(FONT_STANDARD)
+				love.graphics.print("Version: " .. VERSION, (love.graphics.getWidth()-LOGO_IMG:getWidth())/2 + 580, love.graphics.getHeight()-LOGO_IMG:getHeight() + 135)
 			end
 			if map.generating() or map.rendering() or attemptingToConnect then -- or trainGenerateThreads > 0 then
 				loadingScreen.render()
@@ -652,7 +655,6 @@ else
 			love.graphics.setColor(255,255,255,255)
 			love.graphics.print("FAST FORWARD TO CATCH UP WITH SERVER", 0.5*(love.graphics.getWidth()- FONT_HUGE:getWidth("FAST FORWARD TO CATCH UP WITH SERVER")), 0.5*love.graphics.getHeight() -10)
 		end
-	
 	end
 	
 end

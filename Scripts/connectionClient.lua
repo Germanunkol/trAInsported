@@ -56,6 +56,9 @@ function connection.handleConnection()
 		if str then
 			printLineNumber = incrementID(printLineNumber)
 			print("CONNECTION:", str)
+			if str:find("closed") then
+				lostConnection = true
+			end
 		else
 			lineFound = false
 		end
@@ -123,6 +126,7 @@ function connection.handleConnection()
 			connection.closeConnection()
 			loadingScreen.addSubSection("Connecting", "Failed!")
 		end
+		
 	end
 end
 

@@ -62,7 +62,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 			maxTime = FALLBACK_ROUND_TIME
 		end
 		
-		gameMode = math.random(2)
+		gameMode = 1 --math.random(2)
 		AIs = chosenAIs
 		
 		--IMPORTANT!

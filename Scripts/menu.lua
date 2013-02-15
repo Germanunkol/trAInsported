@@ -142,6 +142,7 @@ function menu.init(menuX, menuY)
 	end
 	
 	simulation.stop()
+	lostConnection = false
 	
 	if connectionThread then
 		connectionThread:set("quit", true)

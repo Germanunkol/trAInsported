@@ -38,8 +38,10 @@ function simulation.init()
 	trainList[4] = {}
 	
 	passengerList = {}
-	liveSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LIVE MATCH")) - 20
+	liveSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LIVE MATCH"))/2
 	liveSymbolY = 15
+	lostConnectionSymbolX = (love.graphics.getWidth()-FONT_BUTTON:getWidth("LOST CONNECTION"))/2
+	lostConnectionSymbolY = 37
 	
 	vipClockImages = {}
 	for i = 1,11,1 do
@@ -597,13 +599,19 @@ function simulation.show(dt)
 		stats.displayStatus()
 		
 		
+		love.graphics.setFont(FONT_BUTTON)
 		liveSymbolBlinkTime = liveSymbolBlinkTime + dt*2
 		love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
-		love.graphics.setFont(FONT_BUTTON)
 		love.graphics.print("LIVE MATCH", liveSymbolX-2, liveSymbolY+6)
 		love.graphics.setColor(255,255,255,205*math.sin(liveSymbolBlinkTime)^2+50)
 		love.graphics.print("LIVE MATCH", liveSymbolX, liveSymbolY)
 		
+		if lostConnection then
+			love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
+			love.graphics.print("LOST CONNECTION", lostConnectionSymbolX-2, lostConnectionSymbolY+6)
+			love.graphics.setColor(255,64,64,205*math.sin(liveSymbolBlinkTime)^2+50)
+			love.graphics.print("LOST CONNECTION", lostConnectionSymbolX, lostConnectionSymbolY)
+		end
 	end
 end
 

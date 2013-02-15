@@ -1270,7 +1270,6 @@ function map.render(map)
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
-			
 			return groundData,shadowData,objectData
 		end
 		
@@ -1279,6 +1278,15 @@ end
 
 function map.rendering()
 	if currentlyRenderingMap then return true end
+end
+
+function map.abortRendering()
+	if mapRenderThread then
+		mapRenderThread:set("abort", true)
+		mapRenderThread:wait()
+		mapRenderThread = nil
+	end
+	currentlyRenderingMap = false
 end
 
 function map.renderHighlights(dt)

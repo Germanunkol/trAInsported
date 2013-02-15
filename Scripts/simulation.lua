@@ -8,7 +8,15 @@ local trainList = {}
 
 local liveSymbolX, liveSymbolY = 0, 0
 
+simulation.mapInQueue = false
+
 function simulation.init()
+
+	if map.rendering() then		-- wait until map has finished rendering, then retry.
+		map.abortRendering()
+		loadingScreen.reset()
+	end
+	
 	simulationRunning = true
 	
 	curMapOccupiedTiles = {}
@@ -18,6 +26,8 @@ function simulation.init()
 	passenger.init()
 	
 	--loadingScreen.reset()
+	
+	print("REMOVED PACKET LIST 2")
 	packetList = {}
 	simulation.nextPacket = 1
 	
@@ -53,6 +63,7 @@ function simulation.init()
 	if not curMap then --and map.startupProcess() then
 		map.render(simulationMap)
 		newMapStarting = true
+		menu.exitOnly()
 	end
 	
 end
@@ -81,6 +92,9 @@ function simulation.runMap()
 	roundEnded = false
 	console.flush()
 	menu.ingame()
+	loadingScreen.reset()
+	map.print("Runnig map:", simulationMap)
+	print("running map!")
 end
 
 function simulation.stop()
@@ -103,7 +117,6 @@ end
 ]]--
 
 function addPacket(ID, text, time)
-	print(ID, text, time)
 	packetList[ID] = {time=time, event = text}
 	--table.sort(packetList, sortByTime)
 end
@@ -317,7 +330,6 @@ function runUpdate(event, t1, t2)
 		end
 		return
 	elseif event:find("P_NEW:") == 1 then		-- created new Passenger
-		print(event)
 		s,e = event:find("P_NEW:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
 		name = tbl[1]
@@ -467,8 +479,9 @@ function simulation.update(dt)
 	
 	
 	-- check if there's a packet to be run. If there is one, check again if there's more.
-	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], packetList[simulation.nextPacket].time, simulationMap.time)
+	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], #packetList, simulationMap.time) -- packetList[simulation.nextPacket].time, simulationMap.time)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
+		--print("running:", simulation.nextPacket, packetList[simulation.nextPacket].event)
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
 		
 		--last packet? make sure to run all other remaining packets!! (Otherwise statistics wouldn't be shown.)
@@ -476,6 +489,7 @@ function simulation.update(dt)
 			for k = simulation.nextPacket,#packetList do
 				runUpdate(packetList[k].event, packetList[k].time, simulationMap.time)
 			end
+			print("REMOVED PACKET LIST 1")
 			packetList = {}
 			return
 		end

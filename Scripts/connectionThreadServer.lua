@@ -151,7 +151,7 @@ while true do
 	
 		for k, cl in pairs(clientList) do
 			ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
-			--print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
+			print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
 		end
 		packetNumber = incrementID(packetNumber)
 		

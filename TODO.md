@@ -23,8 +23,8 @@ To do for trAInsported:
 **Server**
 
 **Security**
-- Before download/upload, add a line that won't allow the scripts to be run without the game.
-- Automatically replace windows line endings with unix line breaks.
+[x] Before download/upload, add a line that won't allow the scripts to be run without the game.
+[n/a] Automatically replace windows line endings with unix line breaks.
 
 **Game**
 [x]	Add VIPs
@@ -47,10 +47,10 @@ tut 2:
 [x] Lua control structures (while, if)
 [x] Junctions
 tut 3:
-- Multiple Passengers
-- Smart choosing of directions (depending on passenger's dest)
+[x] Multiple Passengers
+[x] Smart choosing of directions (depending on passenger's dest)
 tut 4:
-- euclidean distance
+[x] euclidean distance
 
 **Visual**
 [x]	clouds
@@ -64,7 +64,7 @@ tut 4:
 - don't let passengers stand on the rails.
 
 **Misc**
-- Add tipps?
+[x] Add tipps?
 - No guarantee that game's outcome is always the same...
 [x] Status message box
 [x] make sure globals.lua is the same for server and client!
@@ -72,9 +72,9 @@ tut 4:
 [x] possibly make server and client use the same files?!
 [x] tooltips
 - rewards!!
-[x] Make "Last Match" loggin use only one querry...
+[x] Make "Last Match" logging use only one querry...
 [x] Log Date along with "Last Match" and display on website
-- screen resolution set at first start!
+[x] screen resolution set at first start!
 
 
 **Maybe**
@@ -92,5 +92,8 @@ tut 4:
 
 **Bugs**
 [x] generator can generate empty maps?
-- default resolution... how to change?
-- sometimes Simulation does not render new map for some reason.
+[x] default resolution... how to change?
+[x] sometimes Simulation does not render new map for some reason.
+- nil pointer when in simulation
+- fast-forward problem: stops showing updates when on fresh connect.
+- fails to render new map is a new map is given while still rendering the old one (simulation)

@@ -17,7 +17,6 @@ ip = thisThread:demand("ip")
 port = thisThread:demand("port")
 
 sendMsgNumber = 0
-
 function incrementID( num )
 	if num == 99999 then
 		num = 0
@@ -49,6 +48,7 @@ end
 
 packetNumber = 0
 function newPacket(text)
+	--print("thread-packet", packetNumber, text)
 	thisThread:set("packet" .. packetNumber, text)
 	packetNumber = incrementID(packetNumber)
 end
@@ -79,7 +79,9 @@ while true do
 	
 	data, msg = client:receive()
 	if not msg then
-		-- print("RECEIVED: " .. data)
+		
+		--print("RECEIVED: " .. data)
+	
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))
 		elseif data:find("U:") == 1 then

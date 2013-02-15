@@ -143,6 +143,9 @@ local renderingPercentage = 0
 function updatePercentage()
 	renderingPercentage = renderingPercentage + percentageStep
 	thisThread:set("percentage", renderingPercentage)
+	if thisThread:get("abort") then
+		return false
+	end
 end
 
 
@@ -246,7 +249,7 @@ while true do
 				end
 				--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
 				--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
-				--updatePercentage()
+				--if updatePercentage() == false then return end
 			end
 		end
 	
@@ -302,7 +305,7 @@ while true do
 					transparentPaste( objectData, IMAGE_HOTSPOT_PLAYGROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
 				end
 		
-				updatePercentage()
+				if updatePercentage() == false then return end
 			end
 		end
 	
@@ -323,7 +326,7 @@ while true do
 						end
 					end
 		
-					updatePercentage()
+					if updatePercentage() == false then return end
 				end
 			end
 	--		thisThread:set("status", "trees")
@@ -354,7 +357,7 @@ while true do
 						end
 					end
 		
-					updatePercentage()
+					if updatePercentage() == false then return end
 				end
 			end
 		end

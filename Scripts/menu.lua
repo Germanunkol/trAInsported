@@ -20,6 +20,35 @@ end
 
 local trainImagesCreated = false
 
+local modes = love.graphics.getModes()
+	
+for k = 1, #RESOLUTIONS do
+	skip = false
+	for i = 1, #modes do
+		if RESOLUTIONS[k].width == modes[i].width and RESOLUTIONS[k].height == modes[i].height then
+			skip = true
+			break
+		end
+	end
+	if not skip then
+		table.insert(modes, RESOLUTIONS[k])
+	end
+end
+
+function sortResolutions(a, b)
+	if a.wdith == b.width then
+		return a.height <= b.height
+	else
+		return a.width < b.width
+	end
+end
+
+table.sort(modes, sortResolutions )   -- sort from smallest to largest
+
+
+
+
+
 function randomMatch()
 	
 	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then
@@ -113,6 +142,7 @@ function menu.init(menuX, menuY)
 	end
 	
 	simulation.stop()
+	
 	if connectionThread then
 		connectionThread:set("quit", true)
 	end
@@ -418,7 +448,8 @@ function menu.simulation()
 	y = defaultMenuY
 	
 	if CL_SERVER_IP then
-		menuButtons.buttonSimulationExit = button:new(x, y, "Exit", confirmCloseGame, nil)
+	
+		menu.exitOnly()
 		y = y + 45
 	
 		if not map.generating() and not map.rendering() then
@@ -450,11 +481,13 @@ end
 function selectResolution(res)
 
 	-- attempt to change screen resolution:
-	success = love.graphics.setMode( res.x, res.y, false, true )
+	success = love.graphics.setMode( res.width, res.height, false, true )
 	
 	if not success then
 		print("failed to set resolution!")
 	else
+	
+		
 		local content = love.filesystem.read(CONFIG_FILE)
 		
 		if content then
@@ -470,10 +503,12 @@ function selectResolution(res)
 			content = ""
 		end
 		
-		content = content .. "resolution_x = " .. res.x .. "\n"
-		content = content .. "resolution_y = " .. res.y .. "\n"
+		content = content .. "resolution_x = " .. res.width .. "\n"
+		content = content .. "resolution_y = " .. res.height .. "\n"
 		
 		love.filesystem.write(CONFIG_FILE, content)
+		
+		menu.settings() -- re-initialise the menu.
 	end
 end
 
@@ -492,9 +527,9 @@ function menu.settings()
 	y = y + bgBoxSmall:getHeight()+5
 	jumped = false
 	
-	for k = 1, #RESOLUTIONS do
-		res = RESOLUTIONS[k]
-		menuButtons[k] = button:newSmall(x, y, res.x .. "x" .. res.y, selectResolution, res, nil, nil, "Change resolution")
+	for k = 1, #modes do
+		res = modes[k]
+		menuButtons[k] = button:newSmall(x, y, res.width .. "x" .. res.height, selectResolution, res, nil, nil, "Change resolution")
 		y = y + 37
 		if y > love.graphics.getWidth() - 150 then
 			if jumped then		-- no more space! Only one jump.

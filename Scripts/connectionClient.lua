@@ -66,9 +66,9 @@ function connection.handleConnection()
 		if not curMap and not map.startupProcess() then
 			mapImage = nil
 		end
-		map.print("new map", simulationMap)
 		roundEnded = true
 		simulationMap = TSerial.unpack(str)
+		map.print("New map", simulationMap)
 		simulation.init()
 	end
 	
@@ -84,7 +84,7 @@ function connection.handleConnection()
 		serverTime = tonumber(str)
 		print("Received new server time: " .. serverTime)
 		if simulationMap then
-			print("My time: " .. simulationMap.time)
+			print("My time: " .. simulationMap.time, "Delta:", serverTime - simulationMap.time .. " seconds" )
 		end
 	end
 	
@@ -128,7 +128,9 @@ end
 
 function connection.closeConnection()
 	if connectionThread then
+		print("Closing connection!")
 	 	connectionThread:set("closeConnection", true)
+	 	connectionThread:wait()
 	 	connectionThread = nil
 	end
 end

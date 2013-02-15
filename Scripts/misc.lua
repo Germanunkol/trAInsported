@@ -38,8 +38,8 @@ end
 function setupScreenResolution()
 	local ok, content = pcall(love.filesystem.read,CONFIG_FILE)
 	local x, y = nil,nil
-	
 	if ok and content then
+		print("found file")
 		local s,e = content:find("resolution_x ?= ?.-\n")
 		if s then
 			substr = content:sub(s,e)
@@ -61,6 +61,7 @@ function setupScreenResolution()
 	end
 
 	if x and y then
+		print("Found resolution:",x,y)
 		success = love.graphics.setMode( x, y, false, true )
 		if success then return end
 	end

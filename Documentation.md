@@ -44,15 +44,16 @@ This event is called, at the beginning of the round. The current map is passed t
 		end
 		
 ###function ai.chooseDirection(train, possibleDirections)###
+Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.
 
 **Passed Arguments**
 
 - train: a Lua table representing the train. It has the fields:
 	- train.ID (an ID representing the train - number)
 	- train.name (the name of the train - string)
-	- train.tileX (x-position of the tile the train is on - number)
-	- train.tileY (y-position of the tile the train is on - number)
-	- train.passenger (name of the passenger who's currently on the train, if any)
+	- train.x (x-position of the tile the train is on - number)
+	- train.y (y-position of the tile the train is on - number)
+	- train.passenger (table representing passenger who's currently on the train, if any - holds the fields name, destX and destY. See ai.foundPassengers for more details.)
 - possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indieces are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.
 
 **Returns**
@@ -138,15 +139,20 @@ This function is called when a train arrives at a position where passengers are 
 **Passed Arguments:**
 
 - train: the train which has arrived at a position where passengers are waiting. Same as above (see ai.chooseDirection)
-- passengers: List of passengers which are at this position.
+- passengers: List of passengers which are at this position. Each passenger is a table containing:
+	- name: Name of the passenger
+	- destX: Destination of the passenger (X-coordinate)
+	- destY: Destination of the passenger (Y-coordinate)
 
 **Returns:**
 
-- Passenger name: The name of a passenger in the list who is to be picked up.
+- Passenger: The passenger in the list who is to be picked up. (i.e. passengers[1] or passengers[2])
 
 **Example:**
 
 		function ai.foundPassengers(train, passengers)
+			print("I'll pick up passenger: " .. passengers[1].name)
+			print("Taking him to: " .. passenger[1].destX .. ", " .. passenger[1].destY)
 			return passengers[1]
 		end
 		
@@ -163,7 +169,7 @@ This function is called when a train which is carrying a passenger arrives at th
 **Example:**
 
 		function ai.foundDestination(train)
-			print("Dropping of my passenger @ " .. train.tileX .. ", " .. train.tileY)
+			print("Dropping of my passenger @ " .. train.x .. ", " .. train.y)
 			dropPassenger(train)
 		end
 		
@@ -226,7 +232,7 @@ Note: This function is NOT called when one of your own trains take a passenger a
 **Passed Arguments:**
 
 - train: the train which has taken the passenger in. (Same as for chooseDirection)
-- passenger: name of the passenger which has boarded a train.
+- passenger: name of passenger who has boarded a train.
 
 **Returns:**
 

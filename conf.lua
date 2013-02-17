@@ -203,8 +203,8 @@ end
 if not DEDICATED then
 
 	love.conf = function(t)
-		t.screen.width = 1960*0.7
-		t.screen.height = 1024*0.7
+		t.screen.width = 800
+		t.screen.height = 600
 		t.screen.fullscreen = false
 		t.title = "trAInsported"        -- The title of the window the game is in (string)
 		t.author = "Germanunkol"        -- The author of the game (string)

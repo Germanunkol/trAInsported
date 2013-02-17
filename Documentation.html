@@ -48,6 +48,8 @@ The second part of this document lists functions that you can call in your code,
 
 <h3>function ai.chooseDirection(train, possibleDirections)</h3>
 
+<p>Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.</p>
+
 <p><strong>Passed Arguments</strong></p>
 
 <ul>
@@ -55,9 +57,9 @@ The second part of this document lists functions that you can call in your code,
 <ul>
 <li>train.ID (an ID representing the train - number)</li>
 <li>train.name (the name of the train - string)</li>
-<li>train.tileX (x-position of the tile the train is on - number)</li>
-<li>train.tileY (y-position of the tile the train is on - number)</li>
-<li>train.passenger (name of the passenger who's currently on the train, if any)</li>
+<li>train.x (x-position of the tile the train is on - number)</li>
+<li>train.y (y-position of the tile the train is on - number)</li>
+<li>train.passenger (table representing passenger who's currently on the train, if any - holds the fields name, destX and destY. See ai.foundPassengers for more details.)</li>
 </ul></li>
 <li>possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indieces are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.</li>
 </ul>
@@ -155,18 +157,25 @@ The second part of this document lists functions that you can call in your code,
 
 <ul>
 <li>train: the train which has arrived at a position where passengers are waiting. Same as above (see ai.chooseDirection)</li>
-<li>passengers: List of passengers which are at this position.</li>
+<li>passengers: List of passengers which are at this position. Each passenger is a table containing:
+<ul>
+<li>name: Name of the passenger</li>
+<li>destX: Destination of the passenger (X-coordinate)</li>
+<li>destY: Destination of the passenger (Y-coordinate)</li>
+</ul></li>
 </ul>
 
 <p><strong>Returns:</strong></p>
 
 <ul>
-<li>Passenger name: The name of a passenger in the list who is to be picked up.</li>
+<li>Passenger: The passenger in the list who is to be picked up. (i.e. passengers[1] or passengers[2])</li>
 </ul>
 
 <p><strong>Example:</strong></p>
 
 <pre><code>    function ai.foundPassengers(train, passengers)
+        print("I'll pick up passenger: " .. passengers[1].name)
+        print("Taking him to: " .. passenger[1].destX .. ", " .. passenger[1].destY)
         return passengers[1]
     end
 </code></pre>
@@ -189,7 +198,7 @@ The second part of this document lists functions that you can call in your code,
 <p><strong>Example:</strong></p>
 
 <pre><code>    function ai.foundDestination(train)
-        print("Dropping of my passenger @ " .. train.tileX .. ", " .. train.tileY)
+        print("Dropping of my passenger @ " .. train.x .. ", " .. train.y)
         dropPassenger(train)
     end
 </code></pre>
@@ -267,7 +276,7 @@ Note: This function is NOT called when one of your own trains take a passenger a
 
 <ul>
 <li>train: the train which has taken the passenger in. (Same as for chooseDirection)</li>
-<li>passenger: name of the passenger which has boarded a train.</li>
+<li>passenger: name of passenger who has boarded a train.</li>
 </ul>
 
 <p><strong>Returns:</strong></p>

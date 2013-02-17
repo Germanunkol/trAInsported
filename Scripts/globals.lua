@@ -90,17 +90,18 @@ POSSIBLE_MODES = {"Time", "Passengers"}
 POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
 
 RESOLUTIONS = {}
-RESOLUTIONS[1] = {width=640, height=480}
-RESOLUTIONS[2] = {width=800, height=600}
-RESOLUTIONS[3] = {width=1024, height=768}
-RESOLUTIONS[5] = {width=1280, height=960}
-RESOLUTIONS[4] = {width=1280, height=1024}
-RESOLUTIONS[6] = {width=1440, height=960}
-RESOLUTIONS[7] = {width=1600, height=1200}
-RESOLUTIONS[8] = {width=1680, height=1050}
-RESOLUTIONS[9] = {width=1920, height=1024}
-RESOLUTIONS[10] = {width=1920, height=1200}
-RESOLUTIONS[11] = {width=2048, height=1536}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=640, height=480}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=800, height=600}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1024, height=768}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1280, height=720}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1280, height=960}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1280, height=1024}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1440, height=960}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1600, height=1200}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1680, height=1050}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1920, height=1024}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=1920, height=1200}
+RESOLUTIONS[#RESOLUTIONS+1] = {width=2048, height=1536}
 
 -- tutorial:
 

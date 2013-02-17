@@ -19,6 +19,13 @@ function console.add( text, colour )
 		return
 	end
 	
+	local nextLine = nil
+	newLinePos = text:find("\n")
+	if newLinePos then
+		nextLine = text:sub(newLinePos+1, #text)
+		text = text:sub(1, newLinePos-1)
+	end
+	
 	local str = ""
 	if colour == nil then colour = {r=255,g=255,b=255} end
 	
@@ -46,6 +53,11 @@ function console.add( text, colour )
 	end
 	
 	consoleStartLine = math.floor(math.max(#consoleLines - console.numLines, 1))
+	
+	print("C:", text)
+	if nextLine then
+		console.add( nextLine, colour )
+	end
 end
 
 function console.flush()

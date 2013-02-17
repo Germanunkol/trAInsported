@@ -303,6 +303,7 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i].y = math.random(100)
 			end
 			
+			ai.newTrain(trainList[aiID][i])
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
 			return trainList[aiID][i]
 		end

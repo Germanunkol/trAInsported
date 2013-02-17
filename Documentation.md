@@ -228,7 +228,7 @@ Will be called whenever a new passenger spawns on the map, or if a passenger has
 
 ###function ai.passengerBoarded(train, passenger)###
 Will be called whenever a train of another player has taken a passenger aboard. You can use this function to make sure your trains no longer try to go to that passenger, if that was their plan.  
-Note: This function is NOT called when one of your own trains take a passenger aboard!  
+Note: This function is NOT called when one of your own trains takes a passenger aboard!  
 **Passed Arguments:**
 
 - train: the train which has taken the passenger in. (Same as for chooseDirection)
@@ -275,6 +275,20 @@ Prints the given objects to the ingame-console (make sure it's visible by pressi
 **Example:**
   
 		print("Sheldon likes trains!")
+		
+###clearConsole()###
+Clears the ingame console to make space for new Messages.  
+**Arguments:**
+
+- none
+
+**Returns:**
+
+- nothing
+
+**Example:**
+  
+		clearConsole()
 
 
 ###pairs(tbl)###
@@ -317,7 +331,7 @@ Returns the type of the given variable.
 
   
 ###pcall(chunk, args)###
-Will safely execute the code given by chunk (can be a function). This way, you can run code which might raise an error or be not working, without loosing control. In case there's an error in the code, you can safely handle the exception.  
+Will safely execute the code given by chunk (can be a function). This way, you can run code which might raise an error or might not be working correctly, without loosing control. In case there's an error in the code, you can safely handle the exception.  
 **Arguments:**
 
 - chunk: code to run, usually the name of the function

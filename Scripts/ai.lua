@@ -44,7 +44,8 @@ local function safelyLoadAI(chunk, scriptName, sb)
 	local func, message = loadstring( "TRAINSPORTED = true\n\n" .. chunk, scriptName)
 	debug.sethook()
 	if not func then
-		print("Could not load script: \n", message)
+		--print("Could not load script: \n", message)
+		console.add("Could not load script: (" .. scriptName .. "): " .. message, {r=255,g=50,b=50})
 		coroutine.yield()
 	end
 	print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_LOADING)
@@ -55,7 +56,8 @@ local function safelyLoadAI(chunk, scriptName, sb)
 	debug.sethook(newLineCountHook(MAX_LINES_LOADING), "l")
 	local ok, message = pcall(func)
 	if not ok then
-		print("Could not execute script: \n", message)
+		--print("Could not execute script: \n", message)
+		console.add("Could not execute script: (" .. scriptName .. "): " .. message, {r=255,g=50,b=50})
 		coroutine.yield()
 	end
 	debug.sethook()
@@ -69,7 +71,7 @@ function runAiFunctionCoroutine(f, ... )
 
 	--local ok, msg = pcall(f, ...)
 	args = {...}
-	local ok, msg = xpcall(function() return f(args) end, debug.traceback)
+	local ok, msg = xpcall(function() return f( unpack(args) ) end, debug.traceback)
 	if not ok then
 		--print("\tError found in your function!", msg)
 		if msg then console.add("Error found in your function: " .. msg, {r=255,g=50,b=50}) end
@@ -137,6 +139,7 @@ function ai.new(scriptName)
 	aiList[aiID].foundPassengers = sb.ai.foundPassengers
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
+	aiList[aiID].newTrain = sb.ai.newTrain
 	
 	return aiList[aiID].name, aiList[aiID].owner
 end
@@ -217,6 +220,39 @@ function ai.chooseDirection(train, possibleDirs)
 		return nil
 	end
 end
+
+
+function ai.newTrain(train)
+	--print("choosing dir:", train.aiID)
+	local result = nil
+	if aiList[train.aiID] then
+		if aiList[train.aiID].newTrain then
+			
+			local cr = coroutine.create(runAiFunctionCoroutine)
+			
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			if train.curPassenger then
+				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
+			end
+			
+			print("Bought Train:")
+			for k, v in pairs(tr) do
+				print(" ",k, v)
+				if type(v) == "table" then
+					for k2, v2 in pairs(v) do
+						print(" ", " ",k2, v2)
+					end
+				end
+			end
+			
+			ok, result = coroutine.resume(cr, aiList[train.aiID].newTrain, tr)
+			if not ok or coroutine.status(cr) ~= "dead" then
+				console.add(aiList[train.aiID].name .. ": Stopped function: ai.newTrain()", {r = 255,g=50,b=50})
+			end
+		end
+	end
+end
+
 
 
 function ai.blocked(train, possibleDirs, lastDir)

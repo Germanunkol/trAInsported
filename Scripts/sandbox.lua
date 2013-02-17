@@ -38,7 +38,6 @@ local function safeprint(aiID)
 	end
 end
 
-
 function sandbox.createNew(aiID)
 	sb = {}
 	
@@ -49,6 +48,8 @@ function sandbox.createNew(aiID)
 	sb.type = type
 	
 	sb.print = safeprint(aiID)
+	sb.clearConsole = console.flush
+	
 	sb.error = error
 	sb.pcall = pcall
 

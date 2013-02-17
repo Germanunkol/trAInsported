@@ -43,6 +43,19 @@ This event is called, at the beginning of the round. The current map is passed t
 			buyTrain(random(map.width), random(map.height))		-- place train at random position
 		end
 		
+###function ai.newTrain(train)###
+Called when the train you bought using buyTrain has successfully been created.
+**Passed Arguments:**
+
+- train: a Lua table representing the train. See ai.chooseDirection for details.
+
+**Example**
+
+		function ai.newTrain(train)
+			print("Bought new train:", train.name)
+			print("Train is starting at:", train.x, train.y)
+		end
+		
 ###function ai.chooseDirection(train, possibleDirections)###
 Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.
 

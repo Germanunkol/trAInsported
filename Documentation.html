@@ -46,6 +46,23 @@ The second part of this document lists functions that you can call in your code,
     end
 </code></pre>
 
+<h3>function ai.newTrain(train)</h3>
+
+<p>Called when the train you bought using buyTrain has successfully been created.
+<strong>Passed Arguments:</strong></p>
+
+<ul>
+<li>train: a Lua table representing the train. See ai.chooseDirection for details.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<pre><code>    function ai.newTrain(train)
+        print("Bought new train:", train.name)
+        print("Train is starting at:", train.x, train.y)
+    end
+</code></pre>
+
 <h3>function ai.chooseDirection(train, possibleDirections)</h3>
 
 <p>Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.</p>
@@ -271,7 +288,7 @@ The second part of this document lists functions that you can call in your code,
 <h3>function ai.passengerBoarded(train, passenger)</h3>
 
 <p>Will be called whenever a train of another player has taken a passenger aboard. You can use this function to make sure your trains no longer try to go to that passenger, if that was their plan. <br />
-Note: This function is NOT called when one of your own trains take a passenger aboard! <br />
+Note: This function is NOT called when one of your own trains takes a passenger aboard! <br />
 <strong>Passed Arguments:</strong></p>
 
 <ul>
@@ -329,6 +346,26 @@ This is a list of functions that are already specified and which you can call at
 <pre><code>    print("Sheldon likes trains!")
 </code></pre>
 
+<h3>clearConsole()</h3>
+
+<p>Clears the ingame console to make space for new Messages. <br />
+<strong>Arguments:</strong></p>
+
+<ul>
+<li>none</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<ul>
+<li>nothing</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>    clearConsole()
+</code></pre>
+
 <h3>pairs(tbl)</h3>
 
 <p>The standard Lua pairs value. See a Lua documentation for more examples. <br />
@@ -379,7 +416,7 @@ This is a list of functions that are already specified and which you can call at
 
 <h3>pcall(chunk, args)</h3>
 
-<p>Will safely execute the code given by chunk (can be a function). This way, you can run code which might raise an error or be not working, without loosing control. In case there's an error in the code, you can safely handle the exception. <br />
+<p>Will safely execute the code given by chunk (can be a function). This way, you can run code which might raise an error or might not be working correctly, without loosing control. In case there's an error in the code, you can safely handle the exception. <br />
 <strong>Arguments:</strong></p>
 
 <ul>

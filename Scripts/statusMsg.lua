@@ -4,6 +4,8 @@ local currentMsg = ""
 local currentErr = nil
 local currentTime = 0
 
+errorSound = love.audio.newSource("Sound/wobble_alert.wav")
+
 function statusMsg.init()
 	if not statusMsgBoxThread and not statusMsgBox then		-- only start thread once!
 		ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
@@ -135,6 +137,10 @@ function statusMsg.new(txt, err)
 	currentErr = err
 	currentMsg = txt
 	currentTime = 6
+	if err then
+		errorSound:rewind()
+		errorSound:play()
+	end
 end
 
 function statusMsg.display(dt)

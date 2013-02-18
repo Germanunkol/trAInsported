@@ -329,6 +329,7 @@ function handleDropOff(k)
 				if currentStep == k then
 					passengerDropoffCorrectlyEvent = nil
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 			passenger.printAll()

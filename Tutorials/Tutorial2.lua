@@ -676,6 +676,7 @@ function eventCounter(k)
 						tutorial.consoleEvent = nil
 						if currentStep == k then
 							nextTutorialStep()
+							tutorialBox.succeed()
 						end
 					end
 				end
@@ -692,6 +693,7 @@ function eventFirstChooseDirection(k)
 							tutorial.chooseDirectionEventCleanup = nil
 							if currentStep == k then
 								nextTutorialStep()
+								tutorialBox.succeed()
 							end
 						end
 					end
@@ -709,6 +711,7 @@ function eventChooseEast(k)
 						tutorial.reachedNewTileEvent = nil
 						if currentStep == k then
 							nextTutorialStep()
+							tutorialBox.succeed()
 						end
 					end
 				end
@@ -734,6 +737,7 @@ function eventChooseEastThenSouth(k)
 								tutorial.restartEvent = nil
 								if currentStep == k then
 									nextTutorialStep()
+									tutorialBox.succeed()
 								end
 							else
 								if currentStep == k then

@@ -86,8 +86,6 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		menu.exitOnly()
 	end
 	
-	
-	
 	ROUND_TIME = math.floor(maxTime)
 	GAME_TYPE = gameMode
 	ai.restart()	-- make sure aiList is reset!
@@ -165,7 +163,8 @@ end
 function map.restart()
 	
 	AIs = ai.restart()	-- get list of current ais, and remove the current ais.
-
+	print("old AIs:")
+	printTable(AIs)
 	stats.start( #AIs )
 	train.init()
 	

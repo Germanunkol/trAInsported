@@ -2,6 +2,9 @@ local tutorialBox = {}
 
 local tutorialBoxList = {}
 
+local checkmarkImage = love.graphics.newImage("Images/CheckMark.png")
+local succeedSound = love.audio.newSource("Sound/echo_affirm1.wav")
+
 -- remove tutorialBox box before quitting!
 function tutorialBoxEvent(box, eventToCall)
 	return function (args)
@@ -54,15 +57,30 @@ end
 function tutorialBox.show()
 	love.graphics.setColor(255,255,255,255)
 	for k, m in pairs(tutorialBoxList) do
-	love.graphics.setFont(FONT_STAT_MSGBOX)
+		love.graphics.setFont(FONT_STAT_MSGBOX)
 		love.graphics.draw(m.bg, m.x, m.y)
 		love.graphics.printf(m.text, m.x + 30, m.y + 15, m.bg:getWidth()-60, "left")
 		for l, b in pairs(m.buttons) do
 			button.renderSingle(b)
 		end
+		if os.time() - tutorialBox.showCheckMark < 5 and os.time() - tutorialBox.showCheckMark > 0 then
+			x = 
+			love.graphics.draw(tutorialBoxCheckMark, m.x + m.bg:getWidth() - tutorialBoxCheckMark:getWidth()/2, m.y - tutorialBoxCheckMark:getHeight()/2 +20)
+			love.graphics.draw(checkmarkImage, m.x + m.bg:getWidth() - checkmarkImage:getWidth()/2, m.y - checkmarkImage:getHeight()/2 + 20)
+			if tutorialBox.playSound then
+				succeedSound:rewind()
+				succeedSound:play()
+				tutorialBox.playSound = false
+			end
+		end
 	end
 end
 
+function tutorialBox.succeed( inSeconds )
+	inSeconds = inSeconds or 1
+	tutorialBox.showCheckMark = os.time() + inSeconds
+	tutorialBox.playSound = true
+end
 
 function tutorialBox.handleClick()
 	local mX, mY = love.mouse.getPosition()
@@ -98,6 +116,9 @@ end
 
 
 function tutorialBox.init()
+	
+	tutorialBox.showCheckMark = 0
+	
 	
 	if not tutorialBoxBGThread and not tutorialBoxBG then		-- only start thread once!
 		ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
@@ -139,10 +160,51 @@ function tutorialBox.init()
 			end
 		end
 	end
+	
+	if not tutorialBoxCheckMarkThread and not tutorialBoxCheckMark then		-- only start thread once!
+		ok, tutorialBoxCheckMark = pcall(love.graphics.newImage, "tutorialBoxCheckMark.png")
+		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+			tutorialBoxCheckMark = nil
+			loadingScreen.addSection("Rendering Tut Box (Checkmark)")
+			tutorialBoxCheckMarkThread = love.thread.newThread("tutorialBoxCheckMarkThread", "Scripts/renderImageBox.lua")
+			tutorialBoxCheckMarkThread:start()
+	
+			tutorialBoxCheckMarkThread:set("width", CHECKMARK_WIDTH )
+			tutorialBoxCheckMarkThread:set("height", CHECKMARK_HEIGHT )
+			tutorialBoxCheckMarkThread:set("shadow", true )
+			tutorialBoxCheckMarkThread:set("shadowOffsetX", 6 )
+			tutorialBoxCheckMarkThread:set("shadowOffsetY", 1 )
+			tutorialBoxCheckMarkThread:set("colR", MSG_BOX_R )
+			tutorialBoxCheckMarkThread:set("colG", MSG_BOX_G )
+			tutorialBoxCheckMarkThread:set("colB", MSG_BOX_B )
+			tutorialBoxCheckMarkThread:set("alpha", 220 )
+		end
+	else
+		if not tutorialBoxCheckMark then	-- if there's no button yet, that means the thread is still running...
+		
+			percent = tutorialBoxCheckMarkThread:get("percentage")
+			if percent then
+				loadingScreen.percentage("Rendering Tut Box (Checkmark)", percent)
+			end
+			err = tutorialBoxCheckMarkThread:get("error")
+			if err then
+				print("Error in thread:", err)
+			end
+		
+			status = tutorialBoxCheckMarkThread:get("status")
+			if status == "done" then
+				tutorialBoxCheckMark = tutorialBoxCheckMarkThread:get("imageData")		-- get the generated image data from the thread
+				tutorialBoxCheckMark:encode("tutorialBoxCheckMark.png")
+				tutorialBoxCheckMark = love.graphics.newImage(tutorialBoxCheckMark)
+				tutorialBoxCheckMarkThread = nil
+			end
+		end
+	end
+	
 end
 
 function tutorialBox.initialised()
-	if tutorialBoxBG then
+	if tutorialBoxBG and tutorialBoxCheckMark then
 		return true
 	end
 end

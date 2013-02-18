@@ -399,11 +399,15 @@ else
 		love.filesystem.mkdir("AI")
 		
 		AI_DIRECTORY = love.filesystem.getSaveDirectory()
-		if AI_DIRECTORY:find("/") == 1 then
+		AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
+		--[[if AI_DIRECTORY:find("/") == 1 then		-- Unix style!!
 			AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
 		else
 			AI_DIRECTORY = AI_DIRECTORY .. "\\AI\\"
-		end
+		end]]--
+		
+		print("Will look for AIs in:",AI_DIRECTORY)
+		
 	end
 
 	function finishStartupProcess()

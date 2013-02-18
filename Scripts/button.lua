@@ -12,6 +12,8 @@ local buttonLevel = 1
 local buttonOver = nil
 local buttonOff = nil
 
+buttonClickSound = love.audio.newSource("Sound/blip_click.wav", "static")
+
 function button.getPriority()
 	return buttonLevel
 end
@@ -81,11 +83,14 @@ function button.calcMouseHover()
 	end
 end
 
+
 function button.handleClick()
 	local hit = false
 	for k, b in pairs(buttonList) do
 		if b.mouseHover and b.event and not b.invisible then
 			b.event(b.eventArgs)
+			buttonClickSound:rewind()
+			buttonClickSound:play()
 			hit = true
 		end
 	end

@@ -395,6 +395,7 @@ function waitingForPassengersEvent(k)
 				if currentStep == k then	-- if I haven't gone back to a previous step
 					-- tutorial.reachedNewTileEvent = nil
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 		end
@@ -411,6 +412,7 @@ function enoughMoneyEvent(k)
 					if currentStep >= k then	-- if I haven't gone back to a previous step
 						tutorial.trainPlacingEvent = nil
 						nextTutorialStep()
+						tutorialBox.succeed()
 					end
 				end
 			end
@@ -428,6 +430,7 @@ function waitFor10Passengers(k)
 				currentTutBox.text = "You now own two trains!\nNow sit back, relax and watch your trains carry 10 passengers to their destination. You've done a good job!\n\n" .. numPassengers .. " out of 10 transported."
 				if numPassengers >= 10 then
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 		end

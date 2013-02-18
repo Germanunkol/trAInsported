@@ -75,6 +75,8 @@ tut 4:
 [x] Make "Last Match" logging use only one querry...
 [x] Log Date along with "Last Match" and display on website
 [x] screen resolution set at first start!
+- Tutorial "tutorial continued" when pressed F1 !
+- Tutorial "cursor keys"/"arrow keys"
 
 
 **Maybe**

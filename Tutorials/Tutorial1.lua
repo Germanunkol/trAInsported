@@ -142,6 +142,10 @@ function tutorial.start()
 	
 	ai.restart()	-- make sure aiList is reset!
 	
+	
+	print("AI DIR:",AI_DIRECTORY)
+	print("AI NAME:",aiFileName)
+	
 	ok, msg = pcall(ai.new, AI_DIRECTORY .. aiFileName)
 	if not ok then
 		print("Err: " .. msg)
@@ -248,7 +252,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The folder is located at: " .. AI_DIRECTORY .. "\n\n(Any normal text editor should do, but there's some which will help you when writing code. See the documentation for details).\nIf you can't find the file in the folder, make sure the game is located in a place where you have writing permissions!"), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you can't find the folder, it might be hidden. Either type the folder path into your file browser or search the internet for 'show hidden files [name of your operating system]'. For example: 'show hidden files Windows 7'\nAlso, any normal text editor should do, but there's some which will help you when writing code. See the documentation for details.\nIf you can't find the file in the folder, make sure the game is located in a place where you have writing permissions!"), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -425,6 +429,7 @@ function setF1Event(k)
 					tutorial.f1Event = nil
 					if currentStep == k then
 						nextTutorialStep()
+						tutorialBox.succeed()	--play succeed sound!
 					end
 				end
 			end
@@ -442,6 +447,7 @@ function setFirstPrintEvent(k)
 						tutorial.consoleEvent = nil
 						if currentStep == k then
 							nextTutorialStep()
+							tutorialBox.succeed()
 						end
 					end
 				end
@@ -460,6 +466,7 @@ function setTrainPlacingEvent(k)
 				tutorial.numPassengers = 0
 				if currentStep == k then
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 		end
@@ -491,6 +498,7 @@ function pickUpPassengerStep2(k)
 				tutorial.passengerPickupEvent = nil
 				if currentStep == k then
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 		end
@@ -503,6 +511,7 @@ function dropOffPassengerEvent(k)
 				tutorial.passengerDropoffCorrectlyEvent = nil
 				if currentStep == k then
 					nextTutorialStep()
+					tutorialBox.succeed()
 				end
 			end
 			tutorial.passengerDropoffWronglyEvent = function()		-- called when the passenger is dropped off elsewhere

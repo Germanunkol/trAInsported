@@ -53,8 +53,9 @@ function console.add( text, colour )
 	end
 	
 	consoleStartLine = math.floor(math.max(#consoleLines - console.numLines, 1))
-	
-	print("C:", text)
+	if not DEDICATED then
+		print("C:", text)
+	end
 	if nextLine then
 		console.add( nextLine, colour )
 	end

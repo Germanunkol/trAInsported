@@ -326,7 +326,7 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 		for k, pass in pairs(p) do
 			if pass.name == result.name then
 				passenger.boardTrain(train, pass.name)
-				print("boarded")
+				--print("boarded")
 				break
 			end
 		end

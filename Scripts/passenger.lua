@@ -239,7 +239,7 @@ function passenger.leaveTrain(aiID)
 			
 			stats.droppedOff( aiID, tr.ID )
 			
-			print("dropped off: " .. tr.curPassenger.name)
+			--print("dropped off: " .. tr.curPassenger.name)
 			stats.passengerDroppedOff( tr.curPassenger )
 			
 			-- check if I have reached my destination

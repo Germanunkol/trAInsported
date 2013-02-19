@@ -17,14 +17,25 @@ end
 -- scan a directory and return all the file names in as a table of strings:
 function scandir(directory)
 	local i, t, popen = 0, {}, io.popen
-	for filename in popen('ls -a "'..directory..'"'):lines() do
-		i = i + 1
-		t[i] = filename
-	end
-	if i == 0 then	-- am I on windowze?
-		for filename in popen('dir "'..directory..'" /b /ad'):lines() do
+	
+	if string.sub(love.filesystem.getSaveDirectory(), 1, 1) == "/" then		-- assume unix!
+		for filename in popen('ls "'..directory..'"'):lines() do
 			i = i + 1
 			t[i] = filename
+			_, pos = filename:find(".* ")		-- find last occurance of space
+		pos = pos or 0
+		t[i] = filename:sub(pos+1, #filename)
+		print("dir returned:", filename)
+			print("ls -a returned:", filename)
+		end
+	else
+		for filename in popen('dir "'..directory ..'" /B'):lines() do
+			i = i + 1
+		
+			_, pos = filename:find(".* ")		-- find last occurance of space
+			pos = pos or 0
+			t[i] = filename:sub(pos+1, #filename)
+			print("dir returned:", filename)
 		end
 	end
 	return t

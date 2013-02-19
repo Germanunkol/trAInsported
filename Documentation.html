@@ -48,7 +48,7 @@ The second part of this document lists functions that you can call in your code,
 
 <h3>function ai.newTrain(train)</h3>
 
-<p>Called when the train you bought using buyTrain has successfully been created.
+<p>Called when the train you bought using buyTrain has successfully been created. <br />
 <strong>Passed Arguments:</strong></p>
 
 <ul>
@@ -65,7 +65,7 @@ The second part of this document lists functions that you can call in your code,
 
 <h3>function ai.chooseDirection(train, possibleDirections)</h3>
 
-<p>Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.</p>
+<p>Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.  </p>
 
 <p><strong>Passed Arguments</strong></p>
 
@@ -472,9 +472,10 @@ This is a list of functions that are already specified and which you can call at
     end
 </code></pre>
 
-<h3>table</h3>
+<h3>table, math, string functions</h3>
 
-<p>You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.</p>
+<p>You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.
+Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) and the string functions (string.sub, string.find etc).</p>
 
 <h3>dropPassenger(train)</h3>
 

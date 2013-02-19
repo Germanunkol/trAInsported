@@ -82,6 +82,11 @@ function tutorialBox.succeed( inSeconds )
 	tutorialBox.playSound = true
 end
 
+function tutorialBox.succeedOff()
+	tutorialBox.playSound = false
+	tutorialBox.showCheckMark = os.time() - 100		-- set back: don't display checkmark!
+end
+
 function tutorialBox.handleClick()
 	local mX, mY = love.mouse.getPosition()
 	

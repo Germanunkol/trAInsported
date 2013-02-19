@@ -391,9 +391,10 @@ Throws an error. If the function in which the error is thrown is called using pc
 			print("Error: " .. msg)
 		end
 		
-###table###
+###table, math, string functions###
 You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.
-
+Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) and the string functions (string.sub, string.find etc).
+There is a few exceptions, but most functions in these libraries are available.
 
 ###dropPassenger(train)###
 Will drop of the passenger of the train at its current position.

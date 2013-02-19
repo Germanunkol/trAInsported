@@ -78,7 +78,6 @@ if INVALID_DIRECTORY then
 end
 
 if CL_DIRECTORY then
-		
 	ok, lfs = pcall(require, "lfs")
 	if not ok then 
 		print("Error: Could not find Lua filesystem. Please install this to use the -d (or --directory) feature!")
@@ -368,6 +367,9 @@ else
 	-------------------------------
 	-- Main function, runs at startup:
 	function love.load(args)
+	
+		print("path:",love.filesystem.getSaveDirectory() .. "/AI/")
+		print ("Is dir:",love.filesystem.isDirectory(love.filesystem.getSaveDirectory() .. "/AI/"))
 	
 		-- load screen resolution from config file:
 		setupScreenResolution()

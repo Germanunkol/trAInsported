@@ -118,7 +118,7 @@ function ai.new(scriptName)
 	end
 	
 	--set up the ai which the user's script will have access to:
-	sb = sandbox.createNew(aiID)
+	sb = sandbox.createNew(aiID, scriptName)
 	sb.ai = {}
 	
 	--this first coroutine compiles and runs the source code of the user's AI script:
@@ -421,11 +421,25 @@ function ai.findAvailableAIs()
 			if file:find("Backup.lua") then
 				files[k] = nil
 			else
-				s, e = file:find(".lua")
-				if e == #file then
-					files[k] = AI_DIRECTORY .. files[k]
-				else
+				if file == "." or file == ".." then
 					files[k] = nil
+				else
+					s, e = file:find(".lua")
+					if e == #file then
+						files[k] = AI_DIRECTORY .. files[k]
+					else
+						--check if this was a zip file! in this case, it would be:
+						--	folderName
+						--	folderName/folderName.lua
+						--	folderName/possible other include files and folders.
+						f = io.open(AI_DIRECTORY .. files[k] .. "/" .. files[k] .. ".lua")
+						if f then
+							files[k] = AI_DIRECTORY .. files[k] .. "/" .. files[k] .. ".lua"
+							f:close()
+						else
+							files[k] = nil
+						end
+					end
 				end
 			end
 		end

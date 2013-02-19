@@ -67,6 +67,7 @@ end
 ]])
 
 function nextTutorialStep()
+	tutorialBox.succeedOff()
 	currentStep = currentStep + 1
 	showCurrentStep()
 end
@@ -252,7 +253,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you can't find the folder, it might be hidden. Either type the folder path into your file browser or search the internet for 'show hidden files [name of your operating system]'. For example: 'show hidden files Windows 7'\nAlso, any normal text editor should do, but there's some which will help you when writing code. See the documentation for details.\nIf you can't find the file in the folder, make sure the game is located in a place where you have writing permissions!"), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you can't find the folder, it might be hidden. Either type the folder path into your file browser or search the internet for 'show hidden files [name of your operating system]'. For example: 'show hidden files Windows 7'\nAlso, any normal text editor should do, but there's some which will help you when writing code. See the documentation for details."), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}

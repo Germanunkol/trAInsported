@@ -88,6 +88,7 @@ tut 4:
 - game mode where map is NOT passed to ai.init? (Fog of war?)
 - Repair costs?
 - Split up rendering of map images into multiple threads?
+- dither full screen
 
 **Website**
 - rank of players?

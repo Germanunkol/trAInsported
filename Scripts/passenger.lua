@@ -184,7 +184,7 @@ function passenger.find(x, y)
 end
 
 function passenger.boardTrain(train, name)		-- try to board the train
-	print("boarding:", name)
+	--print("boarding:", name)
 	for k, p in pairs(passengerList) do
 		if p.name == name then	-- found the passenger in the list!
 			for k, v in pairs(passengerPositions[p.tileX][p.tileY]) do		-- remove me from the field so that I can't be picked up twice:

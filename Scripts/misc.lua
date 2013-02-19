@@ -22,11 +22,7 @@ function scandir(directory)
 		for filename in popen('ls "'..directory..'"'):lines() do
 			i = i + 1
 			t[i] = filename
-			_, pos = filename:find(".* ")		-- find last occurance of space
-		pos = pos or 0
-		t[i] = filename:sub(pos+1, #filename)
-		print("dir returned:", filename)
-			print("ls -a returned:", filename)
+			--print("ls -a returned:", filename)
 		end
 	else
 		for filename in popen('dir "'..directory ..'" /B'):lines() do
@@ -50,7 +46,6 @@ function setupScreenResolution()
 	local ok, content = pcall(love.filesystem.read,CONFIG_FILE)
 	local x, y = nil,nil
 	if ok and content then
-		print("found file")
 		local s,e = content:find("resolution_x ?= ?.-\n")
 		if s then
 			substr = content:sub(s,e)

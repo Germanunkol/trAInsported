@@ -108,7 +108,9 @@ function simulation.stop()
 	mapImage = nil
 	simulationRunning = false
 	simulationMap = nil
-	map.endRound()
+	if curMap then
+		map.endRound()
+	end
 end
 
 --[[

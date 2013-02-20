@@ -380,12 +380,9 @@ end
 
 
 function ai.enoughMoney(aiID, cash)
-	print("enough money", aiID, cash)
 	local result = nil
 	if aiList[aiID] then
-		print("enough money 2")
 		if aiList[aiID].enoughMoney then
-			print("enough money 3")
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, cash)
@@ -393,7 +390,6 @@ function ai.enoughMoney(aiID, cash)
 				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".enoughMoney()")
 			end
-			print("enough money 4")
 		end
 	end
 end

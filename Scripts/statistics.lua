@@ -578,13 +578,14 @@ function statistics.generateStatWindows()
 		end
 		i = i + 1
 	end
-	
+		
 	if CL_CHART_DIRECTORY then
 		local points = {}
 		for i = 1,#aiStats do
 			points[i] = aiStats[i].chartPassengers
 			points[i].name = aiStats[i].name
 		end
+		--printTable(points)
 		chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 500, 250, points, "seconds", "passengers")
 	end
 end
@@ -711,6 +712,7 @@ function statistics.start( ais )
 		
 		if CL_CHART_DIRECTORY then
 			aiStats[i].chartPassengers = {}
+			table.insert(aiStats[i].chartPassengers,{x=0,y=0})
 		end
 	end
 	if not DEDICATED then

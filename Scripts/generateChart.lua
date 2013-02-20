@@ -10,7 +10,7 @@ backgroundColor = "#321E14"
 
 local paddingLeft = 45
 local paddingBottom = 40
-local paddingTop = 10
+local paddingTop = 30
 local paddingRight = 45
 
 function addAttribute(str, name, value)
@@ -64,8 +64,9 @@ end
 
 function writeHeader(width, height)
 	s ='<?xml version="1.0" standalone="no"?>\n'
-	s = s .. '<svg width="' .. width .. '" height="' .. height .. '" viewBox="0 0 ' .. width .. ' ' .. height .. '" style="background-color: ' .. backgroundColor .. '" xmlns="http://www.w3.org/2000/svg" version="1.1"\n'
+	s = s .. '<svg width="' .. width .. '" height="' .. height .. '" viewBox="0 0 ' .. width .. ' ' .. height .. '" xmlns="http://www.w3.org/2000/svg" version="1.1"\n'
 	s = s .. 'xmlns:xlink="http://www.w3.org/1999/xlink">\n'
+	s = s .. '<rect border-radius="10" rx="20" ry="20" width="' .. width .. '" height="' .. height .. '" fill="' .. backgroundColor .. '" stroke-width="3" />\n'
 	return s
 end
 
@@ -78,7 +79,7 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	local stepSize = h/10
 	for y = paddingTop, height-paddingBottom, stepSize do
 		if (h-(y-paddingTop)) > 0 then
-			s = s .. "\t" .. lineToSVG(paddingLeft, y, width, y, "grey", 1)
+			s = s .. "\t" .. lineToSVG(paddingLeft, y, width-paddingRight, y, "grey", 1)
 			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, math.floor((h-(y-paddingTop))/h*maxY), "right", nil, "white")
 		end
 	end
@@ -92,8 +93,8 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	s = s .. "\n"
 	s = s .. "<!-- Axis: -->\n"
 	
-	s = s .. "\t" .. lineToSVG(paddingLeft, height-paddingBottom, width, height-paddingBottom, "white", 3)
-	s = s .. "\t" .. lineToSVG(paddingLeft, 0, paddingLeft, height-paddingBottom, "white", 3)
+	s = s .. "\t" .. lineToSVG(paddingLeft, height-paddingBottom, width-paddingRight, height-paddingBottom, "white", 3)
+	s = s .. "\t" .. lineToSVG(paddingLeft, paddingTop, paddingLeft, height-paddingBottom, "white", 3)
 	
 	return s
 end
@@ -135,8 +136,8 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		end
 		
 		chartContent = chartContent .. writeCoordinateSystem(width, height, maxX, maxY)
-		chartContent = chartContent .. textToSVG(12, 10, 12, yLabel, "right", -90)
-		chartContent = chartContent .. textToSVG(width-10, height-10, 12, xLabel, "right")
+		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
+		chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
 		
 		animSpeed = animationTime*width/maxX
 		

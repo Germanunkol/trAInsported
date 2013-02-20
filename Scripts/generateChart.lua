@@ -78,7 +78,7 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	for y = paddingTop, height-paddingBottom, stepSize do
 		if (h-(y-paddingTop)) > 0 then
 			s = s .. "\t" .. lineToSVG(paddingLeft, y, width, y, "grey", 1)
-			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, 0.1*math.floor(10*(h-(y-paddingTop))/h*maxY), "right", nil, "white")
+			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, math.floor((h-(y-paddingTop))/h*maxY), "right", nil, "white")
 		end
 	end
 	

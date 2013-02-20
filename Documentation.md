@@ -148,7 +148,7 @@ Called after a train was blocked by another train and can't move in that directi
 
 
 ###function ai.foundPassengers(train, passengers)###
-This function is called when a train arrives at a position where passengers are waiting to be picked up. If one of the passengers in the list is returned, then this passenger is picked up (but only if the train does not have a passenger at the moment). If you want to pick up a passenger but you're already trainsporting another passenger, you can drop of the current passenger using the function 'dropPassenger'.  
+This function is called when a train arrives at a position where passengers are waiting to be picked up. If one of the passengers in the list is returned, then this passenger is picked up (but only if the train does not have a passenger at the moment). If you want to pick up a passenger but you're already trainsporting another passenger, you can drop the current passenger using the function 'dropPassenger'.  
 **Passed Arguments:**
 
 - train: the train which has arrived at a position where passengers are waiting. Same as above (see ai.chooseDirection)

@@ -62,7 +62,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 			maxTime = FALLBACK_ROUND_TIME
 		end
 		
-		gameMode = 1 --math.random(2)
+		gameMode = 2 --math.random(2)
 		AIs = chosenAIs
 		
 		--IMPORTANT!
@@ -276,9 +276,9 @@ function map.generate(width, height, seed, tutorialMap)
 
 	
 		if tutorialMap then
-			print("Generating new tutorial map. With: " .. tutorialMap.width .. " Height: " .. tutorialMap.height)
+			print("Generating new tutorial map. Width: " .. tutorialMap.width .. " Height: " .. tutorialMap.height)
 		else
-			print("Generating new map. With: " .. width .. " Height: " .. height)
+			print("Generating new map. Width: " .. width .. " Height: " .. height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
 			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!

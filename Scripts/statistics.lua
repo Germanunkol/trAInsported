@@ -579,6 +579,12 @@ function statistics.generateStatWindows()
 		i = i + 1
 	end
 		
+	if not DEDICATED and CL_CHART_DIRECTORY then
+		statistics.generateChart()
+	end
+end
+
+function statistics.generateChart()
 	if CL_CHART_DIRECTORY then
 		local points = {}
 		for i = 1,#aiStats do
@@ -586,7 +592,9 @@ function statistics.generateStatWindows()
 			points[i].name = aiStats[i].name
 		end
 		--printTable(points)
-		chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 500, 250, points, "seconds", "passengers")
+		if #points > 0 then
+			chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 500, 250, points, "seconds", "passengers")
+		end
 	end
 end
 

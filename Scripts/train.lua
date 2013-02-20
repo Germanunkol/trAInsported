@@ -116,13 +116,11 @@ end
 
 function train.buyNew(aiID)
 	return function (posX, posY, dir)
-		print("ATTEMPT TO BUY NEW TRAIN", aiID, posX, posY, dir)
 		if type(posX) == "number" and type(posY) == "number" then
 			posX = math.floor(clamp(posX, 1, curMap.width))
 			posY = math.floor(clamp(posY, 1, curMap.height))
 			
 			if stats.getMoney(aiID) >= TRAIN_COST then
-				print("Bought new Train", aiID, posX, posY)
 				stats.subMoney(aiID, TRAIN_COST)
 				table.insert(newTrainQueue, {aiID=aiID, posX=posX, posY=posY, dir=dir})
 				if tutorial and tutorial.trainPlacingEvent then

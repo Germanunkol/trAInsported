@@ -40,6 +40,7 @@ if INVALID_PORT then
 	print("Invalid port number given.")
 	print("Usage: -p PORTNUMBER")
 	love.event.quit()
+	return
 else
 	if CL_PORT then
 		PORT = CL_PORT
@@ -53,6 +54,7 @@ if INVALID_MYSQL then
 	print("Example: --mysql testUser,myPassword")
 	print("Example 2: --mysql testUser,myPassword,192.158.1.20,6001")
 	love.event.quit()
+	return
 end
 
 if INVALID_MAPSIZE then
@@ -60,6 +62,7 @@ if INVALID_MAPSIZE then
 	print("Range is " .. MAP_MINIMUM_SIZE + 1 .. " to 100.")
 	print("Example: --mapsize 30")
 	love.event.quit()
+	return
 elseif MAP_SIZE then
 	MAP_MAXIMUM_SIZE = MAP_SIZE
 end
@@ -69,6 +72,7 @@ if INVALID_MYSQL_DATABASE then
 	print("Correct would be: --mysqlDB DATABASE")
 	print("Default database is 'trAInsported'.")
 	love.event.quit()
+	return
 end
 
 if INVALID_DIRECTORY then
@@ -76,12 +80,14 @@ if INVALID_DIRECTORY then
 	print("--directory is only available on Linux Systems.")
 	print("Use:\n--directory /path/to/ais")
 	love.event.quit()
+	return
 end
 
 if INVALID_CHART_DIRECTORY then
 	print("Wrong usage of --chart!")
 	print("Use:\n--chart /path/to/folder")
 	love.event.quit()
+	return
 end
 
 if CL_DIRECTORY then
@@ -274,6 +280,8 @@ if DEDICATED then
 				if timeUntilNextMatch <= 0 then
 				
 					print("")		--jump to newline!
+					
+					stats.generateChart()
 					
 					io.flush()
 					io.write( "Starting next match in 0.00 seconds.","\r")

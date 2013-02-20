@@ -309,10 +309,12 @@ end
 
 function randomizeTable(tbl, n)
 	n = n or #tbl
+	print("During 6")
 	for i = 1,n do
 		local j = math.random(i, n)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
+	print("During 7")
 	return tbl
 end
 
@@ -360,7 +362,6 @@ end
 
 function randomizeTable(tbl)
 	for i = 1,#tbl do
-		print(#tbl)
 		if #tbl > 1 then
 			index1 = math.random(#tbl)
 			index2 = math.random(#tbl)

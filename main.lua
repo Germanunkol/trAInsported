@@ -93,7 +93,6 @@ if CL_DIRECTORY then
 						local attr = lfs.attributes (f)
 						assert (type(attr) == "table")
 						if attr.mode == "directory" then
-							--print ("Opening: \t "..f)
 							tempFiles = findAIs (f)
 							for k, tF in pairs(tempFiles) do
 								
@@ -103,13 +102,9 @@ if CL_DIRECTORY then
 						else
 							local s,e = f:find(".lua")
 							if e == #f then
-								--print("Found: \t" .. f)
 								files[i] = f
 								i = i + 1
 							end
-						  --  for name, value in pairs(attr) do
-							--    print (name, value)
-						   -- end
 						end
 					end
 				end
@@ -367,9 +362,6 @@ else
 	-------------------------------
 	-- Main function, runs at startup:
 	function love.load(args)
-	
-		print("path:",love.filesystem.getSaveDirectory() .. "/AI/")
-		print ("Is dir:",love.filesystem.isDirectory(love.filesystem.getSaveDirectory() .. "/AI/"))
 	
 		-- load screen resolution from config file:
 		setupScreenResolution()

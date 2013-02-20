@@ -163,7 +163,7 @@ end
 function map.restart()
 	
 	AIs = ai.restart()	-- get list of current ais, and remove the current ais.
-	print("old AIs:")
+
 	printTable(AIs)
 	stats.start( #AIs )
 	train.init()
@@ -311,7 +311,7 @@ function map.generate(width, height, seed, tutorialMap)
 		while str do
 			print(str, mapGenerateMsgNumber)
 			if prevStr == str and str == "I'm done!" then
-				print("same message twice")
+				print("Error: Same message twice!")
 				love.event.quit()
 			end
 			prevStr = str
@@ -532,7 +532,6 @@ function map.getIsTileOccupied(x, y, f, t)
 end
 
 function map.setTileOccupied(x, y, f, t)
-	--print("Occupying: ", f, t)
 	if f and t then
 		if not curMapOccupiedTiles[x][y][f..t] then
 			curMapOccupiedTiles[x][y][f..t] = 1
@@ -549,7 +548,6 @@ function map.setTileOccupied(x, y, f, t)
 end
 
 function map.resetTileOccupied(x, y, f, t)
-	--print("Freeing: ", f , t)
 	if f and t then
 		if not curMapOccupiedTiles[x][y][f..t] then 
 			error("Trying to free invalid occupation!: " .. f .. "," .. t)
@@ -1068,7 +1066,6 @@ function map.getRailPath(tileX, tileY, dir, prevDir)
 	elseif curMapRailTypes[tileX][tileY] == 15 then	-- S
 		return pathSS, "S"
 	end
-	print("Path not found", tileX, tileY)
 	return pathNS, "S"		--fallback, should never happen!
 end
 

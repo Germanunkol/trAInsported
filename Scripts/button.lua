@@ -187,7 +187,6 @@ function button.init()
 	if not buttonOverThread and not buttonOver then		-- only start thread once!
 	
 		ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
-		print(buttonOver)
 		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOver = nil
 			loadingScreen.addSection("Rendering Activated Button")
@@ -232,7 +231,6 @@ function button.init()
 	
 		
 		ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
-		print(buttonOffSmall)
 		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOffSmall = nil
 			loadingScreen.addSection("Rendering Deactivated Button (small)")
@@ -273,7 +271,6 @@ function button.init()
 	if not buttonOverSmallThread and not buttonOverSmall then		-- only start thread once!
 	
 		ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
-		print(buttonOverSmall)
 		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
 			buttonOverSmall = nil
 			loadingScreen.addSection("Rendering Activated Button (small)")

@@ -111,6 +111,9 @@ function ai.new(scriptName)
 			aiList[i].scriptName = scriptName
 			
 			local s,e, owner = scriptName:find(".*/(.-)/")
+			if owner == name then
+				s,e, owner = scriptName:find(".*/(.-)/(.-)/")
+			end
 			print("OWNER:",owner)
 			aiList[i].owner = owner or "Unknown"
 			break

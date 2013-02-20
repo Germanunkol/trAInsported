@@ -362,7 +362,6 @@ function menu.newRound()
 	chosenMode = nil
 	
 	aiFiles = ai.findAvailableAIs()
-	
 	x = defaultMenuX
 	y = defaultMenuY
 	menuButtons.buttonReturn = button:new(x, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Return", menu.init, nil)
@@ -377,7 +376,7 @@ function menu.newRound()
 		e = e or 0
 		menuButtons[fileName] = button:newSmall(x, y, fileName:sub(e+1, #fileName-4), selectAI, fileName, nil, nil, "Choose this AI for the match?")
 		y = y + 37
-		if y > love.graphics.getWidth() - 150 then
+		if y > love.graphics.getHeight() - 150 then
 			if jumped then		-- no more space! Only one jump.
 				break
 			end
@@ -413,7 +412,6 @@ function menu.newRound()
 		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, modeOption, selectMode, modeOption, nil, nil, POSSIBLE_MODES_TOOLTIPS[k])
 		y = y + 37
 	end
-	
 end
 
 
@@ -532,7 +530,7 @@ function menu.settings()
 		res = modes[k]
 		menuButtons[k] = button:newSmall(x, y, res.width .. "x" .. res.height, selectResolution, res, nil, nil, "Change resolution")
 		y = y + 37
-		if y > love.graphics.getWidth() - 150 then
+		if y > love.graphics.getHeight() - 150 then
 			if jumped then		-- no more space! Only one jump.
 				break
 			end

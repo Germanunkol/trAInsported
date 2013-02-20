@@ -90,7 +90,7 @@ POSSIBLE_MODES = {"Time", "Passengers"}
 POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
 
 RESOLUTIONS = {}
-RESOLUTIONS[#RESOLUTIONS+1] = {width=640, height=480}
+--RESOLUTIONS[#RESOLUTIONS+1] = {width=640, height=480}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=800, height=600}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=1024, height=768}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=1280, height=720}

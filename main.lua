@@ -32,6 +32,7 @@ ai = require("Scripts/ai")
 require("Scripts/TSerial")
 pSpeach = require("Scripts/passengerSpeach")
 log = require("Scripts/databaseLog")
+chart = require("Scripts/generateChart")
 
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:
@@ -74,6 +75,12 @@ if INVALID_DIRECTORY then
 	print("Wrong usage of --directory!")
 	print("--directory is only available on Linux Systems.")
 	print("Use:\n--directory /path/to/ais")
+	love.event.quit()
+end
+
+if INVALID_CHART_DIRECTORY then
+	print("Wrong usage of --chart!")
+	print("Use:\n--chart /path/to/folder")
 	love.event.quit()
 end
 

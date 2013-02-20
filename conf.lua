@@ -103,6 +103,21 @@ for k, a in pairs(arg) do
 end
 
 for k, a in pairs(arg) do
+	if a == "--chart" then
+		INVALID_CHART_DIRECTORY = true
+		if type(k) == "number" then
+			if arg[k+1] then
+				CL_CHART_DIRECTORY = arg[k+1]
+				INVALID_CHART_DIRECTORY = false;
+				arg[k+1] = nil
+				arg[k] = nil
+			end
+		end
+		break
+	end
+end
+
+for k, a in pairs(arg) do
 	if a == "--match_time" or a == "-m" then
 		INVALID_MATCH_TIME = true
 		if type(k) == "number" then

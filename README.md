@@ -37,10 +37,12 @@ C:\Program/ Files\Love\Love.exe C:\Games\trAInsported --console --server -p 4242
 - **-c TIME** or **--cooldown TIME**: Time between two matches on Server. (TIME in seconds, minimum 10. - Note: if this is too low, watching clients won't be able to view the match results. 20 seconds is usually a good value.) [Server]
 - **--mapsize NUMBER**: Maximum number of tiles the map can be in width and height. Default: 50.
 - **--console** Needed on Windows if you want a console. On Unix-Systems, the standard console will be used for output. [Client and Server]
-- **--render** Forces game to rerender all images at startup. [Client]
-- **--mysql USER,PASSWORD[,HOST[,PORT]]** Will enable logging to a MySQL database if **--server** is activated. It will log into the MySQL server using **USER** and **PASSWORD**. Optionally, **HOST** and **PORT** can be given to connect to a remote server (default is localhost). You can use **--mysqlDB** to change the database to use. Otherwise, it will use the 'trAInsported' database. Note: You have to manually create the trAInsported Database beforehand, and make sure that USER has rights to create a table and edit a table on the database.[Server]
-- **--mysqlDB DATABASE** The game will connect to this database instead of the default one. The **USER** given by **--mysql** (see above) needs to have access to this database. [Server]
+- **--render**: Forces game to rerender all images at startup. [Client]
+- **--mysql USER,PASSWORD[,HOST[,PORT]]**: Will enable logging to a MySQL database if **--server** is activated. It will log into the MySQL server using **USER** and **PASSWORD**. Optionally, **HOST** and **PORT** can be given to connect to a remote server (default is localhost). You can use **--mysqlDB** to change the database to use. Otherwise, it will use the 'trAInsported' database. Note: You have to manually create the trAInsported Database beforehand, and make sure that USER has rights to create a table and edit a table on the database.[Server]
+- **--mysqlDB DATABASE**: The game will connect to this database instead of the default one. The **USER** given by **--mysql** (see above) needs to have access to this database. [Server]
 - **-d DIR** or **--directory DIR**: Needs LuaFileSystem installed! Gives the path to the folder which holds the various user folders, which in turn hold the users' AIs. The path must be absolute, relative paths should not work here!
+- **--chart DIR**: If this DIR is given, the game will render a .svg chart of each round's results and store it in DIR.
+
 Uninstalling:
 ------------------------------
 The game creates a folder called **trAInsported** in your local home folder. Depending on how you uninstall, you might have to remove this manually. They'll usually be in these locations (taken from love2d.org):

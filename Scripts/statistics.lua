@@ -2,6 +2,7 @@ local statistics = {}
 
 local aiStats = {}
 
+
 if not DEDICATED then
 	IMAGE_STATS_PICKUP = love.graphics.newImage("Images/StatsIconPickUp.png")
 	IMAGE_STATS_DROPOFF = love.graphics.newImage("Images/StatsIconDropOff.png")
@@ -96,6 +97,10 @@ end
 function statistics.broughtToDestination( aiID, trainID, vip )
 	aiStats[aiID].pTransported = aiStats[aiID].pTransported + 1
 	aiStats[aiID].trains[trainID].pTransported = aiStats[aiID].trains[trainID].pTransported + 1
+	
+	if CL_CHART_DIRECTORY then
+		table.insert(aiStats[aiID].chartPassengers, {x=math.floor(curMap.time), y = aiStats[aiID].pTransported})
+	end
 	
 	if vip then
 		aiStats[aiID].pVIP = aiStats[aiID].pVIP + 1
@@ -573,6 +578,15 @@ function statistics.generateStatWindows()
 		end
 		i = i + 1
 	end
+	
+	if CL_CHART_DIRECTORY then
+		local points = {}
+		for i = 1,#aiStats do
+			points[i] = aiStats[i].chartPassengers
+			points[i].name = aiStats[i].name
+		end
+		chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 500, 250, points, "seconds", "passengers")
+	end
 end
 
 --------------------------------------------------------------
@@ -694,6 +708,10 @@ function statistics.start( ais )
 		aiStats[i].red = 255	-- default colour
 		aiStats[i].green = 255
 		aiStats[i].blue = 255
+		
+		if CL_CHART_DIRECTORY then
+			aiStats[i].chartPassengers = {}
+		end
 	end
 	if not DEDICATED then
 		displayStatusBoxWidth = statBoxStatus:getWidth()

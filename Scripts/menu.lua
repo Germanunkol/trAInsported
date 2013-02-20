@@ -361,6 +361,8 @@ function menu.newRound()
 	chosenTime = nil
 	chosenMode = nil
 	
+	local columnWidth = math.min(bgBoxSmall:getWidth()+10, love.graphics.getWidth()/3)
+	
 	aiFiles = ai.findAvailableAIs()
 	x = defaultMenuX
 	y = defaultMenuY
@@ -386,7 +388,7 @@ function menu.newRound()
 		end
 	end
 	
-	x = defaultMenuX + bgBoxSmall:getWidth()+10
+	x = defaultMenuX + columnWidth
 	y = defaultMenuY
 	table.insert(menuDividers, {x=x, y = defaultMenuY, txt="Width and Height:"})
 	x = x + 20
@@ -398,7 +400,7 @@ function menu.newRound()
 		y = y + 37
 	end
 	
-	x = defaultMenuX + (bgBoxSmall:getWidth()+10)*2
+	x = defaultMenuX + (columnWidth)*2
 	y = defaultMenuY
 	table.insert(menuDividers, {x=x, y = defaultMenuY, txt="Time and Mode:"})
 	x = x + 20

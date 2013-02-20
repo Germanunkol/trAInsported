@@ -76,7 +76,7 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	s = s .. "\n<!-- Coordinate System: -->\n"
 	
 	local h = (height-paddingBottom-paddingTop)
-	local stepSize = h/10
+	local stepSize = math.max(h/10, 30)
 	for y = paddingTop, height-paddingBottom, stepSize do
 		if (h-(y-paddingTop)) > 0 then
 			s = s .. "\t" .. lineToSVG(paddingLeft, y, width-paddingRight, y, "grey", 1)
@@ -85,7 +85,7 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	end
 	
 	local w = width-paddingLeft-paddingRight
-	local stepSize = w/10
+	local stepSize = math.max(w/10, 40)
 	for x = paddingLeft, width-paddingRight, stepSize do
 		s = s .. "\t" .. textToSVG(x, height-paddingBottom + 15, 10, math.floor((x-paddingLeft)/w*maxX), "right", nil, "white")
 	end

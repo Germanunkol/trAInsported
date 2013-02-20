@@ -593,7 +593,7 @@ function statistics.generateChart()
 		end
 		--printTable(points)
 		if #points > 0 then
-			chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 500, 250, points, "seconds", "passengers")
+			chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 350, 200, points, "seconds", "passengers")
 		end
 	end
 end

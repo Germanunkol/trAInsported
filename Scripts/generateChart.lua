@@ -14,6 +14,7 @@ local paddingTop = 10
 local paddingRight = 45
 
 function addAttribute(str, name, value)
+	if not value or not name then return str end
 	return str .. name .. '="' .. value .. '" '
 end
 

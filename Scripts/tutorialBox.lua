@@ -120,14 +120,20 @@ function tutorialBox.handleClick()
 end
 
 
-function tutorialBox.init()
+function tutorialBox.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
 	
 	tutorialBox.showCheckMark = 0
 	
 	
 	if not tutorialBoxBGThread and not tutorialBoxBG then		-- only start thread once!
-		ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			tutorialBoxBG = nil
 			loadingScreen.addSection("Rendering Tutorial Box")
 			tutorialBoxBGThread = love.thread.newThread("tutorialBoxBGThread", "Scripts/renderImageBox.lua")
@@ -161,14 +167,22 @@ function tutorialBox.init()
 				tutorialBoxBG = tutorialBoxBGThread:get("imageData")		-- get the generated image data from the thread
 				tutorialBoxBG:encode("tutorialBoxBG.png")
 				tutorialBoxBG = love.graphics.newImage(tutorialBoxBG)
+				tutorialBoxBGThread:wait()
 				tutorialBoxBGThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not tutorialBoxCheckMarkThread and not tutorialBoxCheckMark then		-- only start thread once!
-		ok, tutorialBoxCheckMark = pcall(love.graphics.newImage, "tutorialBoxCheckMark.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, tutorialBoxCheckMark = pcall(love.graphics.newImage, "tutorialBoxCheckMark.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			tutorialBoxCheckMark = nil
 			loadingScreen.addSection("Rendering Tut Box (Checkmark)")
 			tutorialBoxCheckMarkThread = love.thread.newThread("tutorialBoxCheckMarkThread", "Scripts/renderImageBox.lua")
@@ -201,11 +215,15 @@ function tutorialBox.init()
 				tutorialBoxCheckMark = tutorialBoxCheckMarkThread:get("imageData")		-- get the generated image data from the thread
 				tutorialBoxCheckMark:encode("tutorialBoxCheckMark.png")
 				tutorialBoxCheckMark = love.graphics.newImage(tutorialBoxCheckMark)
+				tutorialBoxCheckMarkThread:wait()
 				tutorialBoxCheckMarkThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function tutorialBox.initialised()

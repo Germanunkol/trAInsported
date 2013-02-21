@@ -222,6 +222,14 @@ function threadSendStatus( t, status )
 	statusNum = incrementID(statusNum)
 end
 
+function getCPUNumber()
+	f = io.popen("nproc")
+	if f then
+		local n = f:read("*a")
+		f:close()
+		return tonumber(n)
+	end
+end
 ------------------------------------
 
 

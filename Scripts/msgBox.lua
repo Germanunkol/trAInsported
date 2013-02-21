@@ -126,11 +126,17 @@ end
 
 local msgBoxBGThread
 
-function msgBox.init()
+function msgBox.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
 	
 	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
-		ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			msgBoxBG = nil
 			loadingScreen.addSection("Rendering Message Box")
 			msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/renderImageBox.lua")
@@ -162,16 +168,14 @@ function msgBox.init()
 				msgBoxBG = msgBoxBGThread:get("imageData")		-- get the generated image data from the thread
 				msgBoxBG:encode("msgBoxBG.png")
 				msgBoxBG = love.graphics.newImage(msgBoxBG)
+				msgBoxBGThread:wait()
 				msgBoxBGThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
-	
-	
-	
-	
-	--old:
-	--msgBoxBG = createBoxImage(MSG_BOX_WIDTH,MSG_BOX_HEIGHT,true, 10, 0,64,160,100)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function msgBox.initialised()

@@ -5,7 +5,6 @@ local helpBg = nil
 local HELP_WIDTH, HELP_HEIGHT = 400,300
 
 
-
 local helpStrKeys = [[Space :
 W,A,S,D :
 Cursor Keys :
@@ -59,11 +58,17 @@ end
 
 local helpBgThread
 
-function quickHelp.init()
+function quickHelp.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
 
 	if not helpBgThread and not helpBg then		-- only start thread once!
-		ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			helpBg = nil
 			loadingScreen.addSection("Rendering Help Box")
 			helpBgThread = love.thread.newThread("helpBgThread", "Scripts/renderImageBox.lua")
@@ -95,11 +100,14 @@ function quickHelp.init()
 				helpBg = helpBgThread:get("imageData")		-- get the generated image data from the thread
 				helpBg:encode("helpBg.png")
 				helpBg = love.graphics.newImage(helpBg)
+				helpBgThread:wait()
 				helpBgThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
-	--helpBg = createBoxImage(HELP_WIDTH,HELP_HEIGHT,true, 10, 0,64,160,100)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function quickHelp.initialised()

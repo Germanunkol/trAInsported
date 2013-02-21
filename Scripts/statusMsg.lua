@@ -6,10 +6,18 @@ local currentTime = 0
 
 errorSound = love.audio.newSource("Sound/wobble_alert.wav")
 
-function statusMsg.init()
+
+function statusMsg.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
+	
 	if not statusMsgBoxThread and not statusMsgBox then		-- only start thread once!
-		ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			statusMsgBox = nil
 			loadingScreen.addSection("Rendering Status Msg Box")
 			statusMsgBoxThread = love.thread.newThread("statusMsgBoxThread", "Scripts/renderImageBox.lua")
@@ -41,14 +49,22 @@ function statusMsg.init()
 				statusMsgBox = statusMsgBoxThread:get("imageData")		-- get the generated image data from the thread
 				statusMsgBox:encode("statusMsgBox.png")
 				statusMsgBox = love.graphics.newImage(statusMsgBox)
+				statusMsgBoxThread:wait()
 				statusMsgBoxThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not statusErrBoxThread and not statusErrBox then		-- only start thread once!
-		ok, statusErrBox = pcall(love.graphics.newImage, "statusErrBox.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, statusErrBox = pcall(love.graphics.newImage, "statusErrBox.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			statusErrBox = nil
 			loadingScreen.addSection("Rendering Status Error Box")
 			statusErrBoxThread = love.thread.newThread("statusErrBoxThread", "Scripts/renderImageBox.lua")
@@ -80,14 +96,22 @@ function statusMsg.init()
 				statusErrBox = statusErrBoxThread:get("imageData")		-- get the generated image data from the thread
 				statusErrBox:encode("statusErrBox.png")
 				statusErrBox = love.graphics.newImage(statusErrBox)
+				statusErrBoxThread:wait()
 				statusErrBoxThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not toolTipBoxThread and not toolTipBox then		-- only start thread once!
-		ok, toolTipBox = pcall(love.graphics.newImage, "toolTipBox.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, toolTipBox = pcall(love.graphics.newImage, "toolTipBox.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			toolTipBox = nil
 			loadingScreen.addSection("Rendering Tool Tip Box")
 			toolTipBoxThread = love.thread.newThread("toolTipBoxThread", "Scripts/renderImageBox.lua")
@@ -119,10 +143,14 @@ function statusMsg.init()
 				toolTipBox = toolTipBoxThread:get("imageData")		-- get the generated image data from the thread
 				toolTipBox:encode("toolTipBox.png")
 				toolTipBox = love.graphics.newImage(toolTipBox)
+				toolTipBoxThread:wait()
 				toolTipBoxThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 

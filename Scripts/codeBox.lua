@@ -114,11 +114,17 @@ function codeBox.handleClick()
 	end
 end
 
-function codeBox.init()
+function codeBox.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
 	
 	if not codeBoxBGThread and not codeBoxBG then		-- only start thread once!
-		ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+		
 			codeBoxBG = nil
 			loadingScreen.addSection("Rendering Code Box")
 			codeBoxBGThread = love.thread.newThread("codeBoxBGThread", "Scripts/renderImageBox.lua")
@@ -151,10 +157,14 @@ function codeBox.init()
 				codeBoxBG = codeBoxBGThread:get("imageData")		-- get the generated image data from the thread
 				codeBoxBG:encode("codeBoxBG.png")
 				codeBoxBG = love.graphics.newImage(codeBoxBG)
+				codeBoxBGThread:wait()
 				codeBoxBGThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function codeBox.initialised()

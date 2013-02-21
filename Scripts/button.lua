@@ -143,11 +143,17 @@ local buttonOffThread = nil
 local buttonOverThread = nil
 local status = false
 
-function button.init()
+function button.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
+
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
-	
-		ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+		
 			buttonOff = nil
 			loadingScreen.addSection("Rendering Deactivated Button")
 			buttonOffThread = love.thread.newThread("buttonOffThread", "Scripts/renderImageBox.lua")
@@ -179,15 +185,21 @@ function button.init()
 				buttonOff = buttonOffThread:get("imageData")		-- get the generated image data from the thread
 				buttonOff:encode("buttonOff.png")
 				buttonOff = love.graphics.newImage(buttonOff)
+				buttonOffThread:wait()
 				buttonOffThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not buttonOverThread and not buttonOver then		-- only start thread once!
-	
-		ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then		
+			maxNumThreads = maxNumThreads - 1
+		
 			buttonOver = nil
 			loadingScreen.addSection("Rendering Activated Button")
 			buttonOverThread = love.thread.newThread("buttonOverThread", "Scripts/renderImageBox.lua")
@@ -222,16 +234,22 @@ function button.init()
 				buttonOver = buttonOverThread:get("imageData")		-- get the generated image data from the thread
 				buttonOver:encode("buttonOver.png")
 				buttonOver = love.graphics.newImage(buttonOver)
+				buttonOverThread:wait()
 				buttonOverThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not buttonOffSmallThread and not buttonOffSmall then		-- only start thread once!
-	
+		if not CL_FORCE_RENDER then
+			ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
-		ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+			maxNumThreads = maxNumThreads - 1
+		
 			buttonOffSmall = nil
 			loadingScreen.addSection("Rendering Deactivated Button (small)")
 			buttonOffSmallThread = love.thread.newThread("buttonOffSmallThread", "Scripts/renderImageBox.lua")
@@ -263,15 +281,23 @@ function button.init()
 				buttonOffSmall = buttonOffSmallThread:get("imageData")		-- get the generated image data from the thread
 				buttonOffSmall:encode("buttonOffSmall.png")
 				buttonOffSmall = love.graphics.newImage(buttonOffSmall)
+				buttonOffSmallThread:wait()
 				buttonOffSmallThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not buttonOverSmallThread and not buttonOverSmall then		-- only start thread once!
 	
-		ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+		
 			buttonOverSmall = nil
 			loadingScreen.addSection("Rendering Activated Button (small)")
 			buttonOverSmallThread = love.thread.newThread("buttonOverSmallThread", "Scripts/renderImageBox.lua")
@@ -306,13 +332,15 @@ function button.init()
 				buttonOverSmall = buttonOverSmallThread:get("imageData")		-- get the generated image data from the thread
 				buttonOverSmall:encode("buttonOverSmall.png")
 				buttonOverSmall = love.graphics.newImage(buttonOverSmall)
+				buttonOverSmallThread:wait()
 				buttonOverSmallThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
-	-- buttonOff = createBoxImage(STND_BUTTON_WIDTH , STND_BUTTON_HEIGHT, true, 5,2, 64,160,100)
-	-- buttonOverSmall = createBoxImage(STND_BUTTON_WIDTH, STND_BUTTON_HEIGHT, true, 6,1, 64,160,100)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function button.initialised()

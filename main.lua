@@ -332,8 +332,6 @@ else
 		print("Invalid ip given.")
 		print("Usage: -h ###.###.###.### or -h localhost or -h ADDRESS")
 		love.event.quit()
-	else
-		print("Will attempt to connect to " .. FALLBACK_SERVER_IP)
 	end
 	
 	
@@ -348,7 +346,7 @@ else
 	end
 	
 	if not CL_SERVER_IP then
-		print("No IP given. Using default fallback IP: " .. FALLBACK_SERVER_IP)
+		print("No IP given. Will use fallback IP: " .. FALLBACK_SERVER_IP)
 	end
 	-------------------------------
 	
@@ -373,6 +371,12 @@ else
 	versionCheck = require("Scripts/versionCheck")
 	
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
+
+	local renderingProcessStarted
+	local toRenderList = {}
+	local renderingList = {}
+	local numberOfThreads = 0
+	local maxNumberOfThreads = 4	--default
 
 	-------------------------------
 	-- Main function, runs at startup:
@@ -426,8 +430,6 @@ else
 
 		map.init()
 
-		console.add("Loaded...")
-
 		menu.init()
 	end
 
@@ -436,22 +438,52 @@ else
 	function love.update(dt)
 			
 		if initialising then
-			button.init()
-			msgBox.init()
-			loadingScreen.init()
-			quickHelp.init()
-			stats.init()
-			tutorialBox.init()
-			codeBox.init()
-			statusMsg.init()
-			pSpeach.init()
 		
-			if button.initialised() and msgBox.initialised() and loadingScreen.initialised()
-					and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised()
-					and codeBox.initialised() and statusMsg.initialised() and pSpeach.initialised() then
-				initialising = false
-				finishStartupProcess()
+			if not renderingProcessStarted then
+				renderingProcessStarted = true
+				numberOfThreads = 0
+				local n = getCPUNumber()
+				if n then
+					maxNumberOfThreads = n
+					print("Cores detected: " ..  maxNumberOfThreads)
+				else
+					print("Could not detect number of cores. Using " .. maxNumberOfThreads .. " threads.")
+				end
+				
+				startRenderingTime = os.time()
+				
+				-- queue up all modules which need rendering (all of them must have the functions .init and .initialised!!)
+				table.insert(toRenderList, button)
+				table.insert(toRenderList, msgBox)
+				table.insert(toRenderList, loadingScreen)
+				table.insert(toRenderList, quickHelp)
+				table.insert(toRenderList, stats)
+				table.insert(toRenderList, tutorialBox)
+				table.insert(toRenderList, codeBox)
+				table.insert(toRenderList, statusMsg)
+				table.insert(toRenderList, pSpeach)
+				
 			end
+			
+			numberOfThreads = numberOfThreads + button.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + msgBox.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + loadingScreen.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + quickHelp.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + stats.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + tutorialBox.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + codeBox.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + statusMsg.init(maxNumberOfThreads - numberOfThreads)
+			numberOfThreads = numberOfThreads + pSpeach.init(maxNumberOfThreads - numberOfThreads)
+			
+			
+			if button.initialised() and msgBox.initialised() and loadingScreen.initialised()
+				and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised()
+				and codeBox.initialised() and statusMsg.initialised() and pSpeach.initialised() then
+					initialising = false
+					finishStartupProcess()
+					print("Rendered/Loaded images in " .. os.time() - startRenderingTime .. " seconds.")
+			end
+			
 		else
 	
 			connection.handleConnection()

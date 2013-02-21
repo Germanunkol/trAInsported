@@ -17,7 +17,7 @@ function versionCheck.start()
 			s2, e2 = tmp:find("\r\n")
 			if s2 then
 				v = tmp:sub(1, s2-1)
-				print("Config file is version:" .. v, "Game version:" .. VERSION)
+				print("Config file is version: " .. v, "Game version: " .. VERSION)
 				if v == VERSION then
 					versionMatch = true
 					print("\tVersions match!")

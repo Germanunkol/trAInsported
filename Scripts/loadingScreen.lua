@@ -117,10 +117,17 @@ end
 
 local bgBoxThread
 
-function loadingScreen.init()
+function loadingScreen.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
+	
 	if not bgBoxThread and not bgBox then		-- only start thread once!
-		ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			bgBox = nil
 			loadingScreen.addSection("Rendering Loading Box")
 			bgBoxThread = love.thread.newThread("bgBoxThread", "Scripts/renderImageBox.lua")
@@ -152,14 +159,22 @@ function loadingScreen.init()
 				bgBox = bgBoxThread:get("imageData")		-- get the generated image data from the thread
 				bgBox:encode("bgBox.png")
 				bgBox = love.graphics.newImage(bgBox)
+				bgBoxThread:wait()
 				bgBoxThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
-		ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			bgBoxSmall = nil
 			loadingScreen.addSection("Rendering Loading Box (small)")
 			bgBoxSmallThread = love.thread.newThread("bgBoxSmallThread", "Scripts/renderImageBox.lua")
@@ -191,13 +206,15 @@ function loadingScreen.init()
 				bgBoxSmall = bgBoxSmallThread:get("imageData")		-- get the generated image data from the thread
 				bgBoxSmall:encode("bgBoxSmall.png")
 				bgBoxSmall = love.graphics.newImage(bgBoxSmall)
+				bgBoxSmallThread:wait()
 				bgBoxSmallThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
-	--bgBox = createBoxImage(400,50,true, 10, 0, 32,80,50)
-	--bgBoxSmall = createBoxImage(300,30,true, 10, 0, 32,80,50)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function loadingScreen.initialised()

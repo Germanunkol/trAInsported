@@ -24,11 +24,17 @@ vipSpeach = {
 
 local pSpeach = {}
 
-function pSpeach.init()
+function pSpeach.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
 
 	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
-		ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			pSpeachBubble = nil
 			loadingScreen.addSection("Rendering Speach Bubble Box")
 			pSpeachBubbleThread = love.thread.newThread("pSpeachBubbleThread", "Scripts/renderImageBox.lua")
@@ -60,11 +66,14 @@ function pSpeach.init()
 				pSpeachBubble = pSpeachBubbleThread:get("imageData")		-- get the generated image data from the thread
 				pSpeachBubble:encode("pSpeachBubble.png")
 				pSpeachBubble = love.graphics.newImage(pSpeachBubble)
+				pSpeachBubbleThread:wait()
 				pSpeachBubbleThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
-	--pSpeachBubble = createBoxImage(HELP_WIDTH,HELP_HEIGHT,true, 10, 0,64,160,100)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function pSpeach.initialised()

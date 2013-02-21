@@ -730,10 +730,17 @@ function statistics.start( ais )
 	end
 end
 
-function statistics.init()
+function statistics.init(maxNumThreads)
+	local initialMaxNumThreads = maxNumThreads
+	
 	if not statBoxPositiveThread and not statBoxPositive then		-- only start thread once!
-		ok, statBoxPositive = pcall(love.graphics.newImage, "statBoxPositive.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, statBoxPositive = pcall(love.graphics.newImage, "statBoxPositive.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			statBoxPositive = nil
 			loadingScreen.addSection("Rendering Stat Box (green)")
 			statBoxPositiveThread = love.thread.newThread("statBoxPositiveThread", "Scripts/renderImageBox.lua")
@@ -765,14 +772,22 @@ function statistics.init()
 				statBoxPositive = statBoxPositiveThread:get("imageData")		-- get the generated image data from the thread
 				statBoxPositive:encode("statBoxPositive.png")
 				statBoxPositive = love.graphics.newImage(statBoxPositive)
+				statBoxPositiveThread:wait()
 				statBoxPositiveThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	
 	if not statBoxNegativeThread and not statBoxNegative then		-- only start thread once!
-		ok, statBoxNegative = pcall(love.graphics.newImage, "statBoxNegative.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, statBoxNegative = pcall(love.graphics.newImage, "statBoxNegative.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			statBoxNegative = nil
 			loadingScreen.addSection("Rendering Stat Box (red)")
 			statBoxNegativeThread = love.thread.newThread("statBoxNegativeThread", "Scripts/renderImageBox.lua")
@@ -804,13 +819,21 @@ function statistics.init()
 				statBoxNegative = statBoxNegativeThread:get("imageData")		-- get the generated image data from the thread
 				statBoxNegative:encode("statBoxNegative.png")
 				statBoxNegative = love.graphics.newImage(statBoxNegative)
+				statBoxNegativeThread:wait()
 				statBoxNegativeThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 	if not statBoxStatusThread and not statBoxStatus then		-- only start thread once!
-		ok, statBoxStatus = pcall(love.graphics.newImage, "statBoxStatus.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, statBoxStatus = pcall(love.graphics.newImage, "statBoxStatus.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			statBoxStatus = nil
 			loadingScreen.addSection("Rendering Stat Box (status)")
 			statBoxStatusThread = love.thread.newThread("statBoxStatusThread", "Scripts/renderImageBox.lua")
@@ -842,14 +865,22 @@ function statistics.init()
 				statBoxStatus = statBoxStatusThread:get("imageData")		-- get the generated image data from the thread
 				statBoxStatus:encode("statBoxStatus.png")
 				statBoxStatus = love.graphics.newImage(statBoxStatus)
+				statBoxStatusThread:wait()
 				statBoxStatusThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
 
 	if not roundStatsThread and not roundStats then		-- only start thread once!
-		ok, roundStats = pcall(love.graphics.newImage, "roundStats.png")
-		if not ok or not versionCheck.getMatch() or CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER then
+			ok, roundStats = pcall(love.graphics.newImage, "roundStats.png")
+		end
+		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
+		
+			maxNumThreads = maxNumThreads - 1
+			
 			roundStats = nil
 			loadingScreen.addSection("Rendering Round Info Box")
 			roundStatsThread = love.thread.newThread("roundStatsThread", "Scripts/renderImageBox.lua")
@@ -881,12 +912,14 @@ function statistics.init()
 				roundStats = roundStatsThread:get("imageData")		-- get the generated image data from the thread
 				roundStats:encode("roundStats.png")
 				roundStats = love.graphics.newImage(roundStats)
+				roundStatsThread:wait()
 				roundStatsThread = nil
+				
+				maxNumThreads = maxNumThreads + 1
 			end
 		end
 	end
-	-- statBoxPositive = createBoxImage(350, 95, true, 10, 0, 64, 140, 100)
-	-- statBoxStatus = createBoxImage(350, 95, true, 10, 0, 150, 90, 65)
+	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
 end
 
 function statistics.initialised()

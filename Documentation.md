@@ -450,3 +450,30 @@ Will try to buy a train and place it at the position [X][Y]. If there's no rail 
 		else
 			print("I'm not so rich...")
 		end
+		
+###require(filename), dofile(filename), loadfile(filename)###
+
+These functions are used to add additional files to your code. There is a few things to consider:
+- Paths given here are _relative_ to the main file of your AI.
+- Best practice is to put all included files into a subfolder of the AI folder. This way, the subfiles will not be handled as individual AIs by the game.
+- When uploading, you need to make a .zip file out of all the files the AI uses. Make sure the main AI is _at the root_ of this .zip file. To check if this is the case: Open your created .zip file in any archive manager and check if the main .lua file is right there. If it is, you're fine, if not (i.e. you have to go into a subfolder inside the archive to find it) then you need to change that.
+- Your uploaded .zip file must not be larger than the file limit given by the website.
+- Require is just an interface to dofile for security reasons. It can be used to include files, but don't expect it to be as complex as a proper require call is.
+Check the online lua documentation for more details on the various files.
+
+**Arguments:**
+
+- The file to load or run. See 
+
+**Returns:**
+
+- The amount of credits the player currently has at his or her disposal.
+
+**Example:**
+
+		myMoney = getMoney()
+		if myMoney > 10 then
+			print("I'm rich!")
+		else
+			print("I'm not so rich...")
+		end

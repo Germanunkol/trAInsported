@@ -66,7 +66,7 @@ function writeHeader(width, height)
 	s ='<?xml version="1.0" standalone="no"?>\n'
 	s = s .. '<svg width="' .. width .. '" height="' .. height .. '" viewBox="0 0 ' .. width .. ' ' .. height .. '" xmlns="http://www.w3.org/2000/svg" version="1.1"\n'
 	s = s .. 'xmlns:xlink="http://www.w3.org/1999/xlink">\n'
-	s = s .. '<rect border-radius="10" rx="20" ry="20" width="' .. width .. '" height="' .. height .. '" fill="' .. backgroundColor .. '" stroke-width="3" />\n'
+	s = s .. '\n\n<!-- Generate background: -->\n\t<rect x="1" y="1" border-radius="10" rx="20" ry="20" width="' .. width - 2 .. '" height="' .. height -2 .. '" fill="' .. backgroundColor .. '" stroke-width="1" stroke="black" />\n'
 	return s
 end
 

@@ -631,7 +631,9 @@ function menu.ingame()
 	menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil, nil, nil, nil, "Return to main menu.")
 	x = love.graphics.getWidth() - defaultMenuX - STND_BUTTON_WIDTH-10
 	y = love.graphics.getHeight() - defaultMenuY - STND_BUTTON_HEIGHT
-	menuButtons.buttonReload = button:new(x, y, "Reload", confirmReload, nil, nil, nil, nil, "Reload the AI scripts and restart the round.")
+	if not simulation.isRunning() then
+		menuButtons.buttonReload = button:new(x, y, "Reload", confirmReload, nil, nil, nil, nil, "Reload the AI scripts and restart the round.")
+	end
 end
 
 function menu.render()

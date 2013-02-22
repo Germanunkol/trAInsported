@@ -13,11 +13,11 @@ pcall(require, "globals")
 pcall(require, "Scripts/globals")
 DEDICATED = rememberDedi
 
+
 m = TSerial.unpack(thisThread:demand("map"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 startCoordinateX = thisThread:demand("startCoordinateX")
 startCoordinateY = thisThread:demand("startCoordinateY")
-
 
 function checkAborted()
 	if abort then

@@ -1329,7 +1329,6 @@ function map.show()
 		y = -TILE_SIZE*(curMap.height+2)/2 +35
 		for j = 1, #mapImage[i] do
 			if i == 1 or j == #mapImage[i] then
-				--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
 				love.graphics.draw(mapImage[i][j], x,  y)
 			end
 			
@@ -1337,21 +1336,9 @@ function map.show()
 			if j == #mapImage[i] then
 				x = x + mapImage[i][j]:getWidth()
 			end
-			--x = x + mapImage[i][j]:getHeight()
 		end
 	end
-	-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 	love.graphics.setColor(255,255,255, 255)
-	--love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
---[[
-	for i = 1, #mapImage do
-		for j = 1, #mapImage[i] do
-			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
-			--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-			love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*mapImage[i][j]:getWidth(), -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*mapImage[i][j]:getHeight())
-		end
-	end
-]]--	
 	x = -TILE_SIZE*(curMap.width+2)/2
 	for i = 1, #mapImage do
 		y = -TILE_SIZE*(curMap.height+2)/2

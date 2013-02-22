@@ -530,28 +530,27 @@ function simulation.show(dt)
 			y = -TILE_SIZE*(simulationMap.height+2)/2 +35
 			for j = 1, #mapImage[i] do
 				if i == 1 or j == #mapImage[i] then
-					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
 					love.graphics.draw(mapImage[i][j], x,  y)
 				end
-		
-				y = y + mapImage[i][j]:getWidth()
+			
+				y = y + mapImage[i][j]:getHeight()
 				if j == #mapImage[i] then
-					x = x + mapImage[i][j]:getHeight()
+					x = x + mapImage[i][j]:getWidth()
 				end
-				--x = x + mapImage[i][j]:getHeight()
 			end
 		end
 		love.graphics.setColor(255,255,255, 255)
-
 		x = -TILE_SIZE*(simulationMap.width+2)/2
 		for i = 1, #mapImage do
 			y = -TILE_SIZE*(simulationMap.height+2)/2
 			for j = 1, #mapImage[i] do
 				love.graphics.draw(mapImage[i][j], x,  y)
-				y = y + mapImage[i][j]:getWidth()
+				love.graphics.draw(mapShadowImage[i][j], x,  y)
+				love.graphics.draw(mapObjectImage[i][j], x,  y)
+				y = y + mapImage[i][j]:getHeight()
 				if j == #mapImage[i] then
-					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-					x = x + mapImage[i][j]:getHeight()
+					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+					x = x + mapImage[i][j]:getWidth()
 				end
 			end
 		end
@@ -561,17 +560,6 @@ function simulation.show(dt)
 		simulation.passengerShowAll(passedTime)
 		simulation.trainShowAll()
 --		passenger.showVIPs(passedTime)
-	
-		love.graphics.setColor(255,255,255,255)
-		--love.graphics.draw(mapShadowImage, 0,0)
-		--love.graphics.draw(mapObjectImage, 0,0)
-		for i = 1, #mapShadowImage do
-			for j = 1, #mapShadowImage[i] do
-				--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
-				love.graphics.draw(mapShadowImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-				love.graphics.draw(mapObjectImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-			end
-		end
 	
 		map.renderHighlights(passedTime)
 	

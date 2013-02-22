@@ -73,6 +73,7 @@ while true do
 		
 		threadSendStatus(thisThread, "Split map into " .. numImagesX*numImagesY .. " parts.")
 		threadSendStatus(thisThread, "Using " .. numThreads .. " threads.")
+		threadSendStatus(thisThread, "Map: " .. curMap.width .. "x" .. curMap.height )
 		percentageStep = 100/(numImagesX*numImagesY)
 		
 		

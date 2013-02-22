@@ -1249,10 +1249,6 @@ function map.render(map)
 						if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
 						tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
 						if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
-						
-						print("ground:", groundData[i][j], groundData[i][j]:getWidth()/TILE_SIZE)
-						print("shadow:", shadowData[i][j], shadowData[i][j]:getWidth()/TILE_SIZE)
-						print("object:", objectData[i][j], objectData[i][j]:getWidth()/TILE_SIZE)
 					end
 				end
 				

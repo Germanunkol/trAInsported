@@ -459,7 +459,7 @@ These functions are used to add additional files to your code. There is a few th
 - When uploading, you need to make a .zip file out of all the files the AI uses. Make sure the main AI is _at the root_ of this .zip file. To check if this is the case: Open your created .zip file in any archive manager and check if the main .lua file is right there. If it is, you're fine, if not (i.e. you have to go into a subfolder inside the archive to find it) then you need to change that.
 - Your uploaded .zip file must not be larger than the file limit given by the website.
 - Require is just an interface to dofile for security reasons. It can be used to include files, but don't expect it to be as complex as a proper require call is.
-Check the online lua documentation for more details on the various files.
+Check the online lua documentation for more details on the various functions.
 
 **Arguments:**
 

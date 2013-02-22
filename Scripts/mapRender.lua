@@ -27,10 +27,7 @@ local renderingPercentage = 0
 
 function updatePercentage()
 	renderingPercentage = renderingPercentage + percentageStep
-	thisThread:set("percentage", renderingPercentage)
-	if thisThread:get("abort") then
-		return false
-	end
+	thisThread:set("percentage", renderingPercentage)	
 end
 
 
@@ -136,19 +133,28 @@ while true do
 		local numParts = numImagesX*numImagesY
 		local numThreadsRunning = 0
 		while threadsDone < numParts do
+		
+			if thisThread:get("abort") then
+				abort = true
+			end
+		
 			for i = 1,numImagesX do
 				for j = 1,numImagesY do
 					if parts[i][j].running == false and parts[i][j].finished == false and numThreadsRunning < numThreads then
-						parts[i][j].running = true
-						parts[i][j].thread = love.thread.newThread(os.time().."mapGeneratingThread(" .. i .. "," .. j .. ")", "Scripts/mapRenderPart.lua")
-						parts[i][j].thread:start()
+						if abort then		-- don't start more threads when the abort-signal has been sent.
+							threadsDone = threadsDone + 1
+						else
+							parts[i][j].running = true
+							parts[i][j].thread = love.thread.newThread(os.time().."mapGeneratingThread(" .. i .. "," .. j .. ")", "Scripts/mapRenderPart.lua")
+							parts[i][j].thread:start()
 						
-						parts[i][j].thread:set("map", TSerial.pack(parts[i][j].map))
-						parts[i][j].thread:set("curMapRailTypes", curMapRailTypes)
+							parts[i][j].thread:set("map", TSerial.pack(parts[i][j].map))
+							parts[i][j].thread:set("curMapRailTypes", curMapRailTypes)
 						
-						parts[i][j].thread:set("startCoordinateX", (i-1)*partWidth)
-						parts[i][j].thread:set("startCoordinateY", (j-1)*partHeight)
-						numThreadsRunning = numThreadsRunning + 1
+							parts[i][j].thread:set("startCoordinateX", (i-1)*partWidth)
+							parts[i][j].thread:set("startCoordinateY", (j-1)*partHeight)
+							numThreadsRunning = numThreadsRunning + 1
+						end
 					end
 					if parts[i][j].thread then
 						status =  parts[i][j].thread:get("status")
@@ -164,6 +170,11 @@ while true do
 							parts[i][j].thread:wait()
 							parts[i][j].thread = nil
 							updatePercentage()
+						elseif abort then
+							parts[i][j].thread:set("abort", true)
+							parts[i][j].thread:wait()
+							parts[i][j].thread = nil
+							threadsDone = threadsDone + 1
 						end
 					end
 					if parts[i][j].thread then

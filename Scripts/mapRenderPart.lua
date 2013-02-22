@@ -19,6 +19,16 @@ startCoordinateX = thisThread:demand("startCoordinateX")
 startCoordinateY = thisThread:demand("startCoordinateY")
 
 
+function checkAborted()
+	if abort then
+		return true
+	end
+	if thisThread:get("abort") then
+		abort = true
+		return true
+	end
+end
+
 -- Ground:
 IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
 IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
@@ -241,6 +251,9 @@ for i = startX, endX do
 		end
 			--shadows:paste(IMAGE_GROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
 			--objects:paste(IMAGE_GROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
+		if checkAborted() then
+			return
+		end
 	end
 end
 
@@ -263,6 +276,9 @@ if not NO_TREES then
 					transparentPaste( shadows, IMAGE_BUSH01_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
 					transparentPaste( objects, IMAGE_BUSH01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
 				end
+			end
+			if checkAborted() then
+				return
 			end
 		end
 	end
@@ -297,6 +313,9 @@ if not NO_TREES then
 					transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
 				end
 			end
+			if checkAborted() then
+				return
+			end
 		end
 	end
 end
@@ -305,7 +324,12 @@ thisThread:set("groundData", ground)
 thisThread:set("shadowData", shadows)
 thisThread:set("objectData", objects)
 thisThread:set("status", "done")
---[[
+return
+
+
+
+
+--[[ old:
 function paste( dest, source, x, y )
 	i = math.max(x, 0)/TILE_SIZE
 	j = math.max(y, 0)/TILE_SIZE
@@ -464,4 +488,3 @@ if not NO_TREES then
 end
 ]]--
 
-return

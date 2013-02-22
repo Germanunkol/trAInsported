@@ -1233,6 +1233,7 @@ function map.render(map)
 			local objectData = nil
 			local dimensionX = mapRenderThread:get("dimensionX")
 			local dimensionY = mapRenderThread:get("dimensionY")
+			print("Receiving map with " .. dimensionX .. "x" .. dimensionY .. " pieces.")
 			groundData = {}
 			shadowData = {}
 			objectData = {}
@@ -1248,6 +1249,10 @@ function map.render(map)
 						if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
 						tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
 						if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
+						
+						print("ground:", groundData[i][j], groundData[i][j]:getWidth()/TILE_SIZE)
+						print("shadow:", shadowData[i][j], shadowData[i][j]:getWidth()/TILE_SIZE)
+						print("object:", objectData[i][j], objectData[i][j]:getWidth()/TILE_SIZE)
 					end
 				end
 				
@@ -1323,21 +1328,46 @@ function map.show()
 	--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
 	--love.graphics.setColor(0,0,0, 100)
 	
+	x = -TILE_SIZE*(curMap.width+2)/2 -20
 	for i = 1, #mapImage do
+		y = -TILE_SIZE*(curMap.height+2)/2 +35
 		for j = 1, #mapImage[i] do
 			if i == 1 or j == #mapImage[i] then
-				love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				love.graphics.draw(mapImage[i][j], x,  y)
 			end
+			
+			y = y + mapImage[i][j]:getHeight()
+			if j == #mapImage[i] then
+				x = x + mapImage[i][j]:getWidth()
+			end
+			--x = x + mapImage[i][j]:getHeight()
 		end
 	end
 	-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 	love.graphics.setColor(255,255,255, 255)
 	--love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-
+--[[
 	for i = 1, #mapImage do
 		for j = 1, #mapImage[i] do
 			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
-			love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+			love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*mapImage[i][j]:getWidth(), -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*mapImage[i][j]:getHeight())
+		end
+	end
+]]--	
+	x = -TILE_SIZE*(curMap.width+2)/2
+	for i = 1, #mapImage do
+		y = -TILE_SIZE*(curMap.height+2)/2
+		for j = 1, #mapImage[i] do
+			love.graphics.draw(mapImage[i][j], x,  y)
+			love.graphics.draw(mapShadowImage[i][j], x,  y)
+			love.graphics.draw(mapObjectImage[i][j], x,  y)
+			y = y + mapImage[i][j]:getHeight()
+			if j == #mapImage[i] then
+				--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				x = x + mapImage[i][j]:getWidth()
+			end
 		end
 	end
 
@@ -1354,13 +1384,13 @@ function map.show()
 	love.graphics.setColor(255,255,255,255)
 	--love.graphics.draw(mapShadowImage, 0,0)
 	--love.graphics.draw(mapObjectImage, 0,0)
-	for i = 1, #mapShadowImage do
+	--[[for i = 1, #mapShadowImage do
 		for j = 1, #mapShadowImage[i] do
 			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
 			love.graphics.draw(mapShadowImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
 			love.graphics.draw(mapObjectImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
 		end
-	end
+	end]]--
 
 	map.renderHighlights(passedTime)
 	

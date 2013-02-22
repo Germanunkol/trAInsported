@@ -520,38 +520,39 @@ function simulation.show(dt)
 	
 		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 		love.graphics.rotate(CAM_ANGLE)
-		--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
+		--love.graphics.rectangle("fill", -TILE_SIZE*(simulationMap.width+2)/2-120,-TILE_SIZE*(simulationMap.height+2)/2-80, TILE_SIZE*(simulationMap.width+2)+200, TILE_SIZE*(simulationMap.height+2)+200)
 		--love.graphics.setColor(0,0,0, 100)
 	
 		love.graphics.setColor(30,10,5, 150)
-		--love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-20, -TILE_SIZE*(simulationMap.height+2)/2+35)
 		
-		
-		--[[love.graphics.setColor(30, 10, 0, 250)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2-3)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2-3, -TILE_SIZE*(simulationMap.height+2)/2+3)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2+3)
-		love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2+3, -TILE_SIZE*(simulationMap.height+2)/2-3)
-		]]--
-		
-		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
-		--love.graphics.setColor(255,255,255, 255)
-		--love.graphics.draw(mapImage, -TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+		x = -TILE_SIZE*(simulationMap.width+2)/2 -20
 		for i = 1, #mapImage do
+			y = -TILE_SIZE*(simulationMap.height+2)/2 +35
 			for j = 1, #mapImage[i] do
 				if i == 1 or j == #mapImage[i] then
-					love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+					love.graphics.draw(mapImage[i][j], x,  y)
 				end
+		
+				y = y + mapImage[i][j]:getWidth()
+				if j == #mapImage[i] then
+					x = x + mapImage[i][j]:getHeight()
+				end
+				--x = x + mapImage[i][j]:getHeight()
 			end
 		end
-		-- love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-20, -TILE_SIZE*(curMap.height+2)/2+20, TILE_SIZE*(curMap.width+2), TILE_SIZE*(curMap.height+2))
 		love.graphics.setColor(255,255,255, 255)
-		--love.graphics.draw(mapImage, -TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
+		x = -TILE_SIZE*(simulationMap.width+2)/2
 		for i = 1, #mapImage do
+			y = -TILE_SIZE*(simulationMap.height+2)/2
 			for j = 1, #mapImage[i] do
-				--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
-				love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+				love.graphics.draw(mapImage[i][j], x,  y)
+				y = y + mapImage[i][j]:getWidth()
+				if j == #mapImage[i] then
+					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(simulationMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(simulationMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+					x = x + mapImage[i][j]:getHeight()
+				end
 			end
 		end
 	

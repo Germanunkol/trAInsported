@@ -95,8 +95,7 @@ function simulation.runMap()
 	console.flush()
 	menu.ingame()
 	loadingScreen.reset()
-	map.print("Runnig map:", simulationMap)
-	print("running map!")
+	MAX_PAN = (math.max(simulationMap.width, simulationMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
 end
 
 function simulation.stop()

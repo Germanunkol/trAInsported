@@ -30,6 +30,7 @@ function pSpeach.init(maxNumThreads)
 	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
+			if not ok then pSpeachBubble = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -78,6 +79,7 @@ end
 
 function pSpeach.initialised()
 	if pSpeachBubble then
+		print("pspeach:", pSpeachBubble)
 		return true
 	end
 end

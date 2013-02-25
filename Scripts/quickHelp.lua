@@ -4,7 +4,6 @@ local helpBg = nil
 
 local HELP_WIDTH, HELP_HEIGHT = 400,300
 
-
 local helpStrKeys = [[Space :
 W,A,S,D :
 Cursor Keys :
@@ -64,6 +63,7 @@ function quickHelp.init(maxNumThreads)
 	if not helpBgThread and not helpBg then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
+			if not ok then helpBg = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		

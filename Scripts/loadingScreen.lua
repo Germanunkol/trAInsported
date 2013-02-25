@@ -123,6 +123,7 @@ function loadingScreen.init(maxNumThreads)
 	if not bgBoxThread and not bgBox then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, bgBox = pcall(love.graphics.newImage, "bgBox.png")
+			if not ok then bgBox = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -170,6 +171,7 @@ function loadingScreen.init(maxNumThreads)
 	if not bgBoxSmallThread and not bgBoxSmall then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, bgBoxSmall = pcall(love.graphics.newImage, "bgBoxSmall.png")
+			if not ok then bgBoxSmall = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		

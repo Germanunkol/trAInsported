@@ -736,6 +736,7 @@ function statistics.init(maxNumThreads)
 	if not statBoxPositiveThread and not statBoxPositive then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, statBoxPositive = pcall(love.graphics.newImage, "statBoxPositive.png")
+			if not ok then statBoxPositive = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -783,6 +784,7 @@ function statistics.init(maxNumThreads)
 	if not statBoxNegativeThread and not statBoxNegative then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, statBoxNegative = pcall(love.graphics.newImage, "statBoxNegative.png")
+			if not ok then statBoxNegative = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -829,6 +831,7 @@ function statistics.init(maxNumThreads)
 	if not statBoxStatusThread and not statBoxStatus then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, statBoxStatus = pcall(love.graphics.newImage, "statBoxStatus.png")
+			if not ok then statBoxStatus = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -876,6 +879,7 @@ function statistics.init(maxNumThreads)
 	if not roundStatsThread and not roundStats then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, roundStats = pcall(love.graphics.newImage, "roundStats.png")
+			if not ok then roundStats = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		

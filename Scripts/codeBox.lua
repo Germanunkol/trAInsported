@@ -120,6 +120,7 @@ function codeBox.init(maxNumThreads)
 	if not codeBoxBGThread and not codeBoxBG then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
+			if not ok then codeBoxBG = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		

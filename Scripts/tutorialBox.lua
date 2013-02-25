@@ -129,6 +129,7 @@ function tutorialBox.init(maxNumThreads)
 	if not tutorialBoxBGThread and not tutorialBoxBG then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, tutorialBoxBG = pcall(love.graphics.newImage, "tutorialBoxBG.png")
+			if not ok then tutorialBoxBG = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		
@@ -178,6 +179,7 @@ function tutorialBox.init(maxNumThreads)
 	if not tutorialBoxCheckMarkThread and not tutorialBoxCheckMark then		-- only start thread once!
 		if not CL_FORCE_RENDER then
 			ok, tutorialBoxCheckMark = pcall(love.graphics.newImage, "tutorialBoxCheckMark.png")
+			if not ok then tutorialBoxCheckMark = nil end
 		end
 		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
 		

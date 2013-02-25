@@ -370,6 +370,8 @@ else
 	statusMsg = require("Scripts/statusMsg")
 	versionCheck = require("Scripts/versionCheck")
 	
+	challenges = require("Scripts/challenges")
+	
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
 
 	local renderingProcessStarted
@@ -410,6 +412,7 @@ else
 		versionCheck.start()
 		
 		love.filesystem.mkdir("AI")
+		love.filesystem.mkdir("Challenge")
 		
 		AI_DIRECTORY = love.filesystem.getSaveDirectory()
 		AI_DIRECTORY = AI_DIRECTORY .. "/AI/"

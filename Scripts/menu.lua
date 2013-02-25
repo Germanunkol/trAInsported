@@ -157,6 +157,8 @@ function menu.init(menuX, menuY)
 	y = y + 60
 	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
+	menuButtons.buttonChallenge = button:new(x, y, "Challenge", menu.challenge, nil, nil, nil, nil, "Beat the challenge maps!")
+	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "Compete", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45
 	menuButtons.buttonRandomMatch = button:new(x, y, "Random", randomMatch, nil, nil, nil, nil, "Start a random match on a random map using random AIs from your 'AI' folder")
@@ -172,6 +174,8 @@ function menu.init(menuX, menuY)
 	tutorial = {}
 	tutorialBox.clearAll()
 	codeBox.clearAll()
+	--reset challenge:
+	challenges.resetEvents()
 end
 
 
@@ -554,7 +558,7 @@ local function alphabetical(a, b)
 end
 
 function findTutorialFiles()
-	local files = love.filesystem.enumerate("Tutorials")		-- load AI subdirector
+	local files = love.filesystem.enumerate("Tutorials")		-- load subdirectory
 	local foundFiles = {}
 	for k, file in ipairs(files) do
 		s, e = file:find(".lua")
@@ -563,6 +567,8 @@ function findTutorialFiles()
 			table.insert(foundFiles, file)
 		end
 	end
+	
+	table.sort(foundFiles)
 	
 --	table.sort(files, alphabetical)
 	return foundFiles
@@ -594,6 +600,91 @@ function menu.tutorials()
 		end
 		y = y + 45
 	end
+end
+
+--------------------------------------------------------------
+--		TUTORIAL MENU:
+--------------------------------------------------------------
+
+function findChallengeMapsFiles()
+	local foundFiles = {}
+
+	local files = love.filesystem.enumerate("Maps")		-- load Maps subdirectory (in the .love file)
+	for k, file in ipairs(files) do
+		s, e = file:find(".lua")
+		if e == #file then
+			print("Challenge Map found: " .. k .. ". " .. file)
+			table.insert(foundFiles, file)
+		end
+	end
+	
+	
+	local files = love.filesystem.enumerate("Challenge")	-- load user's Maps subdirectory 
+	for k, file in ipairs(files) do
+		s, e = file:find(".lua")
+		if e == #file then
+			print("User Challenge Map found: " .. k .. ". " .. file)
+			table.insert(foundFiles, file)
+		end
+	end
+	
+	return foundFiles
+end
+
+
+function menu.choseChallenge(mapFile)
+	menu.removeAll()
+	hideLogo = true
+	x = defaultMenuX
+	y = defaultMenuY
+	
+	--menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
+	y = y + 60
+	
+	aiFiles = ai.findAvailableAIs()
+	x = defaultMenuX
+	y = defaultMenuY
+	menuButtons.buttonReturn = button:new(x, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Return", menu.init, nil)
+	--menuButtons.buttonContinue = button:new(love.graphics.getWidth() - x - STND_BUTTON_WIDTH - 10, love.graphics.getHeight() - y - STND_BUTTON_HEIGHT, "Continue", normalMatch, nil, nil, nil, nil, "Start the match with these settings")
+	
+	table.insert(menuDividers, {x = x, y = defaultMenuY, txt = "Choose AI for Challenge:"})
+	x = x + 20
+	y = y + bgBoxSmall:getHeight()+5
+	jumped = false
+	for k, fileName in pairs(aiFiles) do
+		local s,e = fileName:find(".*/")
+		e = e or 0
+		menuButtons[fileName] = button:newSmall(x, y, fileName:sub(e+1, #fileName-4), challenges.execute, {mapFileName=mapFile, aiFileName=fileName}, nil, nil, "Choose this AI for the match?")
+		y = y + 37
+		if y > love.graphics.getHeight() - 150 then
+			if jumped then		-- no more space! Only one jump.
+				break
+			end
+			x = x + SMALL_BUTTON_WIDTH + 40
+			y = defaultMenuY + bgBoxSmall:getHeight()+5
+			jumped = true
+		end
+	end
+	
+end
+
+
+function menu.challenge()
+	menu.removeAll()
+	hideLogo = true
+	x = defaultMenuX
+	y = defaultMenuY
+	
+	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
+	y = y + 60
+	mapFiles = findChallengeMapsFiles()
+	for i = 1, #mapFiles do
+		if mapFiles[i] then
+		menuButtons[i] = button:new(x, y, mapFiles[i]:sub(1, #mapFiles[i]-4), menu.choseChallenge, mapFiles[i], nil, nil, nil, nil)
+		end
+		y = y + 45
+	end
+	
 end
 
 

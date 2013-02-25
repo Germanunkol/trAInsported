@@ -154,6 +154,9 @@ function runMap(restart)
 				tutorial.restartEvent()
 			end
 		end
+		if challengeEvents.mapRenderingDoneCallback then
+			challengeEvents.mapRenderingDoneCallback()
+		end
 		
 	else
 		print("ERROR: NO MAP FOUND!")
@@ -1345,6 +1348,28 @@ function map.show()
 		for j = 1, #mapImage[i] do
 			love.graphics.draw(mapImage[i][j], x,  y)
 			love.graphics.draw(mapShadowImage[i][j], x,  y)
+			y = y + mapImage[i][j]:getHeight()
+			if j == #mapImage[i] then
+				x = x + mapImage[i][j]:getWidth()
+			end
+		end
+	end
+
+	love.graphics.push()
+	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
+
+
+	passenger.showAll(passedTime)
+	train.showAll()
+	passenger.showVIPs(passedTime)
+	love.graphics.pop()
+
+
+	love.graphics.setColor(255,255,255,255)
+	x = -TILE_SIZE*(curMap.width+2)/2
+	for i = 1, #mapImage do
+		y = -TILE_SIZE*(curMap.height+2)/2
+		for j = 1, #mapImage[i] do
 			love.graphics.draw(mapObjectImage[i][j], x,  y)
 			y = y + mapImage[i][j]:getHeight()
 			if j == #mapImage[i] then
@@ -1353,28 +1378,9 @@ function map.show()
 			end
 		end
 	end
-
+	love.graphics.push()
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-
-
-	--love.graphics.setColor(255,255,255,255)
-	--love.graphics.circle("fill", mapMouseX, mapMouseY, 20)
-
-	passenger.showAll(passedTime)
-	train.showAll()
-	passenger.showVIPs(passedTime)
-
-	love.graphics.setColor(255,255,255,255)
-	--love.graphics.draw(mapShadowImage, 0,0)
-	--love.graphics.draw(mapObjectImage, 0,0)
-	--[[for i = 1, #mapShadowImage do
-		for j = 1, #mapShadowImage[i] do
-			--love.graphics.setColor((#mapImage[i]-j)/#mapImage[i]*128+128,(#mapImage-i)/#mapImage*128+128,255,255)
-			love.graphics.draw(mapShadowImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-			love.graphics.draw(mapObjectImage[i][j], (i-1)*MAX_IMG_SIZE*TILE_SIZE, (j-1)*MAX_IMG_SIZE*TILE_SIZE)
-		end
-	end]]--
-
+	
 	map.renderHighlights(passedTime)
 	
 	passenger.showSelected(passedTime)
@@ -1384,9 +1390,7 @@ function map.show()
 	if love.keyboard.isDown("m") then
 		map.showCoordinates(curMap) -- display coordinates on the map
 	end
-
-	love.graphics.pop()
-	love.graphics.push()
+	
 	love.graphics.scale(camZ*1.5)
 
 	love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
@@ -1398,6 +1402,7 @@ function map.show()
 	clouds.render()
 	--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
 
+	love.graphics.pop()
 	love.graphics.pop()
 end
 

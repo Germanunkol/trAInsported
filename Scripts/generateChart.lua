@@ -53,7 +53,7 @@ function textToSVG(x, y, size, text, align, rotate, color, boxLabel)
 	local s = ""
 	
 	if boxLabel then
-		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-5 .. '" y = "' .. y-5 .. '" border-radius="10" rx="5" ry="5" width="100" height="12" fill="#523E34" stroke-width="1" stroke="black"  style="opacity:0.5"/>\n'
+		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-5 .. '" y = "' .. y-12 .. '" border-radius="10" rx="5" ry="5" width="100" height="13" fill="#523E34" stroke-width="1" stroke="black"  style="opacity:0.5"/>\n'
 	end
 	
 	s = s .. "\t<text "
@@ -219,7 +219,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 				end
 				local lastX = x + math.random(10)
 				chartContent = chartContent .. textToSVG(lastX, y, 12, points[i].name, "left", nil, color[i], points[i].name)
-				y = y + 15
+				y = y + 16
 			end
 		end
 		

@@ -41,9 +41,9 @@ function ai.chooseDirection( train, directions )
 	-- and the name of the passenger:
 	-- (passenger is 'nil' if there is no passenger)
 	if train.passenger == nil then
-		print( train.name .. " carries no passenger." )
+		print(train.name.." carries no passenger.")
 	else
-		print( train.name .. " carries " .. train.passenger )
+		print(train.name.." carries "..train.passenger.name)
 	end
 end
 ]])
@@ -58,11 +58,11 @@ end
 local CODE_chooseDirectionWithPassenger1 = parseCode([[
 function ai.chooseDirection( train, directions )
 	if train.passenger == nil then
-		print( train.name .. " carries no passenger." )
+		print(train.name.." carries no passenger.")
 		-- go South because that's where the passengers are!
 		return "S"
 	else
-		print( train.name .. " carries " .. train.passenger )
+		print(train.name.." carries "..train.passenger.name)
 	end
 end
 ]])
@@ -70,11 +70,11 @@ end
 local CODE_chooseDirectionWithPassenger2 = parseCode([[
 function ai.chooseDirection( train, directions )
 	if train.passenger == nil then
-		print( train.name .. " carries no passenger." )
+		print(train.name.." carries no passenger.")
 		return "S"
 	else
-		print( train.name .. " carries " .. train.passenger )
-		if train.passengerX < train.x then
+		print(train.name.." carries "..train.passenger.name)
+		if train.passenger.destX < train.x then
 			return "W"
 		else
 			return "E"
@@ -290,7 +290,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The 'train' parameter will be automatically filled with a table representing the train. It has the following elements: 'ID', 'name', 'x' and 'y'.\nIf the train is currently transporting a passenger, then there's three more elements in the table called:\n'passenger' (the name of the passenger), 'passengerX' and 'passengerY' (the coordinates of where the passenger wants to go).\nAdd the code in the code box to your function."
+	tutorialSteps[k].message = "The 'train' parameter will automatically be filled with a table representing the train. It has the following elements: 'ID', 'name', 'x' and 'y'. If the train is currently transporting a passenger, then there's one more element in the table called 'passenger' (a table representing the passenger). This table, again, has elements 'destX' and 'destY' which hold the destination of the passenger and 'name' - the name of the passenger. Add the new code to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionFunction2)
 		end
@@ -320,7 +320,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "If there is a passenger on board, we'll compare the X-coordinates of the train's current position (train.x) and the passenger's destination (train.passengerX). If the destination lies in the West (destination X is smaller than the train's X) then we'll go West. Otherwise, we'll go East.\nAdd the new parts to your function."
+	tutorialSteps[k].message = "If there is a passenger on board, we'll compare the X-coordinates of the train's current position (train.x) and the passenger's destination (train.passenger.destX). If the destination lies in the West (destination X is smaller than the train's X) then we'll go West. Otherwise, we'll go East.\nAdd the new parts to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionWithPassenger2)
 		end
@@ -334,7 +334,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].event = waitingForPassengersEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The game will automatically go to the next step when you've dropped of one passenger in the East and one in the West."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The game will automatically go to the next step when you've dropped off one passenger in the East and one in the West."), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}

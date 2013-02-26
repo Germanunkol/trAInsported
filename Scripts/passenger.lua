@@ -229,6 +229,9 @@ end
 function passenger.leaveTrain(aiID)
 
 	return function (pseudoTrain)
+		if not pseudoTrain or not pseudoTrain.ID then
+			error("Invalid train passed to dropPassenger()!")
+		end
 		tr = train.getByID(aiID, pseudoTrain.ID)
 		if tr and tr.curPassenger then
 		

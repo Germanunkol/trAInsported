@@ -450,7 +450,7 @@ function tutorial.createTutBoxes()
 		end
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1) A == B (are A and B equal?)\n2) A > B (A greater than B?)\n3) A <= B (Is A smaller or Equal to B?)\n4) A ~= B (A does not equal B)"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1) A == B (are A and B equal?)\n2) A > B (A greater than B?)\n3) A <= B (Is A smaller or equal to B?)\n4) A ~= B (A does not equal B)"), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	

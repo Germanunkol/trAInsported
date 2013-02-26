@@ -53,7 +53,7 @@ function textToSVG(x, y, size, text, align, rotate, color, boxLabel)
 	local s = ""
 	
 	if boxLabel then
-		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-5 .. '" y = "' .. y-12 .. '" border-radius="10" rx="5" ry="5" width="100" height="13" fill="#523E34" stroke-width="1" stroke="black"  style="opacity:0.5"/>\n'
+		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-5 .. '" y = "' .. y-10 .. '" border-radius="10" rx="5" ry="5" width="100" height="14" fill="#523E34" stroke-width="1" stroke="black"  style="opacity:0.5"/>\n'
 	end
 	
 	s = s .. "\t<text "
@@ -186,6 +186,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		end
 		-- scale all data to fit onto the chart:
 		for i=1,#points do
+			points[i][#points[i]+1] = {x=maxX, y = points[i][#points[i]].y}		-- add horizontal line after last node!
 			for j=1,#points[i] do
 				points[i][j].x = paddingLeft + (width-paddingLeft-paddingRight)*points[i][j].x/maxX
 				points[i][j].y = (height-paddingBottom-paddingTop)*(maxY-points[i][j].y)/maxY + paddingTop

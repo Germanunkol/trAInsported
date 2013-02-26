@@ -42,6 +42,14 @@ function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID].pNormal = 0
 	aiStats[aiID].trains[train.ID].pVIP = 0
 	aiStats[aiID].numTrains = aiStats[aiID].numTrains + 1
+	
+	if CL_CHART_DIRECTORY then
+		if #aiStats[aiID].chartTrains > 0 then	-- there's already a point in the list?
+			aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains].y}
+		end
+		aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains+1] = {x=math.floor(curMap.time), y = aiStats[aiID].numTrains}
+		--table.insert(aiStats[aiID].chartTrains, {x=math.floor(curMap.time), y = aiStats[aiID].numTrains})
+	end
 end
 
 function statistics.addMoney( aiID, money )
@@ -99,11 +107,11 @@ function statistics.broughtToDestination( aiID, trainID, vip )
 	aiStats[aiID].trains[trainID].pTransported = aiStats[aiID].trains[trainID].pTransported + 1
 	
 	if CL_CHART_DIRECTORY then
-		--[[if #aiStats[aiID].chartPassengers > 0 then	-- there's already a point in the list?
+		if #aiStats[aiID].chartPassengers > 0 then	-- there's already a point in the list?
 			aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers].y}
 		end
-		aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].pTransported}]]--
-		table.insert(aiStats[aiID].chartPassengers, {x=math.floor(curMap.time), y = aiStats[aiID].pTransported})
+		aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].pTransported}
+		--table.insert(aiStats[aiID].chartPassengers, {x=math.floor(curMap.time), y = aiStats[aiID].pTransported})
 	end
 	
 	if vip then
@@ -600,6 +608,16 @@ function statistics.generateChart()
 		if #points > 0 then
 			chart.generate(CL_CHART_DIRECTORY .. "/results.svg", 350, 200, points, "seconds", "passengers")
 		end
+		
+		points = {}
+		for i = 1,#aiStats do
+			points[i] = aiStats[i].chartTrains
+			points[i].name = aiStats[i].name
+		end
+		
+		if #points > 0 then
+			chart.generate(CL_CHART_DIRECTORY .. "/resultsTrains.svg", 350, 200, points, "seconds", "trAIns")
+		end
 	end
 end
 
@@ -726,6 +744,8 @@ function statistics.start( ais )
 		if CL_CHART_DIRECTORY then
 			aiStats[i].chartPassengers = {}
 			aiStats[i].chartPassengers[1] = {x=0,y=0}
+			aiStats[i].chartTrains = {}
+			aiStats[i].chartTrains[1] = {x=0,y=0}
 		end
 	end
 	if not DEDICATED then

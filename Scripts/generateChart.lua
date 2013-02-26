@@ -204,7 +204,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		
 		for i=1,#points do
 			chartContent = chartContent .. "\n<!-- Data Set " .. i .. " -->\n"
-			animSpeed = 1/#points[i]
+			animSpeed = 2/#points[i]
 			for j=1,#points[i]-1 do
 				animTime = animTime + animSpeed
 				chartContent = chartContent .. "\t" .. lineToSVG(points[i][j].x, points[i][j].y, points[i][j+1].x, points[i][j+1].y, color[i], 2, animTime, animSpeed)

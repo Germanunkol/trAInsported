@@ -107,9 +107,9 @@ function statistics.broughtToDestination( aiID, trainID, vip )
 	aiStats[aiID].trains[trainID].pTransported = aiStats[aiID].trains[trainID].pTransported + 1
 	
 	if CL_CHART_DIRECTORY then
-		if #aiStats[aiID].chartPassengers > 0 then	-- there's already a point in the list?
-			aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers].y}
-		end
+		--if #aiStats[aiID].chartPassengers > 0 then	-- there's already a point in the list?
+		--	aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers].y}
+		--end
 		aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].pTransported}
 		--table.insert(aiStats[aiID].chartPassengers, {x=math.floor(curMap.time), y = aiStats[aiID].pTransported})
 	end

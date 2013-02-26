@@ -26,14 +26,16 @@ function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
 	if animationTimeOffset and animationSpeed then
 		s = '<line '
 		s = addAttribute(s, "x1", x1)
-		s = addAttribute(s, "x2", x2)
-		s = addAttribute(s, "y1", yAxisHeight)
-		s = addAttribute(s, "y2", yAxisHeight)
+		s = addAttribute(s, "x2", x1)
+		s = addAttribute(s, "y1", y1)
+		s = addAttribute(s, "y2", y1)
 		s = addAttribute(s, "stroke", color)
 		s = addAttribute(s, "stroke-width", width)
+		s = addAttribute(s, "display", "none")
 		s = s .. '>\n'
-		s = s .. '\t<animate attributeType="XML" attributeName="y2" from="' .. yAxisHeight .. '" to="' .. y2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
-		s = s .. '\t<animate attributeType="XML" attributeName="y1" from="' .. yAxisHeight .. '" to="' .. y1 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t<set attributeName="display" to="inline" begin="' .. animationTimeOffset .. '" />\n'
+		s = s .. '\t<animate attributeType="XML" attributeName="x2" from="' .. x1 .. '" to="' .. x2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t<animate attributeType="XML" attributeName="y2" from="' .. y1 .. '" to="' .. y2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
 		s = s .. '</line>\n'
 	else
 		s = '<line '

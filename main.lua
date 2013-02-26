@@ -213,7 +213,7 @@ if DEDICATED then
 		
 		math.randomseed(os.time())
 		
-		AI_DIRECTORY = "AI/"
+		AI_DIRECTORY = love.filesystem.getWorkingDirectory() .. "/AI/"
 	end
 	
 	
@@ -384,6 +384,8 @@ else
 	-- Main function, runs at startup:
 	function love.load(args)
 	
+		love.filesystem.setIdentity("trAInsported")
+	
 		-- load screen resolution from config file:
 		setupScreenResolution()
 	
@@ -416,6 +418,9 @@ else
 		
 		AI_DIRECTORY = love.filesystem.getSaveDirectory()
 		AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
+		
+		RELATIVE_AI_DIRECTORY = "/AI/"
+		
 		--[[if AI_DIRECTORY:find("/") == 1 then		-- Unix style!!
 			AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
 		else

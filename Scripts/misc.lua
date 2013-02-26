@@ -18,20 +18,27 @@ end
 function scandir(directory)
 	local i, t, popen = 0, {}, io.popen
 	
-	if string.sub(love.filesystem.getSaveDirectory(), 1, 1) == "/" then		-- assume unix!
-		for filename in popen('ls "'..directory..'"'):lines() do
-			i = i + 1
-			t[i] = filename
-			--print("ls -a returned:", filename)
-		end
-	else
-		for filename in popen('dir "'..directory ..'" /B'):lines() do
-			i = i + 1
+	t = love.filesystem.enumerate("AI")
+	
+	if #t < 1 then
+		ok, test = pcall(io.popen,".")
+		if ok then
+			if string.sub(love.filesystem.getSaveDirectory(), 1, 1) == "/" then		-- assume unix!
+				for filename in popen('ls "'..directory..'"'):lines() do
+					i = i + 1
+					t[i] = filename
+					--print("ls -a returned:", filename)
+				end
+			else
+				for filename in popen('dir "'..directory ..'" /B'):lines() do
+					i = i + 1
 		
-			_, pos = filename:find(".* ")		-- find last occurance of space
-			pos = pos or 0
-			t[i] = filename:sub(pos+1, #filename)
-			print("dir returned:", filename)
+					_, pos = filename:find(".* ")		-- find last occurance of space
+					pos = pos or 0
+					t[i] = filename:sub(pos+1, #filename)
+					print("dir returned:", filename)
+				end
+			end
 		end
 	end
 	return t
@@ -223,8 +230,8 @@ function threadSendStatus( t, status )
 end
 
 function getCPUNumber()
-	f = io.popen("nproc")
-	if f then
+	ok, f = pcall(io.popen,"nproc")
+	if ok and f then
 		local n = f:read("*a")
 		f:close()
 		return tonumber(n)

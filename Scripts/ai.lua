@@ -416,6 +416,11 @@ function ai.findAvailableAIs()
 		--local directory = love.filesystem.getWorkingDirectory()
 		--local files = findAIs(directory)
 		local files = scandir(AI_DIRECTORY)
+		
+		--if #files < 1 then
+		--	files = 
+		--end
+		
 		for k, file in ipairs(files) do
 			if file:find("Backup.lua") then
 				files[k] = nil

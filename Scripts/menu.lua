@@ -157,7 +157,7 @@ function menu.init(menuX, menuY)
 	y = y + 60
 	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
-	menuButtons.buttonChallenge = button:new(x, y, "Challenge", menu.challenge, nil, nil, nil, nil, "Beat the challenge maps!")
+	--menuButtons.buttonChallenge = button:new(x, y, "Challenge", menu.challenge, nil, nil, nil, nil, "Beat the challenge maps!")
 	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "Compete", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45

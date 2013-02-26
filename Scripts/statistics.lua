@@ -99,6 +99,10 @@ function statistics.broughtToDestination( aiID, trainID, vip )
 	aiStats[aiID].trains[trainID].pTransported = aiStats[aiID].trains[trainID].pTransported + 1
 	
 	if CL_CHART_DIRECTORY then
+		--[[if #aiStats[aiID].chartPassengers > 0 then	-- there's already a point in the list?
+			aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers].y}
+		end
+		aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].pTransported}]]--
 		table.insert(aiStats[aiID].chartPassengers, {x=math.floor(curMap.time), y = aiStats[aiID].pTransported})
 	end
 	
@@ -579,9 +583,10 @@ function statistics.generateStatWindows()
 		i = i + 1
 	end
 		
-	if not DEDICATED and CL_CHART_DIRECTORY then
+	--if not DEDICATED and CL_CHART_DIRECTORY then
 		statistics.generateChart()
-	end
+	--end
+	
 end
 
 function statistics.generateChart()
@@ -720,7 +725,7 @@ function statistics.start( ais )
 		
 		if CL_CHART_DIRECTORY then
 			aiStats[i].chartPassengers = {}
-			table.insert(aiStats[i].chartPassengers,{x=0,y=0})
+			aiStats[i].chartPassengers[1] = {x=0,y=0}
 		end
 	end
 	if not DEDICATED then

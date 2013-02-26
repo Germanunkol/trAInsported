@@ -13,27 +13,30 @@ local paddingBottom = 40
 local paddingTop = 30
 local paddingRight = 45
 
+local yAxisHeight = 0
+
 function addAttribute(str, name, value)
 	if not value or not name then return str end
 	return str .. name .. '="' .. value .. '" '
 end
 
 function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
-	
+	local s
 	
 	if animationTimeOffset and animationSpeed then
 		s = '<line '
 		s = addAttribute(s, "x1", x1)
 		s = addAttribute(s, "x2", x2)
-		s = addAttribute(s, "y1", y1)
-		s = addAttribute(s, "y2", y2)
+		s = addAttribute(s, "y1", yAxisHeight)
+		s = addAttribute(s, "y2", yAxisHeight)
 		s = addAttribute(s, "stroke", color)
 		s = addAttribute(s, "stroke-width", width)
 		s = s .. '>\n'
-		s = s .. '<animate attributeType="XML" attributeName="y2" from="210" to="200" dur="1s" begin="0s" fill="freeze" />'
-		s = s .. '</line>'
+		s = s .. '\t<animate attributeType="XML" attributeName="y2" from="' .. yAxisHeight .. '" to="' .. y2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t<animate attributeType="XML" attributeName="y1" from="' .. yAxisHeight .. '" to="' .. y1 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '</line>\n'
 	else
-		local s = '<line '
+		s = '<line '
 		s = addAttribute(s, "x1", x1)
 		s = addAttribute(s, "x2", x2)
 		s = addAttribute(s, "y1", y1)
@@ -46,11 +49,20 @@ function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
 	return s
 end
 
-function textToSVG(x, y, size, text, align, rotate, color)
-	local s = "<text "
+function textToSVG(x, y, size, text, align, rotate, color, boxLabel)
+	local s = ""
+	
+	if boxLabel then
+		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-50 .. '" y = "' .. y-10 .. '" border-radius="10" rx="5" ry="5" width="100" height="12" fill="#523E34" stroke-width="1" stroke="black" />\n'
+	end
+	
+	s = s .. "\t<text "
 	s = addAttribute(s, "x", x)
 	s = addAttribute(s, "y", y)
 	s = addAttribute(s, "font-size", size)
+	if boxLabel then
+		s = addAttribute(s, "id", boxLabel)
+	end
 	if align and align == "right" then
 		s = addAttribute(s, "text-anchor", "end")
 	end
@@ -59,7 +71,12 @@ function textToSVG(x, y, size, text, align, rotate, color)
 	end
 	if not color then color = "white" end
 	s = addAttribute(s, "fill", color)
-	s = s .. "> " .. text .. " </text>\n"
+	if not boxLabel then
+		s = s .. "> " .. text .. " </text>\n"
+	else
+		s = s .. '>\n\t\t<tspan id="tspan1">' .. text .. " </tspan>\n\t</text>\n"
+	end
+	
 	return s
 end
 
@@ -107,6 +124,41 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	s = s .. "\t" .. lineToSVG(paddingLeft, height-paddingBottom, width-paddingRight, height-paddingBottom, "white", 3)
 	s = s .. "\t" .. lineToSVG(paddingLeft, paddingTop, paddingLeft, height-paddingBottom, "white", 3)
 	
+	yAxisHeight = height-paddingBottom
+	
+	return s
+end
+
+-- a function that will add a script to the file which can draw the borders around the texts elements.
+function writeBorderScript(points)
+	local s = [[
+	<script type="text/ecmascript">
+		function add_bounding_box (text_id, padding) {
+			var text_elem = document.getElementById(text_id);
+			if (text_elem) {
+				var t = text_elem.getClientRects();
+				var r = document.getElementById(text_id + '-box');
+				if (t) {
+					if (r) {
+				    r.setAttribute(
+				        'style',
+				        'stroke: black;'+
+				        'stroke-width: 1px;'
+				    );
+				    r.setAttribute('x', t[0].left - padding);
+					r.setAttribute('y', t[0].top - padding);
+					r.setAttribute('width', t[0].width + padding * 2);
+					r.setAttribute('height', t[0].height + padding * 2);
+				    }
+				}
+			}
+		}
+		]]
+		
+	for k, p in pairs(points) do
+		s = s .. "\n\t\tadd_bounding_box('" .. p.name .."', 2);"
+	end
+	s = s .. "\n\t</script>\n"
 	return s
 end
 
@@ -115,7 +167,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 	if #points < 1 then return end
 	
 	-- setup defaults:
-	animationTime = animationTime or 0
+	animationTime = animationTime or 5
 	style = style or "line"
 	
 	-- sort list by x, then by y:
@@ -137,7 +189,6 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 				maxY = math.max(points[i][j].y, maxY)
 			end
 		end
-		print("MAX: ", maxX, maxY)
 		-- scale all data to fit onto the chart:
 		for i=1,#points do
 			for j=1,#points[i] do
@@ -150,21 +201,31 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
 		chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
 		
-		animSpeed = animationTime*width/maxX
+		animSpeed = .3
+		animTime = 0
 		
 		for i=1,#points do
 			chartContent = chartContent .. "\n<!-- Data Set " .. i .. " -->\n"
 			for j=1,#points[i]-1 do
-				animTime = animationTime*points[i][j+1].x/maxX	--could be 0
+				animTime = animTime + animSpeed
 				chartContent = chartContent .. "\t" .. lineToSVG(points[i][j].x, points[i][j].y, points[i][j+1].x, points[i][j+1].y, color[i], 2, animTime, animSpeed)
 			end
+			animTime = animTime + 1
+		end
+		
+		for i=1,#points do	-- label all the lines:
 			if points[i][#points[i]] and points[i].name and #points[i] > 1 then
-				local lastX = points[i][#points[i]].x
-				local lastY = points[i][#points[i]].y
-				chartContent = chartContent .. textToSVG(lastX, lastY, 12, points[i].name, "right", nil, color[i])
+				local attachPoint = math.random(#points[i])
+				if #points[i] > 1 and attachPoint < 2 then
+					attachPoint = 2
+				end
+				local lastX = points[i][attachPoint].x
+				local lastY = points[i][attachPoint].y
+				chartContent = chartContent .. textToSVG(lastX - math.random(10), lastY - math.random(10), 12, points[i].name, "right", nil, color[i], points[i].name)
 			end
 		end
 		
+		chartContent = chartContent .. writeBorderScript(points)
 		chartContent = chartContent .. "</svg>\n"
 		
 	end

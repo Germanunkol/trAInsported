@@ -583,9 +583,9 @@ function statistics.generateStatWindows()
 		i = i + 1
 	end
 		
-	--if not DEDICATED and CL_CHART_DIRECTORY then
+	if not DEDICATED and CL_CHART_DIRECTORY then
 		statistics.generateChart()
-	--end
+	end
 	
 end
 

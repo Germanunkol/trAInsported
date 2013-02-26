@@ -53,7 +53,7 @@ function textToSVG(x, y, size, text, align, rotate, color, boxLabel)
 	local s = ""
 	
 	if boxLabel then
-		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-50 .. '" y = "' .. y-10 .. '" border-radius="10" rx="5" ry="5" width="100" height="12" fill="#523E34" stroke-width="1" stroke="black" />\n'
+		s = s .. '\t<rect id="' .. boxLabel .. '-box" x="' .. x-50 .. '" y = "' .. y-10 .. '" border-radius="10" rx="5" ry="5" width="100" height="12" fill="#523E34" stroke-width="1" stroke="black"  style="opacity:0.4"/>\n'
 	end
 	
 	s = s .. "\t<text "
@@ -140,11 +140,6 @@ function writeBorderScript(points)
 				var r = document.getElementById(text_id + '-box');
 				if (t) {
 					if (r) {
-				    r.setAttribute(
-				        'style',
-				        'stroke: black;'+
-				        'stroke-width: 1px;'
-				    );
 				    r.setAttribute('x', t[0].left - padding);
 					r.setAttribute('y', t[0].top - padding);
 					r.setAttribute('width', t[0].width + padding * 2);
@@ -201,16 +196,17 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
 		chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
 		
-		animSpeed = .3
+		
 		animTime = 0
 		
 		for i=1,#points do
 			chartContent = chartContent .. "\n<!-- Data Set " .. i .. " -->\n"
+			animSpeed = 1/#points[i]
 			for j=1,#points[i]-1 do
 				animTime = animTime + animSpeed
 				chartContent = chartContent .. "\t" .. lineToSVG(points[i][j].x, points[i][j].y, points[i][j+1].x, points[i][j+1].y, color[i], 2, animTime, animSpeed)
 			end
-			animTime = animTime + 1
+			animTime = animTime + .5
 		end
 		
 		for i=1,#points do	-- label all the lines:

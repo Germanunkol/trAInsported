@@ -19,17 +19,28 @@ function addAttribute(str, name, value)
 end
 
 function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
-	local s = '<line '
-	s = addAttribute(s, "x1", x1)
-	s = addAttribute(s, "x2", x2)
-	s = addAttribute(s, "y1", y1)
-	s = addAttribute(s, "y2", y2)
-	s = addAttribute(s, "stroke", color)
-	s = addAttribute(s, "stroke-width", width)
-	s = s .. '/>\n'
+	
 	
 	if animationTimeOffset and animationSpeed then
-	
+		s = '<line '
+		s = addAttribute(s, "x1", x1)
+		s = addAttribute(s, "x2", x2)
+		s = addAttribute(s, "y1", y1)
+		s = addAttribute(s, "y2", y2)
+		s = addAttribute(s, "stroke", color)
+		s = addAttribute(s, "stroke-width", width)
+		s = s .. '>\n'
+		s = s .. '<animate attributeType="XML" attributeName="y2" from="210" to="200" dur="1s" begin="0s" fill="freeze" />'
+		s = s .. '</line>'
+	else
+		local s = '<line '
+		s = addAttribute(s, "x1", x1)
+		s = addAttribute(s, "x2", x2)
+		s = addAttribute(s, "y1", y1)
+		s = addAttribute(s, "y2", y2)
+		s = addAttribute(s, "stroke", color)
+		s = addAttribute(s, "stroke-width", width)
+		s = s .. '/>\n'
 	end
 	
 	return s

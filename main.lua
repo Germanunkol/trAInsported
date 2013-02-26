@@ -34,6 +34,8 @@ pSpeach = require("Scripts/passengerSpeach")
 log = require("Scripts/databaseLog")
 chart = require("Scripts/generateChart")
 
+challenges = require("Scripts/challenges")
+
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:
 if INVALID_PORT then
@@ -369,8 +371,6 @@ else
 	simulation = require("Scripts/simulation")
 	statusMsg = require("Scripts/statusMsg")
 	versionCheck = require("Scripts/versionCheck")
-	
-	challenges = require("Scripts/challenges")
 	
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
 

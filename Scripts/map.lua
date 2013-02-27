@@ -52,7 +52,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 
 		curMap = nil
 		
-		print("CHoosing map size:", MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
+		print("Choosing map size:", MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		width = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		height = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		time = "day"

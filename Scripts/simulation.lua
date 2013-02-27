@@ -141,6 +141,12 @@ function simulation.addUpdate(text)
 	end
 	time = tonumber(text:sub(1, e-1))
 	text = text:sub(e+1, #text)
+	
+	if ID == nil or text == nil or time == nil then
+		menu.init()
+		statusMsg.add("Error in connection. Received a bad packet. Maybe retry?", true)
+	end
+	
 	addPacket(ID, text, time)
 	
 	if text:find("ROUND_DETAILS:") == 1 then

@@ -86,7 +86,13 @@ end
 function ai.new(scriptName)
 	--local ok, chunk = pcall(love.filesystem.read, scriptName
 	print("scriptName", scriptName)
-	fh = io.open(scriptName,"r")
+	fh = io.open( scriptName,"r")
+	if not fh then
+		scriptName = scriptName:gsub(AI_DIRECTORY, "")
+		scriptName = love.filesystem.getWorkingDirectory() .. "/AI/" .. scriptName
+		print("scriptName 2", scriptName)
+		fh = io.open( scriptName,"r")
+	end
 	local ok, chunk = pcall(fh.read, fh, "*all" )
 
 	if not ok then error("Could not open file: " .. chunk)

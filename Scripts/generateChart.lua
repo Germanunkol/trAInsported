@@ -24,7 +24,7 @@ function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
 	local s
 	
 	if animationTimeOffset and animationSpeed then
-		s = '<line '
+		s = '\t<line '
 		s = addAttribute(s, "x1", x1)
 		s = addAttribute(s, "x2", x1)
 		s = addAttribute(s, "y1", y1)
@@ -33,18 +33,52 @@ function lineToSVG(x1,y1,x2,y2,color,width,animationTimeOffset,animationSpeed)
 		s = addAttribute(s, "stroke-width", width)
 		s = addAttribute(s, "display", "none")
 		s = s .. '>\n'
-		s = s .. '\t<set attributeName="display" to="inline" begin="' .. animationTimeOffset .. '" />\n'
-		s = s .. '\t<animate attributeType="XML" attributeName="x2" from="' .. x1 .. '" to="' .. x2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
-		s = s .. '\t<animate attributeType="XML" attributeName="y2" from="' .. y1 .. '" to="' .. y2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
-		s = s .. '</line>\n'
+		s = s .. '\t\t<set attributeName="display" to="inline" begin="' .. animationTimeOffset .. '" />\n'
+		s = s .. '\t\t<animate attributeType="XML" attributeName="x2" from="' .. x1 .. '" to="' .. x2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t\t<animate attributeType="XML" attributeName="y2" from="' .. y1 .. '" to="' .. y2 .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t</line>\n'
 	else
-		s = '<line '
+		s = '\t<line '
 		s = addAttribute(s, "x1", x1)
 		s = addAttribute(s, "x2", x2)
 		s = addAttribute(s, "y1", y1)
 		s = addAttribute(s, "y2", y2)
 		s = addAttribute(s, "stroke", color)
 		s = addAttribute(s, "stroke-width", width)
+		s = s .. '/>\n'
+	end
+	
+	return s
+end
+
+function boxToSVG(xPos, yPos, width, height, color, animationTimeOffset, animationSpeed)
+	local s
+	if animationTimeOffset and animationSpeed then
+		s = '\t<rect '
+		s = addAttribute(s, "x", xPos - width/2)
+		s = addAttribute(s, "y", yPos)
+		s = addAttribute(s, "height", 0)
+		s = addAttribute(s, "width", width)
+		s = addAttribute(s, "fill", color)
+		s = addAttribute(s, "stroke-width", 1)
+		s = addAttribute(s, "stroke", "black")
+		s = addAttribute(s, "style", "opacity:0.5")
+		s = addAttribute(s, "display", "none")
+		s = s .. '>\n'
+		s = s .. '\t<set attributeName="display" to="inline" begin="' .. animationTimeOffset .. '" />\n'
+		s = s .. '\t\t<animate attributeType="XML" attributeName="y" from="' .. yPos .. '" to="' .. yPos-height .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t\t<animate attributeType="XML" attributeName="height" from="' .. 0 .. '" to="' .. height .. '" dur="' .. animationSpeed .. 's" begin="' .. animationTimeOffset .. 's" fill="freeze" />\n'
+		s = s .. '\t</rect>\n'
+	else
+		s = '\t<rect '
+		s = addAttribute(s, "x", xPos - width/2)
+		s = addAttribute(s, "y", yPos-height)
+		s = addAttribute(s, "height", height)
+		s = addAttribute(s, "width", width)
+		s = addAttribute(s, "fill", color)
+		s = addAttribute(s, "stroke-width", 1)
+		s = addAttribute(s, "stroke", "black")
+		s = addAttribute(s, "style", "opacity:0.5")
 		s = s .. '/>\n'
 	end
 	
@@ -131,6 +165,31 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 	return s
 end
 
+function writeCoordinateSystemBarGraph(width, height, maxY)
+	local s = ""
+	
+	s = s .. "\n<!-- Coordinate System: -->\n"
+	
+	local h = (height-paddingBottom-paddingTop)
+	local stepSize = math.floor(math.max(h/10, 30))
+	for y = paddingTop, height-paddingBottom, stepSize do
+		if (h-(y-paddingTop)) > 0 then
+			s = s .. "\t" .. lineToSVG(paddingLeft, y, width-paddingRight, y, "grey", 1)
+			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, math.floor((h-(y-paddingTop))/h*maxY), "right", nil, "white")
+		end
+	end
+	
+	s = s .. "\n"
+	s = s .. "<!-- Axis: -->\n"
+	
+	s = s .. "\t" .. lineToSVG(paddingLeft, height-paddingBottom, width-paddingRight, height-paddingBottom, "white", 3)
+	s = s .. "\t" .. lineToSVG(paddingLeft, paddingTop, paddingLeft, height-paddingBottom, "white", 3)
+	
+	yAxisHeight = height-paddingBottom
+	
+	return s
+end
+
 -- a function that will add a script to the file which can draw the borders around the texts elements.
 function writeBorderScript(points)
 	local s = [[
@@ -199,7 +258,6 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
 		chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
 		
-		
 		animTime = 0
 		
 		for i=1,#points do
@@ -215,11 +273,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		local x = paddingLeft + 10
 		local y = paddingTop
 		for i=1,#points do	-- label all the lines:
-			if points[i][#points[i]] and points[i].name and #points[i] > 1 then
-				local attachPoint = math.random(#points[i])
-				if #points[i] > 1 and attachPoint < 2 then
-					attachPoint = 2
-				end
+			if points[i].name and #points[i] > 1 then
 				local lastX = x + math.random(10)
 				chartContent = chartContent .. textToSVG(lastX, y, 12, points[i].name, "left", nil, color[i], points[i].name)
 				y = y + 16
@@ -228,7 +282,34 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		
 		chartContent = chartContent .. writeBorderScript(points)
 		chartContent = chartContent .. "</svg>\n"
+	elseif style == "bar" then
+	
+		maxY = 1
+		for i=1,#points do
+			maxY = math.max(maxY, points[i].height)
+		end
+		chartContent = chartContent .. writeCoordinateSystemBarGraph(width, height, maxY)
+		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
 		
+		w = (width-paddingRight-paddingLeft)/(#points+1)
+		xPos = w + paddingLeft
+		for i=1,#points do
+			h = points[i].height*(height-paddingTop-paddingBottom)/maxY
+			chartContent = chartContent .. boxToSVG(xPos, height-paddingBottom, w/2, h, color[i], (i-1)*(.5+2), 2)
+			xPos = xPos + w
+		end
+		
+		local x = paddingLeft + 10
+		local y = paddingTop
+		for i=1,#points do	-- label all the lines:
+			if points[i].name and #points[i] > 1 then
+				local lastX = x + math.random(10)
+				chartContent = chartContent .. textToSVG(lastX, y, 12, points[i].name, "left", nil, color[i], points[i].name)
+				y = y + 16
+			end
+		end
+		
+		chartContent = chartContent .. "</svg>\n"
 	end
 	
 	file = io.open(fileName, "w")

@@ -203,6 +203,8 @@ if DEDICATED then
 	function love.load(args)
 		print("Starting in dedicated Server mode!")
 		
+		love.filesystem.setIdentity("trAInsported")
+		
 		log.findTable()		-- look for table in database.
 		
 		io.close()

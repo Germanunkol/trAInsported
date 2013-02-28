@@ -623,7 +623,7 @@ function statistics.generateChart()
 			print("Logging results for individual AIs")
 			for k = 1, #aiStats do
 				if aiStats[k].name and aiStats[k].owner then
-					if chart1content then
+					if chart1Content then
 						file = io.open(CL_DIRECTORY .. "/" .. aiStats[k].owner .. "/" .. aiStats[k].name .. ".svg", "w")
 						if file then
 							file:write(chart1Content)

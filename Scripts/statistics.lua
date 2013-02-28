@@ -621,17 +621,21 @@ function statistics.generateChart()
 		
 		if CL_DIRECTORY then
 			print("Logging results for individual AIs")
-			for k, ai in pairs(aiStats) do
-				if ai.name and ai.owner then
-					file = io.open(CL_DIRECTORY .. "/" .. ai.owner .. "/" .. ai.name .. ".svg", "w")
-					if file then
-						file:write(chart1Content)
-						file:close()
+			for k = 1, #aiStats do
+				if aiStats[k].name and aiStats[k].owner then
+					if chart1content then
+						file = io.open(CL_DIRECTORY .. "/" .. aiStats[k].owner .. "/" .. aiStats[k].name .. ".svg", "w")
+						if file then
+							file:write(chart1Content)
+							file:close()
+						end
 					end
-					file = io.open(CL_DIRECTORY .. "/" .. ai.owner .. "/" .. ai.name .. "_trains.svg", "w")
-					if file then
-						file:write(chart2Content)
-						file:close()
+					if chart2content then
+						file = io.open(CL_DIRECTORY .. "/" .. aiStats[k].owner .. "/" .. aiStats[k].name .. "_trains.svg", "w")
+						if file then
+							file:write(chart2Content)
+							file:close()
+						end
 					end
 				end
 			end

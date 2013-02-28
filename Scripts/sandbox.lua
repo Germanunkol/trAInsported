@@ -60,9 +60,15 @@ function sandbox.createNew(aiID, scriptName)
 	-- list of all functions which the AI is allowed to use:
 	sb.pairs = pairs
 	sb.ipairs = ipairs
+	sb.next = next
 	sb.type = type
+	sb.tonumber = tonumber
+	sb.tostring = tostring
+	sb._VERSION = _VERSION
+	sb.unpack = unpack
+	
 	sb.string = {}
-	sb.string.btye = string.byte
+	sb.string.byte = string.byte
 	sb.string.char = string.char
 	sb.string.find = string.find
 	sb.string.format = string.format
@@ -80,6 +86,7 @@ function sandbox.createNew(aiID, scriptName)
 	sb.table.maxn = table.maxn
 	sb.table.remove = table.remove
 	sb.table.sort = table.sort
+	sb.table.concat = table.concat
 	sb.math = {}
 	sb.math.abs = math.abs
 	sb.math.acos = math.acos
@@ -118,6 +125,16 @@ function sandbox.createNew(aiID, scriptName)
 	
 	sb.error = error
 	sb.pcall = pcall
+	
+	sb.xpcall = xpcall
+	
+	sb.coroutine = {}
+	sb.coroutine.create = coroutine.create
+	sb.coroutine.resume = coroutine.resume
+	sb.coroutine.running = coroutine.running
+	sb.coroutine.status = coroutine.status
+	sb.coroutine.wrap = coroutine.wrap
+	sb.coroutine.yield = coroutine.yield
 
 	sb.random = math.random
 	sb.sqrt = math.sqrt
@@ -125,6 +142,10 @@ function sandbox.createNew(aiID, scriptName)
 	sb.buyTrain = train.buyNew(aiID)
 	sb.getMoney = stats.getMoneyAI(aiID)
 
+	sb.os = {}
+	sb.os.clock = os.clock
+	sb.os.difftime = os.difftime
+	sb.os.time = os.time
 
 	-- scriptName is used to get the path:
 	sb.dofile = function(f)
@@ -139,6 +160,13 @@ function sandbox.createNew(aiID, scriptName)
 			file = file .. ".lua"
 		end
 		local chunk, err = loadfile(file)
+		if not chunk then return nil, err end
+		setfenv(chunk, sb)
+		return chunk
+	end
+	
+	function sb.loadstring(str)
+		local chunk, err = loadstring(str)
 		if not chunk then return nil, err end
 		setfenv(chunk, sb)
 		return chunk

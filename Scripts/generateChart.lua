@@ -317,6 +317,8 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		file:write(chartContent)
 		file:close()
 	end
+	
+	return chartContent
 end
 
 return chart

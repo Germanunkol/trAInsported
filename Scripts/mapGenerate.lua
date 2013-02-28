@@ -33,8 +33,6 @@ while true do
 	seed = thisThread:demand("seed")
 	tutorialMap = thisThread:get("tutorialMap")
 
-
-
 	if tutorialMap then
 		tutorialMap = TSerial.unpack(tutorialMap)
 		width = tutorialMap.width

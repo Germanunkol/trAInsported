@@ -616,7 +616,7 @@ function statistics.generateChart()
 		end
 		
 		if #points > 0 then
-			chart2content = chart.generate(CL_CHART_DIRECTORY .. "/resultsTrains.svg", 350, 200, points, "seconds", "trAIns")
+			chart2Content = chart.generate(CL_CHART_DIRECTORY .. "/resultsTrains.svg", 350, 200, points, "seconds", "trAIns")
 		end
 		
 		if CL_DIRECTORY then
@@ -630,7 +630,7 @@ function statistics.generateChart()
 							file:close()
 						end
 					end
-					if chart2content then
+					if chart2Content then
 						file = io.open(CL_DIRECTORY .. "/" .. aiStats[k].owner .. "/" .. aiStats[k].name .. "_trains.svg", "w")
 						if file then
 							file:write(chart2Content)

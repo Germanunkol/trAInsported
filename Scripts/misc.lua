@@ -229,13 +229,32 @@ function threadSendStatus( t, status )
 	statusNum = incrementID(statusNum)
 end
 
+local CPU_NUMBER
+
 function getCPUNumber()
-	ok, f = pcall(io.popen,"nproc")
-	if ok and f then
-		local n = f:read("*a")
-		f:close()
-		return tonumber(n)
+	if not CPU_NUMBER then
+		if love._os == "OS X" then
+			if love.filesystem.isFile("coresDetected.txt") then
+				local corestxt = love.filesystem.read("cores.txt")
+				CPU_NUMBER = tonumber(corestxt)
+			else
+				os.execute(string.format("%s > %q", "sysctl -n hw.ncpu", love.filesystem.getSaveDirectory() .. "/coresDetected.txt"))
+
+				if love.filesystem.isFile("coresDetected.txt") then
+					local corestxt = love.filesystem.read("cores.txt")
+					CPU_NUMBER = tonumber(corestxt)
+				end
+			end
+		else
+			ok, f = pcall(io.popen,"nproc")
+			if ok and f then
+				local n = f:read("*a")
+				f:close()
+				CPU_NUMBER = tonumber(n)
+			end
+		end
 	end
+	return CPU_NUMBER
 end
 ------------------------------------
 

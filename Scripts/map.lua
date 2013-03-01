@@ -1265,7 +1265,6 @@ function map.render(map)
 			
 			loadingScreen.percentage("Rendering Map", 100)
 			
-			
 			currentlyRenderingMap = false
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")

@@ -428,6 +428,7 @@ else
 		else
 			AI_DIRECTORY = AI_DIRECTORY .. "\\AI\\"
 		end]]--
+		print("OS Detected:", love._os)
 		
 		print("Will look for AIs in:",AI_DIRECTORY)
 		

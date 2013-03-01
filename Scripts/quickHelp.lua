@@ -6,7 +6,7 @@ local HELP_WIDTH, HELP_HEIGHT = 400,300
 
 local helpStrKeys = [[Space :
 W,A,S,D :
-Cursor Keys :
+Cursor/Arrow Keys :
 Q,E :
 C :
 + :

@@ -75,9 +75,9 @@ tut 4:
 [x] Make "Last Match" logging use only one querry...
 [x] Log Date along with "Last Match" and display on website
 [x] screen resolution set at first start!
-- Tutorial "tutorial continued" when pressed F1 !
+[x] Tutorial "tutorial continued" when pressed F1 !
 - Tutorial "cursor keys"/"arrow keys"
-
+[x] Rename "End Match" button in simulation
 
 **Maybe**
 - buy code lines using in-game cash?
@@ -87,11 +87,12 @@ tut 4:
 - two or three rail types?
 - game mode where map is NOT passed to ai.init? (Fog of war?)
 - Repair costs?
-- Split up rendering of map images into multiple threads?
+[x] Split up rendering of map images into multiple threads?
 - dither full screen
+- scrollbar for console
 
 **Website**
-- rank of players?
+[x] rank of players?
 
 **Bugs**
 [x] generator can generate empty maps?
@@ -99,4 +100,4 @@ tut 4:
 [x] sometimes Simulation does not render new map for some reason.
 - nil pointer when in simulation
 - fast-forward problem: stops showing updates when on fresh connect.
-- fails to render new map is a new map is given while still rendering the old one (simulation)
+[x] fails to render new map is a new map is given while still rendering the old one (simulation)

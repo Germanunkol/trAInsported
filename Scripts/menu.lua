@@ -719,7 +719,11 @@ function menu.ingame()
 	hideLogo = true
 	x = defaultMenuX
 	y = defaultMenuY
-	menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil, nil, nil, nil, "Return to main menu.")
+	if simulation.isRunning() then
+		menuButtons.buttonExit = button:new(x, y, "Disconnect", confirmEndRound, nil, nil, nil, nil, "Return to main menu.")
+	else
+		menuButtons.buttonExit = button:new(x, y, "End Match", confirmEndRound, nil, nil, nil, nil, "Return to main menu.")
+	end
 	x = love.graphics.getWidth() - defaultMenuX - STND_BUTTON_WIDTH-10
 	y = love.graphics.getHeight() - defaultMenuY - STND_BUTTON_HEIGHT
 	if not simulation.isRunning() then

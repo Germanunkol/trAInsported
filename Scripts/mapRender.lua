@@ -17,7 +17,7 @@ pcall(require, "Scripts/globals")
 DEDICATED = rememberDedi
 
 -- find out how many threads should be used (split the map up into this number of threads/images)
-numThreads = getCPUNumber() or 1
+numThreads = getCPUNumber() or 2
 --numThreads = 1
 numDivisions = math.ceil(math.sqrt(numThreads))			-- by what number x and y are to be devided.
 

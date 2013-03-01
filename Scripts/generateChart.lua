@@ -1,3 +1,4 @@
+
 local chart = {}
 
 local color = {}
@@ -59,10 +60,10 @@ function boxToSVG(xPos, yPos, width, height, color, animationTimeOffset, animati
 		s = addAttribute(s, "y", yPos)
 		s = addAttribute(s, "height", 0)
 		s = addAttribute(s, "width", width)
-		s = addAttribute(s, "fill", color)
+		s = addAttribute(s, "fill", color or "white")
 		s = addAttribute(s, "stroke-width", 1)
 		s = addAttribute(s, "stroke", "black")
-		s = addAttribute(s, "style", "opacity:0.5")
+		s = addAttribute(s, "style", "opacity:0.7")
 		s = addAttribute(s, "display", "none")
 		s = s .. '>\n'
 		s = s .. '\t<set attributeName="display" to="inline" begin="' .. animationTimeOffset .. '" />\n'
@@ -166,8 +167,7 @@ function writeCoordinateSystem(width, height, maxX, maxY)
 end
 
 function writeCoordinateSystemBarGraph(width, height, maxY)
-	local s = ""
-	
+	local s = ""	
 	s = s .. "\n<!-- Coordinate System: -->\n"
 	
 	local h = (height-paddingBottom-paddingTop)
@@ -222,6 +222,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 	-- don't allow an empty list. At least one set of data is needed:
 	if #points < 1 then return end
 	
+	
 	-- setup defaults:
 	animationTime = animationTime or 5
 	style = style or "line"
@@ -255,8 +256,12 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		end
 		
 		chartContent = chartContent .. writeCoordinateSystem(width, height, maxX, maxY)
-		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
-		chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
+		if yLabel then
+			chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
+		end
+		if xLabel then
+			chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
+		end
 		
 		animTime = 0
 		
@@ -274,8 +279,7 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 		local y = paddingTop
 		for i=1,#points do	-- label all the lines:
 			if points[i].name and #points[i] > 1 then
-				local lastX = x + math.random(10)
-				chartContent = chartContent .. textToSVG(lastX, y, 12, points[i].name, "left", nil, color[i], points[i].name)
+				chartContent = chartContent .. textToSVG(x, y, 12, points[i].name, "left", nil, color[i], points[i].name)
 				y = y + 16
 			end
 		end
@@ -289,13 +293,23 @@ function chart.generate(fileName, width, height, points, xLabel, yLabel, style, 
 			maxY = math.max(maxY, points[i].height)
 		end
 		chartContent = chartContent .. writeCoordinateSystemBarGraph(width, height, maxY)
-		chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
+		if yLabel then
+			chartContent = chartContent .. textToSVG(15, paddingTop, 12, yLabel, "right", -90)
+		end
+		if xLabel then
+			chartContent = chartContent .. textToSVG(width-paddingRight, height-10, 12, xLabel, "right")
+		end
 		
 		w = (width-paddingRight-paddingLeft)/(#points+1)
 		xPos = w + paddingLeft
 		for i=1,#points do
 			h = points[i].height*(height-paddingTop-paddingBottom)/maxY
-			chartContent = chartContent .. boxToSVG(xPos, height-paddingBottom, w/2, h, color[i], (i-1)*(.5+2), 2)
+			c = points[i].color or color[i%4 + 1]
+			chartContent = chartContent .. boxToSVG(xPos, height-paddingBottom, w/2, h, c, (i-1)*(.5), 1)
+			chartContent = chartContent .. textToSVG(xPos+6, height-paddingBottom-10, 12, points[i].name, "left", -90)
+			if points[i].rank then
+				chartContent = chartContent .. textToSVG(xPos-10, height-paddingBottom+15, 12, points[i].rank, "left", nil)
+			end
 			xPos = xPos + w
 		end
 		

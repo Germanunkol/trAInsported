@@ -215,8 +215,6 @@ function chooseAIfromDB(numMatches)
 					cursor,err = conn:execute("DELETE FROM nextMatchTime")
 				end
 				
-				
-				
 			
 				-- check if enough entries exist in nextMatch. If not, add them.
 				print("Checking if there's " .. numMatches + 1 .. " matches in the 'nextMatch' table:")

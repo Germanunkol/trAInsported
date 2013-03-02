@@ -416,7 +416,16 @@ else
 		versionCheck.start()
 		
 		love.filesystem.mkdir("AI")
-		love.filesystem.mkdir("Challenge")
+		love.filesystem.mkdir("Maps")
+		
+		if not love.filesystem.isFile("Maps/ExampleChallenge.lua") then
+			if love.filesystem.isFile("Challenges/Challenge1.lua") then
+				contents, size = love.filesystem.read( "Challenges/Challenge1.lua" )
+				if contents then
+					love.filesystem.write("Maps/ExampleChallenge.lua", contents)
+				end
+			end
+		end
 		
 		AI_DIRECTORY = love.filesystem.getSaveDirectory()
 		AI_DIRECTORY = AI_DIRECTORY .. "/AI/"
@@ -612,10 +621,10 @@ else
 				end
 			
 				if not train.isRenderingImages() and not map.generating() and not map.rendering() then	-- done rendering everything!
-					if not simulation.isRunning() then
-						runMap()	-- start the map!
-					else
+					if simulation.isRunning() then
 						simulation.runMap()
+					else
+						runMap()	-- start the map!
 					end
 				end
 			else
@@ -629,6 +638,13 @@ else
 				train.moveAll()
 				if curMap then
 					curMap.time = curMap.time + dt*timeFactor
+				end
+				if challengeEvents.update then
+					res = challengeEvents.update()
+					if res == "lost" then
+						print("Player lost the round!")
+						map.endRound()
+					end
 				end
 			end
 		end

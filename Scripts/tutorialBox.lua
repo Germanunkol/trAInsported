@@ -23,14 +23,16 @@ function tutorialBox.new(x, y, msg, ... )
 		
 			tutorialBoxList[i] = setmetatable({x=x, y=y, width=tutorialBoxBG:getWidth(), height=tutorialBoxBG:getHeight(), text=msg, bg=tutorialBoxBG, index = i, buttons={}}, tutorialBox_mt)
 			local priority = 1		-- same importance as anything else
-			for j = 1, #arg, 1 do
-				if arg[j].inBetweenSteps then
-					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority, nil, true)
-				else
-					b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, tutorialBoxEvent(tutorialBoxList[i], arg[j].event), arg[j].args, priority, nil, true)
-				end
-				if b then
-					table.insert(tutorialBoxList[i].buttons, b)
+			if arg then
+				for j = 1, #arg, 1 do
+					if arg[j].inBetweenSteps then
+						b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, arg[j].event, arg[j].args, priority, nil, true)
+					else
+						b = button:new(x + (j-0.5)*(tutorialBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + tutorialBoxBG:getHeight() - 60, arg[j].name, tutorialBoxEvent(tutorialBoxList[i], arg[j].event), arg[j].args, priority, nil, true)
+					end
+					if b then
+						table.insert(tutorialBoxList[i].buttons, b)
+					end
 				end
 			end
 			return tutorialBoxList[i]

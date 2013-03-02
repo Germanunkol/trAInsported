@@ -62,6 +62,7 @@ tut 4:
 - rails with sidewalks
 - speed controls
 - don't let passengers stand on the rails.
+- show hotspots
 
 **Misc**
 [x] Add tipps?

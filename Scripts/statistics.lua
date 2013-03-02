@@ -715,6 +715,8 @@ function statistics.displayStatus()
 	love.graphics.setColor(255,255,255,255)
 	if tutorial and tutorial.roundStats then		-- let the tutorial draw the winning message
 		tutorial.roundStats()
+	elseif challenges.isRunning() then
+		challenges.roundStats()
 	else
 		x = love.graphics.getWidth()-roundStats:getWidth()-20
 		y = 20

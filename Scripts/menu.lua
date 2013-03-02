@@ -157,7 +157,7 @@ function menu.init(menuX, menuY)
 	y = y + 60
 	menuButtons.buttonTutorial = button:new(x, y, "Tutorial", menu.tutorials, nil, nil, nil, nil, "Get to know the game!")
 	y = y + 45
-	--menuButtons.buttonChallenge = button:new(x, y, "Challenge", menu.challenge, nil, nil, nil, nil, "Beat the challenge maps!")
+	menuButtons.buttonChallenge = button:new(x, y, "Challenge", menu.challenge, nil, nil, nil, nil, "Beat the challenge maps!")
 	y = y + 45
 	menuButtons.buttonNew = button:new(x, y, "Compete", menu.newRound, nil, nil, nil, nil, "Set up a test match for your AI")
 	y = y + 45
@@ -174,7 +174,8 @@ function menu.init(menuX, menuY)
 	tutorial = {}
 	tutorialBox.clearAll()
 	codeBox.clearAll()
-	--reset challenge:
+	
+	--reset challenge events!:
 	challenges.resetEvents()
 end
 
@@ -609,21 +610,20 @@ end
 function findChallengeMapsFiles()
 	local foundFiles = {}
 
-	local files = love.filesystem.enumerate("Maps")		-- load Maps subdirectory (in the .love file)
-	for k, file in ipairs(files) do
-		s, e = file:find(".lua")
-		if e == #file then
-			print("Challenge Map found: " .. k .. ". " .. file)
-			table.insert(foundFiles, file)
-		end
-	end
-	
-	
-	local files = love.filesystem.enumerate("Challenge")	-- load user's Maps subdirectory 
+	local files = love.filesystem.enumerate("Challenges")	-- load Maps subdirectory (in the .love file)
 	for k, file in ipairs(files) do
 		s, e = file:find(".lua")
 		if e == #file then
 			print("User Challenge Map found: " .. k .. ". " .. file)
+			table.insert(foundFiles, file)
+		end
+	end
+
+	local files = love.filesystem.enumerate("Maps")		-- load user maps subdirectory (in the saveDirectory)
+	for k, file in ipairs(files) do
+		s, e = file:find(".lua")
+		if e == #file then
+			print("Challenge Map found: " .. k .. ". " .. file)
 			table.insert(foundFiles, file)
 		end
 	end

@@ -18,7 +18,7 @@ local newTrainQueue = {}
 
 local train_mt = { __index = train }
 
-local trainList = {}
+trainList = {}
 
 if not DEDICATED then
 	trainImageBorder = love.graphics.newImage("Images/Train1Boarded.png")
@@ -194,6 +194,10 @@ function train:new( aiID, x, y, dir )
 				trainList[aiID][i] = setmetatable({image = image, ID = i, aiID = aiID}, train_mt)
 			else
 				trainList[aiID][i] = setmetatable({ID = i, aiID = aiID}, train_mt)
+			end
+			
+			if challengeEvents.newTrain then
+				challengeEvents.newTrain(trainList[aiID][i])
 			end
 			
 			--print("Placing new train at:", x, y)

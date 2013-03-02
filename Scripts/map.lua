@@ -122,6 +122,19 @@ function runMap(restart)
 		
 		math.randomseed(mapSeed)
 		
+		
+		-- If there's a tutorial callback registered by the current map, then start that now!
+		if tutorial then
+			if not restart and tutorial.mapRenderingDoneCallback then
+				tutorial.mapRenderingDoneCallback()
+			elseif restart and tutorial.restartEvent then
+				tutorial.restartEvent()
+			end
+		end
+		if challengeEvents.mapRenderingDoneCallback then
+			challengeEvents.mapRenderingDoneCallback()
+		end
+		
 		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
 		
 		ai.init()
@@ -146,17 +159,7 @@ function runMap(restart)
 		
 		roundEnded = false
 		
-		-- If there's a tutorial callback registered by the current map, then start that now!
-		if tutorial then
-			if not restart and tutorial.mapRenderingDoneCallback then
-				tutorial.mapRenderingDoneCallback()
-			elseif restart and tutorial.restartEvent then
-				tutorial.restartEvent()
-			end
-		end
-		if challengeEvents.mapRenderingDoneCallback then
-			challengeEvents.mapRenderingDoneCallback()
-		end
+		
 		
 	else
 		print("ERROR: NO MAP FOUND!")
@@ -1420,10 +1423,21 @@ function map.handleEvents(dt)
 	if tutorial and tutorial.handleEvents then
 		tutorial.handleEvents(dt)
 	else
-		passengerTimePassed = passengerTimePassed - dt*timeFactor
-		if passengerTimePassed <= 0 then
-			passenger.new()
-			passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
+		if not challenges.isRunning() then
+			passengerTimePassed = passengerTimePassed - dt*timeFactor
+			if passengerTimePassed <= 0 then
+				passenger.new()
+				passengerTimePassed = math.random()*3	-- to make sure it's the same on all platforms
+			end
+			
+			if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+				map.endRound()
+			end
+		
+			if (curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME) or CL_ROUND_TIME and (curMap.time >= CL_ROUND_TIME) then
+				map.endRound()
+			end
+			
 		end
 	
 		newTrainQueueTime = newTrainQueueTime + dt*timeFactor
@@ -1432,13 +1446,7 @@ function map.handleEvents(dt)
 			newTrainQueueTime = newTrainQueueTime - .1
 		end
 	
-		if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-			map.endRound()
-		end
 		
-		if (curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME) or CL_ROUND_TIME and (curMap.time >= CL_ROUND_TIME) then
-			map.endRound()
-		end
 	end
 end
 

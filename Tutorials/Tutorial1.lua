@@ -541,11 +541,6 @@ function tutorial.handleEvents(dt)
 		train.handleNewTrains()
 		newTrainQueueTime = newTrainQueueTime - .1
 	end
-	
-	--if tutorial.trainPlaced then
-		--if tutorial.numPassengers == 0 then
-		--end
-	--end
 end
 
 fileContent = [[

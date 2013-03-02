@@ -3,6 +3,9 @@ local ch = {}
 ch.name = "Challenge1"
 ch.version = "1"
 
+ch.maxTrains = 1
+ch.startMoney = 25
+
 -- create a new, empty map:
 ch.map = challenges.createEmptyMap(10, 7)
 
@@ -52,11 +55,11 @@ local startTime = 0
 local passengersCreated = false
 local maxTime = 180
 local passengersRemaining = 4
+local startupMessage = "Welcome to Smalltown!\nSmalltown is a little town in the middle of nowhere. Only recently has it been connected to its neighbouring town by rails. Of course, all the people in Smalltown want to be the first ones shopping over there. Get the passengers to the other town within " .. maxTime .. " seconds!"
 
 function ch.start()
-	challenges.setMessage("Welcome to Smalltown!\nSmalltown is a little town in the middle of nowhere. Only recently has it been connected to its neighbouring town by rails. Of course, all the people in Smalltown want to be the first ones shopping over there. Get the passengers to the other town within " .. maxTime .. " seconds!")
+	challenges.setMessage(startupMessage)
 end
-
 
 function ch.update(time)
 	if time > 3 and not passengersCreated then
@@ -67,22 +70,19 @@ function ch.update(time)
 		passenger.new( 4, math.random(4) , 7, math.random(4) + 3 )
 		passenger.new( 4, math.random(4) , 10, math.random(4) + 3 )
 		passengersRemaining = 4
-		challenges.setMessage("Welcome to Smalltown!\nSmalltown is a little town in the middle of nowhere. Only recently has it been connected to its neighbouring town by rails. Of course, all the people in Smalltown want to be the first ones shopping over there. Get the passengers to the other town within " .. maxTime .. " seconds!\n\n4 Passengers remaining.")
 	end
 	if time > maxTime then
-		return "lost"
+		return "lost", "No shopping today..."
 	end
 	if passengersRemaining == 0 then
-		return "won"
+		return "won", "The shopping can begin!"
 	end
-	challenges.setStatus( "Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.")
+	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 Passengers remaining.")
 end
 
 function ch.passengerDroppedOff(tr, p)
-	print(tr.tileX, p.destX, tr.tileY, p.destY)
-	if tr.tileX == p.destX and tr.tileY == p.destY then
+	if tr.tileX == p.destX and tr.tileY == p.destY then		
 		passengersRemaining = passengersRemaining - 1
-		challenges.setMessage("Welcome to Smalltown!\nSmalltown is a little town in the middle of nowhere. Only recently has it been connected to its neighbouring town by rails. Of course, all the people in Smalltown want to be the first ones shopping over there. Get the passengers to the other town within " .. maxTime .. " seconds!\n\n" .. passengersRemaining .. " Passengers remaining.")
 	end
 end
 

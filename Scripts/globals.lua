@@ -44,6 +44,8 @@ if not DEDICATED then
 	FONT_CODE_COMMENT = love.graphics.newFont( "UbuntuFont/Ubuntu-LI.ttf", 17 )
 
 	LOGO_IMG = love.graphics.newImage("Images/Logo.png")
+	checkmarkImage = love.graphics.newImage("Images/CheckMark.png")
+	failedImage = love.graphics.newImage("Images/Cross.png")
 	
 else
 	TIME_BETWEEN_MATCHES = 60

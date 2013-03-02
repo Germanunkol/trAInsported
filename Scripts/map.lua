@@ -122,7 +122,6 @@ function runMap(restart)
 		
 		math.randomseed(mapSeed)
 		
-		
 		-- If there's a tutorial callback registered by the current map, then start that now!
 		if tutorial then
 			if not restart and tutorial.mapRenderingDoneCallback then
@@ -1458,7 +1457,9 @@ function map.endRound()
 	challenges.removeMessage()
 	roundEnded = true
 	stats.print()
-	stats.generateStatWindows()
+	if not challenges.isRunning() then
+		stats.generateStatWindows()
+	end
 	passengerTimePassed = 0
 	newTrainQueueTime = 0
 	if DEDICATED then

@@ -678,11 +678,12 @@ function menu.challenge()
 	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
 	y = y + 60
 	mapFiles = findChallengeMapsFiles()
+	table.sort(mapFiles)
 	for i = 1, #mapFiles do
-		if mapFiles[i] then
-		menuButtons[i] = button:new(x, y, mapFiles[i]:sub(1, #mapFiles[i]-4), menu.choseChallenge, mapFiles[i], nil, nil, nil, nil)
+		if mapFiles[i] and not mapFiles[i]:find("ExampleChallenge") then
+			menuButtons[i] = button:new(x, y, mapFiles[i]:sub(1, #mapFiles[i]-4), menu.choseChallenge, mapFiles[i], nil, nil, nil, nil)
+			y = y + 45
 		end
-		y = y + 45
 	end
 	
 end

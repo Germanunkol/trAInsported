@@ -419,8 +419,8 @@ else
 		love.filesystem.mkdir("Maps")
 		
 		if not love.filesystem.isFile("Maps/ExampleChallenge.lua") then
-			if love.filesystem.isFile("Challenges/Challenge1.lua") then
-				contents, size = love.filesystem.read( "Challenges/Challenge1.lua" )
+			if love.filesystem.isFile("Challenges/Smalltown1.lua") then
+				contents, size = love.filesystem.read( "Challenges/Smalltown1.lua" )
 				if contents then
 					love.filesystem.write("Maps/ExampleChallenge.lua", contents)
 				end
@@ -639,13 +639,15 @@ else
 				if curMap then
 					curMap.time = curMap.time + dt*timeFactor
 					if challengeEvents.update then
-						res = challengeEvents.update(curMap.time)
+						res, msg = challengeEvents.update(curMap.time)
 						if res == "lost" then
 							print("Player lost the round!")
 							map.endRound()
+							stats.generateChallengeResult(msg, false)
 						elseif res == "won" then
 							print("Player won the round!")
 							map.endRound()
+							stats.generateChallengeResult(msg, true)
 						end
 					end
 				end

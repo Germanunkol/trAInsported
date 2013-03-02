@@ -337,6 +337,7 @@ function statistics.addStatWindow(newStat)
 	end
 end
 
+
 function statistics.generateStatWindows()
 	
 	statistics.clearWindows()
@@ -595,6 +596,18 @@ function statistics.generateStatWindows()
 		statistics.generateChart()
 	end
 	
+end
+
+function statistics.generateChallengeResult(msg, winner)
+
+	statistics.clearWindows()
+	allPossibleStats = {}
+	
+	if winner then
+		statistics.addStatWindow({title="Challenge completed!", text=msg or "", bg=statBoxPositive, icons={{img=checkmarkImage,x=25, y=30}}})
+	else
+		statistics.addStatWindow({title="You failed!", text=msg or "", bg=statBoxNegative, icons={{img=failedImage,x=25, y=30}}})
+	end
 end
 
 function statistics.generateChart()

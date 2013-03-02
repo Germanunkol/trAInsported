@@ -35,6 +35,10 @@ end
 function challenges.start(c, aiFileName)
 
 	challengeRunning = true
+	
+	MAX_NUM_TRAINS = c.maxTrains
+	STARTUP_MONEY = c.startMoney
+	
 	stats.start( 1 )
 	
 	-- correct anything that might have gone wrong with the map:
@@ -144,6 +148,11 @@ function challenges.restart()
 		local ok, c = pcall(challengeData) -- execute the chunk
 		challenges.setEvents(c)
 		c.map.time = 0
+		
+		MAX_NUM_TRAINS = c.maxTrains
+		STARTUP_MONEY = c.startMoney
+		stats.start( 1 )
+		
 		c.start()
 		challengeRunning = true
 	end

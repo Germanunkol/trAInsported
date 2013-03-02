@@ -2,7 +2,6 @@ local tutorialBox = {}
 
 local tutorialBoxList = {}
 
-local checkmarkImage = love.graphics.newImage("Images/CheckMark.png")
 local succeedSound = love.audio.newSource("Sound/echo_affirm1.wav")
 
 -- remove tutorialBox box before quitting!

@@ -18,6 +18,20 @@ function challenges.isRunning()
 	return challengeRunning
 end
 
+function challenges.setEvents(c)
+-- if the map has events, set them here!
+	challengeEvents.update = c.update
+	challengeEvents.newTrain = c.newTrain
+	challengeEvents.passengerDroppedOff = c.passengerDroppedOff
+	
+	challengeEvents.mapRenderingDoneCallback = function()
+		if c.version and c.version ~= VERSION then
+			statusMsg.new("Map is built for version " .. c.version .. ", but you're running version " .. VERSION ..". There might be problems. If so, please report them!", true)
+		end
+		c.start()
+	end
+end
+
 function challenges.start(c, aiFileName)
 
 	challengeRunning = true
@@ -48,24 +62,22 @@ function challenges.start(c, aiFileName)
 		train.renderTrainImage(aiFileName:sub(1, #aiFileName-4), 1)
 	end
 	
-	map.generate(nil,nil,1,c.map)
+	challenges.setEvents(c)
 	
-	-- if the map has events, set them here!
-	challengeEvents.mapRenderingDoneCallback = function()
-		if c.version and c.version ~= VERSION then
-			statusMsg.new("Map is built for version " .. c.version .. ", but you're running version " .. VERSION ..". There might be problems. If so, please report them!", true)
-		end
-		c.start()
-	end
-	challengeEvents.update = c.update
-	challengeEvents.newTrain = c.newTrain
+	map.generate(nil,nil,1,c.map)
 	
 	menu.exitOnly()
 end
 
+local fileName, aiFileName
+
 function challenges.execute(data)
 
-	local fileName, aiFileName = data.mapFileName, data.aiFileName
+	if data then
+		fileName, aiFileName = data.mapFileName, data.aiFileName
+	end
+
+	challenges.resetEvents()	-- just in case...
 
 	if not map.generating() and not map.rendering() then
 		print("Looking for: ","/Maps/" .. fileName)
@@ -79,7 +91,13 @@ function challenges.execute(data)
 			end
 		end
 		
-		local c = challengeData() -- execute the chunk
+		local ok, c = pcall(challengeData) -- execute the chunk
+		
+		if not ok then
+			print(c)
+			statusMsg.add("Could not execute challenge script. See console for more details.", true)
+			menu.init()
+		end
 		
 		if not c then
 			print("Error in challenge: You must return a lua table containing your challenge's data. See example file!")
@@ -93,8 +111,6 @@ function challenges.execute(data)
 			return
 		end
 		
-		
-		
 		if not c.start or not type(c.start) == "function" then
 			print("Error in challenge: No starting function found.")
 			statusMsg.new("Error in challenge: No starting function found.", true)
@@ -102,8 +118,34 @@ function challenges.execute(data)
 		end
 		
 		challenges.start(c, aiFileName)
+		
 	else
 		statusMsg.new("Wait for rendering to finish...", true)
+	end
+end
+
+function challenges.restart()
+	challenges.resetEvents()	-- just in case...
+
+	print("RESTART!")
+	
+	if not map.generating() and not map.rendering() then
+		print("Looking for: ","/Maps/" .. fileName)
+		ok, challengeData = pcall(love.filesystem.load, "Maps/" .. fileName)
+		if not ok then
+			print("Error in challenge: Couldn't execute map:", challengeData)
+			ok, challengeData = pcall(love.filesystem.load, "Challenges/" .. fileName)
+			if not ok then
+				print("Error in challenge: Couldn't execute map:", challengeData)
+				return
+			end
+		end
+		
+		local ok, c = pcall(challengeData) -- execute the chunk
+		challenges.setEvents(c)
+		c.map.time = 0
+		c.start()
+		challengeRunning = true
 	end
 end
 

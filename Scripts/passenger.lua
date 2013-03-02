@@ -245,6 +245,10 @@ function passenger.leaveTrain(aiID)
 			--print("dropped off: " .. tr.curPassenger.name)
 			stats.passengerDroppedOff( tr.curPassenger )
 			
+			if challengeEvents.passengerDroppedOff then
+				challengeEvents.passengerDroppedOff(tr, tr.curPassenger)
+			end
+			
 			-- check if I have reached my destination
 			if tr.curPassenger.tileX == tr.curPassenger.destX and tr.curPassenger.tileY == tr.curPassenger.destY then
 				tr.curPassenger.reachedDestination = true

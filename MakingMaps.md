@@ -55,7 +55,7 @@ This event is called at the beginning of the round. Use it to set up the first m
 Called when a player has bought a new train.  
 **Passed Arguments:**
 
-- train: A table representing the train. Do not edit this table! For speed reasons, the game gives the original train to you - not just a copy. This means if you edit this table, you might break the game.
+- train: A table representing the train. Do not edit this table! For speed reasons, the game gives the original train to you - not just a copy. This means if you edit this table, you might break the game. Also note that here, the train's x and y position on the map are represented in the following way: train.tileX and train.tileY show the tile the train is currently on and train.x and train.y show the position ON that tile. This is different from the trains getting passed to the AIs.
 
 **Example:**
 
@@ -63,12 +63,12 @@ Called when a player has bought a new train.
 			print("New train created at:", train.x, train.y)
 		end
 
-###function ch.update()###
+###function ch.update(time)###
 Called once every frame. Don't do many heavy calculations in here, it will slow down the game!  
 If this function returns "lost", then the player has lost the round and the round will end. If it returns "won" then the player has won and the round will also end.
 **Passed Arguments:**
 
-- none
+- time: the time that has passed since round start - this is updated every frame. Don't use os.time() (or similar) to determine times, because the player can speed up the game time and then os.time() won't be the correct map time any more.
 
 **Returns:**
 
@@ -77,17 +77,8 @@ If this function returns "lost", then the player has lost the round and the roun
 
 **Example:**
 
-		local startTime = 0
-
-		function ch.start()
-			startTime = os.time()
-		end
-
-		function ch.update()
-			if os.time() - startTime > 5 then
-				return "lost"
-			end
-			challenges.setStatus( 5-(os.time()-startTime) .. " seconds remaining.")
+		function ch.update(time)
+			challenges.setStatus( math.floor(5-time) .. " seconds remaining.")
 		end
 
 

@@ -159,7 +159,9 @@ function runMap(restart)
 		
 		roundEnded = false
 		
-		
+		if restart and challenges.isRunning() then
+			challenges.restart()
+		end
 		
 	else
 		print("ERROR: NO MAP FOUND!")
@@ -1445,7 +1447,6 @@ function map.handleEvents(dt)
 			train.handleNewTrains()
 			newTrainQueueTime = newTrainQueueTime - .1
 		end
-	
 		
 	end
 end
@@ -1454,6 +1455,7 @@ function map.endRound()
 	if tutorial and tutorial.endRound then
 		tutorial.endRound()
 	end
+	challenges.removeMessage()
 	roundEnded = true
 	stats.print()
 	stats.generateStatWindows()

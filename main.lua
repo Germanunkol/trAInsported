@@ -638,12 +638,15 @@ else
 				train.moveAll()
 				if curMap then
 					curMap.time = curMap.time + dt*timeFactor
-				end
-				if challengeEvents.update then
-					res = challengeEvents.update()
-					if res == "lost" then
-						print("Player lost the round!")
-						map.endRound()
+					if challengeEvents.update then
+						res = challengeEvents.update(curMap.time)
+						if res == "lost" then
+							print("Player lost the round!")
+							map.endRound()
+						elseif res == "won" then
+							print("Player won the round!")
+							map.endRound()
+						end
 					end
 				end
 			end

@@ -235,13 +235,13 @@ function getCPUNumber()
 	if not CPU_NUMBER then
 		if love._os == "OS X" then
 			if love.filesystem.isFile("coresDetected.txt") then
-				local corestxt = love.filesystem.read("cores.txt")
+				local corestxt = love.filesystem.read("coresDetected.txt")
 				CPU_NUMBER = tonumber(corestxt)
 			else
 				os.execute(string.format("%s > %q", "sysctl -n hw.ncpu", love.filesystem.getSaveDirectory() .. "/coresDetected.txt"))
 
 				if love.filesystem.isFile("coresDetected.txt") then
-					local corestxt = love.filesystem.read("cores.txt")
+					local corestxt = love.filesystem.read("coresDetected.txt")
 					CPU_NUMBER = tonumber(corestxt)
 				end
 			end

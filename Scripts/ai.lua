@@ -41,7 +41,7 @@ local function safelyLoadAI(chunk, scriptName, sb)
 
 	print("\tCompiling code...")
 	debug.sethook(newLineCountHook(MAX_LINES_LOADING), "l")
-	local func, message = loadstring( "TRAINSPORTED = true\n\n" .. chunk, scriptName)
+	local func, message = loadstring( "TRAINSPORTED = true;" .. chunk, scriptName)
 	debug.sethook()
 	if not func then
 		--print("Could not load script: \n", message)

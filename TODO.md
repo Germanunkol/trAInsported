@@ -91,6 +91,7 @@ tut 4:
 [x] Split up rendering of map images into multiple threads?
 - dither full screen
 - scrollbar for console
+- click on AI to focus on train
 
 **Website**
 [x] rank of players?
@@ -103,3 +104,4 @@ tut 4:
 - fast-forward problem: stops showing updates when on fresh connect.
 [x] fails to render new map is a new map is given while still rendering the old one (simulation)
 - Tutorial 3: jumps over ai.foundDestination part
+- Error Scripts/train.lua:643: attempt to index index field 'image' (a nil value)

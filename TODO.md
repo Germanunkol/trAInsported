@@ -102,3 +102,4 @@ tut 4:
 - nil pointer when in simulation
 - fast-forward problem: stops showing updates when on fresh connect.
 [x] fails to render new map is a new map is given while still rendering the old one (simulation)
+- Tutorial 3: jumps over ai.foundDestination part

@@ -4,20 +4,17 @@ ch.name = "Challenge1"
 ch.version = "1"
 
 -- create a new, empty map:
-ch.map = challenges.createEmptyMap(5, 4)
+ch.map = challenges.createEmptyMap(7, 7)
 
 -- fill some of the tiles with Rails and Houses:
+ch.map[1][1] = "C"
+ch.map[1][2] = "C"
 ch.map[1][3] = "C"
-ch.map[2][3] = "C"
-ch.map[2][4] = "C"
-ch.map[3][4] = "C"
+ch.map[1][4] = "C"
+ch.map[1][5] = "C"
 ch.map[4][4] = "C"
 ch.map[5][4] = "C"
 ch.map[1][2] = "C"
-ch.map[2][1] = "H"
-ch.map[3][1] = "H"
-ch.map[4][1] = "H"
-ch.map[5][1] = "H"
 
 local startTime = 0
 

@@ -93,14 +93,25 @@ function ai.new(scriptName)
 		print("scriptName 2", scriptName)
 		fh = io.open( scriptName,"r")
 	end
-	local ok, chunk = pcall(fh.read, fh, "*all" )
+	
+	local ok, chunk = false, false
+	if fh and fh.read then
+		ok, chunk = pcall(fh.read, fh, "*all" )
+	end
 
-	if not ok then error("Could not open file: " .. chunk)
+	if not ok or not chunk then
+		if chunk and type(chunk) == "string" then
+			error("Could not open file: " .. chunk)
+		else
+			error("Could not open file: " .. scriptName)
+		end
 		console.add("Failed to open file (" .. scriptName .. "): " .. msg, {r=255,g=50,b=50})
+		return
 	end
 	
 	if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!")
 		console.add("Binary bytecode prohibited. Open source ftw!", {r=255,g=50,b=50})
+		return
 	end
 	
 	local aiID = 0
@@ -204,7 +215,7 @@ function ai.chooseDirection(train, possibleDirs)
 			
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir, nextX=train.nextX, nextY=train.nextY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
@@ -270,7 +281,7 @@ function ai.blocked(train, possibleDirs, lastDir)
 		if aiList[train.aiID].blocked then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir, nextX=train.nextX, nextY=train.nextY}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
@@ -421,6 +432,7 @@ function ai.findAvailableAIs()
 		
 		--local directory = love.filesystem.getWorkingDirectory()
 		--local files = findAIs(directory)
+		print("Searching: ", AI_DIRECTORY)
 		local files = scandir(AI_DIRECTORY)
 		
 		--if #files < 1 then

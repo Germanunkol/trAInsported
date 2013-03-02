@@ -18,7 +18,9 @@ end
 function scandir(directory)
 	local i, t, popen = 0, {}, io.popen
 	
-	t = love.filesystem.enumerate("AI")
+	if not DEDICATED then
+		t = love.filesystem.enumerate("AI")
+	end
 	
 	if #t < 1 then
 		ok, test = pcall(io.popen,".")

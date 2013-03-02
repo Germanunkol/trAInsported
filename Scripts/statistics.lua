@@ -38,6 +38,7 @@ function statistics.addTrain( aiID, train )
 	aiStats[aiID].trains[train.ID].pPickedUp = 0		-- number of passengers which were picked up
 	aiStats[aiID].trains[train.ID].pDroppedOff = 0	-- number of passengers dropped off
 	aiStats[aiID].trains[train.ID].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
+	aiStats[aiID].trains[train.ID].pWronglyDropped = 0
 	aiStats[aiID].trains[train.ID].timeBlocked = 0
 	aiStats[aiID].trains[train.ID].pNormal = 0
 	aiStats[aiID].trains[train.ID].pVIP = 0
@@ -121,6 +122,11 @@ function statistics.broughtToDestination( aiID, trainID, vip )
 		aiStats[aiID].pNormal = aiStats[aiID].pNormal + 1
 		aiStats[aiID].trains[trainID].pNormal = aiStats[aiID].trains[trainID].pNormal + 1
 	end
+end
+
+function statistics.broughtToWrongPlace( aiID, trainID )
+	aiStats[aiID].pWronglyDropped = aiStats[aiID].pWronglyDropped + 1
+	aiStats[aiID].trains[trainID].pWronglyDropped = aiStats[aiID].trains[trainID].pWronglyDropped + 1
 end
 
 function statistics.trainBlockedTime( aiID, trainID, time )
@@ -395,9 +401,9 @@ function statistics.generateStatWindows()
 			end
 			mostTransported = aiStats[i].pTransported
 		end
-		if aiStats[i].pTransported and aiStats[i].pPickedUp and aiStats[i].pPickedUp - aiStats[i].pTransported >= mostWrongDestination then
+		if aiStats[i].pTransported and aiStats[i].pPickedUp and aiStats[i].pWronglyDropped >= mostWrongDestination then
 			mostWrongDestinationID = i
-			if mostWrongDestination == aiStats[i].pPickedUp - aiStats[i].pTransported then
+			if mostWrongDestination == aiStats[i].pWronglyDropped then
 				mostWrongDestinationID = nil
 			end
 			mostWrongDestination = aiStats[i].pPickedUp - aiStats[i].pTransported
@@ -443,14 +449,14 @@ function statistics.generateStatWindows()
 				end
 				trMostTransported = tr.pTransported
 			end
-			if tr.pTransported and tr.pPickedUp and tr.pPickedUp - tr.pTransported >= trMostWrongDestination then
+			if tr.pTransported and tr.pPickedUp and tr.pWronglyDropped >= trMostWrongDestination then
 				trMostWrongDestinationID = i
 				trMostWrongDestinationName = tr.name
-				if trMostWrongDestination == tr.pPickedUp - tr.pTransported then
+				if trMostWrongDestination == tr.pWronglyDropped then
 					trMostWrongDestinationID = nil
 					trMostWrongDestinationName = nil
 				end
-				trMostWrongDestination = tr.pPickedUp - tr.pTransported
+				trMostWrongDestination = tr.pWronglyDropped
 			end
 			if tr.timeBlocked and tr.timeBlocked >= trLongestBlocked then
 				trLongestBlockedID = i
@@ -768,6 +774,7 @@ function statistics.start( ais )
 		aiStats[i].pPickedUp = 0		-- number of passengers which were picked up
 		aiStats[i].pDroppedOff = 0	-- number of passengers dropped off
 		aiStats[i].pTransported = 0	-- only set if the player has transported the passenger to his/her destination
+		aiStats[i].pWronglyDropped = 0
 		aiStats[i].trains = {}
 		aiStats[i].name = ""
 		aiStats[i].owner = ""

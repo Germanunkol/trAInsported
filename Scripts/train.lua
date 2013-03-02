@@ -379,6 +379,23 @@ function moveSingleTrain(tr, t)
 			local nextX, nextY = tr.tileX, tr.tileY
 			local cameFromDir = ""
 			
+			if tr.dir == "N" then
+				nextY = nextY - 1
+				cameFromDir = "S"
+			end
+			if tr.dir == "S" then
+				nextY = nextY + 1
+				cameFromDir = "N"
+			end
+			if tr.dir == "W" then
+				nextX = nextX - 1
+				cameFromDir = "E"
+			end
+			if tr.dir == "E" then
+				nextX = nextX + 1
+				cameFromDir = "W"
+			end
+			
 			if not tr.blocked then		-- "blocked" is set if I've already checked for directions in a previous frame and the direction I chose was blocked.
 				
 				tr.possibleDirs, tr.numDirections = map.getNextPossibleDirs(tr.tileX, tr.tileY, tr.dir)
@@ -386,6 +403,8 @@ function moveSingleTrain(tr, t)
 				tr.nextDir = nil
 				
 				if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
+					tr.nextX = nextX	-- give the user the position of the NEXT tile!
+					tr.nextY = nextY
 					tr.nextDir = ai.chooseDirection(tr, tr.possibleDirs)
 				end
 				
@@ -406,27 +425,14 @@ function moveSingleTrain(tr, t)
 					tr.timeBlocked = 0
 					
 					if tr.numDirections > 1 then	-- if there's only one direction, there's no point in asking the ai in which direction it wants to move.
+						tr.nextX = nextX	-- give the user the position of the NEXT tile!
+						tr.nextY = nextY
 						tr.nextDir = ai.blocked(tr, tr.possibleDirs, tr.nextDir)
 					end
 				end
 			end
 			
-			if tr.dir == "N" then
-				nextY = nextY - 1
-				cameFromDir = "S"
-			end
-			if tr.dir == "S" then
-				nextY = nextY + 1
-				cameFromDir = "N"
-			end
-			if tr.dir == "W" then
-				nextX = nextX - 1
-				cameFromDir = "E"
-			end
-			if tr.dir == "E" then
-				nextX = nextX + 1
-				cameFromDir = "W"
-			end
+			
 			
 			if not map.getIsTileOccupied(nextX, nextY, cameFromDir, tr.nextDir) then
 				

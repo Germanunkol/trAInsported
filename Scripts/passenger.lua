@@ -266,6 +266,7 @@ function passenger.leaveTrain(aiID)
 					tutorial.passengerDropoffCorrectlyEvent( tr.curPassenger.tileX, tr.curPassenger.tileY )
 				end
 			else
+				statistics.broughtToWrongPlace( aiID, tr.ID )
 				ai.newPassenger(tr.curPassenger)
 				if tutorial and tutorial.passengerDropoffWronglyEvent then
 					tutorial.passengerDropoffWronglyEvent()

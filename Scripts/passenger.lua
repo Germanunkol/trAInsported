@@ -117,7 +117,8 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 					passengerList[i].vip = true
 					passengerList[i].name = passengerList[i].name .. "[VIP]"
 					passengerList[i].markZ = love.timer.getDelta()
-					passengerList[i].vipTime = MAX_VIP_TIME
+					passengerList[i].vipTime = math.sqrt((passengerList[i].tileX-passengerList[i].destX)^2 + (passengerList[i].tileY-passengerList[i].destY)^2)*10 + MIN_VIP_TIME
+					passengerList[i].maxVipTime = passengerList[i].vipTime
 					if not DEDICATED then
 						passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
 					end
@@ -399,10 +400,10 @@ if DEDICATED then
 			end
 		
 			if p.vip then
-				p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
+				p.vipTime = math.max(p.vipTime - dt, 0)
 				--num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
 				--love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
-				if p.vipTime < -15 then
+				if p.vipTime <= 0 then
 					p.vip = false
 				end
 			end
@@ -462,13 +463,13 @@ else
 				x = p.tileX*TILE_SIZE + p.x - p.image:getWidth()/2
 				y = p.tileY*TILE_SIZE + p.y - p.image:getHeight()/2
 			end
-		
+			
 			if p.vip then
 				love.graphics.setColor(255,255,255,200)
-				p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
-				num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
+				p.vipTime = math.max(p.vipTime - dt, 0)
+				num = clamp(1+math.floor((p.maxVipTime-p.vipTime)/p.maxVipTime*10),1,11)
 				love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
-				if p.vipTime < -15 then
+				if p.vipTime <= 0 then
 					p.vip = false
 				end
 			end

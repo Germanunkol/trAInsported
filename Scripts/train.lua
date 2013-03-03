@@ -359,15 +359,7 @@ end
 
 function moveSingleTrain(tr, t)
 	if tr.path then
-		print("Moving: ")
-		for k, v in pairs(tr) do
-			print("\t",k,v)
-		end
-		if tr.curPassenger then
-			for k, v in pairs(tr.curPassenger) do
-				print(" "," ",k, v)
-			end
-		end
+		
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:

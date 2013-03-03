@@ -365,7 +365,7 @@ function runUpdate(event, t1, t2)
 			vipTime = tonumber(vipTime)
 			if vip == "true" then 
 				print("CREATING VIP!")
-				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, speach=speach, markZ = love.timer.getDelta()}
+				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, maxVipTime=vipTime, speach=speach, markZ = love.timer.getDelta()}
 			else
 				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, speach=speach}
 			end
@@ -808,10 +808,10 @@ function simulation.passengerShowAll(dt)
 		
 		if p.vip then
 			love.graphics.setColor(255,255,255,200)
-			p.vipTime = clamp(p.vipTime - dt,-10,MAX_VIP_TIME)
-			num = clamp(1+math.floor((MAX_VIP_TIME-p.vipTime)/MAX_VIP_TIME*10),1,11)
+			p.vipTime = math.max(p.vipTime - dt, 0)
+			num = clamp(1+math.floor((p.maxVipTime-p.vipTime)/p.maxVipTime*10),1,11)
 			love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
-			if p.vipTime < -15 then
+			if p.vipTime <= 0 then
 				p.vip = false
 			end
 		end

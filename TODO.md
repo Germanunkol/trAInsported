@@ -105,3 +105,5 @@ tut 4:
 [x] fails to render new map is a new map is given while still rendering the old one (simulation)
 - Tutorial 3: jumps over ai.foundDestination part
 - Error Scripts/train.lua:643: attempt to index index field 'image' (a nil value)
+- Trains stop on live server
+- train colors are wrong in simulation!

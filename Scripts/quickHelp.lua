@@ -6,7 +6,8 @@ local HELP_WIDTH, HELP_HEIGHT = 400,300
 
 local helpStrKeys = [[Space :
 W,A,S,D :
-Cursor/Arrow Keys :
+Cursor Keys :
+Arrow Keys :
 Q,E :
 C :
 + :
@@ -14,8 +15,10 @@ C :
 m :
 F5 :
 F1 :
+h :
 ]]
 local helpStr = [[Tactical overlay
+Move view
 Move view
 Move view
 Zoom view
@@ -25,6 +28,7 @@ Slow down
 Show map coordinates
 Screenshot
 Toggle this Help
+Hide AI stats
 ]]
 
 function quickHelp.show()

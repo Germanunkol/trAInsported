@@ -358,8 +358,13 @@ function getAngleByDir( dir )
 end
 
 function moveSingleTrain(tr, t)
-
 	if tr.path then
+		print("Moving: ", tr.aiID, tr.ID, tr.name)
+		if tr.curPassenger then
+			for k, v in pairs(tr.curPassenger) do
+				print(k, v)
+			end
+		end
 		--dx = (tr.path[tr.curNode+1].x - tr.x)
 		--dy = (tr.path[tr.curNode+1].y - tr.y)
 		--normalize:

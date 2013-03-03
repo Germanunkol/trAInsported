@@ -37,6 +37,32 @@ function newLineCountHook( maxLines )
 	end
 end
 
+function traceback (err)
+	local level = 1
+	local s, e = err:find("%[.-%]")
+	if e then
+		err = err:sub(e+1, #err)
+	end
+	local errorMessage = err .. "\n"
+	local firstFound = false
+	while true do
+		local info = debug.getinfo(level, "Sl")
+		if not info then break end
+		--if info.what == "C" then   -- is a C function?
+			--errorMessage = errorMessage .. level .. ": C function\n"
+		--else   -- a Lua function
+		--	if info.source:find("/AI/") then
+		if firstFound or info.source:find("/AI/") then
+			firstFound = true
+			funcName = info.source--:gsub(".*/", "")
+			errorMessage = errorMessage .. level .. ": " .. string.format("[%s]: line %d", funcName, info.currentline) .. "\n"
+			--end
+		end
+		level = level + 1
+	end
+	return errorMessage
+end
+
 local function safelyLoadAI(chunk, scriptName, sb)
 
 	print("\tCompiling code...")
@@ -45,7 +71,8 @@ local function safelyLoadAI(chunk, scriptName, sb)
 	debug.sethook()
 	if not func then
 		--print("Could not load script: \n", message)
-		console.add("Could not load script: (" .. scriptName .. "): " .. message, {r=255,g=50,b=50})
+		local s = scriptName:gsub(".*/", "")
+		console.add("Could not load script: (" .. s .. "): " .. message, {r=255,g=50,b=50})
 		coroutine.yield()
 	end
 	print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_LOADING)
@@ -54,15 +81,17 @@ local function safelyLoadAI(chunk, scriptName, sb)
 	print("\tRunning code:")
 	func = setfenv(func, sb)
 	debug.sethook(newLineCountHook(MAX_LINES_LOADING), "l")
-	local ok, message = pcall(func)
+	local ok, message = xpcall(func, traceback)
 	if not ok then
 		--print("Could not execute script: \n", message)
-		console.add("Could not execute script: (" .. scriptName .. "): " .. message, {r=255,g=50,b=50})
+		local s = scriptName:gsub(".*/", "")
+		console.add("Could not execute script: (" .. s .. "): " .. message, {r=255,g=50,b=50})
 		coroutine.yield()
 	end
 	debug.sethook()
 	print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_LOADING)
 end
+
 	
 function runAiFunctionCoroutine(f, ... )
 --	f = setfenv(f, sandbox)
@@ -71,11 +100,12 @@ function runAiFunctionCoroutine(f, ... )
 
 	--local ok, msg = pcall(f, ...)
 	args = {...}
-	local ok, msg = xpcall(function() return f( unpack(args) ) end, debug.traceback)
+	local ok, msg = xpcall(function() return f( unpack(args) ) end, traceback)
 	if not ok then
 		--print("\tError found in your function!", msg)
 		local shorterMessage = ""
 		local found = false
+		console.add("Error occured when calling function: " .. msg, {r=255,g=50,b=50})
 		for line in msg:gmatch("[^\n]-\n") do
 			if line:find("Taking too long") then
 			shorterMessage = shorterMessage .. line
@@ -84,10 +114,8 @@ function runAiFunctionCoroutine(f, ... )
 					found = true
 				end
 				if found then
-					print("belongs:" .. line)
 					shorterMessage = shorterMessage .. line
 				else
-					print("doesnt:" .. line)
 				end
 			end
 		end

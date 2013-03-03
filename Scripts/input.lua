@@ -88,7 +88,10 @@ function love.keypressed(key, unicode)
 	elseif key == "p" then
 		stats.print()
 --	else
-		--print(key, unicode)
+	elseif unicode == 104 then
+		hideAIStatistics = not hideAIStatistics
 	end
+		--print(key, unicode)
+	
 end
 

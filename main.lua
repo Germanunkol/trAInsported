@@ -528,11 +528,13 @@ else
 				
 					-- allow max of 5 seconds time difference:
 					if (serverTime and simulationMap.time + 5 < serverTime) or fastForward == true then
+						print("Fast forward because", serverTime, simulationMap.time)
 						timeFactor = 10
 						fastForward = true
 						-- 2 seconds is okay:
 						if simulationMap.time + 2 > serverTime then
 							fastForward = false
+							timeFactor = 1
 						end
 					else
 						timeFactor = 1

@@ -706,16 +706,21 @@ local displayStatusBoxWidth = 10
 function statistics.displayStatus()
 	if not statBoxStatus then return end
 	
+	local alpha = 1
+	if hideAIStatistics then
+		alpha = .1
+	end
+	
 	for i = 1, #aiStats do
 		if aiStats[i].name ~= "" and train.getTrainImage(i) then	-- if the ai has already been loaded and named
 		
 			x = displayStatusX + (i-1)*displayStatusBoxWidth
 			
-			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255)
+			love.graphics.setColor(aiStats[i].red,aiStats[i].green,aiStats[i].blue,255*alpha)
 			love.graphics.draw(statBoxStatus, x, displayStatusY)
-			love.graphics.setColor(0,0,0,100)
+			love.graphics.setColor(0,0,0,100*alpha)
 			love.graphics.draw(train.getTrainImage(i), x + 30, displayStatusY + 59)		-- shadow of train
-			love.graphics.setColor(255,255,255,255)
+			love.graphics.setColor(255,255,255,255*alpha)
 			
 			love.graphics.setFont(FONT_STAT_HEADING)
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 7, displayStatusBoxWidth, "center")

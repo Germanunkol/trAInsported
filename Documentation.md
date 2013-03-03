@@ -216,13 +216,14 @@ Whenever the player earns money, the game checks if the player now has enough mo
 			buyTrain(random(map.width), random(map.height))
 		end
 
-###function ai.newPassenger(name, x, y, destX, destY)###
+###function ai.newPassenger(name, x, y, destX, destY, vipTime)###
 Will be called whenever a new passenger spawns on the map, or if a passenger has been dropped off at a place that was not his destination.  
 **Passed Arguments:**
 
-- name: name of the passenger. If the passenger is a VIP, then "[VIP]" is appended to his name.
-- x, y: the x and y positions of the tile on which the passenger is standing.
-- destX, destY: the x and y position of the tile to which the passenger would like to be transported. As soon as you drop him/her of at this position, you will get paid.
+- name: Name of the passenger. If the passenger is a VIP, then "[VIP]" is appended to his name.
+- x, y: The x and y positions of the tile on which the passenger is standing.
+- destX, destY: The x and y position of the tile to which the passenger would like to be transported. As soon as you drop him/her of at this position, you will get paid.
+- vipTime: If the passenger is a VIP, then this is the time in seconds until he stops being a vip. Each VIP has a vipTime that's dependant on the distance they want to travel. **Careful**, if the passenger is not a VIP then this value will be nil! So always check: "if vipTime then ..." before you do anything with it. If you want to work with the vipTime, os.time() migth be a good function to check out - this way you can get the time passed between two times.
 
 **Returns:**
 

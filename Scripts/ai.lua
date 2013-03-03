@@ -344,7 +344,7 @@ function ai.newPassenger(p)
 		if aiList[aiID].newPassenger then		-- if the function has been defined by the player
 		
 			local cr = coroutine.create(runAiFunctionCoroutine)
-			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, p.name, p.tileX, p.tileY, p.destX, p.destY)
+			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, p.name, p.tileX, p.tileY, p.destX, p.destY, p.vipTime)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.newPassenger()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".newPassenger()")

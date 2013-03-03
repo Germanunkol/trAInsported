@@ -436,7 +436,7 @@ function runUpdate(event, t1, t2)
 								p.reachedDestination = true
 								stats.broughtToDestination(ID, tr.ID, p.vip)
 							else
-								statistics.broughtToWrongPlace( aiID, tr.ID )
+								stats.broughtToWrongPlace( ID, tr.ID )
 							end
 							--p.train = nil
 							p.tileX = tileX

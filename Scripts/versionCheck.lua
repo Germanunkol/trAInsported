@@ -6,7 +6,13 @@ function versionCheck.start()
 	versionMatch = nil
 
 	exists = love.filesystem.exists( CONFIG_FILE )
-	if exists then
+	if not exists then
+		local file = love.filesystem.newFile( CONFIG_FILE )
+		if file then
+			file:open('w')		--create the file
+			file:close()
+		end
+	else
 		local file = love.filesystem.newFile( CONFIG_FILE )
 		if file then 
 			file:open('r')

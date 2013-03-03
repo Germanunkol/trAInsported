@@ -10,7 +10,7 @@ function console.show()
 	love.graphics.setFont(FONT_CONSOLE)
 	for i = consoleStartLine,e do
 		love.graphics.setColor(consoleLines[i].colour.r,consoleLines[i].colour.g,consoleLines[i].colour.b, 255)
-		love.graphics.print(consoleLines[i].str, 20, console.y + (i-consoleStartLine)*FONT_CONSOLE:getHeight() )
+		love.graphics.print( consoleLines[i].str, 20, console.y + (i-consoleStartLine)*FONT_CONSOLE:getHeight() )
 	end
 end
 
@@ -31,6 +31,11 @@ function console.add( text, colour )
 	
 	if tutorial and tutorial.consoleEvent then		-- if the tutorial has registered an event for me, run it now.
 		tutorial.consoleEvent(text)
+	end
+	
+	-- workaround! Maybe make this better:
+	if #consoleLines > 200 then
+		console.flush()
 	end
 	
 	for c in text:gfind(".") do

@@ -92,6 +92,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 	stats.start( #AIs )
 	train.init()
 	
+	map.generate(width, height, math.random(1000))
 	print("found AIs:", #AIs)
 	for i = 1, #AIs do
 		ok, name, owner = pcall(ai.new, AIs[i])
@@ -105,7 +106,6 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		end
 	end
 	
-	map.generate(width, height, math.random(1000))
 	
 end
 
@@ -114,9 +114,9 @@ function runMap(restart)
 	newMapStarting = false
 	if curMap then
 	
-		if console and console.flush and not restart then
-			console.flush()
-		end
+--		if console and console.flush and not restart then
+	--		console.flush()
+		--end
 		
 		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
 		
@@ -257,6 +257,7 @@ function map.generate(width, height, seed, tutorialMap)
 		mapSeed = seed
 	
 		if not DEDICATED then
+			print(debug.traceback())
 			console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
 			love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))

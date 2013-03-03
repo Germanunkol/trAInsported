@@ -162,7 +162,7 @@ while true do
 		end
 		time = tonumber(msg:sub(1, s-1))
 		msg = msg:sub(e+1, #msg)
-		sendPackets.add(newPacketID,msg, time)
+		sendPackets.add(newPacketID, msg, time)
 		
 	end
 	

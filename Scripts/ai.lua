@@ -31,7 +31,7 @@ function newLineCountHook( maxLines )
 			linesUsed = linesUsed + 1
 			time = love.timer.getTime()
 			if lines == maxLines then
-				error("Taking too long, stopping. Time taken: " .. time-startTime .. "s.")
+				error("Taking too long, stopping. Time taken: " .. time-startTime .. "s.", 2)
 			end
 		end
 	end
@@ -74,7 +74,24 @@ function runAiFunctionCoroutine(f, ... )
 	local ok, msg = xpcall(function() return f( unpack(args) ) end, debug.traceback)
 	if not ok then
 		--print("\tError found in your function!", msg)
-		if msg then console.add("Error found in your function: " .. msg, {r=255,g=50,b=50}) end
+		local shorterMessage = ""
+		local found = false
+		for line in msg:gmatch("[^\n]-\n") do
+			if line:find("Taking too long") then
+			shorterMessage = shorterMessage .. line
+			else
+				if line:find("%[string.*%]") then
+					found = true
+				end
+				if found then
+					print("belongs:" .. line)
+					shorterMessage = shorterMessage .. line
+				else
+					print("doesnt:" .. line)
+				end
+			end
+		end
+		if shorterMessage then console.add("Error found in your function: " .. shorterMessage, {r=255,g=50,b=50}) end
 		coroutine.yield()
 	end
 	debug.sethook()
@@ -250,19 +267,9 @@ function ai.newTrain(train)
 			
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
-			end
-			
-			print("Bought Train:")
-			for k, v in pairs(tr) do
-				print(" ",k, v)
-				if type(v) == "table" then
-					for k2, v2 in pairs(v) do
-						print(" ", " ",k2, v2)
-					end
-				end
 			end
 			
 			ok, result = coroutine.resume(cr, aiList[train.aiID].newTrain, tr)
@@ -325,7 +332,7 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 		if aiList[train.aiID].foundPassengers then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
@@ -360,7 +367,7 @@ function ai.passengerBoarded(train, passenger)		-- called when the train enters 
 			if aiList[i].passengerBoarded then
 				local cr = coroutine.create(runAiFunctionCoroutine)
 			
-				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 				if train.curPassenger then
 					tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 				end
@@ -381,7 +388,7 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 		if aiList[train.aiID].foundDestination then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY}		-- don't give the original data to the ai!
+			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end

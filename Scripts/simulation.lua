@@ -171,7 +171,7 @@ function runUpdate(event, t1, t2)
 			ROUND_TIME = tonumber(tbl[3])
 		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
 			MAX_NUM_PASSENGERS = tonumber(tbl[3])
-		end
+		end		
 	elseif event:find("NEW_AI:") == 1 then
 		s,e = event:find("NEW_AI:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
@@ -364,7 +364,8 @@ function runUpdate(event, t1, t2)
 			yEnd = tonumber(yEnd)
 			vipTime = tonumber(vipTime)
 			if vip == "true" then 
-				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, speach=speach}
+				print("CREATING VIP!")
+				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, speach=speach, markZ = love.timer.getDelta()}
 			else
 				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, speach=speach}
 			end
@@ -566,6 +567,7 @@ function simulation.show(dt)
 	
 		simulation.passengerShowAll(passedTime)
 		simulation.trainShowAll()
+		simulation.showVIPs(passedTime)
 --		passenger.showVIPs(passedTime)
 	
 		map.renderHighlights(passedTime)
@@ -842,6 +844,18 @@ function simulation.passengerShowAll(dt)
 		p.renderX, p.renderY = x,y
 		--love.graphics.setColor(255,255,255,100)
 		--love.graphics.print(p.name, x, y + 20)
+	end
+end
+
+
+function simulation.showVIPs(dt)
+	love.graphics.setColor(255,255,255,255)
+	for k, p in pairs(passengerList) do
+		if p.vip then
+			p.markZ = p.markZ + dt*5
+			c = math.sin(p.markZ)^2
+			love.graphics.draw(passengerVIPImage, p.renderX + 4, p.renderY - 15 - 10*c, 0, 1+c/10, 1+c/10)
+		end
 	end
 end
 

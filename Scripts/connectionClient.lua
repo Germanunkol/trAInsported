@@ -33,6 +33,9 @@ function connection.startClient(ip, port)
 	if connectionThread then
 		connectionThread:set("quit", true)
 	end
+	
+	serverTime = 0
+	
 	connectionThread = love.thread.newThread("connectionThread" .. connectionsRunning, "Scripts/connectionThreadClient.lua")
 	connectionThread:start()
 	connectionsRunning = connectionsRunning + 1 

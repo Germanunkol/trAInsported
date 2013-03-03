@@ -240,7 +240,7 @@ if DEDICATED then
 			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:
 				timeUntilMatchEnd = timeUntilMatchEnd - dt
 				
-				if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 10 then
+				if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 5 then
 					lastServerTimeUpdate = timeUntilMatchEnd
 					connection.thread:set("time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd)
 				end
@@ -528,6 +528,7 @@ else
 				
 					-- allow max of 5 seconds time difference:
 					if (serverTime and simulationMap.time + 5 < serverTime) or fastForward == true then
+						print("Fast forward because", serverTime, simulationMap.time, ROUND_TIME)
 						timeFactor = 10
 						fastForward = true
 						-- 2 seconds is okay:

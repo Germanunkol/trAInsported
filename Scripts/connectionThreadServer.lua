@@ -130,9 +130,10 @@ while true do
 	if newMap then
 		curMapStr = newMap		-- careful: in this thread, it's only in string form, not in a table!
 		
+		serverTime = 0
 		for k, cl in pairs(clientList) do
 			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
-			ok, err = cl:send("T:" .. 0 .. "\n")		-- send update to clients.
+			ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
 			--print(cl[1], "SENT:","MAP:" .. curMapStr)
 		end
 		

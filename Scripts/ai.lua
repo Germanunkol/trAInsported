@@ -388,7 +388,7 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 	end
 end
 
-function ai.passengerBoarded(train, passenger)		-- called when the train enters a field that its passenger wants to go to.
+function ai.passengerBoarded(train, passenger)		-- called when another player's train picks up a passenger
 	local result = nil
 	for i = 1, #aiList do
 		if i ~= train.aiID and aiList[i] then

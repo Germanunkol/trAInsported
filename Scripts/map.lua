@@ -116,8 +116,9 @@ function runMap(restart)
 --		if console and console.flush and not restart then
 	--		console.flush()
 		--end
-		
-		MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
+		if not challenges.isRunning() then
+			MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
+		end
 		
 		math.randomseed(mapSeed)
 		
@@ -129,11 +130,13 @@ function runMap(restart)
 				tutorial.restartEvent()
 			end
 		end
+		
+		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		
 		if challengeEvents.mapRenderingDoneCallback then
 			challengeEvents.mapRenderingDoneCallback()
 		end
 		
-		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
 		
 		ai.init()
 		 
@@ -256,7 +259,6 @@ function map.generate(width, height, seed, tutorialMap)
 		mapSeed = seed
 	
 		if not DEDICATED then
-			print(debug.traceback())
 			console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
 			love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
@@ -1381,7 +1383,7 @@ function map.show()
 			end
 		end
 	end
-	love.graphics.push()
+
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 	
 	map.renderHighlights(passedTime)
@@ -1389,23 +1391,23 @@ function map.show()
 	passenger.showSelected(passedTime)
 
 	clouds.renderShadows(passedTime)
-	
+
+	--map.drawOccupation()
 	if love.keyboard.isDown("m") then
-		map.showCoordinates(curMap) -- display coordinates on the map
+		map.showCoordinates(curMap)
 	end
 	
+	love.graphics.pop()
+	
+	love.graphics.push()
 	love.graphics.scale(camZ*1.5)
 
 	love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
 	love.graphics.rotate(CAM_ANGLE)
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-	--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-	--love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
 	clouds.render()
-	--love.graphics.translate(camX + love.graphics.getWidth()/2/camZ, camY + love.graphics.getHeight()/2/camZ)
-
-	love.graphics.pop()
+	
 	love.graphics.pop()
 end
 

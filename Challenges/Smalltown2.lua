@@ -14,8 +14,8 @@ ch.map[1][1] = "C"
 ch.map[1][2] = "C"
 ch.map[1][3] = "C"
 ch.map[1][4] = "C"
-ch.map[2][1] = "C"
 ch.map[3][1] = "C"
+ch.map[2][1] = "C"
 ch.map[4][1] = "C"
 ch.map[4][2] = "C"
 ch.map[4][3] = "C"
@@ -63,9 +63,9 @@ ch.map[9][6] = "H"
 
 local startTime = 0
 local passengersCreated = false
-local maxTime = 315
-local passengersRemaining = 4
-local startupMessage = "After the railway was built, lots of people started moving to Smalltown.\nThe city grew.\nStill, there was no store in Smalltown - so people had to get to the neighbouring town to buy food. Get them there, and fast!"
+local maxTime = 355
+local passengersRemaining = 7
+local startupMessage = "After the railway was built, lots of people started moving to Smalltown.\nThe city grew.\nStill, there was no store in Smalltown - so people had to get to the neighbouring town to buy food. Get them there, and fast!\n\nHint: There will always be three passengers spawning at the top right - no more, no less."
 
 function ch.start()
 	challenges.setMessage(startupMessage)
@@ -92,7 +92,7 @@ function ch.update(time)
 	if passengersRemaining == 0 then
 		return "won", "Food for everyone!"
 	end
-	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 Passengers remaining.")
+	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n" .. passengersRemaining .." Passengers remaining.")
 end
 
 function ch.passengerDroppedOff(tr, p)

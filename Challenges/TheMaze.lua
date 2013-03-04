@@ -7,7 +7,7 @@ ch.maxTrains = 1
 ch.startMoney = 25
 
 -- create a new, empty map:
-ch.map = challenges.createEmptyMap(20, 20)
+ch.map = challenges.createEmptyMap(35, 25)
 
 function countNeighbouringRails(x,y)
 	local numNeighbouringRails = 0
@@ -127,6 +127,42 @@ end
 --makePath(1,1)
 drunkardWalk()
 
+
+function findClosestRail(x, y)
+	if ch.map[x][y] ~= "C" then
+		local foundX = nil
+		local foundY = nil
+		local dist = 1
+
+		-- search for "C" around the given position. If not found, increase the radius (dist)
+		while (not foundX or not foundY) and dist < math.max(ch.map.width, ch.map.height) do
+			for i = -dist,dist do
+				for j = -dist,dist do
+					if x +i > 0 and y+j > 0 and x +i < ch.map.width and y+j < ch.map.width then
+						if ch.map[x + i][y + j] == "C" then
+							foundX = x + i
+							foundY = y + j
+							break
+						end
+					end
+				end
+				if foundX and foundY then
+					break
+				end
+			end
+			dist = dist + 1
+		end
+		if not foundX or not foundY then
+			print("Error: could not find Rail for passenger!")
+		else
+			return foundX, foundY
+		end
+	else
+		return x,y
+	end
+end
+
+
 local startTime = 0
 local passengersCreated = false
 local maxTime = 315
@@ -135,15 +171,20 @@ local startupMessage = "After the railway was built, lots of people started movi
 
 function ch.start()
 	--challenges.setMessage(startupMessage)
+	
+	passengerStartX, passengerStartY = findClosestRail(1,1)
+	passengerEndX, passengerEndY = findClosestRail(ch.map.width, ch.map.height)
+
+	passenger.new(passengerStartX, passengerStartY, passengerEndX, passengerEndY)
 end
 
 function ch.update(time)
 
 	if time > maxTime then
-		return "lost", "Oh noes, some inhabitants will starve today..."
+		return "lost"--, --"Oh noes, some inhabitants will starve today..."
 	end
 	if passengersRemaining == 0 then
-		return "won", "Food for everyone!"
+		return "won"--, "Food for everyone!"
 	end
 	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 Passengers remaining.")
 end

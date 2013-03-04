@@ -573,15 +573,16 @@ function simulation.show(dt)
 	
 		map.renderHighlights(passedTime)
 	
-		if not love.keyboard.isDown("i") then clouds.renderShadows(passedTime) end
+		clouds.renderShadows(passedTime)
 
 		--map.drawOccupation()
 		
-		if love.keyboard.isDown("M") then
+		if love.keyboard.isDown("m") then
 			map.showCoordinates(simulationMap)
 		end
 		
 		love.graphics.pop()
+		
 		love.graphics.push()
 		love.graphics.scale(camZ*1.5)
 	

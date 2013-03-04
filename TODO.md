@@ -77,8 +77,9 @@ tut 4:
 [x] Log Date along with "Last Match" and display on website
 [x] screen resolution set at first start!
 [x] Tutorial "tutorial continued" when pressed F1 !
-- Tutorial "cursor keys"/"arrow keys"
+[x] Tutorial "cursor keys"/"arrow keys"
 [x] Rename "End Match" button in simulation
+- Add switch for rendering clouds
 
 **Maybe**
 - buy code lines using in-game cash?

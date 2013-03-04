@@ -117,6 +117,10 @@ end
 
 function train.buyNew(aiID)
 	return function (posX, posY, dir)
+		
+		if #trainList[aiID] >= MAX_NUM_TRAINS then
+			console.add("[" .. ai.getName(aiID) .. "] !Max number of trAIns reached!", {r=255,g=50,b=50})
+		end
 		if type(posX) == "number" and type(posY) == "number" then
 			posX = math.floor(clamp(posX, 1, curMap.width))
 			posY = math.floor(clamp(posY, 1, curMap.height))

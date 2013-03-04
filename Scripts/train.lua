@@ -83,6 +83,7 @@ function train.renderTrainImage( name, ID )
 		trainImageThreads[ID]:set("seed", name .. ".lua")
 		trainImageThreads[ID]:set("colour", TSerial.pack(col))
 		numTrainImageThreads = numTrainImageThreads + 1
+		trainImages[ID] = nil
 	else
 		for k, t in pairs(trainImageThreads) do
 			status = t:get("status")

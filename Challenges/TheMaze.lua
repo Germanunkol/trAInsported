@@ -167,7 +167,7 @@ local startTime = 0
 local passengersCreated = false
 local maxTime = 315
 local passengersRemaining = 4
-local startupMessage = "After the railway was built, lots of people started moving to Smalltown.\nThe city grew.\nStill, there was no store in Smalltown - so people had to get to the neighbouring town to buy food. Get them there, and fast!"
+local startupMessage = "This map is meant for practice. There's only one path to the destination of the passenger - try to get the right path every time, without trial and error! Write a proper pathfinding algorithm to do so! Then go back to the menu and start this same map again to make sure it's working!"
 
 function ch.start()
 	--challenges.setMessage(startupMessage)
@@ -194,5 +194,7 @@ function ch.passengerDroppedOff(tr, p)
 		passengersRemaining = passengersRemaining - 1
 	end
 end
+
+
 
 return ch

@@ -18,7 +18,7 @@ Once done, save the Lua file and it should show up in the "Challenge" menu of th
 **IMPORTANT** These challenge files are NOT run in a protected environment, like the AI is. This means you can do anything inside this code - the game won't stop you from, for example, writing and deleting files or executing programs. Also, when your code is taking too long to compute, it won't be stopped, instead the game will get slow. And when there's an error in your code, the game will crash and display the error message.  
 This is why uploaded challenge maps will not display for download immediately - they will be reviewed and tested before they'll be available for others to download.
 
-**ALSO IMPORTANT** Please make all your variables local. Otherwise they might interfere with the rest of the program. Just put the word "local" infront of the code line that generates them and you'll be fine. Check the ExampleChallenge.lua to see how.
+**ALSO IMPORTANT** Please make all your variables local. Otherwise they might interfere with the rest of the program. Just put the word "local" infront of the code line that generates them and you'll be fine. Check the ExampleChallenge.lua to see how. Test the reload button on your map as well, and see if it still behaves the way it should. If not, you probably didn't make something local!
 
 Structure
 --------------------
@@ -55,7 +55,7 @@ This event is called at the beginning of the round. Use it to set up the first m
 Called when a player has bought a new train.  
 **Passed Arguments:**
 
-- train: A table representing the train. Do not edit this table! For speed reasons, the game gives the original train to you - not just a copy. This means if you edit this table, you might break the game. Also note that here, the train's x and y position on the map are represented in the following way: train.tileX and train.tileY show the tile the train is currently on and train.x and train.y show the position ON that tile. This is different from the trains getting passed to the AIs.
+- train: A table representing the train. Do not edit this table! For speed reasons, the game gives the original train to you - not just a copy. This means if you edit this table, you might break the game. Also note that here, the train's x and y position on the map are represented in the following way: train.tileX and train.tileY show the tile the train is currently on and train.x and train.y show the position (in pixels) ON that tile. This is different from the trains getting passed to the AIs.
 
 **Example:**
 
@@ -74,17 +74,23 @@ If this function returns "lost", then the player has lost the round and the roun
 
 - "lost": Player has lost the round
 - "won": Player has won the round
+- "msg": This second, optional parameter is a string which describes why you lost or won - it will displayed on the "You win!" or "You failed!" screens.
 
 **Example:**
 
 		function ch.update(time)
 			challenges.setStatus( math.floor(5-time) .. " seconds remaining.")
+			if math.floor(5-time) == 0 then
+				return "lost", "Time is up!"
+			end
 		end
 
 
 Others
 --------------------
-###function challenges.setStatus(msg)###
+These are functions you can call and strings/values you can set:
+
+###challenges.setStatus(msg)###
 Use to set the status message at the top right corner.  
 You can use special characters like "\n" to break the lines.  
 **Passed Arguments:**
@@ -97,7 +103,7 @@ You can use special characters like "\n" to break the lines.
 			challenges.setStatus("Map by Germanunkol\nThe system time is: " .. os.time())
 		end
 		
-###function challenges.setMessage(msg)###
+###challenges.setMessage(msg)###
 Use to fill the game information field.  
 You can use special characters like "\n" to break the lines.  
 **Passed Arguments:**
@@ -110,10 +116,10 @@ You can use special characters like "\n" to break the lines.
 			challenges.setMessage("Welcome to the new Challenge by Germanunkol!")
 		end
 		
-###function challenges.removeMessage()###
+###challenges.removeMessage()###
 Removes the current message box.  
 
-###function passenger.new( x, y, destX, destY )###
+###passenger.new( x, y, destX, destY )###
 Call this to create a new passenger on the map.  
 If you don't give x and y or if you don't give destX and destY, these parameters will be chosen randomly.
 **Passed Arguments:**
@@ -121,15 +127,24 @@ If you don't give x and y or if you don't give destX and destY, these parameters
 - x, y: Coordinates of the place where the passenger should spawn
 - destX, destY: Coordinates of where the passenger should go.
 
-###function ch.name###
+###ch.name###
 String that can be set to display a nicer name than the filename.  
 (not used yet)
 
 		ch.name = "Some Name"
 
-###function ch.version###
+###ch.version###
 String that can be set to give the user a warning when using a different version to run this map.  
 Check the title screen of the game to see what version you're making the map for.  
 
 		ch.version = "1"
+		
+###console.add(message, color)###
+Use this to print something to the in-game console.
+**Passed Arguments:**
+
+- message: Coordinates of the place where the passenger should spawn
+- color: A table containing r,g and b values (red, green and blue). Console message will be displayed in this color.
+
+		console.add("Beware of Zombies!", {r=255,g=50,b=50})
 

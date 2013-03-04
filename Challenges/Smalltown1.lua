@@ -77,7 +77,7 @@ function ch.update(time)
 	if passengersRemaining == 0 then
 		return "won", "The shopping can begin!"
 	end
-	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 Passengers remaining.")
+	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 passengers remaining.")
 end
 
 function ch.passengerDroppedOff(tr, p)

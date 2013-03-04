@@ -21,6 +21,7 @@ To do for trAInsported:
 	-[x] "New Train"
 
 **Server**
+- Stage Special fights between the two best AIs every two hours.
 
 **Security**
 [x] Before download/upload, add a line that won't allow the scripts to be run without the game.

@@ -7,7 +7,7 @@ ch.maxTrains = 1
 ch.startMoney = 25
 
 -- create a new, empty map:
-ch.map = challenges.createEmptyMap(80, 80)
+ch.map = challenges.createEmptyMap(20, 20)
 
 function countNeighbouringRails(x,y)
 	local numNeighbouringRails = 0

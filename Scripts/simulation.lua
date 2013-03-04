@@ -140,18 +140,19 @@ function simulation.addUpdate(text)
 		return
 	end
 	time = tonumber(text:sub(1, e-1))
-	text = text:sub(e+1, #text)
+	shortText = text:sub(e+1, #text)
 	
-	if ID == nil or text == nil or time == nil then
+	if ID == nil or shortText == nil or time == nil then
 		menu.init()
-		statusMsg.add("Error in connection. Received a bad packet. Maybe retry?", true)
+		print("Faulty packet data:", ID, shortText, time, text)
+		statusMsg.new("Error in connection. Received a bad packet. Maybe retry?", true)
 	end
 	
-	addPacket(ID, text, time)
+	addPacket(ID, shortText, time)
 	
-	if text:find("ROUND_DETAILS:") == 1 then
-		s,e = text:find("ROUND_DETAILS:")
-		local tbl = seperateStrings(text:sub(e+1,#text))
+	if shortText:find("ROUND_DETAILS:") == 1 then
+		s,e = shortText:find("ROUND_DETAILS:")
+		local tbl = seperateStrings(shortText:sub(e+1,#shortText))
 		if tbl[1] ~= VERSION then
 			statusMsg.new("Error: Could not match versions.\n(Your version: " .. VERSION .. ", server's version: " .. tbl[1] .. ")", true)
 			simulation.stop()

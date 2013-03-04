@@ -30,8 +30,7 @@ function map.startupProcess()
 end
 
 function setupMatch( width, height, time, maxTime, gameMode, AIs )
-	
-	
+
 	winnerID = nil
 	
 	if DEDICATED then		-- let server choose parameteres for game:

@@ -99,7 +99,7 @@ function challenges.execute(data)
 		
 		if not ok then
 			print(c)
-			statusMsg.add("Could not execute challenge script. See console for more details.", true)
+			statusMsg.new("Could not execute challenge script. See console for more details.", true)
 			menu.init()
 		end
 		

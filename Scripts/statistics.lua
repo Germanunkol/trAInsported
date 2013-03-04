@@ -726,7 +726,7 @@ function statistics.displayStatus()
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 7, displayStatusBoxWidth, "center")
 			
 			love.graphics.setFont(FONT_STAT_MSGBOX)
-			love.graphics.printf("( by " .. aiStats[i].owner .. ")", x, displayStatusY + 30, displayStatusBoxWidth, "center")
+			love.graphics.printf("( by " .. aiStats[i].owner .. " )", x, displayStatusY + 30, displayStatusBoxWidth, "center")
 			
 			love.graphics.draw(train.getTrainImage(i), x + 34 , displayStatusY + 55)
 			love.graphics.print(aiStats[i].numTrains, x + 84 , displayStatusY + 65)

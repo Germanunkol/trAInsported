@@ -34,8 +34,15 @@ function console.add( text, colour )
 	end
 	
 	-- workaround! Maybe make this better:
-	if #consoleLines > 200 then
-		console.flush()
+	if #consoleLines > 2000 then
+		for k = 200,1 do
+			consoleLines[k] = consoleLines[#consoleLines]
+			consoleLines[#consoleLines] = nil
+		end
+		linesToDelete = #consoleLines
+		for k = linesToDelete, 201 do
+			consoleLines[linesToDelete] = nil
+		end
 	end
 	
 	for c in text:gfind(".") do

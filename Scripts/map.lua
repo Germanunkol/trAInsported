@@ -131,7 +131,7 @@ function runMap(restart)
 			end
 		end
 		
-		passenger.init (math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		passenger.init ( math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
 		
 		if challengeEvents.mapRenderingDoneCallback then
 			challengeEvents.mapRenderingDoneCallback()

@@ -140,7 +140,6 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 					passengerList[i].speach = " "
 				end
 				
-				print(passengerList[i].tileX, passengerPositions[passengerList[i].tileX], passengerList[i].tileY, passengerList[i])
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
 				
 				if DEDICATED then
@@ -318,7 +317,6 @@ function passenger.init( max )
 			vipClockImages[i] = love.graphics.newQuad( (i-1)*32,0, 32, 32, 352, 32 )
 		end
 	end
-	print("INIT PASSENGER POSITIONS:", debug.traceback())
 	MAX_NUM_PASSENGERS = max or 0
 	passengerList = {}
 	numPassengersTotal = 1

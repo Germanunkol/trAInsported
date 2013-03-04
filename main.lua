@@ -636,7 +636,7 @@ else
 			end
 		
 		
-			if not roundEnded then
+			if not roundEnded and not newMapStarting then
 				train.moveAll()
 				if curMap then
 					curMap.time = curMap.time + dt*timeFactor

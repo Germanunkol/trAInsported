@@ -291,7 +291,7 @@ for i = startX, endX do
 				elseif m[i][j] == "SCHOOL22" then	-- school
 					transparentPaste( shadows, IMAGE_HOTSPOT_SCHOOL_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					transparentPaste( objects, IMAGE_HOTSPOT_SCHOOL11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
-				elseif m[i][j] == "HOSPITAL11" then	-- school
+				elseif m[i][j] == "HOSPITAL11" then	-- HOSPITAL
 					transparentPaste( shadows, IMAGE_HOTSPOT_HOSPITAL_SHADOW00, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					transparentPaste( objects, IMAGE_HOTSPOT_HOSPITAL00, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 				elseif m[i][j] == "HOSPITAL12" then	-- HOSPITAL

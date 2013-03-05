@@ -266,7 +266,7 @@ function placeHouses()
 
 	local placed = false
 	local schoolPlaced = false
-	local hostpitalPlaced = false
+	local hospitalPlaced = false
 	
 	for i = 0, curMap.width+1 do
 		for j = 0, curMap.height+1 do
@@ -282,17 +282,17 @@ function placeHouses()
 							schoolPlaced = true
 							placed = true
 						end
-						if math.random(20) == 1 and not hostpitalPlaced then
+						if math.random(20) == 1 and not hospitalPlaced then
 							curMap[i][j] = "HOSPITAL"
 							curMap[i+1][j] = "HOSPITAL"
 							curMap[i][j+1] = "HOSPITAL"
 							curMap[i+1][j+1] = "HOSPITAL"
-							hostpitalPlaced = true
+							hospitalPlaced = true
 							placed = true
 						end
 					end
 				end
-				if not placed and (curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+				if not placed and ((curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C") then
 					if math.random(2) == 1 then
 						curMap[i][j] = "H"
 					end

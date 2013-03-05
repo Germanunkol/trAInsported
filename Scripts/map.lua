@@ -1275,7 +1275,6 @@ function map.render(map)
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
-			
 			if curMap then
 				for i = 1, curMap.width do
 					for j = 1, curMap.height do

@@ -183,7 +183,7 @@ function ch.update(time)
 	challenges.setStatus("Map by Germanunkol\n" .. passengersRemaining .. " passengers remaining.")
 	
 	if passengersRemaining == 0 then
-		return "won", "Well done! You showed those mayors what you can work with!\n Seconds: " .. math.floor(time)
+		return "won", "Well done! You showed those mayors what you can work with!\n Time: " .. makeTimeReadable(time)
 	end
 end
 

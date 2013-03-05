@@ -166,7 +166,7 @@ end
 local startTime = 0
 local passengersCreated = false
 local maxTime = 315
-local passengersRemaining = 4
+local passengersRemaining = 1
 local startupMessage = "This map is meant for practice. There's only one path to the destination of the passenger - try to get the right path every time, without trial and error!\nWrite a proper pathfinding algorithm to do so! Then go back to the menu and start this same map again to make sure your pathfinding is working - this map is different every time you start it!"
 
 function ch.start()
@@ -180,13 +180,13 @@ end
 
 function ch.update(time)
 
-	if time > maxTime then
+	challenges.setStatus("Map by Germanunkol\n" .. passengersRemaining .. " Passengers remaining.")
+	--[[if time > maxTime then
 		return "lost"--, --"Oh noes, some inhabitants will starve today..."
-	end
+	end]]--
 	if passengersRemaining == 0 then
-		return "won"--, "Food for everyone!"
+		return "won", "Found the maze's exit after: " .. makeTimeReadable(time) .. "!"
 	end
-	challenges.setStatus("Map by Germanunkol\n" .. math.floor(maxTime-time) .. " seconds remaining.\n4 Passengers remaining.")
 end
 
 function ch.passengerDroppedOff(tr, p)

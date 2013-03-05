@@ -160,8 +160,19 @@ Check the title screen of the game to see what version you're making the map for
 
 		ch.version = "1"
 		
+		
+###ch.maxTrains###
+The maximum amount of trains per player.  
+
+		ch.maxTrains = 3	-- no more than 3 trains allowed per player on this map.
+
+###ch.startMoney###
+The money the player starts with.  
+	
+		ch.startMoney = 50	-- enough to buy two trains
+		
 ###console.add(message, color)###
-Use this to print something to the in-game console.
+Use this to print something to the in-game console.  
 **Passed Arguments:**
 
 - message: Coordinates of the place where the passenger should spawn

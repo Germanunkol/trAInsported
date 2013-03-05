@@ -598,8 +598,19 @@ function statistics.generateStatWindows()
 		i = i + 1
 	end
 		
-	if not DEDICATED and CL_CHART_DIRECTORY then
-		statistics.generateChart()
+	if CL_CHART_DIRECTORY then
+		for aiID, stat in pairs(aiStats) do
+			if #aiStats[aiID].chartTrains > 0 then	-- there's already a point in the list?
+				aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains+1] = {x=math.floor(curMap.time), y = aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains].y}
+			end
+			aiStats[aiID].chartTrains[#aiStats[aiID].chartTrains+1] = {x=math.floor(curMap.time), y = aiStats[aiID].numTrains}
+
+			aiStats[aiID].chartPassengers[#aiStats[aiID].chartPassengers+1] = {x=math.floor(curMap.time), y = aiStats[aiID].pTransported}
+		end
+		
+		if not DEDICATED then
+			statistics.generateChart()
+		end
 	end
 	
 end

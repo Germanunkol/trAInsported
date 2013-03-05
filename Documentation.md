@@ -337,7 +337,6 @@ The standard Lua pairs value. See a Lua documentation for more examples.
 		end
 
 
-
 ###type(variable)###
 Returns the type of the given variable.  
 **Arguments:**

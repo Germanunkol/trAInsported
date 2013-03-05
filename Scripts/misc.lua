@@ -48,6 +48,14 @@ end
 ---------------------------------------
 
 
+function createTrainCopy(train)
+	local tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir, nextX=train.nextX, nextY=train.nextY}		-- don't give the original data to the ai!
+	if train.curPassenger then
+		tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
+	end
+	return tr
+end
+
 
 ---------------------------------------
 -- Load screen res from config file:

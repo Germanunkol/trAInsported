@@ -271,6 +271,19 @@ Note: This function is NOT called when one of your own trains takes a passenger 
 			-- set the entry in the passengerList for the passenger to nil. This is the accepted way of "deleting" the entry in Lua.
 			passengerList[passenger] = nil
 		end
+		
+
+###function ai.mapEvent(...)###
+Some challenge-matches need more events than listed above, to notify you if something has happened.  
+These challenge maps will call this function. This way, a user-created map can tell you, for example, when the time's almost up, or when your train has arrived at a certain, special rail-piece.  
+The description of the map should always make sure you know what arguments the map creator will pass to you.  
+**Passed Arguments:**
+
+- any number of arguments which the creator of the map has specified. Check the map description to see what arguments to expect!
+
+**Returns:**
+
+- nothing
 
 
 Available Functions

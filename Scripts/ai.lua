@@ -205,6 +205,7 @@ function ai.new(scriptName)
 	aiList[aiID].foundDestination = sb.ai.foundDestination
 	aiList[aiID].enoughMoney = sb.ai.enoughMoney
 	aiList[aiID].newTrain = sb.ai.newTrain
+	aiList[aiID].mapEvent = sb.ai.mapEvent
 	
 	return aiList[aiID].name, aiList[aiID].owner
 end
@@ -430,6 +431,21 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 	end
 end
 
+function ai.mapEvent(aiID, ... )		-- called when the map script wants to.
+	local result = nil
+	if aiList[aiID] then
+		if aiList[aiID].mapEvent then
+			local cr = coroutine.create(runAiFunctionCoroutine)
+			
+			args = {...}
+			ok, result = coroutine.resume(cr, aiList[aiID].mapEvent, unpack(args))
+			if not ok or coroutine.status(cr) ~= "dead" then		
+				console.add(aiList[aiID].name .. ": Stopped function: ai.mapEvent()", {r = 255,g=50,b=50})
+				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
+			end
+		end
+	end
+end
 
 function ai.enoughMoney(aiID, cash)
 	local result = nil

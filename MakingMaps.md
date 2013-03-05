@@ -121,11 +121,32 @@ Removes the current message box.
 
 ###passenger.new( x, y, destX, destY )###
 Call this to create a new passenger on the map.  
-If you don't give x and y or if you don't give destX and destY, these parameters will be chosen randomly.
+If you don't give x and y or if you don't give destX and destY, these parameters will be chosen randomly.  
 **Passed Arguments:**
 
 - x, y: Coordinates of the place where the passenger should spawn
 - destX, destY: Coordinates of where the passenger should go.
+
+###ai.mapEvent(aiID, ... )###
+This function is very useful. It allows you to pass your own messages and events to an AI at any time.  
+The player's AI must implement the function ai.mapEvent as well (see the AI Documentation for that), so you should tell them so using challenges.setMessage().  
+For an example of this, check out the Smalltown3 Challenge map.  
+**Passed Arguments:**
+
+- aiID: (Number) The ID of the AI, in challenge maps there's only one AI, so this ID is 1.
+- ... any other arguments you want to pass. Make sure the players know which arguments they should expect! If you want to give the ai a copy of the train, use createTrainCopy() (see below).
+
+###createTrainCopy(train)###
+This will create a copy of the train which you can then pass to a user, using ai.mapEvent. This way, the user can't modify the train directly and he/she always gets the train in the same, known format.  
+Again, for an example, check out the Smalltown3 challenge map.
+**Passed Arguments:**
+
+- train: The way it is implemented internally by the game
+
+**Returns:**
+
+- tr: A table showing the train the way it is usually given to the user.
+
 
 ###ch.name###
 String that can be set to display a nicer name than the filename.  

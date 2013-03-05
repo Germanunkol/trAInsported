@@ -1,6 +1,6 @@
 local ch = {}
 
-ch.name = "Challenge1"
+ch.name = "TheMaze"
 ch.version = "1"
 
 ch.maxTrains = 1
@@ -167,7 +167,7 @@ local startTime = 0
 local passengersCreated = false
 local maxTime = 315
 local passengersRemaining = 4
-local startupMessage = "This map is meant for practice. There's only one path to the destination of the passenger - try to get the right path every time, without trial and error! Write a proper pathfinding algorithm to do so! Then go back to the menu and start this same map again to make sure it's working!"
+local startupMessage = "This map is meant for practice. There's only one path to the destination of the passenger - try to get the right path every time, without trial and error!\nWrite a proper pathfinding algorithm to do so! Then go back to the menu and start this same map again to make sure your pathfinding is working - this map is different every time you start it!"
 
 function ch.start()
 	--challenges.setMessage(startupMessage)

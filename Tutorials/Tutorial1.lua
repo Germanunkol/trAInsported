@@ -16,7 +16,6 @@ tutMap[4][4] = "C"
 tutMap[5][4] = "C"
 tutMap[1][2] = "PS"
 
-
 tutorialSteps = {}
 currentStep = 1
 

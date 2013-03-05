@@ -263,11 +263,39 @@ end
 
 
 function placeHouses()
+
+	local placed = false
+	local schoolPlaced = false
+	local hostpitalPlaced = false
+	
 	for i = 0, curMap.width+1 do
 		for j = 0, curMap.height+1 do
+			placed = false
 			if curMap[i][j] == nil then
-				if (curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
-					if math.random(2) == 1 then curMap[i][j] = "H" end
+				if i > 0 and j > 0 and i < curMap.width-1 and j < curMap.height-1 then		-- place large house
+					if curMap[i+1][j] == nil and curMap[i][j+1] == nil and curMap[i+1][j+1] == nil then
+						if math.random(20) == 1 and not schoolPlaced then
+							curMap[i][j] = "SCHOOL"
+							curMap[i+1][j] = "SCHOOL"
+							curMap[i][j+1] = "SCHOOL"
+							curMap[i+1][j+1] = "SCHOOL"
+							schoolPlaced = true
+							placed = true
+						end
+						if math.random(20) == 1 and not hostpitalPlaced then
+							curMap[i][j] = "HOSPITAL"
+							curMap[i+1][j] = "HOSPITAL"
+							curMap[i][j+1] = "HOSPITAL"
+							curMap[i+1][j+1] = "HOSPITAL"
+							hostpitalPlaced = true
+							placed = true
+						end
+					end
+				end
+				if not placed and (curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C" then
+					if math.random(2) == 1 then
+						curMap[i][j] = "H"
+					end
 				end
 			end
 		end

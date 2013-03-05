@@ -18,7 +18,10 @@ tutMap[3][2] = "C"
 tutMap[3][4] = "C"
 tutMap[3][5] = "C"
 
-tutMap[1][2] = "SC"
+tutMap[1][1] = "SCHOOL"
+tutMap[2][1] = "SCHOOL"
+tutMap[1][2] = "SCHOOL"
+tutMap[2][2] = "SCHOOL"
 tutMap[5][2] = "PL"
 tutMap[2][5] = "HO"
 

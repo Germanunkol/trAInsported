@@ -44,7 +44,7 @@ function passenger.clearList()
 	end
 end
 
-function passenger.new( givenX, givenY, givenDestX, givenDestY )
+function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeech )
 	
 	if givenX or givenY then dontCreateVIP = true end
 	
@@ -115,7 +115,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 						image = passengerImage,
 						angle = math.random()*math.pi*2,
 						selected = s
-						}
+					}
 				if vip then
 					--passengerList[i].image = passengerVIPImage
 					passengerList[i].vip = true
@@ -131,9 +131,13 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY )
 						passengerList[i].speach = vipSpeach[num]
 					end
 				else
-					local num = math.random(#passengerSpeach)
-					if passengerSpeach[num] then		-- just to make sure
-						passengerList[i].speach = passengerSpeach[num]
+					if givenSpeach then
+						passengerList[i].speach = givenSpeach
+					else
+						local num = math.random(#passengerSpeach)
+						if passengerSpeach[num] then		-- just to make sure
+							passengerList[i].speach = passengerSpeach[num]
+						end
 					end
 				end
 				if not passengerList[i].speach then
@@ -526,14 +530,14 @@ else
 	
 		for k, p in pairs(passengerList) do
 			if p.selected > 0 then
-		love.graphics.setColor(255,255,255)
-					love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
-		love.graphics.setColor(0,0,0)
-					love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
-					p.selected = p.selected - dt
-					if p.vip then
-						love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
-					end
+				love.graphics.setColor(255,255,255)
+				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
+				love.graphics.setColor(0,0,0)
+				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
+				p.selected = p.selected - dt
+				if p.vip then
+					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
+				end
 			end
 		end
 	end

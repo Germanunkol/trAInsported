@@ -1275,6 +1275,27 @@ function map.render(map)
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
+			
+			if curMap then
+				for i = 1, curMap.width do
+					for j = 1, curMap.height do
+						if curMap[i][j] == "SCHOOL" or curMap[i][j] == "HOSPITAL" then
+							curMap[i][j] = "S"
+						end
+					end				
+				end
+			elseif simulationMap then
+				if simulationMap then
+					for i = 1, simulationMap.width do
+						for j = 1, simulationMap.height do
+							if simulationMap[i][j] == "SCHOOL" or simulationMap[i][j] == "HOSPITAL" then
+								simulationMap[i][j] = "S"
+							end
+						end				
+					end
+				end
+			end
+			
 			return groundData,shadowData,objectData
 		end
 		
@@ -1388,7 +1409,7 @@ function map.show()
 	
 	map.renderHighlights(passedTime)
 	
-	passenger.showSelected(passedTime)
+	passenger.showSelected()
 
 	clouds.renderShadows(passedTime)
 

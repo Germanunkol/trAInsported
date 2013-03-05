@@ -51,12 +51,31 @@ while true do
 			end
 		end
 	end
+	
 
 	MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
 
 	SEED = SEED % 9999
 
 	math.randomseed(SEED)
+	
+	
+	for i = 1, curMap.width do
+		for j = 1, curMap.height do
+			if curMap[i][j] == "SCHOOL" then
+				curMap[i][j] = "SCHOOL11"
+				curMap[i][j+1] = "SCHOOL12"
+				curMap[i+1][j] = "SCHOOL21"
+				curMap[i+1][j+1] = "SCHOOL22"
+			elseif curMap[i][j] == "HOSPITAL" then
+				curMap[i][j] = "HOSPITAL11"
+				curMap[i][j+1] = "HOSPITAL12"
+				curMap[i+1][j] = "HOSPITAL21"
+				curMap[i+1][j+1] = "HOSPITAL22"
+			end
+		end
+	end
+	
 
 	thisThread:set("percentage", -2)
 

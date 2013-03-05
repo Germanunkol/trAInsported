@@ -101,6 +101,14 @@ while true do
 
 	generateRailList()
 	thisThread:set("percentage", 90)
+	
+	--[[for i = 0,width+1 do
+		for j = 0, height+1 do
+			if curMap[i][j] == "SCHOOL" then
+				curMap[i][j] = "S"
+			end
+		end
+	end]]--
 
 	-- return the results to parent (main) thread:
 	thisThread:set("curMap", TSerial.pack(curMap))

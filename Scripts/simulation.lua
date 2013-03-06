@@ -555,7 +555,7 @@ function simulation.show(dt)
 			for j = 1, #mapImage[i] do
 				love.graphics.draw(mapImage[i][j], x,  y)
 				love.graphics.draw(mapShadowImage[i][j], x,  y)
-				love.graphics.draw(mapObjectImage[i][j], x,  y)
+				--love.graphics.draw(mapObjectImage[i][j], x,  y)
 				y = y + mapImage[i][j]:getHeight()
 				if j == #mapImage[i] then
 					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
@@ -563,13 +563,32 @@ function simulation.show(dt)
 				end
 			end
 		end
-	
+		
+		love.graphics.push()
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
 	
 		simulation.passengerShowAll(passedTime)
 		simulation.trainShowAll()
 		simulation.showVIPs(passedTime)
 --		passenger.showVIPs(passedTime)
+
+		love.graphics.pop()
+		love.graphics.setColor(255,255,255,255)
+		x = -TILE_SIZE*(simulationMap.width+2)/2
+		for i = 1, #mapImage do
+			y = -TILE_SIZE*(simulationMap.height+2)/2
+			for j = 1, #mapImage[i] do
+				love.graphics.draw(mapObjectImage[i][j], x,  y)
+				love.graphics.draw(mapShadowImage[i][j], x,  y)
+				y = y + mapImage[i][j]:getHeight()
+				if j == #mapImage[i] then
+					--love.graphics.draw(mapImage[i][j], -TILE_SIZE*(curMap.width+2)/2 -20 + (i-1)*MAX_IMG_SIZE*TILE_SIZE, -TILE_SIZE*(curMap.height+2)/2 +35 + (j-1)*MAX_IMG_SIZE*TILE_SIZE)
+					x = x + mapImage[i][j]:getWidth()
+				end
+			end
+		end
+		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+	
 	
 		map.renderHighlights(passedTime)
 	

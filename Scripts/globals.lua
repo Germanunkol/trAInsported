@@ -91,7 +91,7 @@ POSSIBLE_TIMES_TOOLTIPS = {"Normal setup, average amount of passengers", "Lots o
 POSSIBLE_MODES = {"Time", "Passengers"}
 POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
 
-POSSIBLE_REGIONS = {"Rural", "Urban"}
+POSSIBLE_REGIONS = {"Suburban", "Urban"}
 
 RESOLUTIONS = {}
 --RESOLUTIONS[#RESOLUTIONS+1] = {width=640, height=480}

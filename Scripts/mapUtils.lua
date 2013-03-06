@@ -338,7 +338,7 @@ function generateRailList()
 				table.insert(curMap.railList, {x=i, y=j})
 			elseif curMap[i][j] == "H" then
 				table.insert(curMap.houseList, {x=i, y=j})
-			elseif curMap[i][j] == "S" then
+			elseif curMap[i][j] == "S" or curMap[i][j] == "SCHOOL" or curMap[i][j] == "HOSPITAL" then
 				if curMap[i+1][j] == "C" then
 					for k = 1,25 do
 						table.insert(curMap.railList, {x=i+1, y=j})		-- 25 times as likely to spawn passenger if the rail is near a hotspot.

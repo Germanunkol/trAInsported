@@ -39,7 +39,9 @@ while true do
 	NO_TREES = thisThread:get("NO_TREES")
 
 	SEED = curMap.height*curMap.width
-
+	
+	region = thisThread:get("region") or "Urban"
+	
 	for i = 1, curMap.width do
 		for j = 1, curMap.height do
 			if curMap[i][j] == "H" then
@@ -173,6 +175,7 @@ while true do
 						
 							parts[i][j].thread:set("startCoordinateX", (i-1)*partWidth)
 							parts[i][j].thread:set("startCoordinateY", (j-1)*partHeight)
+							parts[i][j].thread:set("region", region)
 							numThreadsRunning = numThreadsRunning + 1
 						end
 					end

@@ -91,6 +91,7 @@ menuIcons = {}
 widthButtons = {}
 heightButtons = {}
 timeButtons = {}
+regionButtons = {}
 modeButtons = {}
 
 function menu.removeAll()
@@ -104,6 +105,9 @@ function menu.removeAll()
 		b:remove()
 	end
 	for k, b in pairs(timeButtons) do
+		b:remove()
+	end
+	for k, b in pairs(regionButtons) do
 		b:remove()
 	end
 	for k, b in pairs(modeButtons) do
@@ -121,6 +125,7 @@ function menu.removeAll()
 	widthButtons = {}
 	heightButtons = {}
 	timeButtons = {}
+	regionButtons = {}
 	modeButtons = {}
 	
 	trainImageThreads = {}
@@ -205,6 +210,9 @@ function normalMatch()
 		statusMsg.new("Invalid game time!", true)
 		return
 	end
+	if not chosenRegion then
+		chosenRegion = "Rural"
+	end
 	if not chosenMode then
 		statusMsg.new("Invalid game mode!", true)
 		return
@@ -231,7 +239,7 @@ function normalMatch()
 	
 	maxTime = chosenWidth*chosenHeight*10 + math.random(chosenWidth*chosenHeight*10)
 	
-	setupMatch( chosenWidth, chosenHeight, chosenTime, maxTime, chosenMode, AIs )
+	setupMatch( chosenWidth, chosenHeight, chosenTime, maxTime, chosenMode, AIs, chosenRegion)
 end
 
 
@@ -306,6 +314,19 @@ function selectTime( time )
 	chosenTime = time
 end
 
+function selectRegion( region )
+	for k, button in pairs(regionButtons) do
+		button.event = selectRegion
+		button.x = regionButtons[region].x
+		button.selected = false
+	end
+	print("region:" , region)
+	regionButtons[region].event = nil
+	regionButtons[region].x = regionButtons[region].x + 20
+	regionButtons[region].selected = true
+	chosenRegion = region
+end
+
 function selectMode( mode )
 	for k, button in pairs(modeButtons) do
 		button.event = selectMode
@@ -365,6 +386,7 @@ function menu.newRound()
 	chosenHeight = 0
 	chosenTime = nil
 	chosenMode = nil
+	chosenRegion = nil
 	
 	local columnWidth = math.min(bgBoxSmall:getWidth()+10, love.graphics.getWidth()/3)
 	
@@ -417,6 +439,16 @@ function menu.newRound()
 	y = defaultMenuY + bgBoxSmall:getHeight()+5
 	for k, modeOption in pairs(POSSIBLE_MODES) do
 		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, modeOption, selectMode, modeOption, nil, nil, POSSIBLE_MODES_TOOLTIPS[k])
+		y = y + 37
+	end
+	
+	x = defaultMenuX + (columnWidth)*2
+	y = y + 30
+	table.insert(menuDividers, {x=x, y = y, txt="Region:"})
+	x = x + 20
+	y = y + bgBoxSmall:getHeight()+5
+	for k, regionOption in pairs(POSSIBLE_REGIONS) do
+		regionButtons[regionOption] = button:newSmall(x, y, regionOption, selectRegion, regionOption, nil, nil, nil)
 		y = y + 37
 	end
 end

@@ -18,6 +18,7 @@ m = TSerial.unpack(thisThread:demand("map"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 startCoordinateX = thisThread:demand("startCoordinateX")
 startCoordinateY = thisThread:demand("startCoordinateY")
+region = thisThread:get("region")
 
 function checkAborted()
 	if abort then
@@ -30,8 +31,11 @@ function checkAborted()
 end
 
 -- Ground:
-IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
-IMAGE_GROUND_STONE = love.image.newImageData("Images/Ground_Stone.png")
+if region == "Urban" then
+	IMAGE_GROUND = love.image.newImageData("Images/Ground_Stone.png")
+else
+	IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
+end
 IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
 IMAGE_GROUND_RIGHT = love.image.newImageData("Images/BorderRight.png")
 IMAGE_GROUND_BOTTOM = love.image.newImageData("Images/BorderBottom.png")
@@ -43,25 +47,40 @@ IMAGE_GROUND_BOTTOMRIGHT = love.image.newImageData("Images/BorderBottomRight.png
 
 
 --Rails:
-IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS.png")
-IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW.png")
+if region == "Urban" then
+	IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS_Stone.png")
+	IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW_Stone.png")
+	IMAGE_RAIL_NE = love.image.newImageData("Images/Rail_NE_Stone.png")
+	IMAGE_RAIL_ES = love.image.newImageData("Images/Rail_ES_Stone.png")
+	IMAGE_RAIL_SW = love.image.newImageData("Images/Rail_SW_Stone.png")
+	IMAGE_RAIL_NW = love.image.newImageData("Images/Rail_NW_Stone.png")
+	IMAGE_RAIL_NEW = love.image.newImageData("Images/Rail_NEW_Stone.png")
+	IMAGE_RAIL_NES = love.image.newImageData("Images/Rail_NES_Stone.png")
+	IMAGE_RAIL_ESW = love.image.newImageData("Images/Rail_ESW_Stone.png")
+	IMAGE_RAIL_NSW = love.image.newImageData("Images/Rail_NSW_Stone.png")
+	IMAGE_RAIL_NESW = love.image.newImageData("Images/Rail_NESW_Stone.png")
+	IMAGE_RAIL_N = love.image.newImageData("Images/Rail_N_Stone.png")
+	IMAGE_RAIL_E = love.image.newImageData("Images/Rail_E_Stone.png")
+	IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S_Stone.png")
+	IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W_Stone.png")
+else
+	IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS.png")
+	IMAGE_RAIL_EW = love.image.newImageData("Images/Rail_EW.png")
+	IMAGE_RAIL_NE = love.image.newImageData("Images/Rail_NE.png")
+	IMAGE_RAIL_ES = love.image.newImageData("Images/Rail_ES.png")
+	IMAGE_RAIL_SW = love.image.newImageData("Images/Rail_SW.png")
+	IMAGE_RAIL_NW = love.image.newImageData("Images/Rail_NW.png")
+	IMAGE_RAIL_NEW = love.image.newImageData("Images/Rail_NEW.png")
+	IMAGE_RAIL_NES = love.image.newImageData("Images/Rail_NES.png")
+	IMAGE_RAIL_ESW = love.image.newImageData("Images/Rail_ESW.png")
+	IMAGE_RAIL_NSW = love.image.newImageData("Images/Rail_NSW.png")
+	IMAGE_RAIL_NESW = love.image.newImageData("Images/Rail_NESW.png")
+	IMAGE_RAIL_N = love.image.newImageData("Images/Rail_N.png")
+	IMAGE_RAIL_E = love.image.newImageData("Images/Rail_E.png")
+	IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
+	IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
+end
 
-IMAGE_RAIL_NE = love.image.newImageData("Images/Rail_NE.png")
-IMAGE_RAIL_ES = love.image.newImageData("Images/Rail_ES.png")
-IMAGE_RAIL_SW = love.image.newImageData("Images/Rail_SW.png")
-IMAGE_RAIL_NW = love.image.newImageData("Images/Rail_NW.png")
-
-IMAGE_RAIL_NEW = love.image.newImageData("Images/Rail_NEW.png")
-IMAGE_RAIL_NES = love.image.newImageData("Images/Rail_NES.png")
-IMAGE_RAIL_ESW = love.image.newImageData("Images/Rail_ESW.png")
-IMAGE_RAIL_NSW = love.image.newImageData("Images/Rail_NSW.png")
-
-IMAGE_RAIL_NESW = love.image.newImageData("Images/Rail_NESW.png")
-
-IMAGE_RAIL_N = love.image.newImageData("Images/Rail_N.png")
-IMAGE_RAIL_E = love.image.newImageData("Images/Rail_E.png")
-IMAGE_RAIL_S = love.image.newImageData("Images/Rail_S.png")
-IMAGE_RAIL_W = love.image.newImageData("Images/Rail_W.png")
 
 --Hotspots/special Buildings:
 IMAGE_HOTSPOT01 = love.image.newImageData("Images/HotSpot1.png")
@@ -172,6 +191,8 @@ function getRailImage( railType )
 	
 	return nil
 end
+
+
 
 
 xBorder = 0
@@ -321,62 +342,101 @@ end
 -- Foilage
 if not NO_TREES then
 
-	for i = startX,endX,1 do		-- randomly place trees/bushes etc
-		for j = startY,endY,1 do
-			if (not m[i] or not m[i][j]) and math.random(7) == 1 then
-				numTries = math.random(3)+1
-				for k = 1, numTries do
-					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
-					randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+	if not region == "Urban" then
+		for i = startX,endX,1 do		-- randomly place trees/bushes etc
+			for j = startY,endY,1 do
+				if (not m[i] or not m[i][j]) and math.random(7) == 1 then
+					numTries = math.random(3)+1
+					for k = 1, numTries do
+						col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
+						randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
 					
-					if i == startX then randX = math.max(0, randX) end
-					if j == startY then randY = math.max(0, randY) end
-					if i == endX then randX = math.min(TILE_SIZE-IMAGE_BUSH01_SHADOW:getWidth(), randX) end
-					if j == endY then randY = math.min(TILE_SIZE-IMAGE_BUSH01_SHADOW:getHeight(), randY) end
-					transparentPaste( shadows, IMAGE_BUSH01_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
-					transparentPaste( objects, IMAGE_BUSH01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
-				end
-			end
-			if checkAborted() then
-				return
-			end
-		end
-	end
-
-	local treetype = 0
-	for i = startX,endX,1 do		-- randomly place trees/bushes etc
-		for j = startY,endY,1 do
-			if (not m[i] or not m[i][j]) and math.random(3) == 1 then
-				numTries = math.random(5)+1
-				for k = 1, numTries do
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					treetype = math.random(3)
-		
-					col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
-					if treetype == 1 then
-						s = IMAGE_TREE01_SHADOW
-						o = IMAGE_TREE01
-					elseif treetype == 2 then
-						s = IMAGE_TREE02_SHADOW
-						o = IMAGE_TREE02
-					else
-						s = IMAGE_TREE03_SHADOW
-						o = IMAGE_TREE03
+						if i == startX then randX = math.max(0, randX) end
+						if j == startY then randY = math.max(0, randY) end
+						if i == endX then randX = math.min(TILE_SIZE-IMAGE_BUSH01_SHADOW:getWidth(), randX) end
+						if j == endY then randY = math.min(TILE_SIZE-IMAGE_BUSH01_SHADOW:getHeight(), randY) end
+						transparentPaste( shadows, IMAGE_BUSH01_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+						transparentPaste( objects, IMAGE_BUSH01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
 					end
-					
-					if i == startX then randX = math.max(0, randX) end
-					if j == startY then randY = math.max(0, randY) end
-					if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
-					if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end
-					
-					transparentPaste( shadows, s, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
-					transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
+				end
+				if checkAborted() then
+					return
 				end
 			end
-			if checkAborted() then
-				return
+		end
+
+		local treetype = 0
+		for i = startX,endX,1 do		-- randomly place trees/bushes etc
+			for j = startY,endY,1 do
+				if (not m[i] or not m[i][j]) and math.random(3) == 1 then
+					numTries = math.random(5)+1
+					for k = 1, numTries do
+						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						treetype = math.random(3)
+		
+						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+						if treetype == 1 then
+							s = IMAGE_TREE01_SHADOW
+							o = IMAGE_TREE01
+						elseif treetype == 2 then
+							s = IMAGE_TREE02_SHADOW
+							o = IMAGE_TREE02
+						else
+							s = IMAGE_TREE03_SHADOW
+							o = IMAGE_TREE03
+						end
+					
+						if i == startX then randX = math.max(0, randX) end
+						if j == startY then randY = math.max(0, randY) end
+						if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
+						if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end
+					
+						transparentPaste( shadows, s, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+						transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
+					end
+				end
+				if checkAborted() then
+					return
+				end
 			end
 		end
+	else
+		local treetype = 0
+		for i = startX,endX,1 do		-- randomly place trees/bushes etc
+			for j = startY,endY,1 do
+				if (not m[i] or not m[i][j]) and math.random(10) == 1 then
+					numTries = math.random(5)+1
+					for k = 1, numTries do
+						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						treetype = math.random(3)
+		
+						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+						if treetype == 1 then
+							s = IMAGE_TREE01_SHADOW
+							o = IMAGE_TREE01
+						elseif treetype == 2 then
+							s = IMAGE_TREE02_SHADOW
+							o = IMAGE_TREE02
+						else
+							s = IMAGE_TREE03_SHADOW
+							o = IMAGE_TREE03
+						end
+					
+						if i == startX then randX = math.max(0, randX) end
+						if j == startY then randY = math.max(0, randY) end
+						if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
+						if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end
+					
+						transparentPaste( shadows, s, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+						transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
+					end
+				end
+				if checkAborted() then
+					return
+				end
+			end
+		end
+	
 	end
 end
 

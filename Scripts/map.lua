@@ -29,7 +29,7 @@ function map.startupProcess()
 	end
 end
 
-function setupMatch( width, height, time, maxTime, gameMode, AIs )
+function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 
 	winnerID = nil
 	
@@ -85,6 +85,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs )
 		menu.exitOnly()
 	end
 	
+	CURRENT_REGION = region or "Urban"
 	ROUND_TIME = math.floor(maxTime)
 	GAME_TYPE = gameMode
 	ai.restart()	-- make sure aiList is reset!
@@ -1211,6 +1212,10 @@ function map.render(map)
 		mapRenderThread:set("curMap", TSerial.pack( map ) )
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
+		
+		if CURRENT_REGION then
+			mapRenderThread:set("region", CURRENT_REGION)
+		end
 		
 		mapRenderThreadStatusNum = 0
 		currentlyRenderingMap = true

@@ -32,6 +32,7 @@ while true do
 	height = thisThread:demand("height")
 	seed = thisThread:demand("seed")
 	tutorialMap = thisThread:get("tutorialMap")
+	region = thisThread:get("region")
 
 	if tutorialMap then
 		tutorialMap = TSerial.unpack(tutorialMap)

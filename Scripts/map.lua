@@ -54,7 +54,8 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 		print("Choosing map size:", MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		width = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		height = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
-		time = "day"
+		time = POSSIBLE_TIMES[math.random(#POSSIBLE_TIMES)]
+		region = POSSIBLE_REGIONS[math.random(#POSSIBLE_REGIONS)]
 		if CL_ROUND_TIME then
 			maxTime = CL_ROUND_TIME
 		else
@@ -85,9 +86,10 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 		menu.exitOnly()
 	end
 	
-	CURRENT_REGION = region or "Urban"
+	CURRENT_REGION = region or "Suburban"
 	ROUND_TIME = math.floor(maxTime)
 	GAME_TYPE = gameMode
+	GAME_TIME = time
 	ai.restart()	-- make sure aiList is reset!
 	stats.start( #AIs )
 	train.init()
@@ -132,7 +134,12 @@ function runMap(restart)
 			end
 		end
 		
-		passenger.init ( math.ceil(curMap.width*curMap.height/3) )		-- start generating random passengers, set the maximum number of them.
+		
+		local maxPassengers = math.ceil(curMap.width*curMap.height/3)
+		if CURRENT_REGION == "Urban" then
+			maxPassengers = maxPassengers*2
+		end
+		passenger.init ( maxPassengers )		-- start generating random passengers, set the maximum number of them.
 		
 		if challengeEvents.mapRenderingDoneCallback then
 			challengeEvents.mapRenderingDoneCallback()
@@ -252,7 +259,6 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-	
 		newMapStarting = true
 		mapRenderPercent = nil
 		mapGeneratePercent = nil
@@ -302,6 +308,9 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThread:set("height", height )
 		mapGenerateThread:set("seed", seed )
 		mapGenerateThread:set("ID", mapGenerateThreadNumber )
+		if CURRENT_REGION then
+			mapGenerateThread:set("region", CURRENT_REGION)
+		end
 		
 		mapGenerateStatusNum = 0
 		currentlyGeneratingMap = true
@@ -1280,23 +1289,17 @@ function map.render(map)
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
-			if curMap then
-				for i = 1, curMap.width do
-					for j = 1, curMap.height do
-						if curMap[i][j] == "SCHOOL" or curMap[i][j] == "HOSPITAL" then
-							curMap[i][j] = "S"
+			m = curMap or simulationMap
+			if m then
+				for i = 1, m.width do
+					for j = 1, m.height do
+						if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
+							m[i][j] = "S"
+						end
+						if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
+							m[i][j] = "H"
 						end
 					end				
-				end
-			elseif simulationMap then
-				if simulationMap then
-					for i = 1, simulationMap.width do
-						for j = 1, simulationMap.height do
-							if simulationMap[i][j] == "SCHOOL" or simulationMap[i][j] == "HOSPITAL" then
-								simulationMap[i][j] = "S"
-							end
-						end				
-					end
 				end
 			end
 			

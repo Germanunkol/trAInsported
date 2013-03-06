@@ -82,7 +82,7 @@ function randomMatch()
 	
 	local time = width*height*10 + math.random(width*height*10)
 	
-	setupMatch(width, height, 1, time, gameMode, chosenAIs)
+	setupMatch(width, height, 1, time, gameMode, chosenAIs, POSSIBLE_REGIONS[math.random(#POSSIBLE_REGIONS)])
 end
 
 menuButtons = {}
@@ -417,7 +417,7 @@ function menu.newRound()
 	
 	x = defaultMenuX + columnWidth
 	y = defaultMenuY
-	table.insert(menuDividers, {x=x, y = defaultMenuY, txt="Width and Height:"})
+	table.insert(menuDividers, {x=x, y = defaultMenuY, txt = "Width and Height:"})
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	stepSize = math.floor((MAP_MAXIMUM_SIZE-MAP_MINIMUM_SIZE)/10)
@@ -448,7 +448,7 @@ function menu.newRound()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	for k, regionOption in pairs(POSSIBLE_REGIONS) do
-		regionButtons[regionOption] = button:newSmall(x, y, regionOption, selectRegion, regionOption, nil, nil, nil)
+		regionButtons[regionOption] = button:newSmall(x, y, regionOption, selectRegion, regionOption, nil, nil, POSSIBLE_REGIONS_TOOLTIPS[k])
 		y = y + 37
 	end
 end

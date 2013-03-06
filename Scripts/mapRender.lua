@@ -40,7 +40,7 @@ while true do
 
 	SEED = curMap.height*curMap.width
 	
-	region = thisThread:get("region") or "Urban"
+	region = thisThread:get("region") or "Suburban"
 	
 	for i = 1, curMap.width do
 		for j = 1, curMap.height do

@@ -293,8 +293,44 @@ function placeHouses()
 					end
 				end
 				if not placed and ((curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C") then
-					if math.random(2) == 1 then
-						curMap[i][j] = "H"
+					if region == "Urban" then
+						if math.random(4) > 1 then
+							curMap[i][j] = "H"
+						end
+					else
+						if math.random(2) == 1 then
+							curMap[i][j] = "H"
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	if region == "Urban" then
+		for i = 1, curMap.width do
+			for j = 1, curMap.height do
+				if curMap[i][j] == "H" and curMap[i][j+1] == "H" then
+					if math.random(4) > 1 then
+						if math.random(2) == 1 then
+							curMap[i][j] = "HOUSE_1_LARGE11"
+							curMap[i][j+1] = "HOUSE_1_LARGE12"
+						else
+							curMap[i][j] = "HOUSE_2_LARGE11"
+							curMap[i][j+1] = "HOUSE_2_LARGE12"
+						end
+					end
+				end
+				if curMap[i][j] == "H" and curMap[i+1][j] == "H" then
+				
+					if math.random(4) > 1 then
+						if math.random(2) == 1 then
+							curMap[i][j] = "HOUSE_3_LARGE11"
+							curMap[i+1][j] = "HOUSE_3_LARGE21"
+						else
+							curMap[i][j] = "HOUSE_4_LARGE11"
+							curMap[i+1][j] = "HOUSE_4_LARGE21"
+						end
 					end
 				end
 			end
@@ -336,7 +372,7 @@ function generateRailList()
 		for j = 1, curMap.height do
 			if curMap[i][j] == "C" then 
 				table.insert(curMap.railList, {x=i, y=j})
-			elseif curMap[i][j] == "H" then
+			elseif curMap[i][j] == "H" or curMap[i][k] and curMap[i][j]:find("HOUSE") then
 				table.insert(curMap.houseList, {x=i, y=j})
 			elseif curMap[i][j] == "S" or curMap[i][j] == "SCHOOL" or curMap[i][j] == "HOSPITAL" then
 				if curMap[i+1][j] == "C" then

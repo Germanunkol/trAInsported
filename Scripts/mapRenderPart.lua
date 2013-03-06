@@ -33,17 +33,27 @@ end
 -- Ground:
 if region == "Urban" then
 	IMAGE_GROUND = love.image.newImageData("Images/Ground_Stone.png")
+	IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft_Stone.png")
+	IMAGE_GROUND_RIGHT = love.image.newImageData("Images/BorderRight_Stone.png")
+	IMAGE_GROUND_BOTTOM = love.image.newImageData("Images/BorderBottom_Stone.png")
+	IMAGE_GROUND_TOP = love.image.newImageData("Images/BorderTop_Stone.png")
+	IMAGE_GROUND_TOPLEFT = love.image.newImageData("Images/BorderTopLeft_Stone.png")
+	IMAGE_GROUND_TOPRIGHT = love.image.newImageData("Images/BorderTopRight_Stone.png")
+	IMAGE_GROUND_BOTTOMLEFT = love.image.newImageData("Images/BorderBottomLeft_Stone.png")
+	IMAGE_GROUND_BOTTOMRIGHT = love.image.newImageData("Images/BorderBottomRight_Stone.png")
 else
 	IMAGE_GROUND = love.image.newImageData("Images/Ground.png")
+	IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
+	IMAGE_GROUND_RIGHT = love.image.newImageData("Images/BorderRight.png")
+	IMAGE_GROUND_BOTTOM = love.image.newImageData("Images/BorderBottom.png")
+	IMAGE_GROUND_TOP = love.image.newImageData("Images/BorderTop.png")
+	IMAGE_GROUND_TOPLEFT = love.image.newImageData("Images/BorderTopLeft.png")
+	IMAGE_GROUND_TOPRIGHT = love.image.newImageData("Images/BorderTopRight.png")
+	IMAGE_GROUND_BOTTOMLEFT = love.image.newImageData("Images/BorderBottomLeft.png")
+	IMAGE_GROUND_BOTTOMRIGHT = love.image.newImageData("Images/BorderBottomRight.png")
 end
-IMAGE_GROUND_LEFT = love.image.newImageData("Images/BorderLeft.png")
-IMAGE_GROUND_RIGHT = love.image.newImageData("Images/BorderRight.png")
-IMAGE_GROUND_BOTTOM = love.image.newImageData("Images/BorderBottom.png")
-IMAGE_GROUND_TOP = love.image.newImageData("Images/BorderTop.png")
-IMAGE_GROUND_TOPLEFT = love.image.newImageData("Images/BorderTopLeft.png")
-IMAGE_GROUND_TOPRIGHT = love.image.newImageData("Images/BorderTopRight.png")
-IMAGE_GROUND_BOTTOMLEFT = love.image.newImageData("Images/BorderBottomLeft.png")
-IMAGE_GROUND_BOTTOMRIGHT = love.image.newImageData("Images/BorderBottomRight.png")
+
+IMAGE_PARK = love.image.newImageData("Images/Park_Stone.png")
 
 
 --Rails:
@@ -112,8 +122,8 @@ IMAGE_HOTSPOT_HOSPITAL_SHADOW10 = love.image.newImageData("Images/Hotspot_Hospit
 IMAGE_HOTSPOT_HOSPITAL_SHADOW01 = love.image.newImageData("Images/Hotspot_Hospital_Shadow-0-1.png")
 IMAGE_HOTSPOT_HOSPITAL_SHADOW11 = love.image.newImageData("Images/Hotspot_Hospital_Shadow-1-1.png")
 
-
 IMAGE_HOTSPOT_STORE = love.image.newImageData("Images/Hotspot_Store.png")
+
 
 --Environment/Misc:
 IMAGE_HOUSE01 = love.image.newImageData("Images/House1.png")
@@ -124,6 +134,30 @@ IMAGE_HOUSE03 = love.image.newImageData("Images/House3.png")
 IMAGE_HOUSE03_SHADOW = love.image.newImageData("Images/House3_Shadow.png")
 IMAGE_HOUSE04 = love.image.newImageData("Images/House4.png")
 IMAGE_HOUSE04_SHADOW = love.image.newImageData("Images/House4_Shadow.png")
+
+IMAGE_HOUSE05 = love.image.newImageData("Images/House5.png")
+IMAGE_HOUSE05_SHADOW = love.image.newImageData("Images/House5_Shadow.png")
+IMAGE_HOUSE06 = love.image.newImageData("Images/House6.png")
+IMAGE_HOUSE06_SHADOW = love.image.newImageData("Images/House6_Shadow.png")
+IMAGE_HOUSE07 = love.image.newImageData("Images/House7.png")
+IMAGE_HOUSE07_SHADOW = love.image.newImageData("Images/House7_Shadow.png")
+
+IMAGE_HOUSE01_L11 = love.image.newImageData("Images/House_1_Large-0-0.png")
+IMAGE_HOUSE01_L_SHADOW11 = love.image.newImageData("Images/House_1_Large_Shadow-0-0.png")
+IMAGE_HOUSE01_L12 = love.image.newImageData("Images/House_1_Large-0-1.png")
+IMAGE_HOUSE01_L_SHADOW12 = love.image.newImageData("Images/House_1_Large_Shadow-0-1.png")
+IMAGE_HOUSE02_L11 = love.image.newImageData("Images/House_2_Large-0-0.png")
+IMAGE_HOUSE02_L_SHADOW11 = love.image.newImageData("Images/House_2_Large_Shadow-0-0.png")
+IMAGE_HOUSE02_L12 = love.image.newImageData("Images/House_2_Large-0-1.png")
+IMAGE_HOUSE02_L_SHADOW12 = love.image.newImageData("Images/House_2_Large_Shadow-0-1.png")
+IMAGE_HOUSE03_L11 = love.image.newImageData("Images/House_3_Large-0-0.png")
+IMAGE_HOUSE03_L_SHADOW11 = love.image.newImageData("Images/House_3_Large_Shadow-0-0.png")
+IMAGE_HOUSE03_L21 = love.image.newImageData("Images/House_3_Large-1-0.png")
+IMAGE_HOUSE03_L_SHADOW21 = love.image.newImageData("Images/House_3_Large_Shadow-1-0.png")
+IMAGE_HOUSE04_L11 = love.image.newImageData("Images/House_4_Large-0-0.png")
+IMAGE_HOUSE04_L_SHADOW11 = love.image.newImageData("Images/House_4_Large_Shadow-0-0.png")
+IMAGE_HOUSE04_L21 = love.image.newImageData("Images/House_4_Large-1-0.png")
+IMAGE_HOUSE04_L_SHADOW21 = love.image.newImageData("Images/House_4_Large_Shadow-1-0.png")
 
 IMAGE_TREE01 = love.image.newImageData("Images/Tree1.png")
 IMAGE_TREE01_SHADOW = love.image.newImageData("Images/Tree1_Shadow.png")
@@ -256,25 +290,42 @@ for i = startX, endX do
 				ground:paste(getRailImage( curMapRailTypes[i+startCoordinateX][j+startCoordinateY] ), (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE) 		-- get the image corresponding the rail type at this position				
 			else
 				ground:paste(IMAGE_GROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
+				--if not m[i][j] and math.random(2) == 1 then
+				--	ground:paste(IMAGE_PARK, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
+				--end
 				
 				-- Houses etc:
 				if m[i][j] == "H" then
 					randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
-					houseType = math.random(4)
-	
-					col = {r = math.random(40)-20, g = 0, b = 0}
-					if houseType == 1 then
-						transparentPaste( shadows, IMAGE_HOUSE01_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData)
-						transparentPaste( objects, IMAGE_HOUSE01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
-					elseif houseType == 2 then
-						transparentPaste( shadows, IMAGE_HOUSE02_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
-						transparentPaste( objects, IMAGE_HOUSE02, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
-					elseif houseType == 3 then
-						transparentPaste( shadows, IMAGE_HOUSE03_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
-						transparentPaste( objects, IMAGE_HOUSE03, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
-					elseif houseType == 4 then
-						transparentPaste( shadows, IMAGE_HOUSE04_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
-						transparentPaste( objects, IMAGE_HOUSE04, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+					if region == "Urban" then
+						houseType = math.random(3)
+						col = {r = math.random(40)-20, g = 0, b = 0}
+						if houseType == 1 then
+							transparentPaste( shadows, IMAGE_HOUSE05_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData)
+							transparentPaste( objects, IMAGE_HOUSE05, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						elseif houseType == 2 then
+							transparentPaste( shadows, IMAGE_HOUSE06_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+							transparentPaste( objects, IMAGE_HOUSE06, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						elseif houseType == 3 then
+							transparentPaste( shadows, IMAGE_HOUSE07_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+							transparentPaste( objects, IMAGE_HOUSE07, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						end
+					else
+						houseType = math.random(4)
+						col = {r = math.random(40)-20, g = 0, b = 0}
+						if houseType == 1 then
+							transparentPaste( shadows, IMAGE_HOUSE01_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData)
+							transparentPaste( objects, IMAGE_HOUSE01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						elseif houseType == 2 then
+							transparentPaste( shadows, IMAGE_HOUSE02_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
+							transparentPaste( objects, IMAGE_HOUSE02, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						elseif houseType == 3 then
+							transparentPaste( shadows, IMAGE_HOUSE03_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
+							transparentPaste( objects, IMAGE_HOUSE03, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						elseif houseType == 4 then
+							transparentPaste( shadows, IMAGE_HOUSE04_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData )
+							transparentPaste( objects, IMAGE_HOUSE04, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
+						end
 					end
 				elseif m[i][j] == "S" then
 					choice = math.random(4)
@@ -324,6 +375,30 @@ for i = startX, endX do
 				elseif m[i][j] == "HOSPITAL22" then	-- HOSPITAL
 					transparentPaste( shadows, IMAGE_HOTSPOT_HOSPITAL_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					transparentPaste( objects, IMAGE_HOTSPOT_HOSPITAL11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_1_LARGE11" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE01_L_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE01_L11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_1_LARGE12" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE01_L_SHADOW12, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE01_L12, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_2_LARGE11" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE02_L_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE02_L11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_2_LARGE12" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE02_L_SHADOW12, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE02_L12, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_3_LARGE11" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE03_L_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE03_L11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_3_LARGE21" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE03_L_SHADOW21, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE03_L21, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_4_LARGE11" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE04_L_SHADOW11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE04_L11, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+				elseif m[i][j] == "HOUSE_4_LARGE21" then	-- HOSPITAL
+					transparentPaste( shadows, IMAGE_HOUSE04_L_SHADOW21, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					transparentPaste( objects, IMAGE_HOUSE04_L21, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 				elseif m[i][j] == "PL" then	-- playground
 					transparentPaste( shadows, IMAGE_HOTSPOT_PLAYGROUND_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					transparentPaste( objects, IMAGE_HOTSPOT_PLAYGROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
@@ -410,7 +485,7 @@ if not NO_TREES then
 						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
 						treetype = math.random(3)
 		
-						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+						col = {r = math.random(20)-10, g = math.random(10)-10, b = 0}
 						if treetype == 1 then
 							s = IMAGE_TREE01_SHADOW
 							o = IMAGE_TREE01

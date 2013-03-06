@@ -89,8 +89,14 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeech )
 		xEnd, yEnd = randPassengerPos()
 		
 		local vip = false
-		if VIP_RATIO > 0 and VIP_RATIO < 1 and math.random(1/VIP_RATIO) == 1 and not dontCreateVIP then
-			vip = true
+		if VIP_RATIO > 0 and VIP_RATIO < 1 and not dontCreateVIP then
+			if GAME_TIME == "Rushhour" then
+				if math.random(math.floor(1/(VIP_RATIO*5))) >= 1 then
+					vip = true
+				end
+			elseif math.random(1/VIP_RATIO) >= 1 then
+				vip = true
+			end
 		end
 		
 		for i = 1,#passengerList+1 do

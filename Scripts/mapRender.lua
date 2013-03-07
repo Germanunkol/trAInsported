@@ -39,11 +39,7 @@ while true do
 	
 	curMap.region = curMap.region or "Suburban"
 
-	MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
-
-
-	math.randomseed(curMap.seed)
-	
+	MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE	
 	
 	--[[for i = 1, curMap.width do
 		for j = 1, curMap.height do
@@ -159,6 +155,7 @@ while true do
 							parts[i][j].thread:set("startCoordinateX", (i-1)*partWidth)
 							parts[i][j].thread:set("startCoordinateY", (j-1)*partHeight)
 							parts[i][j].thread:set("region", curMap.region)
+							parts[i][j].thread:set("seed", curMap.seed)
 							numThreadsRunning = numThreadsRunning + 1
 						end
 					end

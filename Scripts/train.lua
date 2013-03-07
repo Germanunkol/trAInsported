@@ -76,12 +76,12 @@ end
 function train.renderTrainImage( name, ID )
 	if name and ID then
 		print("starting thread...train.renderTrainImage", name .. ".lua")
-		col = generateColour(name .. ".lua", 1)
+		--col = generateColour(name .. ".lua", 1)
 		trainImageThreads[ID] = love.thread.newThread("traimImageThread" .. totalNumImageThreads, "Scripts/renderTrainImage.lua")
 		totalNumImageThreads = totalNumImageThreads + 1
 		trainImageThreads[ID]:start()
 		trainImageThreads[ID]:set("seed", name .. ".lua")
-		trainImageThreads[ID]:set("colour", TSerial.pack(col))
+		--trainImageThreads[ID]:set("colour", TSerial.pack(col))
 		numTrainImageThreads = numTrainImageThreads + 1
 		trainImages[ID] = nil
 	else

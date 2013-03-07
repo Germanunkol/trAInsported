@@ -13,12 +13,12 @@ pcall(require, "globals")
 pcall(require, "Scripts/globals")
 DEDICATED = rememberDedi
 
-
 m = TSerial.unpack(thisThread:demand("map"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 startCoordinateX = thisThread:demand("startCoordinateX")
 startCoordinateY = thisThread:demand("startCoordinateY")
 region = thisThread:get("region")
+seed = thisThread:demand("seed") + startCoordinateX + startCoordinateY
 
 function checkAborted()
 	if abort then
@@ -29,6 +29,53 @@ function checkAborted()
 		return true
 	end
 end
+
+-- new random generator:
+do
+	local p = 7907 -- 11 in wikipedia example, but has a too short cycle
+	local q = 7919 -- 19 in wikipedia example
+	local s = 3
+	local xn = s
+
+	assert(p%4==3)
+	assert(q%4==3)
+
+	function randombit()
+		xn = xn^2 % p*q
+		return xn % 2
+	end
+
+	function myRandomseed(seed)
+		xn = seed
+	end
+
+	function myRandom(a, b)
+		local n = 0
+		for i=0,31 do
+			n = n*2 + randombit()
+		end
+
+
+		if not a and not b then
+			return n/4294967295	-- 4294967295 is the largest number possible
+		elseif not b then
+			a,b = 1,a
+		end
+		
+		if a > b then
+			error("Invalid range in random function" .. a .. b)
+		end
+		
+		
+		diff = b-a + 1
+		n = a + n % diff
+		
+		return n
+	end
+end
+
+myRandomseed(seed)
+
 
 -- Ground:
 if region == "Urban" then
@@ -290,16 +337,16 @@ for i = startX, endX do
 				ground:paste(getRailImage( curMapRailTypes[i+startCoordinateX][j+startCoordinateY] ), (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE) 		-- get the image corresponding the rail type at this position				
 			else
 				ground:paste(IMAGE_GROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
-				--if not m[i][j] and math.random(2) == 1 then
+				--if not m[i][j] and myRandom(2) == 1 then
 				--	ground:paste(IMAGE_PARK, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
 				--end
 				
 				-- Houses etc:
 				if m[i][j] == "H" then
-					randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
+					randX, randY = math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8), math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8)
 					if region == "Urban" then
-						houseType = math.random(3)
-						col = {r = math.random(40)-20, g = 0, b = 0}
+						houseType = myRandom(3)
+						col = {r = myRandom(40)-20, g = 0, b = 0}
 						if houseType == 1 then
 							transparentPaste( shadows, IMAGE_HOUSE05_SHADOW, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData)
 							transparentPaste( objects, IMAGE_HOUSE05, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
@@ -311,8 +358,8 @@ for i = startX, endX do
 							transparentPaste( objects, IMAGE_HOUSE07, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
 						end
 					else
-						houseType = math.random(4)
-						col = {r = math.random(40)-20, g = 0, b = 0}
+						houseType = myRandom(4)
+						col = {r = myRandom(40)-20, g = 0, b = 0}
 						if houseType == 1 then
 							transparentPaste( shadows, IMAGE_HOUSE01_SHADOW, (i+offsetX)*TILE_SIZE+randX-26, (j+offsetY)*TILE_SIZE+randY-26, nil, groundData)
 							transparentPaste( objects, IMAGE_HOUSE01, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData )
@@ -328,7 +375,7 @@ for i = startX, endX do
 						end
 					end
 				elseif m[i][j] == "S" then
-					choice = math.random(4)
+					choice = myRandom(4)
 					if choice == 1 then
 						transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_STORE, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
@@ -420,11 +467,11 @@ if not NO_TREES then
 	if not region == "Urban" then
 		for i = startX,endX,1 do		-- randomly place trees/bushes etc
 			for j = startY,endY,1 do
-				if (not m[i] or not m[i][j]) and math.random(7) == 1 then
-					numTries = math.random(3)+1
+				if (not m[i] or not m[i][j]) and myRandom(7) == 1 then
+					numTries = myRandom(3)+1
 					for k = 1, numTries do
-						col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
-						randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+						col = {r = myRandom(20)-10, g = myRandom(40)-30, b = 0}
+						randX, randY = TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
 					
 						if i == startX then randX = math.max(0, randX) end
 						if j == startY then randY = math.max(0, randY) end
@@ -443,13 +490,13 @@ if not NO_TREES then
 		local treetype = 0
 		for i = startX,endX,1 do		-- randomly place trees/bushes etc
 			for j = startY,endY,1 do
-				if (not m[i] or not m[i][j]) and math.random(3) == 1 then
-					numTries = math.random(5)+1
+				if (not m[i] or not m[i][j]) and myRandom(3) == 1 then
+					numTries = myRandom(5)+1
 					for k = 1, numTries do
-						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-						treetype = math.random(3)
+						randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+						treetype = myRandom(3)
 		
-						col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+						col = {r = myRandom(20)-10, g = myRandom(40)-20, b = 0}
 						if treetype == 1 then
 							s = IMAGE_TREE01_SHADOW
 							o = IMAGE_TREE01
@@ -479,13 +526,13 @@ if not NO_TREES then
 		local treetype = 0
 		for i = startX,endX,1 do		-- randomly place trees/bushes etc
 			for j = startY,endY,1 do
-				if (not m[i] or not m[i][j]) and math.random(10) == 1 then
-					numTries = math.random(5)+1
+				if (not m[i] or not m[i][j]) and myRandom(10) == 1 then
+					numTries = myRandom(5)+1
 					for k = 1, numTries do
-						randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-						treetype = math.random(3)
+						randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+						treetype = myRandom(3)
 		
-						col = {r = math.random(20)-10, g = math.random(10)-10, b = 0}
+						col = {r = myRandom(20)-10, g = myRandom(10)-10, b = 0}
 						if treetype == 1 then
 							s = IMAGE_TREE01_SHADOW
 							o = IMAGE_TREE01
@@ -567,7 +614,7 @@ for i = 0,curMap.width+1,1 do
 		else
 			paste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE )
 		end
-		--col = {r = math.random(10)-5, g = math.random(10)-5, b = 0}
+		--col = {r = myRandom(10)-5, g = myRandom(10)-5, b = 0}
 		--transparentPaste( groundData, IMAGE_GROUND, (i)*TILE_SIZE, (j)*TILE_SIZE, col)
 		--if updatePercentage() == false then return end
 	end
@@ -580,10 +627,10 @@ local houseType = 0
 for i = 0,curMap.width+1,1 do
 	for j = 0,curMap.height+1,1 do
 		if curMap[i][j] == "H" then
-			randX, randY = math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8), math.floor(math.random()*TILE_SIZE/4-TILE_SIZE/8)
-			houseType = math.random(4)
+			randX, randY = math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8), math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8)
+			houseType = myRandom(4)
 	
-			col = {r = math.random(40)-20, g = 0, b = 0}
+			col = {r = myRandom(40)-20, g = 0, b = 0}
 			if houseType == 1 then
 				transparentPaste( shadowData, IMAGE_HOUSE01_SHADOW, (i)*TILE_SIZE+randX-26, (j)*TILE_SIZE+randY-26, nil, groundData)
 				--paste( objectData, IMAGE_HOUSE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY )
@@ -604,10 +651,10 @@ for i = 0,curMap.width+1,1 do
 		elseif curMap[i][j] == "S" then
 			transparentPaste( shadowData, IMAGE_HOTSPOT01_SHADOW, (i)*TILE_SIZE-26, (j)*TILE_SIZE-26, nil, groundData )
 			transparentPaste( objectData, IMAGE_HOTSPOT01, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData )
-			table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
-			table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 2})
-			table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
-			table.insert(highlightList, {frame = math.random(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
+			table.insert(highlightList, {frame = myRandom(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 2})
+			table.insert(highlightList, {frame = myRandom(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 2})
+			table.insert(highlightList, {frame = myRandom(10), x = (i)*TILE_SIZE + 2, y = (j)*TILE_SIZE + 96})
+			table.insert(highlightList, {frame = myRandom(10), x = (i)*TILE_SIZE + 96, y = (j)*TILE_SIZE + 96})
 		elseif curMap[i][j] == "C" then
 			img = getRailImage( curMapRailTypes[i][j] )		-- get the image corresponding the rail type at this position
 			if img then transparentPaste( groundData, img, (i)*TILE_SIZE, (j)*TILE_SIZE, nil, groundData ) end
@@ -636,11 +683,11 @@ if not NO_TREES then
 	threadSendStatus( thisThread,"bushes")
 	for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
 		for j = 0,curMap.height+1,1 do
-			if not curMap[i][j] and math.random(7) == 1 then
-				numTries = math.random(3)+1
+			if not curMap[i][j] and myRandom(7) == 1 then
+				numTries = myRandom(3)+1
 				for k = 1, numTries do
-					col = {r = math.random(20)-10, g = math.random(40)-30, b = 0}
-					randX, randY = TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
+					col = {r = myRandom(20)-10, g = myRandom(40)-30, b = 0}
+					randX, randY = TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
 					transparentPaste( shadowData, IMAGE_BUSH01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
 					transparentPaste( objectData, IMAGE_BUSH01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData )
 				end
@@ -657,13 +704,13 @@ if not NO_TREES then
 	local treetype = 0
 	for i = 0,curMap.width+1,1 do		-- randomly place trees/bushes etc
 		for j = 0,curMap.height+1,1 do
-			if not curMap[i][j] and math.random(3) == 1 then
-				numTries = math.random(5)+1
+			if not curMap[i][j] and myRandom(3) == 1 then
+				numTries = myRandom(5)+1
 				for k = 1, numTries do
-					randX, randY = math.floor(math.random()*TILE_SIZE-TILE_SIZE/2), math.floor(math.random()*TILE_SIZE-TILE_SIZE/2)
-					treetype = math.random(3)
+					randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+					treetype = myRandom(3)
 		
-					col = {r = math.random(20)-10, g = math.random(40)-20, b = 0}
+					col = {r = myRandom(20)-10, g = myRandom(40)-20, b = 0}
 					if treetype == 1 then
 						transparentPaste( shadowData, IMAGE_TREE01_SHADOW, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, nil, groundData )
 						transparentPaste( objectData, IMAGE_TREE01, (i)*TILE_SIZE+randX, (j)*TILE_SIZE+randY, col, groundData)

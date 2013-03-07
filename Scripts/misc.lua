@@ -316,21 +316,63 @@ function vonNeumannRandom(seed)		-- generates a random number using the von Neum
 end
 
 
+-- new random generator:
+do
+	local p = 7907 -- 11 in wikipedia example, but has a too short cycle
+	local q = 7919 -- 19 in wikipedia example
+	local s = 3
+	local xn = s
+
+	assert(p%4==3)
+	assert(q%4==3)
+
+	function randombit()
+		xn = xn^2 % p*q
+		return xn % 2
+	end
+
+	function myRandomseed(seed)
+		xn = seed
+	end
+
+	function myRandom(a, b)
+		local n = 0
+		for i=0,31 do
+			n = n*2 + randombit()
+		end
+
+
+		if not a and not b then
+			return n/4294967295	-- 4294967295 is the largest number possible
+		elseif not b then
+			a,b = 1,a
+		end
+		
+		if a > b then
+			error("Invalid range in random function" .. a .. b)
+		end
+		
+		
+		diff = b-a + 1
+		n = a + n % diff
+		
+		return n
+	end
+end
+
 function generateColour(name, brightness)
 	brightness = brightness or 1
 	sum = 0
 	for i = 1,#name do
 		sum = sum + name:byte(i,i)
 	end
-	_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
-	__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
-	___ = vonNeumannRandom(__)		--discard first number, it's usually too similar.
-	red = vonNeumannRandom(___)
-	green = vonNeumannRandom(red)
-	blue = vonNeumannRandom(green)
-	red = cycle(red, 0, 255)
-	blue = cycle(blue, 0, 255)
-	green = cycle(green, 0, 255)
+	myRandomseed(sum)
+	--_ = vonNeumannRandom(sum)		--discard first number, it's usually too similar.
+	--__ = vonNeumannRandom(_)		--discard first number, it's usually too similar.
+	--___ = vonNeumannRandom(__)		--discard first number, it's usually too similar.
+	red = myRandom(0,255)
+	green = myRandom(0,255)
+	blue = myRandom(0,255)
 	return {r=clamp(red*brightness, 0, 255), g=clamp(green*brightness, 0, 255), b=clamp(blue*brightness, 0, 255)}
 end
 

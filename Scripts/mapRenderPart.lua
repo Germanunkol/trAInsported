@@ -143,12 +143,14 @@ end
 IMAGE_HOTSPOT01 = love.image.newImageData("Images/HotSpot1.png")
 IMAGE_HOTSPOT01_SHADOW = love.image.newImageData("Images/HotSpot1_Shadow.png")
 
--- Tutorial:
+-- Misc/Tutorial:
 IMAGE_HOTSPOT_HOME = love.image.newImageData("Images/HotSpot_Home.png")
 IMAGE_HOTSPOT_SCHOOL = love.image.newImageData("Images/HotSpot_School.png")
 IMAGE_HOTSPOT_PLAYGROUND = love.image.newImageData("Images/Hotspot_Playground.png")
 IMAGE_HOTSPOT_PLAYGROUND_SHADOW = love.image.newImageData("Images/Hotspot_Playground_Shadow.png")
 IMAGE_HOTSPOT_PIESTORE = love.image.newImageData("Images/Hotspot_Piestore.png")
+IMAGE_HOTSPOT_BOOKSTORE = love.image.newImageData("Images/Hotspot_Bookstore.png")
+IMAGE_HOTSPOT_STORE = love.image.newImageData("Images/Hotspot_Store.png")
 IMAGE_HOTSPOT_STORE_SHADOW = love.image.newImageData("Images/Hotspot_Store_Shadow.png")
 
 IMAGE_HOTSPOT_SCHOOL00 = love.image.newImageData("Images/Hotspot_School-0-0.png")
@@ -169,7 +171,6 @@ IMAGE_HOTSPOT_HOSPITAL_SHADOW10 = love.image.newImageData("Images/Hotspot_Hospit
 IMAGE_HOTSPOT_HOSPITAL_SHADOW01 = love.image.newImageData("Images/Hotspot_Hospital_Shadow-0-1.png")
 IMAGE_HOTSPOT_HOSPITAL_SHADOW11 = love.image.newImageData("Images/Hotspot_Hospital_Shadow-1-1.png")
 
-IMAGE_HOTSPOT_STORE = love.image.newImageData("Images/Hotspot_Store.png")
 
 
 --Environment/Misc:
@@ -377,7 +378,7 @@ for i = startX, endX do
 						end
 					end
 				elseif m[i][j] == "S" then
-					choice = myRandom(4)
+					choice = myRandom(5)
 					if choice == 1 then
 						transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_STORE, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
@@ -385,6 +386,9 @@ for i = startX, endX do
 						transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_PIESTORE, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					elseif choice == 3 then
+						transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+						transparentPaste( objects, IMAGE_HOTSPOT_BOOKSTORE, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+					elseif choice == 4 then
 						transparentPaste( shadows, IMAGE_HOTSPOT_PLAYGROUND_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_PLAYGROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					else

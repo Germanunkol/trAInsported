@@ -275,18 +275,18 @@ function placeHouses()
 				if i > 0 and j > 0 and i < curMap.width-1 and j < curMap.height-1 then		-- place large house
 					if curMap[i+1][j] == nil and curMap[i][j+1] == nil and curMap[i+1][j+1] == nil then
 						if math.random(20) == 1 and not schoolPlaced then
-							curMap[i][j] = "SCHOOL"
-							curMap[i+1][j] = "SCHOOL"
-							curMap[i][j+1] = "SCHOOL"
-							curMap[i+1][j+1] = "SCHOOL"
+							curMap[i][j] = "SCHOOL11"
+							curMap[i+1][j] = "SCHOOL21"
+							curMap[i][j+1] = "SCHOOL12"
+							curMap[i+1][j+1] = "SCHOOL22"
 							schoolPlaced = true
 							placed = true
 						end
 						if math.random(20) == 1 and not hospitalPlaced then
-							curMap[i][j] = "HOSPITAL"
-							curMap[i+1][j] = "HOSPITAL"
-							curMap[i][j+1] = "HOSPITAL"
-							curMap[i+1][j+1] = "HOSPITAL"
+							curMap[i][j] = "HOSPITAL11"
+							curMap[i+1][j] = "HOSPITAL21"
+							curMap[i][j+1] = "HOSPITAL12"
+							curMap[i+1][j+1] = "HOSPITAL22"
 							hospitalPlaced = true
 							placed = true
 						end

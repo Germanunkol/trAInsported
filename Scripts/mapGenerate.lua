@@ -33,6 +33,8 @@ while true do
 	seed = thisThread:demand("seed")
 	tutorialMap = thisThread:get("tutorialMap")
 	region = thisThread:get("region")
+	
+	
 
 	if tutorialMap then
 		tutorialMap = TSerial.unpack(tutorialMap)
@@ -42,11 +44,19 @@ while true do
 
 
 	math.randomseed(seed)
-	if not tutorialMap then curMap = {width=width, height=height, time=0} end
+	
+	if not tutorialMap then
+		curMap = {width=width, height=height, time=0}
+		curMap.region = region or "Suburban"
+		curMap.seed = seed
+	else
+		tutorialMap.region = region or "Suburban"
+		tutorialMap.seed = seed
+	end
 	curMapOccupiedTiles = {}
 	curMapOccupiedExits = {}
 	curMapRailTypes = {}
-
+	
 
 	thisThread:set("percentage", 0)
 

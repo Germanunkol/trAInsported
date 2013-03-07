@@ -30,39 +30,22 @@ function updatePercentage()
 	thisThread:set("percentage", renderingPercentage)	
 end
 
-
 while true do
 	curMap = TSerial.unpack(thisThread:demand("curMap"))
 	curMapRailTypes = thisThread:demand("curMapRailTypes")
 	TILE_SIZE = thisThread:demand("TILE_SIZE")
 	
 	NO_TREES = thisThread:get("NO_TREES")
-
-	SEED = curMap.height*curMap.width
 	
-	region = thisThread:get("region") or "Suburban"
-	
-	for i = 1, curMap.width do
-		for j = 1, curMap.height do
-			if curMap[i][j] == "H" then
-				SEED = SEED + curMap.height*curMap.width*i*j
-			end
-		
-			if curMap[i][j] == "C" then
-				SEED = SEED + curMap.height*curMap.width*i*j
-			end
-		end
-	end
-	
+	curMap.region = curMap.region or "Suburban"
 
 	MAX_IMG_SIZE_PX = MAX_IMG_SIZE*TILE_SIZE
 
-	SEED = SEED % 9999
 
-	math.randomseed(SEED)
+	math.randomseed(curMap.seed)
 	
 	
-	for i = 1, curMap.width do
+	--[[for i = 1, curMap.width do
 		for j = 1, curMap.height do
 			if curMap[i][j] == "SCHOOL" then
 				curMap[i][j] = "SCHOOL11"
@@ -76,7 +59,7 @@ while true do
 				curMap[i+1][j+1] = "HOSPITAL22"
 			end
 		end
-	end
+	end]]--
 	
 
 	thisThread:set("percentage", -2)
@@ -175,7 +158,7 @@ while true do
 						
 							parts[i][j].thread:set("startCoordinateX", (i-1)*partWidth)
 							parts[i][j].thread:set("startCoordinateY", (j-1)*partHeight)
-							parts[i][j].thread:set("region", region)
+							parts[i][j].thread:set("region", curMap.region)
 							numThreadsRunning = numThreadsRunning + 1
 						end
 					end

@@ -16,7 +16,7 @@ Then, the next step will be to get into the challenges. Once you've mastered the
 Setting up your own server:
 ------------------------------
 You can start your own dedicated server (see the section "Command Line Options" below). 
-This server will automatically start running matches using random maps and the AIs located in your AI subfolder (if you don't want the game to . You can watch these matches by starting the game again, without the server option. Start with **--host localhost** to connect to the server running on your PC.
+This server will automatically start running matches using random maps and the AIs located in your AI subfolder. You can watch these matches by starting the game again, without the server option. Start with **--host localhost** to connect to the server running on your PC.
 
 Command Line Options:
 ------------------------------

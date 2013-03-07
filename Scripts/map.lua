@@ -1222,10 +1222,6 @@ function map.render(map)
 		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
 		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
 		
-		if CURRENT_REGION then
-			mapRenderThread:set("region", CURRENT_REGION)
-		end
-		
 		mapRenderThreadStatusNum = 0
 		currentlyRenderingMap = true
 		
@@ -1289,17 +1285,19 @@ function map.render(map)
 			-- mapRenderThread = nil
 			print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 			
-			m = curMap or simulationMap
-			if m then
-				for i = 1, m.width do
-					for j = 1, m.height do
-						if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
-							m[i][j] = "S"
-						end
-						if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
-							m[i][j] = "H"
-						end
-					end				
+			if not DEDICATED then
+				m = curMap or simulationMap
+				if m then
+					for i = 1, m.width do
+						for j = 1, m.height do
+							if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
+								m[i][j] = "S"
+							end
+							if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
+								m[i][j] = "H"
+							end
+						end				
+					end
 				end
 			end
 			

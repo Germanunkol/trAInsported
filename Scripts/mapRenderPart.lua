@@ -349,6 +349,8 @@ for i = startX, endX do
 					randX, randY = math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8), math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8)
 					if i == endX then randX = -TILE_SIZE/8 end
 					if j == endY then randY = -TILE_SIZE/8 end
+					if i == startX then randX = TILE_SIZE/8 end
+					if j == startX then randY = TILE_SIZE/8 end
 					if region == "Urban" then
 						houseType = myRandom(3)
 						col = {r = myRandom(40)-20, g = 0, b = 0}

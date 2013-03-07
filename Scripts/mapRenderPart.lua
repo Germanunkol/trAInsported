@@ -152,6 +152,8 @@ IMAGE_HOTSPOT_PIESTORE = love.image.newImageData("Images/Hotspot_Piestore.png")
 IMAGE_HOTSPOT_BOOKSTORE = love.image.newImageData("Images/Hotspot_Bookstore.png")
 IMAGE_HOTSPOT_STORE = love.image.newImageData("Images/Hotspot_Store.png")
 IMAGE_HOTSPOT_STORE_SHADOW = love.image.newImageData("Images/Hotspot_Store_Shadow.png")
+IMAGE_HOTSPOT_CINEMA = love.image.newImageData("Images/Hotspot_Cinema.png")
+IMAGE_HOTSPOT_CINEMA_SHADOW = love.image.newImageData("Images/Hotspot_Cinema_Shadow.png")
 
 IMAGE_HOTSPOT_SCHOOL00 = love.image.newImageData("Images/Hotspot_School-0-0.png")
 IMAGE_HOTSPOT_SCHOOL10 = love.image.newImageData("Images/Hotspot_School-1-0.png")
@@ -339,7 +341,7 @@ for i = startX, endX do
 			else
 				ground:paste(IMAGE_GROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
 				--if not m[i][j] and myRandom(2) == 1 then
-				--	ground:paste(IMAGE_PARK, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
+					--ground:paste(IMAGE_PARK, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
 				--end
 				
 				-- Houses etc:
@@ -378,7 +380,11 @@ for i = startX, endX do
 						end
 					end
 				elseif m[i][j] == "S" then
-					choice = myRandom(5)
+					if region == "Urban" then
+						choice = myRandom(5)
+					else
+						choice = myRandom(4)
+					end
 					if choice == 1 then
 						transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_STORE, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
@@ -392,8 +398,8 @@ for i = startX, endX do
 						transparentPaste( shadows, IMAGE_HOTSPOT_PLAYGROUND_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 						transparentPaste( objects, IMAGE_HOTSPOT_PLAYGROUND, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					else
-						transparentPaste( shadows, IMAGE_HOTSPOT01_SHADOW, (i+offsetX)*TILE_SIZE-26, (j+offsetY)*TILE_SIZE-26, nil, groundData )
-						transparentPaste( objects, IMAGE_HOTSPOT01, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
+						transparentPaste( shadows, IMAGE_HOTSPOT_CINEMA_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE,nil, groundData )
+						transparentPaste( objects, IMAGE_HOTSPOT_CINEMA, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
 					end
 				elseif m[i][j] == "PS" then	-- pie store...
 					transparentPaste( shadows, IMAGE_HOTSPOT_STORE_SHADOW, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE, nil, groundData )
@@ -470,10 +476,49 @@ end
 -- Foilage
 if not NO_TREES then
 
-	if not region == "Urban" then
+	if region == "Urban" then
+		local treetype = 0
 		for i = startX,endX,1 do		-- randomly place trees/bushes etc
 			for j = startY,endY,1 do
-				if (not m[i] or not m[i][j]) and myRandom(7) == 1 then
+				if (not m[i] or not m[i][j]) and myRandom(4) == 1 then
+					if i ~= 0 and i ~= m.width+1 and j ~= 0 and j~= m.height+1 then
+						ground:paste(IMAGE_PARK, (i+offsetX)*TILE_SIZE, (j+offsetY)*TILE_SIZE)
+					end
+					numTries = myRandom(5)+1
+					for k = 1, numTries do
+						randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+						treetype = myRandom(3)
+		
+						col = {r = myRandom(20)-10, g = myRandom(10)-10, b = 0}
+						if treetype == 1 then
+							s = IMAGE_TREE01_SHADOW
+							o = IMAGE_TREE01
+						elseif treetype == 2 then
+							s = IMAGE_TREE02_SHADOW
+							o = IMAGE_TREE02
+						else
+							s = IMAGE_TREE03_SHADOW
+							o = IMAGE_TREE03
+						end
+					
+						if i == startX then randX = math.max(0, randX) end
+						if j == startY then randY = math.max(0, randY) end
+						if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
+						if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end
+					
+						transparentPaste( shadows, s, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
+						transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
+					end
+				end
+				if checkAborted() then
+					return
+				end
+			end
+		end
+	else
+		for i = startX,endX,1 do		-- randomly place trees/bushes etc
+			for j = startY,endY,1 do
+				if (not m[i] or not m[i][j]) and myRandom(4) == 1 then
 					numTries = myRandom(3)+1
 					for k = 1, numTries do
 						col = {r = myRandom(20)-10, g = myRandom(40)-30, b = 0}
@@ -528,43 +573,6 @@ if not NO_TREES then
 				end
 			end
 		end
-	else
-		local treetype = 0
-		for i = startX,endX,1 do		-- randomly place trees/bushes etc
-			for j = startY,endY,1 do
-				if (not m[i] or not m[i][j]) and myRandom(10) == 1 then
-					numTries = myRandom(5)+1
-					for k = 1, numTries do
-						randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
-						treetype = myRandom(3)
-		
-						col = {r = myRandom(20)-10, g = myRandom(10)-10, b = 0}
-						if treetype == 1 then
-							s = IMAGE_TREE01_SHADOW
-							o = IMAGE_TREE01
-						elseif treetype == 2 then
-							s = IMAGE_TREE02_SHADOW
-							o = IMAGE_TREE02
-						else
-							s = IMAGE_TREE03_SHADOW
-							o = IMAGE_TREE03
-						end
-					
-						if i == startX then randX = math.max(0, randX) end
-						if j == startY then randY = math.max(0, randY) end
-						if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
-						if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end
-					
-						transparentPaste( shadows, s, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, nil, groundData )
-						transparentPaste( objects, o, (i+offsetX)*TILE_SIZE+randX, (j+offsetY)*TILE_SIZE+randY, col, groundData)
-					end
-				end
-				if checkAborted() then
-					return
-				end
-			end
-		end
-	
 	end
 end
 

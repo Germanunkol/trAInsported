@@ -103,9 +103,9 @@ tut 4:
 [x] default resolution... how to change?
 [x] sometimes Simulation does not render new map for some reason.
 - nil pointer when in simulation
-- fast-forward problem: stops showing updates when on fresh connect.
+[x] fast-forward problem: stops showing updates when on fresh connect.
 [x] fails to render new map is a new map is given while still rendering the old one (simulation)
 - Tutorial 3: jumps over ai.foundDestination part
 - Error Scripts/train.lua:643: attempt to index index field 'image' (a nil value)
-- Trains stop on live server
-- train colors are wrong in simulation!
+[x] Trains stop on live server
+[x] train colors are wrong in simulation!

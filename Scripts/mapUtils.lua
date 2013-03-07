@@ -294,7 +294,7 @@ function placeHouses()
 				end
 				if not placed and ((curMap[i+1] and curMap[i+1][j] == "C") or (curMap[i-1] and curMap[i-1][j] == "C") or curMap[i][j+1] == "C" or curMap[i][j-1] == "C") then
 					if region == "Urban" then
-						if math.random(4) > 1 then
+						if math.random(7) > 1 then
 							curMap[i][j] = "H"
 						end
 					else

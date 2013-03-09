@@ -20,11 +20,16 @@ local MAX_LINES_EXECUTING = 20000
 local coLoad = nil
 linesUsed = 0
 
+ai_currentMaxLines = 0
+ai_currentLines = 0
+
 function newLineCountHook( maxLines )
 	local startTime = love.timer.getTime()
 	local time = 0
 	local lines = 0
 	linesUsed = 0
+	ai_currentLines = lines
+	ai_currentMaxLines = maxLines
 	return function ( event, l )
 		if event == "line" then
 			lines = lines + 1
@@ -33,6 +38,8 @@ function newLineCountHook( maxLines )
 			if lines == maxLines then
 				error("Taking too long, stopping. Time taken: " .. time-startTime .. "s.", 2)
 			end
+			ai_currentLines = lines
+			ai_currentMaxLines = maxLines
 		end
 	end
 end

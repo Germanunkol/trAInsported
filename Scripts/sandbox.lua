@@ -172,6 +172,10 @@ function sandbox.createNew(aiID, scriptName)
 		return chunk
 	end
 	
+	function sb.getNumberOfLines()
+		return ai_currentLines, ai_currentMaxLines
+	end
+	
 	sb.require = sb.dofile
 	return sb
 end

@@ -291,6 +291,24 @@ Available Functions
 You can define your own functions inside your code.  
 This is a list of functions that are already specified and which you can call at any time. Be careful not to overuse them - they all take some time to compute and your code will be aborted if it takes too long!
 
+###getNumberOfLines()###
+Every one of your events (ai.init, ai.chooseDirection etc) gets aborted after a certain number of lua line executions. A line often - but not always - corresponds to a line of code. This function lets you see how many executions you have left before the game will abort your function.  
+An important note: Calling game functions (like "print") will also use up lines. "print()", for example, uses up quite a lot of lines.  
+Also, ai.init gets to use a lot more lines than the other functions. Try to do heavy calculations in ai.init()!  
+
+***Returns:**
+
+- number of lines already used
+- total number of lines you can use in this function
+
+**Example:**
+
+		-- use this to see how many lines of code you can execute in ai.chooseDirection():
+		function ai.chooseDirection(train, directions)
+			print(getNumberOfLines())
+			-- the rest of your code.
+		end
+
 ###print(...)###
 Prints the given objects to the ingame-console (make sure it's visible by pressing 'C' in the game!)  
 **Arguments:**

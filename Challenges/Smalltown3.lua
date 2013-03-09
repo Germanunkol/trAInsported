@@ -1,7 +1,7 @@
 local ch = {}
 
-ch.name = "Challenge1"
-ch.version = "1"
+ch.name = "Challenge3"
+ch.version = "3"
 
 ch.maxTrains = 2
 ch.startMoney = 50

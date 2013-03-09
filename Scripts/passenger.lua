@@ -212,6 +212,9 @@ function passenger.boardTrain(train, name)		-- try to board the train
 					p.train = train
 					stats.passengersPickedUp( train.aiID, train.ID )
 					ai.passengerBoarded(train, name)
+					if challengeEvents.passengerBoarded then
+						challengeEvents.passengerBoarded( trainList[train.aiID][train.ID], p )
+					end
 			
 					if DEDICATED then
 						if train.stop == 1 then

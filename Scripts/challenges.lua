@@ -22,6 +22,7 @@ function challenges.setEvents(c)
 -- if the map has events, set them here!
 	challengeEvents.update = c.update
 	challengeEvents.newTrain = c.newTrain
+	challengeEvents.passengerBoarded = c.passengerBoarded
 	challengeEvents.passengerDroppedOff = c.passengerDroppedOff
 	
 	challengeEvents.mapRenderingDoneCallback = function()
@@ -95,7 +96,10 @@ function challenges.execute(data)
 			end
 		end
 		
-		local ok, c = pcall(challengeData) -- execute the chunk
+		local ok, c
+		do		-- just in case. I don't think this actually does anything.
+			ok, c = pcall(challengeData) -- execute the chunk
+		end
 		
 		if not ok then
 			print(c)

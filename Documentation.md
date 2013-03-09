@@ -296,7 +296,7 @@ Every one of your events (ai.init, ai.chooseDirection etc) gets aborted after a 
 An important note: Calling game functions (like "print") will also use up lines. "print()", for example, uses up quite a lot of lines.  
 Also, ai.init gets to use a lot more lines than the other functions. Try to do heavy calculations in ai.init()!  
 
-***Returns:**
+**Returns:**
 
 - number of lines already used
 - total number of lines you can use in this function
@@ -313,7 +313,7 @@ Also, ai.init gets to use a lot more lines than the other functions. Try to do h
 Prints the given objects to the ingame-console (make sure it's visible by pressing 'C' in the game!)  
 **Arguments:**
 
-- ... List of objects to print
+- ... Comma-seperated list of objects to print
 
 **Returns:**
 
@@ -321,7 +321,7 @@ Prints the given objects to the ingame-console (make sure it's visible by pressi
 
 **Example:**
   
-		print("Sheldon likes trains!")
+		print("Sheldon likes trains!", 1, tbl[1])
 		
 ###clearConsole()###
 Clears the ingame console to make space for new Messages.  

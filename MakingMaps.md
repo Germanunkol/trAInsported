@@ -1,4 +1,4 @@
-**trAInsported**
+**trAInsported - Challenge Maps**
 =====================
 - - - - - - - - - - -
 This document will teach you how to create your own challenge maps.
@@ -10,15 +10,16 @@ To make a new map, do the following:
 - Open up the folder where your AIs are stored
 - Navigate one folder up
 - Open the "Maps" Folder
-- Copy and paste the "ExampleChallenge.lua". Then rename it to the name of your Challenge.
+- Copy and paste the "ExampleChallenge.lua". Then rename it to the name of your Challenge (for example: "AwesomeChallenge.lua").
 - Edit the new Lua file.
 
 Once done, save the Lua file and it should show up in the "Challenge" menu of the game.
 
-**IMPORTANT** These challenge files are NOT run in a protected environment, like the AI is. This means you can do anything inside this code - the game won't stop you from, for example, writing and deleting files or executing programs. Also, when your code is taking too long to compute, it won't be stopped, instead the game will get slow. And when there's an error in your code, the game will crash and display the error message.  
+**IMPORTANT:** To give players the most flexibility possible, these challenge files are NOT run in a protected environment, like the AI is. This means you can do anything inside this code - the game won't stop you from, for example, writing and deleting files or executing programs. Also, when your code is taking too long to compute, it won't be stopped, instead the game will get slow. And when there's an error in your code, the game will crash and display the error message.  
 This is why uploaded challenge maps will not display for download immediately - they will be reviewed and tested before they'll be available for others to download.
 
-**ALSO IMPORTANT** Please make all your variables local. Otherwise they might interfere with the rest of the program. Just put the word "local" infront of the code line that generates them and you'll be fine. Check the ExampleChallenge.lua to see how. Test the reload button on your map as well, and see if it still behaves the way it should. If not, you probably didn't make something local!
+**ALSO IMPORTANT:** Please make all your variables local. Otherwise they might interfere with the rest of the program. Just put the word "local" infront of the code line that generates them and you'll be fine. Check the ExampleChallenge.lua to see how.  
+Test the reload button on your map as well, and see if it still behaves the way it should. If not, you probably didn't make something local!
 
 Structure
 --------------------
@@ -33,8 +34,8 @@ Each challenge should follow a predefined structure:
 		
 		return ch
 
-The first and last line here are important, otherwise the map won't run.
-Just like you did with the AIs, there are certain functions which should be implemented. These functions will be called when certain events happen (i.e. the map is started or a train has reached some place).
+The first and last line here are important, otherwise the map won't run.  
+Just like you did with the AIs, there are certain functions which you should implement. These functions will be called when certain events happen (i.e. the map is started or a passenger has been dropped off).
 
 Event functions
 --------------------
@@ -82,6 +83,39 @@ If this function returns "lost", then the player has lost the round and the roun
 			challenges.setStatus( math.floor(5-time) .. " seconds remaining.")
 			if math.floor(5-time) == 0 then
 				return "lost", "Time is up!"
+			end
+		end
+
+
+###function ch.passengerBoarded(train, passenger)###
+Called when a train is in the process of picking up a passenger.  
+**Passed Arguments:**
+
+- train: The train that has picked up the passenger
+- passenger: Table containing the new passenger
+
+**Example:**
+
+		function ch.passengerBoarded(train, passenger)
+			if train.ID == 1 then
+				console.add("Train 1 has picked up the passenger, well done!", {r=255,g=255,b=255})
+			end
+		end
+		
+###function ch.passengerDroppedOff(train, passenger)###
+Called when a train has dropped off a passenger.  
+Note: this does not necessarily mean that the passenger has reached his/her destination!  
+**Passed Arguments:**
+
+- train: The train that has dropped off the passenger
+- passenger: Table containing the passenger
+
+**Example:**
+
+		function ch.passengerDroppedOff(tr, p)
+			if tr.tileX == p.destX and tr.tileY == p.destY then		
+				passengersRemaining = passengersRemaining - 1
+				console.add("Yes, that's where the passenger wanted to go!", {r=255,g=255,b=255})
 			end
 		end
 

@@ -27,7 +27,6 @@ function simulation.init()
 	
 	--loadingScreen.reset()
 	
-	print("REMOVED PACKET LIST 2")
 	packetList = {}
 	simulation.nextPacket = 1
 	
@@ -62,12 +61,6 @@ function simulation.init()
 	
 	calculateRailTypes(simulationMap)
 	
-	if not curMap then --and map.startupProcess() then
-		map.render(simulationMap)
-		newMapStarting = true
-		menu.exitOnly()
-	end
-	
 end
 
 function simulation.isRunning()
@@ -90,7 +83,9 @@ end
 function simulation.runMap()
 	newMapStarting = false
 	stats.start(4)
-	clouds.restart()
+	if RENDER_CLOUDS then
+		clouds.restart()
+	end
 	roundEnded = false
 	console.flush()
 	menu.ingame()
@@ -153,14 +148,18 @@ function simulation.addUpdate(text)
 	if shortText:find("ROUND_DETAILS:") == 1 then
 		s,e = shortText:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(shortText:sub(e+1,#shortText))
-		if tbl[1] ~= VERSION then
-			statusMsg.new("Error: Could not match versions.\n(Your version: " .. VERSION .. ", server's version: " .. tbl[1] .. ")", true)
+		if tbl[1] == VERSION then
+			connection.serverVersionMatch = true
+		else
+			statusMsg.new("Error: Game versions don't match.\n(Your version: " .. VERSION .. ", server's version: " .. tbl[1] .. ")", true)
+			print("Error: Game versions don't match.\n(Your version: " .. VERSION .. ", server's version: " .. tbl[1] .. ")")
 			simulation.stop()
 		end
 	end
 end
 
 function runUpdate(event, t1, t2)
+	print("Running:",event)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
@@ -493,6 +492,7 @@ function simulation.update(dt)
 	
 	-- check if there's a packet to be run. If there is one, check again if there's more.
 	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], #packetList, simulationMap.time) -- packetList[simulation.nextPacket].time, simulationMap.time)
+	print("test", simulationMap, packetList[simulation.nextPacket], simulation.nextPacket)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
 		--print("running:", simulation.nextPacket, packetList[simulation.nextPacket].event)
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
@@ -592,7 +592,9 @@ function simulation.show(dt)
 	
 		map.renderHighlights(passedTime)
 	
-		clouds.renderShadows(passedTime)
+		if RENDER_CLOUDS then
+			clouds.renderShadows(passedTime)
+		end
 
 		--map.drawOccupation()
 		
@@ -609,7 +611,9 @@ function simulation.show(dt)
 		love.graphics.rotate(CAM_ANGLE)
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
 	
-		clouds.render()
+		if RENDER_CLOUDS then
+			clouds.render()
+		end
 		
 		love.graphics.pop()
 		

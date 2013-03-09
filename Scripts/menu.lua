@@ -515,39 +515,34 @@ end
 --		SETTINGS MENU:
 --------------------------------------------------------------
 
-
 function selectResolution(res)
 
 	-- attempt to change screen resolution:
 	success = love.graphics.setMode( res.width, res.height, false, true )
 	
 	if not success then
-		print("failed to set resolution!")
+		print("Failed to set resolution!")
+		statusMsg.new("Failed to set resolution!", true)
 	else
 	
-		
-		local content = love.filesystem.read(CONFIG_FILE)
-		
-		if content then
-			local s,e = content:find("resolution_x ?= ?.-\n")
-			if s then
-				content = content:sub(1,s-1) .. content:sub(e+1, #content)
-			end
-		 	s,e = content:find("resolution_y ?= ?.-\n")
-			if s then
-				content = content:sub(1,s-1) .. content:sub(e+1, #content)
-			end
-		else
-			content = ""
-		end
-		
-		content = content .. "resolution_x = " .. res.width .. "\n"
-		content = content .. "resolution_y = " .. res.height .. "\n"
-		
-		love.filesystem.write(CONFIG_FILE, content)
+		configFile.setValue("resolution_x", res.width)
+		configFile.setValue("resolution_x", res.height)
 		
 		menu.settings() -- re-initialise the menu.
 	end
+end
+
+function toggleOptionClouds(enable)
+	print(enable)
+	if enable then
+		RENDER_CLOUDS = true
+	else
+		RENDER_CLOUDS = false
+	end
+
+	configFile.setValue("render_clouds", enable)
+	
+	menu.settings() -- re-initialise the menu.
 end
 
 function menu.settings()
@@ -557,6 +552,9 @@ function menu.settings()
 	y = defaultMenuY
 	menuButtons.buttonExit = button:new(x, y, "Return", menu.init, nil)
 	y = y + 45
+	
+	
+	local columnWidth = math.min(bgBoxSmall:getWidth()+10, love.graphics.getWidth()/3)
 	
 	x = x + 200
 	y = defaultMenuY
@@ -577,6 +575,17 @@ function menu.settings()
 			y = defaultMenuY + bgBoxSmall:getHeight()+5
 			jumped = true
 		end
+	end
+	
+	x = defaultMenuX + 200 + columnWidth
+	y = defaultMenuY
+	table.insert(menuDividers, {x = x, y = defaultMenuY, txt = "Options:"})
+	x = x + 20
+	y = y + bgBoxSmall:getHeight()+5
+	if RENDER_CLOUDS then
+		menuButtons["optionClouds"] = button:newSmall(x, y, "Clouds: On", toggleOptionClouds, false, nil, nil, "Click to disable clouds.")
+	else
+		menuButtons["optionClouds"] = button:newSmall(x, y, "Clouds: Off", toggleOptionClouds, true, nil, nil, "Click to enable clouds.")
 	end
 end
 

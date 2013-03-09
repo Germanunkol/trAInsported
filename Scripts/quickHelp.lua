@@ -65,7 +65,7 @@ function quickHelp.init(maxNumThreads)
 	local initialMaxNumThreads = maxNumThreads
 
 	if not helpBgThread and not helpBg then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, helpBg = pcall(love.graphics.newImage, "helpBg.png")
 			if not ok then helpBg = nil end
 		end

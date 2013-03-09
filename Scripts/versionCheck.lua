@@ -1,52 +1,17 @@
 local versionCheck = {}
-
+local versionMatch
 
 function versionCheck.start()
 
 	versionMatch = nil
 
-	exists = love.filesystem.exists( CONFIG_FILE )
-	if not exists then
-		local file = love.filesystem.newFile( CONFIG_FILE )
-		if file then
-			file:open('w')		--create the file
-			file:close()
-		end
+	v = configFile.getValue("version")
+	if v == VERSION then
+		versionMatch = true
 	else
-		local file = love.filesystem.newFile( CONFIG_FILE )
-		if file then 
-			file:open('r')
-			local data = file:read()
-			--print("config file:", data)
-			s, e = data:find("version = ")
-			if s then 
-				local tmp = data:sub(e+1, #data)
-				s2, e2 = tmp:find("\r\n")
-				if s2 then
-					v = tmp:sub(1, s2-1)
-					print("Config file is version: " .. v, "Game version: " .. VERSION)
-					if v == VERSION then
-						versionMatch = true
-						print("\tVersions match!")
-					end
-				end
-			end
-			file:close()
-		end
+		configFile.setValue("version", VERSION)
 	end
 	
-	if not versionMatch then
-		local data = ""
-		local file = love.filesystem.newFile( CONFIG_FILE )
-		if file then
-			file:open('r')
-			data = file:read()
-			file:close()
-		end
-		local data = file:read()
-		data = data .. "version = " .. VERSION .. "\r\n"
-		love.filesystem.write( CONFIG_FILE, data )
-	end
 end
 
 function versionCheck.getMatch()

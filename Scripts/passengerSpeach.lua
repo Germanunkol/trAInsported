@@ -28,7 +28,7 @@ function pSpeach.init(maxNumThreads)
 	local initialMaxNumThreads = maxNumThreads
 
 	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
 			if not ok then pSpeachBubble = nil end
 		end

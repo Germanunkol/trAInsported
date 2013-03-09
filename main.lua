@@ -33,6 +33,7 @@ require("Scripts/TSerial")
 pSpeach = require("Scripts/passengerSpeach")
 log = require("Scripts/databaseLog")
 chart = require("Scripts/generateChart")
+configFile = require("Scripts/configFile")
 
 challenges = require("Scripts/challenges")
 
@@ -388,8 +389,8 @@ else
 	
 		love.filesystem.setIdentity("trAInsported")
 	
-		-- load screen resolution from config file:
-		setupScreenResolution()
+		-- load screen resolution etc from config file:
+		loadConfiguration()
 	
 		numTrains = 0
 		--DEBUG_OVERLAY = true

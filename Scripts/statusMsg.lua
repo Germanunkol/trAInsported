@@ -11,7 +11,7 @@ function statusMsg.init(maxNumThreads)
 	local initialMaxNumThreads = maxNumThreads
 	
 	if not statusMsgBoxThread and not statusMsgBox then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, statusMsgBox = pcall(love.graphics.newImage, "statusMsgBox.png")
 			if not ok then statusMsgBox = nil end
 		end
@@ -59,7 +59,7 @@ function statusMsg.init(maxNumThreads)
 	end
 	
 	if not statusErrBoxThread and not statusErrBox then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, statusErrBox = pcall(love.graphics.newImage, "statusErrBox.png")
 			if not ok then statusErrBox = nil end
 		end
@@ -107,7 +107,7 @@ function statusMsg.init(maxNumThreads)
 	end
 	
 	if not toolTipBoxThread and not toolTipBox then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, toolTipBox = pcall(love.graphics.newImage, "toolTipBox.png")
 			if not ok then toolTipBox = nil end
 		end

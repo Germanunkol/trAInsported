@@ -4,7 +4,7 @@
 ----------------------------------
 
 -- General:
-VERSION = "1"
+VERSION = "2"
 CONFIG_FILE = "trAInsported.conf"
 DEFAULT_RES_X = 1024
 DEFAULT_RES_Y = 600
@@ -94,6 +94,8 @@ POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of tim
 POSSIBLE_REGIONS = {"Suburban", "Urban"}
 POSSIBLE_REGIONS_TOOLTIPS = {"Peaceful village setting.", "Twice as many passengers as Suburban setting has."}
 
+-- Game Settings:
+
 RESOLUTIONS = {}
 --RESOLUTIONS[#RESOLUTIONS+1] = {width=640, height=480}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=800, height=600}
@@ -107,6 +109,9 @@ RESOLUTIONS[#RESOLUTIONS+1] = {width=1680, height=1050}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=1920, height=1024}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=1920, height=1200}
 RESOLUTIONS[#RESOLUTIONS+1] = {width=2048, height=1536}
+
+RENDER_CLOUDS = true
+
 
 -- tutorial:
 

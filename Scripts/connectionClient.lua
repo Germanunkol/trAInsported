@@ -44,6 +44,9 @@ function connection.startClient(ip, port)
 		connectionThread:set("port", port)
 		printLineNumber = 0
 		packetNumber = 0
+		
+		connection.serverVersionMatch = false
+		connection.mapReceived = false
 	end
 end
 
@@ -75,15 +78,21 @@ function connection.handleConnection()
 		roundEnded = true
 		simulationMap = TSerial.unpack(str)
 		map.print("New map", simulationMap)
+		connection.mapReceived = true
 		simulation.init()
 	end
 	
 	str = connectionThread:get("packet" .. packetNumber)
-	if str then
+	while str do
 		simulation.addUpdate(str)
 		packetNumber = incrementID(packetNumber)
+		
+		-- addUpdate MIGHT have stopped the connection (if version does not match server's version). Make sure to handle this here:
+		if not connectionThread then
+			return
+		end
+		str = connectionThread:get("packet" .. packetNumber)
 	end
-	
 	
 	str = connectionThread:get("serverTime")
 	if str then
@@ -93,10 +102,6 @@ function connection.handleConnection()
 			print("My time: " .. simulationMap.time, "Delta:", serverTime - simulationMap.time .. " seconds" )
 		end
 	end
-	
-	-- if versions don't match, addUpdate might have stopped the connection, so make sure it's still up:
-	
-	if not connectionThread then return end
 	
 	str = connectionThread:get("statusErr")
 	if str then
@@ -129,7 +134,16 @@ function connection.handleConnection()
 			connection.closeConnection()
 			loadingScreen.addSubSection("Connecting", "Failed!")
 		end
-		
+	end
+	
+	if connection.serverVersionMatch and connection.mapReceived then
+		if not curMap then --and map.startupProcess() then
+			map.render(simulationMap)
+			newMapStarting = true
+			menu.exitOnly()
+		end
+		connection.serverVersionMatch = false
+		connection.mapReceived = false
 	end
 end
 

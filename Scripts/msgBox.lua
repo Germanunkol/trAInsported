@@ -130,7 +130,7 @@ function msgBox.init(maxNumThreads)
 	local initialMaxNumThreads = maxNumThreads
 	
 	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
 			if not ok then msgBoxBG = nil end
 		end

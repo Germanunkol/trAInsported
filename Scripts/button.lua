@@ -147,7 +147,7 @@ function button.init(maxNumThreads)
 	local initialMaxNumThreads = maxNumThreads
 
 	if not buttonOffThread and not buttonOff then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, buttonOff = pcall(love.graphics.newImage, "buttonOff.png")
 			if not ok then buttonOff = nil end
 		end
@@ -195,7 +195,7 @@ function button.init(maxNumThreads)
 	end
 	
 	if not buttonOverThread and not buttonOver then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, buttonOver = pcall(love.graphics.newImage, "buttonOver.png")
 			if not ok then buttonOver = nil end
 		end
@@ -245,7 +245,7 @@ function button.init(maxNumThreads)
 	end
 	
 	if not buttonOffSmallThread and not buttonOffSmall then		-- only start thread once!
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, buttonOffSmall = pcall(love.graphics.newImage, "buttonOffSmall.png")
 			if not ok then buttonOffSmall = nil end
 		end
@@ -294,7 +294,7 @@ function button.init(maxNumThreads)
 	
 	if not buttonOverSmallThread and not buttonOverSmall then		-- only start thread once!
 	
-		if not CL_FORCE_RENDER then
+		if not CL_FORCE_RENDER and versionCheck.getMatch() then
 			ok, buttonOverSmall = pcall(love.graphics.newImage, "buttonOverSmall.png")
 			if not ok then buttonOverSmall = nil end
 		end

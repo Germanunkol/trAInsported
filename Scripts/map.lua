@@ -149,7 +149,9 @@ function runMap(restart)
 		ai.init()
 		 
 		if not DEDICATED then
-			clouds.restart()
+			if RENDER_CLOUDS then
+				clouds.restart()
+			end
 			
 			MAX_PAN = (math.max(curMap.width, curMap.height)*TILE_SIZE)/2		-- maximum width that the camera can move
 			
@@ -1416,7 +1418,9 @@ function map.show()
 	
 	passenger.showSelected()
 
-	clouds.renderShadows(passedTime)
+	if RENDER_CLOUDS then
+		clouds.renderShadows(passedTime)
+	end
 
 	--map.drawOccupation()
 	if love.keyboard.isDown("m") then
@@ -1431,8 +1435,10 @@ function map.show()
 	love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
 	love.graphics.rotate(CAM_ANGLE)
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-
-	clouds.render()
+	
+	if RENDER_CLOUDS then
+		clouds.render()
+	end
 	
 	love.graphics.pop()
 end

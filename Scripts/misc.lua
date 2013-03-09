@@ -58,40 +58,33 @@ end
 
 
 ---------------------------------------
--- Load screen res from config file:
-function setupScreenResolution()
-	local ok, content = pcall(love.filesystem.read,CONFIG_FILE)
-	local x, y = nil,nil
-	if ok and content then
-		local s,e = content:find("resolution_x ?= ?.-\n")
-		if s then
-			substr = content:sub(s,e)
-			s,e = substr:find("=")
-			if s then
-				substr = substr:sub(e+1, #substr)
-				x = tonumber(substr) or DEFAULT_RES_X
-			end
-		end
-	 	local s,e = content:find("resolution_y ?= ?.-\n")
-		if s then
-			substr = content:sub(s,e)
-			s,e = substr:find("=")
-			if s then
-				substr = substr:sub(e+1, #substr)
-				y = tonumber(substr) or DEFAULT_RES_Y
-			end
-		end
-	end
+-- Load screen res, etc from config file:
+function loadConfiguration()
+	
+	x, y = configFile.getValue("resolution_x"), configFile.getValue("resolution_y")
+	local resSet
 
 	if x and y then
 		print("Found resolution:",x,y)
 		success = love.graphics.setMode( x, y, false, true )
-		if success then return end
+		if success then
+			resSet = true
+		end
 	end
 	
 	-- backup:
-	print("Setting resolution to default values because no configuration has been found: ", DEFAULT_RES_X .. "x" .. DEFAULT_RES_Y)
-	love.graphics.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y, false, true )
+	if not resSet then
+		print("Setting resolution to default values because no configuration has been found: ", DEFAULT_RES_X .. "x" .. DEFAULT_RES_Y)
+		love.graphics.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y, false, true )
+	end
+	
+	local clouds = configFile.getValue("render_clouds")
+	if clouds == "true" then
+		RENDER_CLOUDS = true
+	end
+	if clouds == "false" then
+		RENDER_CLOUDS = false
+	end
 end
 ---------------------------------------
 

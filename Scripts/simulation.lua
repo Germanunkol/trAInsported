@@ -492,7 +492,6 @@ function simulation.update(dt)
 	
 	-- check if there's a packet to be run. If there is one, check again if there's more.
 	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], #packetList, simulationMap.time) -- packetList[simulation.nextPacket].time, simulationMap.time)
-	print("test", simulationMap, packetList[simulation.nextPacket], simulation.nextPacket)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
 		--print("running:", simulation.nextPacket, packetList[simulation.nextPacket].event)
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
@@ -502,7 +501,6 @@ function simulation.update(dt)
 			for k = simulation.nextPacket,#packetList do
 				runUpdate(packetList[k].event, packetList[k].time, simulationMap.time)
 			end
-			print("REMOVED PACKET LIST 1")
 			packetList = {}
 			return
 		end

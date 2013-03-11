@@ -94,6 +94,7 @@ tut 4:
 - dither full screen
 - scrollbar for console
 - click on AI to focus on train
+- print kostenlos
 
 **Website**
 [x] rank of players?

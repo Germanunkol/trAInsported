@@ -1350,16 +1350,31 @@ function map.showCoordinates(m)
 	end
 end
 
+local mouseImage = love.graphics.newImage("Images/Cross.png")
+local mousePosX, mousePosY = 0,0
+local centerX, centerY = 0,0
+
 function map.show()
+	
+	mousePosX, mousePosY = love.mouse.getPosition()
+	
+	mousePosX, mousePosY = mousePosX/camZ, mousePosY/camZ
+
 	love.graphics.push()
 	love.graphics.scale(camZ)
+	
+	mousePosX, mousePosY = mousePosX - camX - love.graphics.getWidth()/(2*camZ), mousePosY - camY - love.graphics.getHeight()/(2*camZ)
 
+	mX, mY = mousePosX, mousePosY
+	mousePosX, mousePosY = math.cos(-CAM_ANGLE)*mX - math.sin(-CAM_ANGLE)*mY, math.sin(-CAM_ANGLE)*mX + math.cos(-CAM_ANGLE)*mY
+	
+	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.rotate(CAM_ANGLE)
 	love.graphics.setColor(30,10,5, 200)
-	--love.graphics.rectangle("fill", -TILE_SIZE*(curMap.width+2)/2-120,-TILE_SIZE*(curMap.height+2)/2-80, TILE_SIZE*(curMap.width+2)+200, TILE_SIZE*(curMap.height+2)+200)
-	--love.graphics.setColor(0,0,0, 100)
 	
+
+
 	x = -TILE_SIZE*(curMap.width+2)/2 -20
 	for i = 1, #mapImage do
 		y = -TILE_SIZE*(curMap.height+2)/2 +35
@@ -1388,6 +1403,12 @@ function map.show()
 		end
 	end
 
+
+	centerX, centerY = 0,0
+	love.graphics.draw(mouseImage, centerX, centerY)
+	love.graphics.draw(mouseImage, mousePosX, mousePosY)
+	
+	
 	love.graphics.push()
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
@@ -1441,6 +1462,11 @@ function map.show()
 	end
 	
 	love.graphics.pop()
+	
+	love.graphics.setColor(255,255,255,255)
+	love.graphics.print(mousePosX, 20, 100)
+	love.graphics.print(mousePosY, 20, 120)
+	love.graphics.print(CAM_ANGLE, 20, 140)
 end
 
 --------------------------------------------------------------

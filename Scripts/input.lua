@@ -37,6 +37,10 @@ function love.mousepressed(x, y, b)
 		hit = tutorialBox.handleClick()
 	end
 	if not hit then
+		print("Entering")
+		hit = map.handleClick()
+	end
+	if not hit then
 		panningView = true
 		mouseLastX, mouseLastY = love.mouse.getPosition()
 	end

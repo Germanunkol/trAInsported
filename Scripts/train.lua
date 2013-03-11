@@ -650,12 +650,13 @@ if not DEDICATED then
 				y = tr.tileY*TILE_SIZE + tr.y
 				scale = 1
 			
-				if vecDist(x, y, mapMouseX, mapMouseY) < 20 then
-					scale = 3
-				end
-			
 				love.graphics.setColor(0,0,0,120)
 				love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+				
+				if tr.selected == true then
+					love.graphics.setColor(128,0,0,120)
+					love.graphics.draw( tr.image, x - 5*1.5, y + 8*1.5, tr.smoothAngle, 1.5, 1.5, tr.image:getWidth()/2, tr.image:getHeight()/2 )
+				end
 			
 				love.graphics.setColor(255,255,255,255)
 				love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )

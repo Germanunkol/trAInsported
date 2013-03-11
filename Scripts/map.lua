@@ -1351,22 +1351,22 @@ function map.showCoordinates(m)
 end
 
 local mouseImage = love.graphics.newImage("Images/Cross.png")
-local mousePosX, mousePosY = 0,0
+local mapMouseX, mapMouseY = 0,0
 local centerX, centerY = 0,0
 
 function map.show()
 	
-	mousePosX, mousePosY = love.mouse.getPosition()
+	mapMouseX, mapMouseY = love.mouse.getPosition()
 	
-	mousePosX, mousePosY = mousePosX/camZ, mousePosY/camZ
+	mapMouseX, mapMouseY = mapMouseX/camZ, mapMouseY/camZ
 
 	love.graphics.push()
 	love.graphics.scale(camZ)
 	
-	mousePosX, mousePosY = mousePosX - camX - love.graphics.getWidth()/(2*camZ), mousePosY - camY - love.graphics.getHeight()/(2*camZ)
+	mapMouseX, mapMouseY = mapMouseX - camX - love.graphics.getWidth()/(2*camZ), mapMouseY - camY - love.graphics.getHeight()/(2*camZ)
 
-	mX, mY = mousePosX, mousePosY
-	mousePosX, mousePosY = math.cos(-CAM_ANGLE)*mX - math.sin(-CAM_ANGLE)*mY, math.sin(-CAM_ANGLE)*mX + math.cos(-CAM_ANGLE)*mY
+	mX, mY = mapMouseX, mapMouseY
+	mapMouseX, mapMouseY = math.cos(-CAM_ANGLE)*mX - math.sin(-CAM_ANGLE)*mY, math.sin(-CAM_ANGLE)*mX + math.cos(-CAM_ANGLE)*mY
 	
 	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
@@ -1405,13 +1405,15 @@ function map.show()
 
 
 	centerX, centerY = 0,0
-	love.graphics.draw(mouseImage, centerX, centerY)
-	love.graphics.draw(mouseImage, mousePosX, mousePosY)
 	
 	
 	love.graphics.push()
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
+	mapMouseX = mapMouseX + TILE_SIZE*(curMap.width+2)/2
+	mapMouseY = mapMouseY + TILE_SIZE*(curMap.height+2)/2
+
+	love.graphics.draw(mouseImage, mapMouseX - mouseImage:getWidth()/2, mapMouseY - mouseImage:getHeight()/2)
 
 	passenger.showAll(passedTime)
 	train.showAll()
@@ -1463,10 +1465,6 @@ function map.show()
 	
 	love.graphics.pop()
 	
-	love.graphics.setColor(255,255,255,255)
-	love.graphics.print(mousePosX, 20, 100)
-	love.graphics.print(mousePosY, 20, 120)
-	love.graphics.print(CAM_ANGLE, 20, 140)
 end
 
 --------------------------------------------------------------
@@ -1526,6 +1524,59 @@ function map.endRound()
 		sendMapUpdate("END_ROUND:")
 	end
 end
+
+
+--------------------------------------------------------------
+--		MAP MOUSE EVENT:
+--------------------------------------------------------------
+
+function map.handleClick()
+	local found
+	
+	for i,l in pairs(trainList) do
+		for k,tr in pairs(l) do
+			x = tr.tileX*TILE_SIZE + tr.x
+			y = tr.tileY*TILE_SIZE + tr.y
+			if mapMouseX > x - tr.image:getHeight()/2 and mapMouseX < x + tr.image:getHeight()/2 and
+				mapMouseY > y - tr.image:getHeight()/2 and mapMouseY < y + tr.image:getHeight()/2 then
+				if not tr.selected then
+					found = tr
+					break
+				else
+					tr.selected = false
+				end
+			end
+		end
+	end
+	for k,p in pairs(passengerList) do
+		x = p.tileX*TILE_SIZE + p.x
+		y = p.tileY*TILE_SIZE + p.y
+		if mapMouseX > x - p.image:getWidth()/2 and mapMouseX < x + p.image:getWidth()/2 and
+			mapMouseY > y - p.image:getHeight()/2 and mapMouseY < y + p.image:getHeight()/2 then
+			if not p.selected then
+				found = p
+				break
+			else
+				p.selected = false
+			end
+		end
+	end
+	
+	if found then		-- only deselect others if new train or passenger was clicked on
+		for k,p in pairs(passengerList) do
+			p.selected = false
+		end
+		for i,l in pairs(trainList) do
+			for k,tr in pairs(l) do
+				tr.selected = false
+			end
+		end	
+		found.selected = true
+		return true
+	end
+end
+
+
 
 
 return map

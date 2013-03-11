@@ -1,6 +1,6 @@
 local passenger = {}
 
-local passengerList = {}
+passengerList = {}
 
 passengerPositions = {}
 
@@ -120,7 +120,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeech )
 						curY = y,
 						image = passengerImage,
 						angle = math.random()*math.pi*2,
-						selected = s
+						spawned = s
 					}
 				if vip then
 					--passengerList[i].image = passengerVIPImage
@@ -504,7 +504,11 @@ else
 					end
 					love.graphics.setColor(0,0,0,120)
 					love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
-					love.graphics.setColor(64,128,255,255)
+					if p.selected then
+						love.graphics.setColor(255,64,128,255)
+					else
+						love.graphics.setColor(64,128,255,255)
+					end
 				
 					love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 				end
@@ -538,12 +542,12 @@ else
 		love.graphics.setFont(FONT_SMALL)
 	
 		for k, p in pairs(passengerList) do
-			if p.selected > 0 then
+			if p.spawned > 0 then
 				love.graphics.setColor(255,255,255)
 				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
 				love.graphics.setColor(0,0,0)
 				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
-				p.selected = p.selected - dt
+				p.spawned = p.spawned - dt
 				if p.vip then
 					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
 				end

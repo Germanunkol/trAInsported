@@ -344,6 +344,12 @@ function statistics.addStatWindow(newStat)
 end
 
 
+function statistics.trainTransportedNum( aiID, ID )
+	if aiStats[aiID] and aiStats[aiID].trains and aiStats[aiID].trains[ID] then
+		return aiStats[aiID].trains[ID].pTransported
+	end
+end
+
 function statistics.generateStatWindows()
 	
 	statistics.clearWindows()
@@ -777,6 +783,12 @@ function statistics.displayStatus()
 				love.graphics.print("Match is over!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Match is over!")/2, y+10)
 			end
 		end
+	end
+end
+
+function statistics.getAIColor(i)
+	if aiStats[i] then
+		return aiStats[i].red,aiStats[i].green,aiStats[i].blue
 	end
 end
 

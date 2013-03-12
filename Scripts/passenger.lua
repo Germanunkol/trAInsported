@@ -504,11 +504,11 @@ else
 					end
 					love.graphics.setColor(0,0,0,120)
 					love.graphics.draw(p.image, x-4, y+6) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
-					if p.selected then
-						love.graphics.setColor(255,64,128,255)
-					else
+					--if p.selected then
+					--	love.graphics.setColor(255,64,128,255)
+					--else
 						love.graphics.setColor(64,128,255,255)
-					end
+					--end
 				
 					love.graphics.draw(p.image, x, y, 0, p.scale, p.scale) --, p.angle, 1,1, p.image:getWidth()/2, p.image:getHeight()/2)
 				end
@@ -543,15 +543,21 @@ else
 	
 		for k, p in pairs(passengerList) do
 			if p.selected then
-				love.graphics.setColor(255,255,255)
-				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
-				love.graphics.setColor(0,0,0)
-				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
-				--p.spawned = p.spawned - dt
-				if p.vip then
-					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
-				end
+				passenger.showSelectionBox(p)
+				return
 			end
+		end
+	end
+	
+	function passenger.showSelectionBox(p)
+		love.graphics.setColor(255,255,255)
+		love.graphics.draw(pSpeachBubble, p.renderX-BUBBLE_WIDTH/2+10, p.renderY + 26)
+		love.graphics.setColor(0,0,0)
+		love.graphics.printf(p.name .. ":", p.renderX-BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
+		love.graphics.printf(p.speach, p.renderX-BUBBLE_WIDTH/2+22, p.renderY + 45, 190, "center")
+		--p.spawned = p.spawned - dt
+		if p.vip then
+			love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-BUBBLE_WIDTH/2+22, p.renderY + 95, 190, "center")
 		end
 	end
 end

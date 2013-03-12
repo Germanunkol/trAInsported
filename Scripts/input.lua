@@ -37,7 +37,11 @@ function love.mousepressed(x, y, b)
 		hit = tutorialBox.handleClick()
 	end
 	if not hit then
-		hit = map.handleClick()
+		if simulation.isRunning() then
+			hit = simulation.handleClick()
+		else		
+			hit = map.handleClick()
+		end
 	end
 	if not hit then
 		panningView = true

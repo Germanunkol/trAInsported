@@ -652,11 +652,6 @@ if not DEDICATED then
 			
 				love.graphics.setColor(0,0,0,120)
 				love.graphics.draw( tr.image, x - 5, y + 8, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-				
-				if tr.selected == true then
-					love.graphics.setColor(128,0,0,120)
-					love.graphics.draw( tr.image, x - 5*1.5, y + 8*1.5, tr.smoothAngle, 1.5, 1.5, tr.image:getWidth()/2, tr.image:getHeight()/2 )
-				end
 			
 				love.graphics.setColor(255,255,255,255)
 				love.graphics.draw( tr.image, x, y, tr.smoothAngle, scale, scale, tr.image:getWidth()/2, tr.image:getHeight()/2 )
@@ -664,18 +659,46 @@ if not DEDICATED then
 					love.graphics.draw( trainImageBorder, x, y, tr.smoothAngle, scale, scale, trainImageBorder:getWidth()/2, trainImageBorder:getHeight()/2 )
 				end
 				--love.graphics.print( tr.name, x, y+30)
+				--[[
 				if tr.timeBlocked > 0 then
 					love.graphics.print( tr.timeBlocked, x, y+30)
 				end
+				]]--
 			end
 		end
 	end
 
-	function train.checkSelection()
-		x,y = love.mouse.getPosition()
-			-- love.graphics.scale(camZ)
-			-- love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+	function train.showSelected()
+		for k, list in pairs(trainList) do
+			for k, tr in pairs(list) do
+				if tr.selected == true then
+					train.showSelectionBox(tr)
+					return
+				end
+			end
+		end
+	end
+	
+	function train.showSelectionBox(tr)
+		x, y = tr.x + tr.tileX*TILE_SIZE, tr.y + tr.tileY*TILE_SIZE + 5
+		love.graphics.setFont(FONT_SMALL)
+		r,g,b = stats.getAIColor(tr.aiID)
+		local str = tr.name
+		num = stats.trainTransportedNum(tr.aiID, tr.ID)
+		if num then
+			str = str .. " | Transported: " .. num
+		end
+		if tr.curPassenger then
+			str = str .. " | Passenger: " .. tr.curPassenger.name
+		end
+		x = x - FONT_SMALL:getWidth(str)/2 - 5
+		love.graphics.setColor(r or 128, g or 128, b or 128, 200)
+		love.graphics.rectangle( "fill", x, y, FONT_SMALL:getWidth(str) + 10, FONT_SMALL:getHeight() + 10 )
+		love.graphics.setColor(0,0,0)
+		love.graphics.print(str, x+5, y+5)
 	end
 end
+
+
 
 return train

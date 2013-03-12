@@ -19,7 +19,7 @@ vipSpeach = {
 	"Late for a date...",
 	"My kids are home alone.",
 	"My dog needs food!",
-	"...",
+	"Winter is coming.",
 }
 
 local pSpeach = {}

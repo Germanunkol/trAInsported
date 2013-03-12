@@ -588,6 +588,9 @@ function simulation.show(dt)
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
 	
 	
+		simulation.passengerShowSelected()
+		simulation.trainShowSelected()
+	
 		map.renderHighlights(passedTime)
 	
 		if RENDER_CLOUDS then
@@ -881,5 +884,90 @@ function simulation.showVIPs(dt)
 		end
 	end
 end
+
+function simulation.passengerShowSelected()
+	love.graphics.setFont(FONT_SMALL)
+
+	for k, p in pairs(passengerList) do
+		if p.selected then
+			passenger.showSelectionBox(p)
+		end
+	end
+end
+
+function simulation.trainShowSelected()
+	for k, list in pairs(trainList) do
+		for k2, tr in pairs(list) do
+			if tr.selected == true then
+				train.showSelectionBox(tr)
+			end
+		end
+	end
+end
+
+
+local mapMouseX, mapMouseY = 0,0
+
+
+function simulation.handleClick()
+
+	mapMouseX, mapMouseY = love.mouse.getPosition()
+	
+	mapMouseX, mapMouseY = mapMouseX/camZ, mapMouseY/camZ
+
+	mapMouseX, mapMouseY = mapMouseX - camX - love.graphics.getWidth()/(2*camZ), mapMouseY - camY - love.graphics.getHeight()/(2*camZ)
+
+	mX, mY = mapMouseX, mapMouseY
+	mapMouseX, mapMouseY = math.cos(-CAM_ANGLE)*mX - math.sin(-CAM_ANGLE)*mY, math.sin(-CAM_ANGLE)*mX + math.cos(-CAM_ANGLE)*mY
+	mapMouseX = mapMouseX + TILE_SIZE*(simulationMap.width+2)/2
+	mapMouseY = mapMouseY + TILE_SIZE*(simulationMap.height+2)/2
+
+	local found
+	
+	for i,l in pairs(trainList) do
+		for k,tr in pairs(l) do
+			x = tr.tileX*TILE_SIZE + tr.x
+			y = tr.tileY*TILE_SIZE + tr.y
+			if mapMouseX > x - tr.image:getHeight()/2 and mapMouseX < x + tr.image:getHeight()/2 and
+				mapMouseY > y - tr.image:getHeight()/2 and mapMouseY < y + tr.image:getHeight()/2 then
+				if not tr.selected then
+					found = tr
+					break
+				else
+					tr.selected = false
+				end
+			end
+		end
+	end
+	for k,p in pairs(passengerList) do
+		x = p.tileX*TILE_SIZE + p.x
+		y = p.tileY*TILE_SIZE + p.y
+		if mapMouseX > x - p.image:getWidth()/2 and mapMouseX < x + p.image:getWidth()/2 and
+			mapMouseY > y - p.image:getHeight()/2 and mapMouseY < y + p.image:getHeight()/2 then
+			if not p.selected then
+				found = p
+				break
+			else
+				p.selected = false
+			end
+		end
+	end
+	
+	if found then		-- only deselect others if new train or passenger was clicked on
+		for k,p in pairs(passengerList) do
+			p.selected = false
+		end
+		for i,l in pairs(trainList) do
+			for k,tr in pairs(l) do
+				tr.selected = false
+			end
+		end	
+		print("CLICKED!")
+		found.selected = true
+		return true
+	end
+end
+
+
 
 return simulation

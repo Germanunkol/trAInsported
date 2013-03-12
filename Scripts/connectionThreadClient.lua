@@ -80,7 +80,7 @@ while true do
 	data, msg = client:receive()
 	if not msg then
 		
-		print("RECEIVED: " .. data)
+		--print("RECEIVED: " .. data)
 	
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))

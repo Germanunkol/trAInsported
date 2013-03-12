@@ -447,8 +447,6 @@ else
 	function finishStartupProcess()
 		console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
 	
-		SPEACH_BUBBLE_WIDTH = pSpeachBubble:getWidth()
-
 		map.init()
 
 		menu.init()

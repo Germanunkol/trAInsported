@@ -1359,13 +1359,17 @@ function map.show()
 	
 	mapMouseX, mapMouseY = mapMouseX/camZ, mapMouseY/camZ
 
-	love.graphics.push()
-	love.graphics.scale(camZ)
-	
 	mapMouseX, mapMouseY = mapMouseX - camX - love.graphics.getWidth()/(2*camZ), mapMouseY - camY - love.graphics.getHeight()/(2*camZ)
 
 	mX, mY = mapMouseX, mapMouseY
 	mapMouseX, mapMouseY = math.cos(-CAM_ANGLE)*mX - math.sin(-CAM_ANGLE)*mY, math.sin(-CAM_ANGLE)*mX + math.cos(-CAM_ANGLE)*mY
+	mapMouseX = mapMouseX + TILE_SIZE*(curMap.width+2)/2
+	mapMouseY = mapMouseY + TILE_SIZE*(curMap.height+2)/2
+	
+	
+	love.graphics.push()
+	love.graphics.scale(camZ)
+	
 	
 	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
@@ -1409,8 +1413,6 @@ function map.show()
 	love.graphics.push()
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 
-	mapMouseX = mapMouseX + TILE_SIZE*(curMap.width+2)/2
-	mapMouseY = mapMouseY + TILE_SIZE*(curMap.height+2)/2
 
 	passenger.showAll(passedTime)
 	train.showAll()
@@ -1437,6 +1439,7 @@ function map.show()
 	map.renderHighlights(passedTime)
 	
 	passenger.showSelected()
+	train.showSelected()
 
 	if RENDER_CLOUDS then
 		clouds.renderShadows(passedTime)
@@ -1572,8 +1575,6 @@ function map.handleClick()
 		return true
 	end
 end
-
-
 
 
 return map

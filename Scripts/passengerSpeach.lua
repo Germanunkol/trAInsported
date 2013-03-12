@@ -15,7 +15,7 @@ vipSpeach = {
 	"I left the oven on.",
 	"Need to get home! 'Big Bang Theory' starts any minute now...",
 	"My wife will kill me if I'm not home by nine!",
-	"I HAVE to get to this party before she gets there.",
+	"I HAVE to get to this party before SHE gets there.",
 	"Late for a date...",
 	"My kids are home alone.",
 	"My dog needs food!",

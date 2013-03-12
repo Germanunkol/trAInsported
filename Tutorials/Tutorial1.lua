@@ -475,11 +475,11 @@ end
 function setPassengerStart(k)
 	return function()
 		if not tutorial.placedFirstPassenger then
-			passenger.new(5,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+			passenger.new(5,4, 1,3, "There will be a cake at the end. And a party. No, really.") 	-- place passenger at 3, 4 wanting to go to 1,3
 			tutorial.placedFirstPassenger = true
 			tutorial.restartEvent = function()
 					if currentStep >= k then	-- if I haven't gone back to a previous step
-						passenger.new(5,4, 1,3) 	-- place passenger at 3, 4 wanting to go to 1,3
+						passenger.new(5,4, 1,3, "There will be a cake at the end. And a party. No, really.") 	-- place passenger at 3, 4 wanting to go to 1,3
 						tutorial.placedFirstPassenger = true
 					end
 				end

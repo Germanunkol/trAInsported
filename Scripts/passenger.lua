@@ -44,7 +44,7 @@ function passenger.clearList()
 	end
 end
 
-function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeech )
+function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 	
 	if givenX or givenY then dontCreateVIP = true end
 	
@@ -542,12 +542,12 @@ else
 		love.graphics.setFont(FONT_SMALL)
 	
 		for k, p in pairs(passengerList) do
-			if p.spawned > 0 then
+			if p.selected then
 				love.graphics.setColor(255,255,255)
 				love.graphics.draw(pSpeachBubble, p.renderX-SPEACH_BUBBLE_WIDTH/2+10, p.renderY + 26)
 				love.graphics.setColor(0,0,0)
 				love.graphics.printf(p.speach, p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 29, 190, "center")
-				p.spawned = p.spawned - dt
+				--p.spawned = p.spawned - dt
 				if p.vip then
 					love.graphics.printf(makeTimeReadable(p.vipTime), p.renderX-SPEACH_BUBBLE_WIDTH/2+22, p.renderY + 73, 190, "center")
 				end

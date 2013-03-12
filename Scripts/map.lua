@@ -1350,7 +1350,6 @@ function map.showCoordinates(m)
 	end
 end
 
-local mouseImage = love.graphics.newImage("Images/Cross.png")
 local mapMouseX, mapMouseY = 0,0
 local centerX, centerY = 0,0
 
@@ -1412,8 +1411,6 @@ function map.show()
 
 	mapMouseX = mapMouseX + TILE_SIZE*(curMap.width+2)/2
 	mapMouseY = mapMouseY + TILE_SIZE*(curMap.height+2)/2
-
-	love.graphics.draw(mouseImage, mapMouseX - mouseImage:getWidth()/2, mapMouseY - mouseImage:getHeight()/2)
 
 	passenger.showAll(passedTime)
 	train.showAll()

@@ -43,6 +43,8 @@ while true do
 	end
 
 
+
+
 	math.randomseed(seed)
 	
 	if not tutorialMap then
@@ -91,6 +93,18 @@ while true do
 		thisThread:set("percentage", 40)
 	else
 		curMap = tutorialMap
+		
+		for i = 0,width+1 do
+			for j = 0, height+1 do
+				if curMap[i][j] == "SCHOOL" then
+					curMap[i][j] = "SCHOOL11"
+					curMap[i][j+1] = "SCHOOL12"
+					curMap[i+1][j] = "SCHOOL21"
+					curMap[i+1][j+1] = "SCHOOL22"
+				end
+			end
+		end
+		
 	end
 
 	calculateRailTypes()
@@ -113,13 +127,13 @@ while true do
 	generateRailList()
 	thisThread:set("percentage", 90)
 	
-	--[[for i = 0,width+1 do
+	for i = 0,width+1 do
 		for j = 0, height+1 do
 			if curMap[i][j] == "SCHOOL" then
 				curMap[i][j] = "S"
 			end
 		end
-	end]]--
+	end
 
 	-- return the results to parent (main) thread:
 	thisThread:set("curMap", TSerial.pack(curMap))

@@ -526,7 +526,7 @@ function selectResolution(res)
 	else
 	
 		configFile.setValue("resolution_x", res.width)
-		configFile.setValue("resolution_x", res.height)
+		configFile.setValue("resolution_y", res.height)
 		
 		menu.settings() -- re-initialise the menu.
 	end

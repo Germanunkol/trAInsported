@@ -79,7 +79,6 @@ end
 
 function pSpeach.initialised()
 	if pSpeachBubble then
-		print("pspeach:", pSpeachBubble)
 		return true
 	end
 end

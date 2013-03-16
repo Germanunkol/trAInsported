@@ -110,3 +110,9 @@ tut 4:
 - Error Scripts/train.lua:643: attempt to index index field 'image' (a nil value)
 [x] Trains stop on live server
 [x] train colors are wrong in simulation!
+
+**Windows:**
+- Added configFile.lua
+- Changed screenResolution writing
+- READ NUMBER OF CPU CORES on WIN!
+- picture colors are different??

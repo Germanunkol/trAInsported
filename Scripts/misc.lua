@@ -248,7 +248,20 @@ function getCPUNumber()
 					CPU_NUMBER = tonumber(corestxt)
 				end
 			end
-		else
+		elseif love._os == "Windows" then
+			if io.popen then
+				f = assert(io.popen("wmic cpu get NumberOfCores"))
+				local content = assert(f:read("*a"))
+				local i = 1
+				for line in content:gmatch("%d+") do
+					CPU_NUMBER = tonumber(line)
+				end
+				f:close()
+				--if content then
+				--	print(content)
+				--end
+			end
+		else			-- linux:
 			ok, f = pcall(io.popen,"nproc")
 			if ok and f then
 				local n = f:read("*a")

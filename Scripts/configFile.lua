@@ -3,7 +3,13 @@ local configFile = {}
 function configFile.setValue( name, value )
 	if not name or not value == nil then
 		print(name, value)
-		error("Err: configFile.setValue got nil value or nil name.")
+		error("Error: configFile.setValue got nil value or nil name.")
+	end
+	
+	if not love.filesystem.isFile(CONFIG_FILE) then
+		local file = love.filesystem.newFile( CONFIG_FILE )
+		file:open('w')	--create the file
+		file:close()
 	end
 	
 	if type(value) ~= "string" then
@@ -39,9 +45,13 @@ function configFile.setValue( name, value )
 end
 
 function configFile.getValue( name )
-	local file = love.filesystem.newFile( CONFIG_FILE )
+	if not love.filesystem.isFile(CONFIG_FILE) then
+		print("Could not find config file.")
+		return
+	end
+	local ok, file = pcall(love.filesystem.newFile, CONFIG_FILE )
 	local data
-	if file then
+	if ok and file then
 		file:open('r')
 		data = file:read()
 		file:close()

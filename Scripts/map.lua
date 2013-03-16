@@ -125,6 +125,8 @@ function runMap(restart)
 		
 		math.randomseed(mapSeed)
 		
+		passenger.init ( maxPassengers )		-- start generating random passengers, set the maximum number of them.
+		
 		-- If there's a tutorial callback registered by the current map, then start that now!
 		if tutorial then
 			if not restart and tutorial.mapRenderingDoneCallback then
@@ -139,8 +141,6 @@ function runMap(restart)
 		if CURRENT_REGION == "Urban" then
 			maxPassengers = maxPassengers*2
 		end
-		passenger.init ( maxPassengers )		-- start generating random passengers, set the maximum number of them.
-		
 		if challengeEvents.mapRenderingDoneCallback then
 			challengeEvents.mapRenderingDoneCallback()
 		end

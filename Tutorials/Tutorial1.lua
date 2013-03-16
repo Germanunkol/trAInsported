@@ -252,7 +252,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you can't find the folder, it might be hidden. Either type the folder path into your file browser or search the internet for 'show hidden files [name of your operating system]'. For example: 'show hidden files Windows 7'\nAlso, any normal text editor should do, but there's some which will help you when writing code. See the documentation for details."), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you can't find the folder, it might be hidden. Either type the folder path into your file browser or search the internet for 'show hidden files [name of your operating system]'. For example: 'show hidden files Windows 7'\nAlso, any normal text editor should do, but there's some which will help you when writing code.\n\nGood, free editors include:\nGedit, Vim (Linux)\nNotepad++ (Windows)"), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -475,9 +475,12 @@ end
 function setPassengerStart(k)
 	return function()
 		if not tutorial.placedFirstPassenger then
+			print("CALLED PASSENGER CREATION EVENT! 1")
 			passenger.new(5,4, 1,3, "There will be a cake at the end. And a party. No, really.") 	-- place passenger at 3, 4 wanting to go to 1,3
 			tutorial.placedFirstPassenger = true
 			tutorial.restartEvent = function()
+			print("CALLED PASSENGER CREATION EVENT! 2")
+				print(currentStep, k)
 					if currentStep >= k then	-- if I haven't gone back to a previous step
 						passenger.new(5,4, 1,3, "There will be a cake at the end. And a party. No, really.") 	-- place passenger at 3, 4 wanting to go to 1,3
 						tutorial.placedFirstPassenger = true

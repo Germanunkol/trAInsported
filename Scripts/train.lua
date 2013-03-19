@@ -680,7 +680,7 @@ if not DEDICATED then
 	end
 	
 	function train.showSelectionBox(tr)
-		x, y = tr.x + tr.tileX*TILE_SIZE, tr.y + tr.tileY*TILE_SIZE - 25
+		x, y = tr.x + tr.tileX*TILE_SIZE, tr.y + tr.tileY*TILE_SIZE - 35
 		love.graphics.setFont(FONT_SMALL)
 		r,g,b = stats.getAIColor(tr.aiID)
 		local str = tr.name

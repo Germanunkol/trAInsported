@@ -80,6 +80,8 @@ function randomMatch()
 		gameMode = GAME_TYPE_MAX_PASSENGERS
 	end
 	
+	gameMode = GAME_TYPE_MAX_PASSENGERS
+	
 	local time = width*height*10 + math.random(width*height*10)
 	
 	setupMatch(width, height, 1, time, gameMode, chosenAIs, POSSIBLE_REGIONS[math.random(#POSSIBLE_REGIONS)])

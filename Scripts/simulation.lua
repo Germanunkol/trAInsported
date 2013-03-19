@@ -845,12 +845,12 @@ function simulation.passengerShowAll(dt)
 		-- draw passenger:
 		if not p.reachedDestination then
 			if p.train and p.onTrain and not p.gettingOff then
-				if love.keyboard.isDown(" ") then 
+				if love.keyboard.isDown(" ") or p.train.selected then 
 					love.graphics.setColor(255,255,128,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
 			else
-				if love.keyboard.isDown(" ") then 
+				if love.keyboard.isDown(" ") or p.selected then 
 					love.graphics.setColor(64,128,255,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
@@ -889,7 +889,7 @@ function simulation.passengerShowSelected()
 	love.graphics.setFont(FONT_SMALL)
 
 	for k, p in pairs(passengerList) do
-		if p.selected then
+		if p.selected or (p.train and p.train.selected)then
 			passenger.showSelectionBox(p)
 		end
 	end

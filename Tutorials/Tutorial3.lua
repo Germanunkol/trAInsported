@@ -268,7 +268,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "On this map, there are some kids. As it is with students, some want to go to school, some would rather not.\nAs trAIn programmers, it is not our job to judge that, though...\n(Press space bar to see their destinations)"
+	tutorialSteps[k].message = "On this map, there are some kids. As it is with students, some want to go to school, some would rather not.\nAs trAIn programmers, it is not our job to judge that, though...\n(Hold down the space bar or click on the passengers to see their destinations)"
 	tutorialSteps[k].event =  startCreatingPassengers(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -481,15 +481,24 @@ function tutorial.handleEvents(dt)
 	if tutorial.passengersEnRoute <= 5 and createPassengers and currentStep >= createPassengers then
 		tutorial.passengersEnRoute = tutorial.passengersEnRoute + 1
 		if goWest then
-			passenger.new(3,5, 1,3)
+			passenger.new(3,5, 1,3, kidSpeaches[math.random(#kidSpeaches)])
 			goWest = nil
 		else
-			passenger.new(3,5, 5,3)
+			passenger.new(3,5, 5,3, kidSpeaches[math.random(#kidSpeaches)])
 			goWest = true
 		end
 	end
 	
 end
+
+kidSpeaches = {}
+kidSpeaches[1] = "I should flunk that math test..."
+kidSpeaches[2] = "Got programming class today. I heard we'll start with something called 'Lua'. Whatever."
+kidSpeaches[3] = "I forgot my homework."
+kidSpeaches[4] = "To skip or not to skip, that is the question..."
+kidSpeaches[5] = "This will be my doom."
+kidSpeaches[6] = "Last day of school!"
+kidSpeaches[7] = "See that sunshine? It's saying: 'Noooo... don't go to school!'"
 
 fileContent = [[
 -- Tutorial 3: Be smart!

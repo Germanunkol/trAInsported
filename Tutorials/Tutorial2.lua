@@ -61,6 +61,7 @@ variable3 = variable2 .. variable1
 local CODE_counter = parseCode([[
 function ai.init()
 	buyTrain(1,1)
+	-- create variable called "counter"
 	counter = 0
 end
 
@@ -74,7 +75,7 @@ end
 ]])
 
 local CODE_functions1 = parseCode([[
-function myFunction(argument1, argument2, argument3, ... )
+function myFunction(argument1, argument2, ... )
 	-- do something with the arguments
 	-- possibly return something
 end
@@ -131,6 +132,22 @@ while x < width do
 end
 ]])
 
+local CODE_whileLoop2 = parseCode([[
+function ai.chooseDirection()
+	-- count the junctions:
+	counter = counter + 1
+	
+	i = 0	-- a new counting variable
+	text = "" -- initialise empty string
+	while i < counter do
+		text = text .. "x" 
+		i = i + 1
+	end
+	-- print the result:
+	print(text)
+end
+]])
+
 local CODE_forLoop = parseCode([[
 -- this will print numbers from 1 to 10:
 width = 10
@@ -180,7 +197,8 @@ myTable = {
 
 -- calculate the average:
 result = (myTable.x + myTable.y)/2
-print(result)	-- will print 15
+print(result)
+-- will print 15, because (10+20)/2 = 15
 ]])
 
 local CODE_tables3 = parseCode([[
@@ -199,26 +217,20 @@ a = myTable.x + 10
 local CODE_tables4 = parseCode([[
 -- If you leave away the names, Lua will automatically
 -- use the numbers [1], [2], [3] and so on:
-myList = {"apples", "are", "red"}
+myList = {"Apples", "Are", "Red"}
 
-print(myList[1]) -- will print 'apples'.
+print(myList[1]) -- will print 'Apples'.
 
--- replace "red" with "green":
-myList[3] = "green"
+-- replace "Red" with "Green":
+myList[3] = "Green"
 
--- will print: "applesaregreen"
+-- will print: "ApplesAreGreen"
 print(myList[1] .. myList[2] .. myList[3])
 
 ]])
 
-local CODE_hintPrint = parseCode([[
--- Try this:
-function ai.chooseDirection()
-	print("Where should I go?")
-end
-]])
-
 local CODE_hintGoEast = parseCode([[
+-- Try this:
 function ai.chooseDirection()
 	print("I want to go East!")
 	return "E"
@@ -412,7 +424,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Let's try it out!\nWe'll write code that will count the junctions the train passes.\nWhen a trAIn reaches a junction, it will always try to call the function 'ai.chooseDirection()' in your AI's code. This means that if your AI file has a function ai.chooseDirection, then you can do something every time the trAIn reaches a junction."
+	tutorialSteps[k].message = "Let's try it out!\nWe'll write code that will count the junctions the train passes.\nWhen a trAIn reaches a junction, the game will always try to call the function 'ai.chooseDirection()' in your AI's code. This means that if your AI file has a function ai.chooseDirection, then you can do something every time a trAIn reaches a junction."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
@@ -423,6 +435,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].event = eventCounter(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The code will fail if you forget the line 'counter = 0', because before you can add 1 to the counter variable, it needs to be initialised. Since ai.init will always run BEFORE ai.chooseDirection, so the code will work."), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
@@ -467,6 +480,23 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "While-Loops are also a handy feature. They let you repeat something until an EXPRESSION is false.\n\nwhile EXPRESSION do\n(your code to repeat)\nend"
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_whileLoop)
+		end
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "Time to try it!\nWe'll modify our ai.chooseDirection. Instead of printing a number at each junction, we'll now print the letter 'x' as many times as we've passed the junction. (The first time we'll print 'x', the second time we'll print 'xx' and so on.)\nTo do that, we'll use the 'counter' variable, just like before. Then, we'll add 'x' to the end of a text as many times as 'counter' is high, and then print the text."
+	tutorialSteps[k].buttons = {}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	k = k + 1
+	
+	tutorialSteps[k] = {}
+	tutorialSteps[k].message = "... and here's the code. The line text = \"\" creates an empty text (also called 'string'), and i=0 starts a new counter, so we can count how many 'x' we've added to the text.\nChange your ai.chooseDirection function, reload, and try it out.\n\nIf it works, cheer, and press 'Next'."
+	tutorialSteps[k].event =  function()
+			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_whileLoop2)
 		end
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -549,7 +579,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = eventChooseEastThenSouth(k)
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("It will be sufficient to tell the trAIn to go East the first time and otherwise go South, because, when it's coming from the South and you tell it to go South, it will automatically default to North (because it can't go South)..."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("It will be sufficient to tell the trAIn to go East the first time and otherwise go South, because, when it's coming from the South and you tell it to go South, it will automatically default to North (because it can't go South)...\n\nThere's more than one solution to this. But be careful: Everything you do after a 'return' statement won't get executed, because when the game reaches the 'return', it will end the function."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Hint!", event = function()
 		if cBox then codeBox.remove(cBox) end
 		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_hintGoEastThenSouth)
@@ -634,7 +664,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You've completed the second tutorial, well done!\nClick 'More Ideas' for some ideas of what you can try on your own before going to the next tutorial.\n\nWith this tutorial, we've covered most of the dry theory - the next tutorials will be more practical."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go East, then North, then South, then East again and so on. To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time the game calls ai.chooseDirection. Then return \"E\", \"N\" or \"S\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go East, then North, then South, then East again and so on (East, North, South, East, North, South, East ...).\n To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time the game calls ai.chooseDirection. Then return \"E\", \"N\" or \"S\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
@@ -649,14 +679,14 @@ end
 
 
 function eventCounter(k)
-	local count = 0
 	return function()
+			local count = 0
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_counter)
 			tutorial.consoleEvent = function( str )
 					
 					if str:sub(1, 13) == "[TutorialAI2]" then
 						count = count + 1
-						if count >= 2 then
+						if count == 2 then
 							tutorial.consoleEvent = nil
 							if currentStep == k then
 								nextTutorialStep()

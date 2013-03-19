@@ -46,9 +46,6 @@ end
 table.sort(modes, sortResolutions )   -- sort from smallest to largest
 
 
-
-
-
 function randomMatch()
 	
 	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then

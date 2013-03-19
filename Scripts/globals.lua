@@ -4,7 +4,7 @@
 ----------------------------------
 
 -- General:
-VERSION = "1"
+VERSION = "2"
 CONFIG_FILE = "trAInsported.conf"
 DEFAULT_RES_X = 1024
 DEFAULT_RES_Y = 600

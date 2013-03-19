@@ -125,9 +125,14 @@ function runMap(restart)
 		
 		math.randomseed(mapSeed)
 		
-		local maxPassengers = math.ceil(curMap.width*curMap.height/3)
+		if CURRENT_REGION == "Urban" then
+			maxPassengers = maxPassengers*2
+		end
+		if challengeEvents.mapRenderingDoneCallback then
+			challengeEvents.mapRenderingDoneCallback()
+		end
 		
-		print("INITIALISING PASSSENGERS", maxPassengers)
+		local maxPassengers = math.ceil(curMap.width*curMap.height/3)
 		passenger.init ( maxPassengers )		-- start generating random passengers, set the maximum number of them.
 		
 		-- If there's a tutorial callback registered by the current map, then start that now!
@@ -138,15 +143,6 @@ function runMap(restart)
 				tutorial.restartEvent()
 			end
 		end
-		
-		
-		if CURRENT_REGION == "Urban" then
-			maxPassengers = maxPassengers*2
-		end
-		if challengeEvents.mapRenderingDoneCallback then
-			challengeEvents.mapRenderingDoneCallback()
-		end
-		
 		
 		ai.init()
 		 
@@ -1492,12 +1488,10 @@ function map.handleEvents(dt)
 			end
 			
 			if numPassengersDroppedOff >= MAX_NUM_PASSENGERS and GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-				print("ENDING: REASON 1", numPassengersDroppedOff, MAX_NUM_PASSENGERS)
 				map.endRound()
 			end
 		
 			if (curMap.time >= ROUND_TIME and GAME_TYPE == GAME_TYPE_TIME) or CL_ROUND_TIME and (curMap.time >= CL_ROUND_TIME) then
-				print("ENDING: REASON 2")
 				map.endRound()
 			end
 			
@@ -1516,9 +1510,7 @@ function map.endRound()
 	if tutorial and tutorial.endRound then
 		tutorial.endRound()
 	end
-	
-	print("ENDED MAP:\n", debug.traceback())
-	
+		
 	challenges.removeMessage()
 	roundEnded = true
 	stats.print()

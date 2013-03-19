@@ -517,8 +517,12 @@ end
 --		SETTINGS MENU:
 --------------------------------------------------------------
 
+local lastX, lastY
+
 function selectResolution(res)
 
+	lastX, lastY = love.graphics.getWidth(), love.graphics.getHeight()
+	
 	-- attempt to change screen resolution:
 	success = love.graphics.setMode( res.width, res.height, false, true )
 	
@@ -526,12 +530,20 @@ function selectResolution(res)
 		print("Failed to set resolution!")
 		statusMsg.new("Failed to set resolution!", true)
 	else
-	
-		configFile.setValue("resolution_x", res.width)
-		configFile.setValue("resolution_y", res.height)
-		
 		menu.settings() -- re-initialise the menu.
+		msgBox:new(love.graphics.getWidth()/2-210, love.graphics.getHeight()/2-100, "Keep this new resolution?", {name="Yes",event=acceptResolution, args=nil},{name="No",event=resetResolution, args=nil})
 	end
+end
+
+function acceptResolution()
+	configFile.setValue("resolution_x", love.graphics.getWidth())
+	configFile.setValue("resolution_y", love.graphics.getHeight())
+	menu.settings() -- re-initialise the menu.
+end
+
+function resetResolution()
+	success = love.graphics.setMode( lastX, lastY, false, true )
+	menu.settings() -- re-initialise the menu.
 end
 
 function toggleOptionClouds(enable)

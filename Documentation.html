@@ -76,7 +76,9 @@ The second part of this document lists functions that you can call in your code,
 <li>train.name (the name of the train - string)</li>
 <li>train.x (x-position of the tile the train is on - number)</li>
 <li>train.y (y-position of the tile the train is on - number)</li>
-<li>train.passenger (table representing passenger who's currently on the train, if any - holds the fields name, destX and destY. See ai.foundPassengers for more details.)</li>
+<li>train.dir (the direction the train is going in - "N", "S", "E" or "W")</li>
+<li>train.passenger (table representing passenger who's currently on the train, if any - holds the passengers name, destX and destY. See ai.foundPassengers for more details.)</li>
+<li>(<strong>NOTE:</strong> The trains' .x and .y fields are the coordinates of the tile it's coming from. So in this function, there's also a .nextX and .nextY field to describe the tile of the junction the train is moving to. Not all functions that get a train have these fields, usually just .x and .y do the job.)</li>
 </ul></li>
 <li>possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indieces are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.</li>
 </ul>
@@ -169,7 +171,7 @@ The second part of this document lists functions that you can call in your code,
 
 <h3>function ai.foundPassengers(train, passengers)</h3>
 
-<p>This function is called when a train arrives at a position where passengers are waiting to be picked up. If one of the passengers in the list is returned, then this passenger is picked up (but only if the train does not have a passenger at the moment). If you want to pick up a passenger but you're already trainsporting another passenger, you can drop of the current passenger using the function 'dropPassenger'. <br />
+<p>This function is called when a train arrives at a position where passengers are waiting to be picked up. If one of the passengers in the list is returned, then this passenger is picked up (but only if the train does not have a passenger at the moment). If you want to pick up a passenger but you're already trainsporting another passenger, you can drop the current passenger using the function 'dropPassenger'. <br />
 <strong>Passed Arguments:</strong></p>
 
 <ul>
@@ -254,15 +256,16 @@ The second part of this document lists functions that you can call in your code,
     end
 </code></pre>
 
-<h3>function ai.newPassenger(name, x, y, destX, destY)</h3>
+<h3>function ai.newPassenger(name, x, y, destX, destY, vipTime)</h3>
 
 <p>Will be called whenever a new passenger spawns on the map, or if a passenger has been dropped off at a place that was not his destination. <br />
 <strong>Passed Arguments:</strong></p>
 
 <ul>
-<li>name: name of the passenger. If the passenger is a VIP, then "[VIP]" is appended to his name.</li>
-<li>x, y: the x and y positions of the tile on which the passenger is standing.</li>
-<li>destX, destY: the x and y position of the tile to which the passenger would like to be transported. As soon as you drop him/her of at this position, you will get paid.</li>
+<li>name: Name of the passenger. If the passenger is a VIP, then "[VIP]" is appended to his name.</li>
+<li>x, y: The x and y positions of the tile on which the passenger is standing.</li>
+<li>destX, destY: The x and y position of the tile to which the passenger would like to be transported. As soon as you drop him/her of at this position, you will get paid.</li>
+<li>vipTime: If the passenger is a VIP, then this is the time in seconds until he stops being a vip. Each VIP has a vipTime that's dependant on the distance they want to travel. <strong>Careful</strong>, if the passenger is not a VIP then this value will be nil! So always check: "if vipTime then ..." before you do anything with it. If you want to work with the vipTime, os.time() migth be a good function to check out - this way you can get the time passed between two times.</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -321,10 +324,49 @@ Note: This function is NOT called when one of your own trains takes a passenger 
     end
 </code></pre>
 
+<h3>function ai.mapEvent(...)</h3>
+
+<p>Some challenge-matches need more events than listed above, to notify you if something has happened. <br />
+These challenge maps will call this function. This way, a user-created map can tell you, for example, when the time's almost up, or when your train has arrived at a certain, special rail-piece. <br />
+The description of the map should always make sure you know what arguments the map creator will pass to you. <br />
+<strong>Passed Arguments:</strong></p>
+
+<ul>
+<li>any number of arguments which the creator of the map has specified. Check the map description to see what arguments to expect!</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<ul>
+<li>nothing</li>
+</ul>
+
 <h2>Available Functions</h2>
 
 <p>You can define your own functions inside your code. <br />
 This is a list of functions that are already specified and which you can call at any time. Be careful not to overuse them - they all take some time to compute and your code will be aborted if it takes too long!</p>
+
+<h3>getNumberOfLines()</h3>
+
+<p>Every one of your events (ai.init, ai.chooseDirection etc) gets aborted after a certain number of lua line executions. A line often - but not always - corresponds to a line of code. This function lets you see how many executions you have left before the game will abort your function. <br />
+An important note: Calling game functions (like "print") will also use up lines. "print()", for example, uses up quite a lot of lines. <br />
+Also, ai.init gets to use a lot more lines than the other functions. Try to do heavy calculations in ai.init()!  </p>
+
+<p><strong>Returns:</strong></p>
+
+<ul>
+<li>number of lines already used</li>
+<li>total number of lines you can use in this function</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>    -- use this to see how many lines of code you can execute in ai.chooseDirection():
+    function ai.chooseDirection(train, directions)
+        print(getNumberOfLines())
+        -- the rest of your code.
+    end
+</code></pre>
 
 <h3>print(...)</h3>
 
@@ -332,7 +374,7 @@ This is a list of functions that are already specified and which you can call at
 <strong>Arguments:</strong></p>
 
 <ul>
-<li>... List of objects to print</li>
+<li>... Comma-seperated list of objects to print</li>
 </ul>
 
 <p><strong>Returns:</strong></p>
@@ -343,7 +385,7 @@ This is a list of functions that are already specified and which you can call at
 
 <p><strong>Example:</strong></p>
 
-<pre><code>    print("Sheldon likes trains!")
+<pre><code>    print("Sheldon likes trains!", 1, tbl[1])
 </code></pre>
 
 <h3>clearConsole()</h3>
@@ -475,7 +517,8 @@ This is a list of functions that are already specified and which you can call at
 <h3>table, math, string functions</h3>
 
 <p>You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.
-Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) and the string functions (string.sub, string.find etc).</p>
+Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) and the string functions (string.sub, string.find etc).
+There is a few exceptions, but most functions in these libraries are available.</p>
 
 <h3>dropPassenger(train)</h3>
 
@@ -524,6 +567,38 @@ Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) a
 
 <ul>
 <li>none</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<ul>
+<li>The amount of credits the player currently has at his or her disposal.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>    myMoney = getMoney()
+    if myMoney &gt; 10 then
+        print("I'm rich!")
+    else
+        print("I'm not so rich...")
+    end
+</code></pre>
+
+<h3>require(filename), dofile(filename), loadfile(filename)</h3>
+
+<p>These functions are used to add additional files to your code. There is a few things to consider:
+- Paths given here are <em>relative</em> to the main file of your AI.
+- Best practice is to put all included files into a subfolder of the AI folder. This way, the subfiles will not be handled as individual AIs by the game.
+- When uploading, you need to make a .zip file out of all the files the AI uses. Make sure the main AI is <em>at the root</em> of this .zip file. To check if this is the case: Open your created .zip file in any archive manager and check if the main .lua file is right there. If it is, you're fine, if not (i.e. you have to go into a subfolder inside the archive to find it) then you need to change that.
+- Your uploaded .zip file must not be larger than the file limit given by the website.
+- Require is just an interface to dofile for security reasons. It can be used to include files, but don't expect it to be as complex as a proper require call is.
+Check the online lua documentation for more details on the various functions.</p>
+
+<p><strong>Arguments:</strong></p>
+
+<ul>
+<li>The file to load or run. See </li>
 </ul>
 
 <p><strong>Returns:</strong></p>

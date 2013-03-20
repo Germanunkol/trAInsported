@@ -544,11 +544,17 @@ end
 
 function ai.createNewTutAI( fileName, fileContent)
 	ai.backupTutorialAI( fileName )
+	print("Attempt to create tutorial file:", fileName)
+	print("Path:", AI_DIRECTORY .. fileName)
 	file = io.open( AI_DIRECTORY .. fileName, "w")
+	print("File result:", file)
 	if not file then
-		file = io.open( AI_DIRECTORY .. fileName, "w")
+		print("Path2:", "AI/" .. fileName)
+		file = io.open( "AI/" .. fileName, "w")
 	end
+	print("File result2:", file)
 	if file then
+		print("Writing to tut file:", fileContent:sub(1, 20) .. "...")
 		file:write(fileContent)
 		file:close()
 	end

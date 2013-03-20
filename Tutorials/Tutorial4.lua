@@ -149,7 +149,7 @@ function tutorial.start()
 	
 	aiFileName = "TutorialAI4.lua"
 	
-	ai.backupTutorialAI(aiFileName)
+	--ai.backupTutorialAI(aiFileName)
 	ai.createNewTutAI(aiFileName, fileContent)
 
 	stats.start( 1 )

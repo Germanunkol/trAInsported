@@ -85,14 +85,17 @@ function challenges.execute(data)
 	challenges.resetEvents()	-- just in case...
 
 	if not map.generating() and not map.rendering() then
-		print("Looking for: ","/Maps/" .. fileName)
+		print("Looking for: ","Maps/" .. fileName)
 		ok, challengeData = pcall(love.filesystem.load, "Maps/" .. fileName)
 		if not ok then
-			print("Error in challenge: Couldn't find/execute map. Fallback: Looking for file in internal path...", challengeData)
+			print("Problem in challenge: Couldn't find/execute map. Error:", challengeData)
+			print("Fallback: Looking for file in internal path...")
 			ok, challengeData = pcall(love.filesystem.load, "Challenges/" .. fileName)
 			if not ok then
 				print("Error in challenge: Couldn't execute map:", challengeData)
 				return
+			else
+				print("Success: Map found in Challenges/ subfolder!")
 			end
 		end
 		

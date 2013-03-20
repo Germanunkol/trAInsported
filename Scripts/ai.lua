@@ -138,19 +138,22 @@ end
 function ai.new(scriptName)
 	--local ok, chunk = pcall(love.filesystem.read, scriptName
 	print("scriptName", scriptName)
-	fh = io.open( scriptName,"r")
-	if not fh then
-		scriptName = scriptName:gsub(AI_DIRECTORY, "")
-		scriptName = love.filesystem.getWorkingDirectory() .. "/AI/" .. scriptName
-		print("scriptName 2", scriptName)
-		fh = io.open( scriptName,"r")
-	end
-	
 	local ok, chunk = false, false
+	fh = io.open( scriptName,"r")
 	if fh and fh.read then
 		ok, chunk = pcall(fh.read, fh, "*all" )
+		
+		if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!")
+			console.add("Binary bytecode prohibited. Open source ftw!", {r=255,g=50,b=50})
+			return
+		end
+	else
+		scriptName = scriptName:gsub(AI_DIRECTORY, "")
+		scriptName = "AI/" .. scriptName
+		print("scriptName 2", scriptName)
+		ok, chunk = pcall(love.filesystem.read, scriptName)
 	end
-
+	
 	if not ok or not chunk then
 		if chunk and type(chunk) == "string" then
 			error("Could not open file: " .. chunk)
@@ -161,10 +164,7 @@ function ai.new(scriptName)
 		return
 	end
 	
-	if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!")
-		console.add("Binary bytecode prohibited. Open source ftw!", {r=255,g=50,b=50})
-		return
-	end
+	
 	
 	local aiID = 0
 	

@@ -261,10 +261,10 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-		local f = io.open("log.txt", "w")
+		--[[local f = io.open("log.txt", "w")
 		f:write("")
 		f:close()
-	
+		]]--
 	
 		newMapStarting = true
 		mapRenderPercent = nil

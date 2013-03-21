@@ -220,6 +220,8 @@ if DEDICATED then
 	end
 	
 	
+	local countSeconds = 0
+	
 	-------------------------------
 	-- runs every frame:
 	function love.update()
@@ -229,8 +231,11 @@ if DEDICATED then
 			map.generate()
 		end
 		dt = love.timer.getDelta()
-		if math.random(10) == 1 then
+		
+		countSeconds = countSeconds + dt
+		if countSeconds >= 10 then
 			print("time:", dt, love.timer.getFPS())
+			countSeconds = countSeconds - 10
 		end
 		
 		if not roundEnded and curMap then

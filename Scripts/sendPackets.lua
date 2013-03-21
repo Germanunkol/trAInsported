@@ -12,9 +12,10 @@ end
 
 function sendPackets.add(packetID, text, time)
 	sendPacketsList[packetID] = {ID = packetID, time=time, event = text}
-	local f = io.open("log.txt", "a")
+	--[[local f = io.open("log.txt", "a")
 	f:write(packetID .. " " .. time .. " " .. text .. "\n")
 	f:close()
+	]]--
 end
 
 function sendPackets.getPacketNum()

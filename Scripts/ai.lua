@@ -15,7 +15,7 @@ local sandbox = require("Scripts/sandbox")
 
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 50000
-local MAX_LINES_EXECUTING = 10000
+local MAX_LINES_EXECUTING = 8000
 
 local coLoad = nil
 linesUsed = 0
@@ -102,16 +102,12 @@ end
 	
 local socket = require("socket")
 function runAiFunctionCoroutine(f, ... )
---	f = setfenv(f, sandbox)
-	local t = socket.gettime()
+	--local t = socket.gettime()
 	debug.sethook(newLineCountHook(MAX_LINES_EXECUTING), "l")
---	local ok, msg = pcall(f, ...)
 
-	--local ok, msg = pcall(f, ...)
 	args = {...}
 	local ok, msg = xpcall(function() return f( unpack(args) ) end, traceback)
 	if not ok then
-		--print("\tError found in your function!", msg)
 		local shorterMessage = ""
 		local found = false
 		console.add("Error occured when calling function: " .. msg, {r=255,g=50,b=50})
@@ -132,9 +128,7 @@ function runAiFunctionCoroutine(f, ... )
 		coroutine.yield()
 	end
 	debug.sethook()
-	print("Took: (ms)", (socket.gettime() - t)*1000)
-		 -- throw up to next level
-	-- print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_EXECUTING)
+	--print("Took: (ms)", (socket.gettime() - t)*1000)
 	return msg
 end
 
@@ -227,7 +221,6 @@ function ai.init()
 		--the second coroutine loads the ai.init() function in the user's AI script:
 		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name, aiList[aiID].scriptName)
 		if aiList[aiID].init then
-			print("ai.init():", aiID)
 			local crInit = coroutine.create(runAiFunctionCoroutine)
 			ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
 			if not ok then print("NEW ERROR:", msg) end
@@ -269,7 +262,6 @@ function ai.chooseDirection(train, possibleDirs)
 			if tutorial and tutorial.chooseDirectionEvent then
 				tutorial.chooseDirectionEvent()
 			end
-			print("ai.chooseDirection():", aiID)
 			
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
@@ -306,7 +298,6 @@ function ai.newTrain(train)
 	if aiList[train.aiID] then
 		if aiList[train.aiID].newTrain then
 			
-			print("ai.newTrain():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
@@ -328,7 +319,6 @@ function ai.blocked(train, possibleDirs, lastDir)
 	local result = nil
 	if aiList[train.aiID] then
 		if aiList[train.aiID].blocked then
-			print("ai.blocked():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir, nextX=train.nextX, nextY=train.nextY}		-- don't give the original data to the ai!
@@ -358,7 +348,6 @@ function ai.newPassenger(p)
 		
 		if aiList[aiID].newPassenger then		-- if the function has been defined by the player
 		
-			print("ai.newPassenger():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, p.name, p.tileX, p.tileY, p.destX, p.destY, p.vipTime)
 			if not ok or coroutine.status(cr) ~= "dead" then
@@ -374,7 +363,6 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 	local result = nil
 	if aiList[train.aiID] then
 		if aiList[train.aiID].foundPassengers then
-			print("ai.foundPassengers():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
@@ -410,7 +398,6 @@ function ai.passengerBoarded(train, passenger)		-- called when another player's 
 	for i = 1, #aiList do
 		if i ~= train.aiID and aiList[i] then
 			if aiList[i].passengerBoarded then
-			print("ai.passengerBoarded():", aiID)
 				local cr = coroutine.create(runAiFunctionCoroutine)
 			
 				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
@@ -432,7 +419,6 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 	local result = nil
 	if aiList[train.aiID] then
 		if aiList[train.aiID].foundDestination then
-			print("ai.foundDestination():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
@@ -453,7 +439,6 @@ function ai.mapEvent(aiID, ... )		-- called when the map script wants to.
 	local result = nil
 	if aiList[aiID] then
 		if aiList[aiID].mapEvent then
-			print("ai.mapEvent():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			args = {...}
@@ -470,7 +455,6 @@ function ai.enoughMoney(aiID, cash)
 	local result = nil
 	if aiList[aiID] then
 		if aiList[aiID].enoughMoney then
-			print("ai.enoughMoney():", aiID)
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, cash)

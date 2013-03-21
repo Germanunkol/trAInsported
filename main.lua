@@ -326,6 +326,7 @@ if DEDICATED then
 			passenger.showAll(dt*timeFactor)
 		end
 		
+		--limit FPS: 
 		if dt < 1/15 then
 			love.timer.sleep(1/15 - dt)
 		end
@@ -334,7 +335,7 @@ if DEDICATED then
 	
 	console = {}
 	function console.add(text, color)
-		-- print("CONSOLE:", text)
+		-- empty function...
 	end
 		
 else
@@ -669,6 +670,7 @@ else
 			end
 		end
 	
+		--limit FPS: 
 		if dt < 1/30 then
 			love.timer.sleep(1/30 - dt)
 		end

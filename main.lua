@@ -233,9 +233,9 @@ if DEDICATED then
 		dt = love.timer.getDelta()
 		
 		countSeconds = countSeconds + dt
-		if countSeconds >= 10 then
+		if countSeconds >= 1 then
 			print("time:", dt, love.timer.getFPS())
-			countSeconds = countSeconds - 10
+			countSeconds = countSeconds - 1
 		end
 		
 		if not roundEnded and curMap then
@@ -325,6 +325,11 @@ if DEDICATED then
 			map.handleEvents(dt)
 			passenger.showAll(dt*timeFactor)
 		end
+		
+		if dt < 1/15 then
+			love.timer.sleep(1/15 - dt)
+		end
+		
 	end
 	
 	console = {}
@@ -664,6 +669,10 @@ else
 			end
 		end
 	
+		if dt < 1/30 then
+			love.timer.sleep(1/30 - dt)
+		end
+		
 	end
 
 	-------------------------------

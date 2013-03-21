@@ -100,8 +100,10 @@ local function safelyLoadAI(chunk, scriptName, sb)
 end
 
 	
+local socket = require("socket")
 function runAiFunctionCoroutine(f, ... )
 --	f = setfenv(f, sandbox)
+	local t = socket.gettime()
 	debug.sethook(newLineCountHook(MAX_LINES_EXECUTING), "l")
 --	local ok, msg = pcall(f, ...)
 
@@ -130,6 +132,7 @@ function runAiFunctionCoroutine(f, ... )
 		coroutine.yield()
 	end
 	debug.sethook()
+	print("Took: (ms)", (socket.gettime() - t)*1000)
 		 -- throw up to next level
 	-- print("\t\tSuccess! Code lines: " .. linesUsed .. " of " .. MAX_LINES_EXECUTING)
 	return msg

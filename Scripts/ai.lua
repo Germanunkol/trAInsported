@@ -15,7 +15,7 @@ local sandbox = require("Scripts/sandbox")
 
 -- maximum times that the script may run (in seconds)
 local MAX_LINES_LOADING = 50000
-local MAX_LINES_EXECUTING = 20000
+local MAX_LINES_EXECUTING = 10000
 
 local coLoad = nil
 linesUsed = 0

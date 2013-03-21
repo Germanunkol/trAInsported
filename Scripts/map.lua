@@ -261,6 +261,13 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
+		print("Log file:", love.filesystem.getSaveDirectory() .. "/log.txt")
+		f = love.filesystem.newFile("log.txt")
+		f:open("w")
+		f:write("")
+		f:close()
+	
+	
 		newMapStarting = true
 		mapRenderPercent = nil
 		mapGeneratePercent = nil

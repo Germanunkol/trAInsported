@@ -229,6 +229,9 @@ if DEDICATED then
 			map.generate()
 		end
 		dt = love.timer.getDelta()
+		if math.random(10) == 1 then
+			print("time:", dt, love.timer.getFPS())
+		end
 		
 		if not roundEnded and curMap then
 			train.moveAll(dt*timeFactor)
@@ -713,7 +716,7 @@ else
 		if love.keyboard.isDown(" ") then
 			love.graphics.setFont(FONT_CONSOLE)
 			love.graphics.setColor(255,255,255,255)
-			love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), love.graphics.getWidth()-150, 5)
+			love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), love.graphics.getWidth()-150, 5)
 			love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
 			love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
 			love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)

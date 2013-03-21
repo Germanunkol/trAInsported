@@ -20,20 +20,25 @@ end
 ]]--
 
 local function safeprint(aiID)
-	return function (...)
-		str = "[" .. ai.getName(aiID) .. "]"
-		arg = { ... }
-		for k, v in ipairs(arg) do
-			if not v then print("trying to print nil value!")
-			else
-				str = str .. "\t".. tostring(v)
+	if not DEDICATED then
+		return function (...)
+			str = "[" .. ai.getName(aiID) .. "]"
+			arg = { ... }
+			for k, v in ipairs(arg) do
+				if not v then print("trying to print nil value!")
+				else
+					str = str .. "\t".. tostring(v)
+				end
+			end
+			if aiID == 1 then console.add(str, PLAYERCOLOUR1_CONSOLE)
+			elseif aiID == 2 then console.add(str, PLAYERCOLOUR2_CONSOLE)
+			elseif aiID == 3 then console.add(str, PLAYERCOLOUR3_CONSOLE)
+			elseif aiID == 4 then console.add(str, PLAYERCOLOUR4_CONSOLE)
+			else console.add(str)
 			end
 		end
-		if aiID == 1 then console.add(str, PLAYERCOLOUR1_CONSOLE)
-		elseif aiID == 2 then console.add(str, PLAYERCOLOUR2_CONSOLE)
-		elseif aiID == 3 then console.add(str, PLAYERCOLOUR3_CONSOLE)
-		elseif aiID == 4 then console.add(str, PLAYERCOLOUR4_CONSOLE)
-		else console.add(str)
+	else
+		return function (...)
 		end
 	end
 end

@@ -12,8 +12,7 @@ end
 
 function sendPackets.add(packetID, text, time)
 	sendPacketsList[packetID] = {ID = packetID, time=time, event = text}
-	f = love.filesystem.newFile("log.txt")
-	f:open("a")
+	local f = io.open("log.txt", "a")
 	f:write(packetID .. " " .. time .. " " .. text .. "\n")
 	f:close()
 end

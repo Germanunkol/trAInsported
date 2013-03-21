@@ -577,7 +577,6 @@ if not NO_TREES then
 		end
 	end
 end
-
 thisThread:set("groundData", ground)
 thisThread:set("shadowData", shadows)
 thisThread:set("objectData", objects)

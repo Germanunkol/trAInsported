@@ -599,12 +599,14 @@ else
 					err = mapGenerateThread:get("error")
 					if err then
 						print("Error in thread", err)
+						statusMsg.new("Something went wrong in a thread while generating the map. Sorry about that, please restart the game and try again.", true)
 					end
 					curMap = map.generate()
 				elseif map.rendering() then
 					err = mapRenderThread:get("error")
 					if err then
 						print("Error in thread", err)
+						statusMsg.new("Something went wrong in a thread while rendering the map. Sorry about that, please restart the game and try again.", true)
 					end
 				
 					--if simulation.isRunning() then

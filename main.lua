@@ -197,7 +197,7 @@ if DEDICATED then
 	moveTime = 0
 	timeUntilNextMatch = 0
 	timeUntilMatchEnd = 0
-	timeFactor = 3
+	timeFactor = 2
 
 	-------------------------------
 	-- main function, runs at startup:

@@ -75,10 +75,8 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 				error("sendPacketsList[i].event", sendPacketsList[i].event)
 			end
 			s = "U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n"
-			print(s)
 			if s:find(".U:") then
-			print("ERROR!")
-			error("EXIT")
+				print("ERROR!", s)
 			end
 		end
 		
@@ -167,7 +165,6 @@ while true do
 	
 		if msg:find("U:") then
 			print("PANIC!!", msg)
-			error("Panic!", msg)
 		end
 	
 		for k, cl in pairs(clientList) do

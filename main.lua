@@ -221,6 +221,7 @@ if DEDICATED then
 	
 	
 	local countSeconds = 0
+	local lastServerTimeUpdate = 0
 	
 	-------------------------------
 	-- runs every frame:
@@ -248,11 +249,6 @@ if DEDICATED then
 		
 			if timeUntilMatchEnd > 0 then		--wait until the actual match time is over:
 				timeUntilMatchEnd = timeUntilMatchEnd - dt
-				
-				if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 5 then
-					lastServerTimeUpdate = timeUntilMatchEnd
-					connection.thread:set("time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd)
-				end
 				
 				-- display time until next match:
 				rounded = math.floor(timeUntilMatchEnd*100)/100
@@ -324,6 +320,11 @@ if DEDICATED then
 		if curMap and not roundEnded then
 			map.handleEvents(dt)
 			passenger.showAll(dt*timeFactor)
+		end
+		
+		if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 5 then
+			lastServerTimeUpdate = timeUntilMatchEnd
+			connection.thread:set("time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd)
 		end
 		
 		--limit FPS: 

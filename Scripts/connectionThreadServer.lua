@@ -74,6 +74,12 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 			if type(sendPacketsList[i].event) == "string" and sendPacketsList[i].event:find("U:") then
 				error("sendPacketsList[i].event", sendPacketsList[i].event)
 			end
+			s = "U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n"
+			print(s)
+			if s:find(".U") then
+			print("ERROR!")
+			error("EXIT")
+			end
 		end
 		
 		if serverTime then

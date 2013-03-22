@@ -731,19 +731,20 @@ else
 		if love.keyboard.isDown(" ") then
 			love.graphics.setFont(FONT_CONSOLE)
 			love.graphics.setColor(255,255,255,255)
-			love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), love.graphics.getWidth()-150, 5)
-			love.graphics.print('RAM: ' .. collectgarbage('count'), love.graphics.getWidth()-150,20)
-			love.graphics.print('X: ' .. camX, love.graphics.getWidth()-150,35)
-			love.graphics.print('Y: ' .. camY, love.graphics.getWidth()-150,50)
-			love.graphics.print('Z ' .. camZ, love.graphics.getWidth()-150,65)
-			love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, love.graphics.getWidth()-150,80)
-			love.graphics.print('Trains: ' .. numTrains, love.graphics.getWidth()-150,95)
-			love.graphics.print('x ' .. timeFactor, love.graphics.getWidth()-150,110)
-			if curMap then love.graphics.print('time ' .. curMap.time, love.graphics.getWidth()-150,125) end
+			local y = 160
+			love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 20, y); y = y + 15
+			love.graphics.print('RAM: ' .. collectgarbage('count'), 20,y); y = y + 15
+			love.graphics.print('X: ' .. camX, 20,y); y = y + 15
+			love.graphics.print('Y: ' .. camY, 20,y); y = y + 15
+			love.graphics.print('Z ' .. camZ, 20,y); y = y + 15
+			love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, 20,y); y = y + 15
+			love.graphics.print('Trains: ' .. numTrains, 20,y); y = y + 15
+			love.graphics.print('x ' .. timeFactor, 20,y); y = y + 15
+			if curMap then love.graphics.print('time ' .. curMap.time, 20,y); y = y + 15 end
 			if roundEnded then
-				love.graphics.print('roundEnded: true', love.graphics.getWidth()-150,140)
+				love.graphics.print('roundEnded: true', 20,y); y = y + 15
 			else
-				love.graphics.print('roundEnded: false', love.graphics.getWidth()-150,140)
+				love.graphics.print('roundEnded: false', 20,y)
 			end
 		end
 		

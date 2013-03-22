@@ -2,6 +2,7 @@ local button = {}
 
 STANDARD = 1
 SMALL = 2
+SQUARE = 3
 
 local button_mt = { __index = button }
 
@@ -13,6 +14,9 @@ local buttonOver = nil
 local buttonOff = nil
 
 buttonClickSound = love.audio.newSource("Sound/blip_click.wav", "static")
+
+buttonOffSquare = love.graphics.newImage("Images/ButtonSpeedOff.png")
+buttonOverSquare = love.graphics.newImage("Images/ButtonSpeedOver.png")
 
 function button.getPriority()
 	return buttonLevel
@@ -44,6 +48,8 @@ function button:new(x, y, label, event, eventArgs, priority, size, renderSeperat
 				buttonList[i] = setmetatable({size = STANDARD, x=x, y=y, imageOff=buttonOff, imageOver=buttonOver, event=event, index = i, w=buttonOff:getWidth(), h=buttonOff:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
 			elseif size == SMALL then
 				buttonList[i] = setmetatable({size = SMALL, x=x, y=y, imageOff=buttonOffSmall, imageOver=buttonOverSmall, event=event, index = i, w=buttonOverSmall:getWidth(), h=buttonOverSmall:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
+			elseif size == SQUARE then
+				buttonList[i] = setmetatable({size = SQUARE, x=x, y=y, imageOff=buttonOffSquare, imageOver=buttonOverSquare, event=event, index = i, w=buttonOverSquare:getWidth(), h=buttonOverSquare:getHeight(), l=label, eventArgs=eventArgs, priority=priority, renderSeperate = renderSeperate}, button_mt)
 			end
 			buttonList[i].toolTip = toolTip
 			button.setButtonLevel()
@@ -54,6 +60,10 @@ end
 
 function button:newSmall(x, y, label, event, eventArgs, priority, renderSeperate, toolTip)
 	return button:new(x, y, label, event, eventArgs, priority, SMALL, renderSeperate, toolTip)
+end
+
+function button:newSquare(x, y, label, event, eventArgs, priority, renderSeperate, toolTip)
+	return button:new(x, y, label, event, eventArgs, priority, SQUARE, renderSeperate, toolTip)
 end
 
 function button:remove()

@@ -177,6 +177,10 @@ function runMap(restart)
 	else
 		print("ERROR: NO MAP FOUND!")
 	end
+	
+	if not simulation.isRunning() then
+		menu.createSpeedControl()
+	end
 end
 
 function map.restart()

@@ -141,7 +141,6 @@ if DEDICATED then
 	------------------------------------------
 	-- DEDICATED Server (headless):
 
-	
 	-------------------------------
 	-- HANDLE COMMAND LINE OPTIONS:
 	
@@ -218,7 +217,6 @@ if DEDICATED then
 		
 		AI_DIRECTORY = love.filesystem.getWorkingDirectory() .. "/AI/"
 	end
-	
 	
 	local countSeconds = 0
 	local lastServerTimeUpdate = 0

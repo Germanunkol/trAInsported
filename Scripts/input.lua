@@ -72,6 +72,46 @@ function coordinatesToMap(x, y)
 	return x, y
 end
 
+function speedGameUp()
+	if not simulation.isRunning() then
+		timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
+	end
+	timeFactor = timeFactorList[timeFactorIndex]
+	timeFactorIndexRemember = false
+	if menuButtons.pause then
+		menuButtons.pause.l = "x " .. timeFactor
+	end
+end
+
+function slowGameDown()
+	if not simulation.isRunning() then
+		timeFactorIndex = math.max(timeFactorIndex - 1, 1)
+	end
+	timeFactor = timeFactorList[timeFactorIndex]
+	timeFactorIndexRemember = false
+	if menuButtons.pause then
+		menuButtons.pause.l = "x " .. timeFactor
+	end
+end
+
+function pauseGame()
+	if timeFactorIndex == 1 then	-- unpause
+		if timeFactorIndexRemember then
+			timeFactorIndex = timeFactorIndexRemember
+		end
+		timeFactorIndexRemember = false
+	else
+		if not simulation.isRunning() then
+			timeFactorIndex = 1
+		end
+	end
+	timeFactor = timeFactorList[timeFactorIndex]
+	if menuButtons.pause then
+		menuButtons.pause.l = "x " .. timeFactor
+	end
+end
+
+
 function love.keypressed(key, unicode)
 	--if key == "f12" then
 		--debug.debug()
@@ -83,15 +123,9 @@ function love.keypressed(key, unicode)
 	elseif unicode == 99 then--key == "c" then
 		console.toggle()
 	elseif unicode == 43 then -- key == "+" then
-		if not simulation.isRunning() then
-			timeFactorIndex = math.min(timeFactorIndex + 1, #timeFactorList)
-		end
-		timeFactor = timeFactorList[timeFactorIndex]
+		speedGameUp()
 	elseif unicode == 45 then --key == "-" then
-		if not simulation.isRunning() then
-			timeFactorIndex = math.max(timeFactorIndex - 1, 1)
-		end
-		timeFactor = timeFactorList[timeFactorIndex]
+		slowGameDown()
 	elseif key == "p" then
 		stats.print()
 --	else

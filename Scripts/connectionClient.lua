@@ -86,7 +86,12 @@ function connection.handleConnection()
 	while str do
 		simulation.addUpdate(str)
 		packetNumber = incrementID(packetNumber)
-		
+		print("RECEIVED2:", str)
+		if str:find(".U:") then
+			print("PANIC2!!")
+			error("Oh noes2!")
+			love.event.quit()
+		end
 		-- addUpdate MIGHT have stopped the connection (if version does not match server's version). Make sure to handle this here:
 		if not connectionThread then
 			return

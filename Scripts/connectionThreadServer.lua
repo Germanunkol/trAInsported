@@ -150,6 +150,11 @@ while true do
 	
 		newPacketID = sendPackets.getPacketNum() + 1
 	
+		if msg:find("U:") then
+			print("PANIC!!", msg)
+			error("Panic!", msg)
+		end
+	
 		for k, cl in pairs(clientList) do
 			ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
 			--print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)

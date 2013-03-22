@@ -159,7 +159,7 @@ function simulation.addUpdate(text)
 end
 
 function runUpdate(event, t1, t2)
-	print("Running:",event)
+	--print("Running:",event)
 	if event:find("ROUND_DETAILS:") == 1 then
 		s,e = event:find("ROUND_DETAILS:")
 		local tbl = seperateStrings(event:sub(e+1,#event))
@@ -494,7 +494,7 @@ function simulation.update(dt)
 	--print(simulationMap, simulation.nextPacket, packetList[simulation.nextPacket], #packetList, simulationMap.time) -- packetList[simulation.nextPacket].time, simulationMap.time)
 	while simulationMap and packetList[simulation.nextPacket] and packetList[simulation.nextPacket].time and simulationMap.time >= packetList[simulation.nextPacket].time do
 		--print("running:", simulation.nextPacket, packetList[simulation.nextPacket].event)
-		print("TIME:", packetList[simulation.nextPacket].time, simulationMap.time)
+		--print("TIME:", packetList[simulation.nextPacket].time, simulationMap.time)
 		runUpdate(packetList[simulation.nextPacket].event, packetList[simulation.nextPacket].time, simulationMap.time)
 		
 		--last packet? make sure to run all other remaining packets!! (Otherwise statistics wouldn't be shown.)

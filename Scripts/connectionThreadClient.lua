@@ -78,9 +78,14 @@ while true do
 	end
 	
 	data, msg = client:receive()
-	if not msg then
+	if data and not msg then
 		
-		--print("RECEIVED: " .. data)
+		print("RECEIVED: " .. data)
+		if data:find(".U:") and not data:find("MAP:") == 1 then
+			print("PANIC!!")
+			error("Oh noes!")
+			love.event.quit()
+		end
 	
 		if data:find("MAP:") == 1 then
 			thisThread:set("newMap", data:sub(5,#data))

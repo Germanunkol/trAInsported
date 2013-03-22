@@ -693,7 +693,7 @@ else
 		if mapImage then
 			if simulationMap then
 				simulation.show(dt)
-			else
+			elseif curMap then
 				map.show()
 		
 				if showQuickHelp then quickHelp.show() end

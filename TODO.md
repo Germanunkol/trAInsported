@@ -3,7 +3,7 @@ To do for trAInsported:
 =========================
 
 **Map (Editor)**
-- Tile map
+[x] Tile map
 [x] Random environment pieces
 
 **Sandbox**
@@ -57,13 +57,13 @@ tut 4:
 [x]	clouds
 [x] trees
 - water
-- Urban setting
+[x] Urban setting
 - weather?
 - Seasons change graphics?
-- rails with sidewalks
+[x] rails with sidewalks
 - speed controls
 - don't let passengers stand on the rails.
-- show hotspots
+[x] show hotspots
 
 **Misc**
 [x] Add tipps?
@@ -80,7 +80,8 @@ tut 4:
 [x] Tutorial "tutorial continued" when pressed F1 !
 [x] Tutorial "cursor keys"/"arrow keys"
 [x] Rename "End Match" button in simulation
-- Add switch for rendering clouds
+[x] Add switch for rendering clouds
+- Different statistics for different game modes/map sizes.
 
 **Maybe**
 - buy code lines using in-game cash?
@@ -94,7 +95,8 @@ tut 4:
 - dither full screen
 - scrollbar for console
 - click on AI to focus on train
-- print kostenlos
+- print kostenlos?
+- Expose train positions to users
 
 **Website**
 [x] rank of players?

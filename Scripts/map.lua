@@ -255,16 +255,27 @@ function populateMap()
 end
 ]]--
 
+function file_exists(name)
+	local f=io.open(name,"r")
+	if f~=nil then
+		io.close(f)
+		return true
+	else
+		return false
+	end
+end
+
 local mapGenerateThreadNumber = 0
 local mapRenderThreadNumber = 0
 -- Generates a new map. Any old map is dropped.
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-		--[[local f = io.open("log.txt", "w")
-		f:write("")
-		f:close()
-		]]--
+		if file_exists("log.txt") then
+			local f = io.open("log.txt", "w")
+			f:write("")
+			f:close()
+		end
 	
 		newMapStarting = true
 		mapRenderPercent = nil

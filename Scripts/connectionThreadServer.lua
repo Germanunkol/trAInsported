@@ -76,7 +76,7 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 			end
 			s = "U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n"
 			print(s)
-			if s:find(".U") then
+			if s:find(".U:") then
 			print("ERROR!")
 			error("EXIT")
 			end

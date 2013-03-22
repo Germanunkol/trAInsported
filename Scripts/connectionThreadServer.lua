@@ -65,6 +65,15 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 		for i = 1, #sendPacketsList do
 			--print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
+			if type(sendPacketsList[i].ID) == "string" and sendPacketsList[i].ID:find("U:") then
+				error("sendPacketsList[i].ID", sendPacketsList[i].ID)
+			end
+			if type(sendPacketsList[i].time) == "string" and sendPacketsList[i].time:find("U:") then
+				error("sendPacketsList[i].time", sendPacketsList[i].time)
+			end
+			if type(sendPacketsList[i].event) == "string" and sendPacketsList[i].event:find("U:") then
+				error("sendPacketsList[i].event", sendPacketsList[i].event)
+			end
 		end
 		
 		if serverTime then
@@ -145,7 +154,7 @@ while true do
 	end
 	timeUntilNextMatch = timeUntilNextMatch - dt
 	
-	msg = thisThread:get("packet" .. packetNumber)
+	local msg = thisThread:get("packet" .. packetNumber)
 	if msg then
 	
 		newPacketID = sendPackets.getPacketNum() + 1

@@ -80,11 +80,8 @@ while true do
 	data, msg = client:receive()
 	if data and not msg then
 		
-		print("RECEIVED: " .. data)
 		if data:find(".U:") and not data:find("MAP:") == 1 then
-			print("PANIC!!")
-			error("Oh noes!")
-			love.event.quit()
+			print("RECEIVED: faulty packet")
 		end
 	
 		if data:find("MAP:") == 1 then

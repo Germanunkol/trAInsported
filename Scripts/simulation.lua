@@ -140,7 +140,7 @@ function simulation.addUpdate(text)
 	if ID == nil or shortText == nil or time == nil then
 		menu.init()
 		print("Faulty packet data:", ID, shortText, time, text)
-		statusMsg.new("Error in connection. Received a bad packet. Maybe retry?", true)
+		statusMsg.new("Error in connection. Received a bad packet. Maybe retry next round?", true)
 	end
 	
 	addPacket(ID, shortText, time)

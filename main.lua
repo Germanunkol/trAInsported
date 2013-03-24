@@ -733,18 +733,18 @@ else
 			love.graphics.setColor(255,255,255,255)
 			local y = 160
 			love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 20, y); y = y + 15
-			love.graphics.print('RAM: ' .. collectgarbage('count'), 20,y); y = y + 15
-			love.graphics.print('X: ' .. camX, 20,y); y = y + 15
-			love.graphics.print('Y: ' .. camY, 20,y); y = y + 15
-			love.graphics.print('Z ' .. camZ, 20,y); y = y + 15
-			love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, 20,y); y = y + 15
-			love.graphics.print('Trains: ' .. numTrains, 20,y); y = y + 15
-			love.graphics.print('x ' .. timeFactor, 20,y); y = y + 15
-			if curMap then love.graphics.print('time ' .. curMap.time, 20,y); y = y + 15 end
+			love.graphics.print('RAM: ' .. collectgarbage('count'), 20, y); y = y + 15
+			love.graphics.print('X: ' .. camX, 20, y); y = y + 15
+			love.graphics.print('Y: ' .. camY, 20, y); y = y + 15
+			love.graphics.print('Z ' .. camZ, 20, y); y = y + 15
+			love.graphics.print('Passengers: ' .. MAX_NUM_PASSENGERS, 20, y); y = y + 15
+			love.graphics.print('Trains: ' .. numTrains, 20, y); y = y + 15
+			love.graphics.print('x ' .. timeFactor, 20, y); y = y + 15
+			if curMap then love.graphics.print('time ' .. curMap.time, 20, y); y = y + 15 end
 			if roundEnded then
-				love.graphics.print('roundEnded: true', 20,y); y = y + 15
+				love.graphics.print('roundEnded: true', 20, y); y = y + 15
 			else
-				love.graphics.print('roundEnded: false', 20,y)
+				love.graphics.print('roundEnded: false', 20, y)
 			end
 		end
 		

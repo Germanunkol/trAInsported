@@ -805,7 +805,7 @@ function menu.createSpeedControl()
 	if menuButtons.pause then menuButtons.pause:remove() end
 	if menuButtons.slower then menuButtons.slower:remove() end
 	menuButtons.faster = button:newSquare(love.graphics.getWidth() - 30 - buttonOffSquare:getWidth(), STAT_BOX_HEIGHT + 25, "++", speedGameUp, nil, nil, nil, "Speed game up")
-	menuButtons.pause = button:newSquare(love.graphics.getWidth() - 30 - buttonOffSquare:getWidth()*2, STAT_BOX_HEIGHT + 25, "x " .. timeFactor, pauseGame, nil, nil, nil, "Speed game up")
+	menuButtons.pause = button:newSquare(love.graphics.getWidth() - 30 - buttonOffSquare:getWidth()*2, STAT_BOX_HEIGHT + 25, "x " .. timeFactor, pauseGame, nil, nil, nil, "Pause game")
 	menuButtons.slower = button:newSquare(love.graphics.getWidth() - 30 - buttonOffSquare:getWidth()*3, STAT_BOX_HEIGHT + 25, "--", slowGameDown, eventArgs, priority, renderSeperate, "Slow game down")
 end
 

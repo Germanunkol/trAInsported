@@ -496,11 +496,11 @@ Check the online lua documentation for more details on the various functions.
 
 **Arguments:**
 
-- The file to load or run. See 
+- The file to load or run. See Lua documentation for details.
 
 **Returns:**
 
-- The amount of credits the player currently has at his or her disposal.
+- A chunk of code that you can run, and error codes. See Lua documentation for more details.
 
 **Example:**
 

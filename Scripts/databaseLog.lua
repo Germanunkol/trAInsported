@@ -319,7 +319,9 @@ function log.matchResults()
 						
 						cursor,err = conn:execute("UPDATE ais SET points=points+" .. aiList[i].points .. " WHERE name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "';")
 						if cursor then
-							cursor:close()
+							if type(cursor) == "table" then
+								cursor:close()
+							end
 						end
 					--[[else
 						print("Didn't find " .. aiList[i].name .. " in Database. Attempting to add.")

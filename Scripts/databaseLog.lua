@@ -313,7 +313,14 @@ function log.matchResults()
 					end
 					if result then
 						print("Found " .. aiList[i].name .. " in Database!")
-						exists = true				
+						exists = true
+						
+						
+						
+						cursor,err = conn:execute("UPDATE ais SET points=points+" .. aiList[i].points .. " WHERE name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "';")
+						if cursor then
+							cursor:close()
+						end
 					--[[else
 						print("Didn't find " .. aiList[i].name .. " in Database. Attempting to add.")
 						cursor, err = conn:execute("INSERT INTO ais VALUE('" .. aiList[i].name .. "','" .. aiList[i].owner .. "',0,0,0,'"  .. aiList[i].name .. ".lua', NULL);")
@@ -324,16 +331,17 @@ function log.matchResults()
 							exists = true
 						end]]--
 					end
-					if exists then
+					--[[if exists then
 						if first then
 							first = false
 							querry = querry .. " WHERE (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						else
 							querry = querry .. " OR (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						end
-					end
+					end]]--
 				end				
 				
+				--[[
 				querry = querry .. ";"
 				
 				print("Querry:", querry)
@@ -348,6 +356,7 @@ function log.matchResults()
 				else
 					print("result",cursor)
 				end
+				]]--
 				
 				if winnerID and aiList[winnerID] then
 					querry = "UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[winnerID].name .. "' AND owner LIKE '" .. aiList[winnerID].owner .. "';"
@@ -361,6 +370,7 @@ function log.matchResults()
 						print("result",cursor)
 					end
 				end
+				
 				
 				
 				-- add a table holding the last match:

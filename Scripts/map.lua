@@ -178,8 +178,10 @@ function runMap(restart)
 		print("ERROR: NO MAP FOUND!")
 	end
 	
-	if not simulation.isRunning() then
-		menu.createSpeedControl()
+	if not simulation or not simulation.isRunning() then
+		if menu then
+			menu.createSpeedControl()
+		end
 	end
 end
 

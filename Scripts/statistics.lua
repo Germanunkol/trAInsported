@@ -476,6 +476,24 @@ function statistics.generateStatWindows()
 		end
 	end
 	
+	-- calculate ranking and give points accordingly!
+	lastRank = math.huge
+	for curPoints = 3,0,-1 do
+		cur = 0
+		for i = 1,#aiStats do
+			if not aiStats[i].points then
+				if aiStats[i].pTransported > cur then
+					cur = aiStats[i].pTransported
+				end
+			end
+		end
+		for i = 1,#aiStats do
+			if aiStats[i].pTransported == cur then
+				aiStats[i].points = curPoints
+			end
+		end
+	end	
+	
 	if mostPickedUpID then
 		if mostPickedUp ~= 1 then
 			text = "AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."

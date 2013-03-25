@@ -502,11 +502,3 @@ Check the online lua documentation for more details on the various functions.
 
 - A chunk of code that you can run, and error codes. See Lua documentation for more details.
 
-**Example:**
-
-		myMoney = getMoney()
-		if myMoney > 10 then
-			print("I'm rich!")
-		else
-			print("I'm not so rich...")
-		end

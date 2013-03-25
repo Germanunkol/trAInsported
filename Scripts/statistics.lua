@@ -481,7 +481,7 @@ function statistics.generateStatWindows()
 	for curPoints = 3,0,-1 do
 		cur = 0
 		for i = 1,#aiStats do
-			if not aiStats[i].points then
+			if not aiList[i].points then
 				if aiStats[i].pTransported > cur then
 					cur = aiStats[i].pTransported
 				end
@@ -489,7 +489,7 @@ function statistics.generateStatWindows()
 		end
 		for i = 1,#aiStats do
 			if aiStats[i].pTransported == cur then
-				aiStats[i].points = curPoints
+				aiList[i].points = curPoints
 			end
 		end
 	end	

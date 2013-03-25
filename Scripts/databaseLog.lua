@@ -333,17 +333,17 @@ function log.matchResults()
 							exists = true
 						end]]--
 					end
-					--[[if exists then
+					if exists then
 						if first then
 							first = false
 							querry = querry .. " WHERE (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						else
 							querry = querry .. " OR (name LIKE '" .. aiList[i].name .. "' AND owner LIKE '" .. aiList[i].owner .. "')"
 						end
-					end]]--
+					end
 				end				
 				
-				--[[
+			
 				querry = querry .. ";"
 				
 				print("Querry:", querry)
@@ -358,7 +358,7 @@ function log.matchResults()
 				else
 					print("result",cursor)
 				end
-				]]--
+				
 				
 				if winnerID and aiList[winnerID] then
 					querry = "UPDATE ais SET wins=wins+1 WHERE name LIKE '" .. aiList[winnerID].name .. "' AND owner LIKE '" .. aiList[winnerID].owner .. "';"

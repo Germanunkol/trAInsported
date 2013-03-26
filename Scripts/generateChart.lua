@@ -175,7 +175,7 @@ function writeCoordinateSystemBarGraph(width, height, maxY)
 	for y = paddingTop, height-paddingBottom, stepSize do
 		if (h-(y-paddingTop)) > 0 then
 			s = s .. "\t" .. lineToSVG(paddingLeft, y, width-paddingRight, y, "grey", 1)
-			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, math.floor((h-(y-paddingTop))/h*maxY), "right", nil, "white")
+			s = s .. "\t" .. textToSVG(paddingLeft-4, y+2, 10, math.floor((h-(y-paddingTop))/h*maxY*10)/10, "right", nil, "white")
 		end
 	end
 	

@@ -25,7 +25,7 @@ function sendPackets.add(packetID, text, time)
 
 	if file_exists("log.txt") then
 		local f = io.open("log.txt", "a")
-		f:write("U:" .. newPacketID .. "|" .. msg .. " " .. time .. "\n")
+		f:write("U:" .. newPacketID .. "|" .. text .. " " .. time .. "\n")
 		f:close()
 	end
 end

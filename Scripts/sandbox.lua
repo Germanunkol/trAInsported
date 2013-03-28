@@ -25,7 +25,7 @@ local function safeprint(aiID)
 			str = "[" .. ai.getName(aiID) .. "]"
 			arg = { ... }
 			for k, v in ipairs(arg) do
-				if not v then print("trying to print nil value!")
+				if v == nil then print("trying to print nil value!")
 				else
 					str = str .. "\t".. tostring(v)
 				end
@@ -58,6 +58,29 @@ local function safeDofile(scriptName)
 		--return loadfile(path  .. fileToInclude)
 	end
 end
+
+
+function pack(...)
+	args = {...}
+	return args
+end
+
+function sandboxPcall(...)
+	args = {...}
+	print(unpack(args))
+	resultTable = pack(pcall(unpack(args)))
+	print(resultTable[1], resultTable[2])
+	if resultTable[1] then		-- pcall's first value indicated if call succeeded
+		return unpack(resultTable)
+	else
+		if type(resultTable[2]) == "table" and getmetatable(resultTable[2]) == hookfunctionMetatable then
+			error(resultTable[2].msg, 2)
+		else
+			return unpack(resultTable)	-- just pass along!
+		end
+	end
+end
+
 
 function sandbox.createNew(aiID, scriptName)
 	sb = {}
@@ -129,7 +152,7 @@ function sandbox.createNew(aiID, scriptName)
 	sb.clearConsole = console.flush
 	
 	sb.error = error
-	sb.pcall = pcall
+	sb.pcall = sandboxPcall
 	
 	sb.xpcall = xpcall
 	

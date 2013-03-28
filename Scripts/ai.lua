@@ -23,6 +23,8 @@ linesUsed = 0
 ai_currentMaxLines = 0
 ai_currentLines = 0
 
+hookfunctionMetatable = {}	-- dummy table to compare against.
+
 function newLineCountHook( maxLines )
 	local startTime = love.timer.getTime()
 	local time = 0
@@ -36,7 +38,9 @@ function newLineCountHook( maxLines )
 			linesUsed = linesUsed + 1
 			time = love.timer.getTime()
 			if lines == maxLines then
-				error("Taking too long, stopping. Time taken: " .. time-startTime .. "s.", 2)
+				err = {msg="Taking too long, stopping. Time taken: " .. time-startTime .. "s."}
+				setmetatable(err, hookfunctionMetatable)
+				error(err)
 			end
 			ai_currentLines = lines
 			ai_currentMaxLines = maxLines
@@ -45,6 +49,9 @@ function newLineCountHook( maxLines )
 end
 
 function traceback (err)
+	if type(err) == "table" then
+		err = err.msg
+	end
 	local level = 1
 	local s, e = err:find("%[.-%]")
 	if e then
@@ -472,7 +479,7 @@ function ai.getName(ID)
 	end
 end
 
-function ai.findAvailableAIs()
+function ai.findAvailableAIs(randomize)
 	if CL_DIRECTORY then
 		local fileNames = nil
 		if MYSQL then 
@@ -521,8 +528,12 @@ function ai.findAvailableAIs()
 			end
 		end
 		
-		
-		return randomizeTable(files, 4)
+		if randomize then
+			return randomizeTable(files, 4)
+		else
+			table.sort(files)
+			return files
+		end
 	end
 end
 

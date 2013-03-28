@@ -84,11 +84,12 @@ function connection.handleConnection()
 	
 	str = connectionThread:get("packet" .. packetNumber)
 	while str do
-		simulation.addUpdate(str)
 		packetNumber = incrementID(packetNumber)
 		if str:find(".U:") then
 			print("Error: Received bad packet", str)
 			statusMsg.new("Error in connection. Received a bad packet content. Will automatically retry when current match is over.", true)
+		else	
+			simulation.addUpdate(str)
 		end
 		-- addUpdate MIGHT have stopped the connection (if version does not match server's version). Make sure to handle this here:
 		if not connectionThread then

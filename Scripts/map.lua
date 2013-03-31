@@ -120,10 +120,10 @@ function runMap(restart)
 	--		console.flush()
 		--end
 		if not challenges.isRunning() then
-			MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/10, 1)
+			MAX_NUM_TRAINS = math.floor(math.max(curMap.width*curMap.height/10, 1))
 		end
 		if DEDICATED then
-			MAX_NUM_TRAINS = math.max(curMap.width*curMap.height/20, 1)
+			MAX_NUM_TRAINS = math.floor(math.max(curMap.width*curMap.height/20, 1))
 		end
 		
 		math.randomseed(mapSeed)

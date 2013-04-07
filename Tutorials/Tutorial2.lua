@@ -164,7 +164,7 @@ end
 local CODE_loop3 = parseCode([[
 i = 1
 -- go through the whole list of passengers:
-while i < #passengers do
+while i <= #passengers do
 	-- each passenger has a name, accessed by
 	-- 'passenger[number].name', Find the one named Skywalker.
 	if passengers[i].name == "Skywalker" then

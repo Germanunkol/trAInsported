@@ -110,7 +110,7 @@ if train.ID == 1 then
 -- loop through passengers:
 -- IMPORTANT: #passengers is the length of the list!!
 i = 1
-while i < #passengers do
+while i <= #passengers do
 	...
 	if ... then
 		-- pick up passenger

@@ -174,6 +174,18 @@ function sandbox.createNew(aiID, scriptName)
 	sb.os.clock = os.clock
 	sb.os.difftime = os.difftime
 	sb.os.time = os.time
+	
+	sb.mapTime = function()
+		if curMap then
+			if GAME_TYPE == GAME_TYPE_TIME then
+				return curMap.time, ROUND_TIME
+			else
+				return curMap.time
+			end
+		else
+			return 0, 0
+		end
+	end
 
 	-- scriptName is used to get the path:
 	sb.dofile = function(f)

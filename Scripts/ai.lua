@@ -108,9 +108,9 @@ end
 
 	
 local socket = require("socket")
-function runAiFunctionCoroutine(f, ... )
+function runAiFunctionCoroutine(f, lines, ... )
 	--local t = socket.gettime()
-	debug.sethook(newLineCountHook(MAX_LINES_EXECUTING), "l")
+	debug.sethook(newLineCountHook(lines), "l")
 
 	args = {...}
 	local ok, msg = xpcall(function() return f( unpack(args) ) end, traceback)
@@ -229,7 +229,7 @@ function ai.init()
 		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name, aiList[aiID].scriptName)
 		if aiList[aiID].init then
 			local crInit = coroutine.create(runAiFunctionCoroutine)
-			ok, msg = coroutine.resume(crInit, aiList[aiID].init, copyTable(curMap), stats.getMoney(aiID))
+			ok, msg = coroutine.resume(crInit, aiList[aiID].init, MAX_LINES_LOADING, copyTable(curMap), stats.getMoney(aiID))
 			if not ok then print("NEW ERROR:", msg) end
 			if coroutine.status(crInit) ~= "dead" then
 				crInit = nil
@@ -278,7 +278,7 @@ function ai.chooseDirection(train, possibleDirs)
 			end
 			dirs = copyTable(possibleDirs)
 			
-			ok, result = coroutine.resume(cr, aiList[train.aiID].chooseDirection, tr, dirs)
+			ok, result = coroutine.resume(cr, aiList[train.aiID].chooseDirection, MAX_LINES_EXECUTING, tr, dirs)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".chooseDirection()")
@@ -312,7 +312,7 @@ function ai.newTrain(train)
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
 			
-			ok, result = coroutine.resume(cr, aiList[train.aiID].newTrain, tr)
+			ok, result = coroutine.resume(cr, aiList[train.aiID].newTrain, MAX_LINES_EXECUTING, tr)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.newTrain()", {r = 255,g=50,b=50})
 			end
@@ -334,7 +334,7 @@ function ai.blocked(train, possibleDirs, lastDir)
 			end
 			dirs = copyTable(possibleDirs)
 			
-			ok, result = coroutine.resume(cr, aiList[train.aiID].blocked, tr, dirs, lastDir)
+			ok, result = coroutine.resume(cr, aiList[train.aiID].blocked, MAX_LINES_EXECUTING, tr, dirs, lastDir)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.blocked()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".blocked()")
@@ -356,7 +356,7 @@ function ai.newPassenger(p)
 		if aiList[aiID].newPassenger then		-- if the function has been defined by the player
 		
 			local cr = coroutine.create(runAiFunctionCoroutine)
-			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, p.name, p.tileX, p.tileY, p.destX, p.destY, p.vipTime)
+			ok, result = coroutine.resume(cr, aiList[aiID].newPassenger, MAX_LINES_EXECUTING, p.name, p.tileX, p.tileY, p.destX, p.destY, p.vipTime)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.newPassenger()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".newPassenger()")
@@ -380,7 +380,7 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 			-- don't let the ai change the original list of passengers!
 			local pCopy = copyTable(p)				
 			
-			ok, result = coroutine.resume(cr, aiList[train.aiID].foundPassengers, tr, pCopy)
+			ok, result = coroutine.resume(cr, aiList[train.aiID].foundPassengers, MAX_LINES_EXECUTING, tr, pCopy)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundPassenger()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundPassengers()")
@@ -412,7 +412,7 @@ function ai.passengerBoarded(train, passenger)		-- called when another player's 
 					tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 				end
 			
-				ok, result = coroutine.resume(cr, aiList[i].passengerBoarded, tr, passenger)
+				ok, result = coroutine.resume(cr, aiList[i].passengerBoarded, MAX_LINES_EXECUTING, tr, passenger)
 				if not ok or coroutine.status(cr) ~= "dead" then		
 					console.add(aiList[i].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 					--print("\tCoroutine stopped prematurely: " .. aiList[i].name .. ".foundDestination()")
@@ -433,7 +433,7 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
 			
-			ok, result = coroutine.resume(cr, aiList[train.aiID].foundDestination, tr)
+			ok, result = coroutine.resume(cr, aiList[train.aiID].foundDestination, MAX_LINES_EXECUTING, tr)
 			if not ok or coroutine.status(cr) ~= "dead" then		
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
@@ -449,7 +449,7 @@ function ai.mapEvent(aiID, ... )		-- called when the map script wants to.
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
 			args = {...}
-			ok, result = coroutine.resume(cr, aiList[aiID].mapEvent, unpack(args))
+			ok, result = coroutine.resume(cr, aiList[aiID].mapEvent, MAX_LINES_EXECUTING, unpack(args))
 			if not ok or coroutine.status(cr) ~= "dead" then		
 				console.add(aiList[aiID].name .. ": Stopped function: ai.mapEvent()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
@@ -464,7 +464,7 @@ function ai.enoughMoney(aiID, cash)
 		if aiList[aiID].enoughMoney then
 			local cr = coroutine.create(runAiFunctionCoroutine)
 			
-			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, cash)
+			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, MAX_LINES_EXECUTING, cash)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".enoughMoney()")
@@ -531,7 +531,7 @@ function ai.findAvailableAIs(randomize)
 		if randomize then
 			return randomizeTable(files, 4)
 		else
-			table.sort(files)
+			--table.sort(files)
 			return files
 		end
 	end

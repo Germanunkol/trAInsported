@@ -308,6 +308,29 @@ Also, ai.init gets to use a lot more lines than the other functions. Try to do h
 			print(getNumberOfLines())
 			-- the rest of your code.
 		end
+		
+###mapTime()###
+Get the time in seconds that have passed since the map started. Note - this time is multiplied by the speed multiplyer, so if the game is sped up, this still gives the correct time.
+If you want to know the system time without multiplication then use os.time instead.
+
+**Returns:**
+
+- seconds since round start
+- time when the game ends (Only if the game mode is the "Time" mode! Otherwise it does not return a second value!)
+
+**Example:**
+
+		function ai.init()
+			time, totalTime = mapTime()
+			if totalTime then
+				print("Game type is 'time' - Game will end after " ..  .. " seconds!")
+			end
+		end
+		
+		function ai.chooseDirection()
+			time, totalTime = mapTime()
+			print( totalTime - time .. " seconds left until round ends.")
+		end
 
 ###print(...)###
 Prints the given objects to the ingame-console (make sure it's visible by pressing 'C' in the game!)  

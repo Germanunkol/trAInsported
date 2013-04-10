@@ -486,7 +486,9 @@ function ai.findAvailableAIs(randomize)
 			fileNames = chooseAIfromDB( 2 )
 		end
 		if not fileNames then
-			fileNames = randomizeTable(findAIs(CL_DIRECTORY), 4)
+			fileNames = findAIs(CL_DIRECTORY)
+			fileNames = fixTableIndices(fileNames)
+			fileNames = randomizeTable(fileNames, 4)
 		end
 		return fileNames
 	else
@@ -527,6 +529,8 @@ function ai.findAvailableAIs(randomize)
 				end
 			end
 		end
+		
+		files = fixTableIndices(files)
 		
 		if randomize then
 			return randomizeTable(files, 4)

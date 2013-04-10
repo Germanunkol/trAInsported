@@ -398,6 +398,19 @@ function getScreenshot()
 	screen:encode(fileName)
 end
 
+function fixTableIndices(tbl)
+
+	-- make sure table has no empty slots:
+	newTbl = {}
+	
+	local i = 1
+	for k, p in pairs(tbl) do
+		newTbl[i] = p
+		i = i+1
+	end
+	return newTbl
+end
+
 function randomizeTable(tbl, n)
 	n = n or #tbl
 	print("During 6")

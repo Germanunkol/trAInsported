@@ -129,17 +129,23 @@ function chooseNewAIfromDB_table()
 				
 				
 				toChoose = math.min(4, #row)
+				local firstChosen = false
 				
 				while toChoose > 0 do
-					local chosen = math.random(math.max(probability, 1))
-					local i = #row
 					local found = false
+					local chosen = 1
+					if firstChosen == false then
+						chosen = math.random(math.max(probability, 1))
+					else
+						chosen = math.random(#row)
+					end
+					local i = #row
 					while i > 0 do
 						if row[i] then
-							if chosen <= row[i].probability then
+							if chosen <= row[i].probability or firstChosen == true then
 								found = true
 							end
-							if not row[i].chosen and found and (not row[i-1] or chosen > row[i-1].probability) then
+							if not row[i].chosen and found and (firstChosen == true or (not row[i-1] or chosen > row[i-1].probability)) then
 								row[i].chosen = true
 								toChoose = toChoose - 1
 								break
@@ -158,6 +164,7 @@ function chooseNewAIfromDB_table()
 							i = i + 1
 						end
 					end
+					firstChosen = true
 				end
 				for i = 1,#row do 
 					if row[i].chosen then

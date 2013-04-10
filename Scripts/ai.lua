@@ -483,7 +483,7 @@ function ai.findAvailableAIs(randomize)
 	if CL_DIRECTORY then
 		local fileNames = nil
 		if MYSQL then 
-			fileNames = chooseAIfromDB( 2 )
+			fileNames = chooseAIfromDB( 1 )
 		end
 		if not fileNames then
 			fileNames = findAIs(CL_DIRECTORY)

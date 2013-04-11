@@ -312,6 +312,13 @@ function train:new( aiID, x, y, dir )
 			
 			ai.newTrain(trainList[aiID][i])
 			stats.addTrain(aiID, {ID=i, name=trainList[aiID][i].name})
+			
+			-- do this last!! Make sure everything is initialised!
+			p = passenger.find(trainList[aiID][i].tileX, trainList[aiID][i].tileY)
+			if p then
+				ai.foundPassengers(trainList[aiID][i], p)		-- call the event. This way the ai can choose whether to take the passenger aboard or not.
+			end
+			
 			return trainList[aiID][i]
 		end
 	end

@@ -134,24 +134,32 @@ function chooseNewAIfromDB_table()
 				while toChoose > 0 do
 					local found = false
 					local chosen = 1
+					local i = #row
 					if firstChosen == false then
 						chosen = math.random(math.max(probability, 1))
+						while i > 0 do
+							if row[i] then
+								if chosen <= row[i].probability then
+									found = true
+								end
+								if not row[i].chosen and found and (not row[i-1] or chosen > row[i-1].probability) then
+									row[i].chosen = true
+									toChoose = toChoose - 1
+									break
+								end
+							end
+							i = i - 1
+						end
 					else
 						chosen = math.random(#row)
-					end
-					local i = #row
-					while i > 0 do
-						if row[i] then
-							if chosen <= row[i].probability or firstChosen == true then
-								found = true
-							end
-							if not row[i].chosen and found and (firstChosen == true or (not row[i-1] or chosen > row[i-1].probability)) then
-								row[i].chosen = true
+						while i > 0 do
+							if row[chosen] and not row[chosen].chosen then
+								row[chosen].chosen = true
 								toChoose = toChoose - 1
 								break
 							end
+							i = i - 1
 						end
-						i = i - 1
 					end
 					if i == 0 then		-- none found. Go back through the list and choose the first possible one.
 						i = 1

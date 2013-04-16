@@ -455,6 +455,15 @@ else
 		
 		print("Will look for AIs in:",AI_DIRECTORY)
 		
+		
+		tbl = love.filesystem.enumerate("Languages")
+		for k, file in pairs(tbl) do
+			if not file:find("_") and file:find(".lua") == #file - 4 then
+				print(file)
+				table.insert(LANGUAGES, file:sub(1, #file-5))
+			end
+		end
+		
 		selectLanguage("English") -- fallback! Don't delete, because other languages might not have all strings defined.			
 		lang = configFile.getValue( "language" )
 		if lang then

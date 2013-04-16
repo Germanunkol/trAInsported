@@ -57,8 +57,6 @@ end
 timeFactor = 1
 
 LANGUAGES = {}
-LANGUAGES[1] = "English"
-LANGUAGES[2] = "Deutsch"
 CURRENT_LANGUAGE = "English"
 
 LNG = {}	-- table that holds all (!) the texts for translation.

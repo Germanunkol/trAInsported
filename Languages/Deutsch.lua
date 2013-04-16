@@ -6,7 +6,7 @@
 -------------------------------------------------
 -- Menu:
 -------------------------------------------------
-LNG.menu_live = [["á,é,í,ó,ú ñ]]
+LNG.menu_live = [[Live]]
 LNG.menu_live_tooltip = [[Beobachte die hochgeladenen KIs in online spielen!]]
 LNG.menu_tutorial = [[Anleitung]]
 LNG.menu_tutorial_tooltip = [[Lerne das Spiel und die Programmiersprache]]

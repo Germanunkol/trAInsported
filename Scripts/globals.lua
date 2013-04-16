@@ -4,7 +4,7 @@
 ----------------------------------
 
 -- General:
-VERSION = "2"
+VERSION = "3"
 CONFIG_FILE = "trAInsported.conf"
 DEFAULT_RES_X = 1024
 DEFAULT_RES_Y = 600
@@ -55,6 +55,13 @@ else
 end
 
 timeFactor = 1
+
+LANGUAGES = {}
+LANGUAGES[1] = "English"
+LANGUAGES[2] = "Deutsch"
+CURRENT_LANGUAGE = "English"
+
+LNG = {}	-- table that holds all (!) the texts for translation.
 
 STARTUP_MONEY = 25
 

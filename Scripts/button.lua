@@ -38,6 +38,7 @@ end
 local buttnOff, buttnOver
 
 function button:new(x, y, label, event, eventArgs, priority, size, renderSeperate, toolTip)
+	if not label then error("button label nil!") end
 	priority = priority or 1
 	size = size or STANDARD
 	for i=1,#buttonList+1,1 do

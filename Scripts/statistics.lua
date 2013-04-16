@@ -762,7 +762,7 @@ function statistics.displayStatus()
 			love.graphics.printf(aiStats[i].name, x, displayStatusY + 7, displayStatusBoxWidth, "center")
 			
 			love.graphics.setFont(FONT_STAT_MSGBOX)
-			love.graphics.printf("( by " .. aiStats[i].owner .. " )", x, displayStatusY + 30, displayStatusBoxWidth, "center")
+			love.graphics.printf("( " .. LNG.by .. " " .. aiStats[i].owner .. " )", x, displayStatusY + 30, displayStatusBoxWidth, "center")
 			
 			love.graphics.draw(train.getTrainImage(i), x + 34 , displayStatusY + 55)
 			love.graphics.print(aiStats[i].numTrains, x + 84 , displayStatusY + 65)
@@ -789,18 +789,18 @@ function statistics.displayStatus()
 				elseif simulationMap then
 					t = makeTimeReadable(ROUND_TIME - simulationMap.time)
 				end
-				love.graphics.print("Round ends in", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Round ends in")/2, y+10)
+				love.graphics.print(LNG.round_ends, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(LNG.round_ends)/2, y+10)
 				love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 			else
-				love.graphics.print("Match is over!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Match is over!")/2, y+10)
+				love.graphics.print(LNG.end_of_match, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(LNG.end_of_match)/2, y+10)
 			end
 		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
 			if not roundEnded then
-				t = numPassengersDroppedOff .. " of " .. MAX_NUM_PASSENGERS .. " passengers"
-				love.graphics.print("Transported:", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Transported:")/2, y+10)
+				t = LNG.transported1 .. numPassengersDroppedOff .. LNG.transported2 .. MAX_NUM_PASSENGERS .. LNG.transported3
+				love.graphics.print(LNG.transported, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(LNG.transported)/2, y+10)
 				love.graphics.print(t, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(t)/2, y+30)
 			else
-				love.graphics.print("Match is over!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Match is over!")/2, y+10)
+				love.graphics.print(LNG.end_of_match, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(LNG.end_of_match)/2, y+10)
 			end
 		end
 	end

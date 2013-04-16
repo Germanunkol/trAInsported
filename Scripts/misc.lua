@@ -205,10 +205,10 @@ function makeTimeReadable(time)
 	seconds = time
 	
 	local str = ""
-	if days > 0 then str = str .. days .. " days " end
-	if hours > 0 then str = str .. hours .. " h " end
-	if minutes > 0 then str = str .. minutes .. " mins " end
-	if seconds > 0 then str = str .. math.floor(seconds) .. " secs " end
+	if days > 0 then str = str .. days .. " " .. LNG.days .. " " end
+	if hours > 0 then str = str .. hours .. " " .. LNG.hours .. " "end
+	if minutes > 0 then str = str .. minutes .. " " .. LNG.minutes .. " " end
+	if seconds > 0 then str = str .. math.floor(seconds) .. " " .. LNG.seconds .. " " end
 	return str
 end
 

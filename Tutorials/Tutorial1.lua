@@ -234,7 +234,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Controls"
-	tutorialSteps[k].message = "In this Tutorial, you'll learn about:\n1) Game Controls\n3) Buying trains\n2) Transporting your first passengers" 
+	tutorialSteps[k].message = "In this Tutorial, you'll learn about:\n1) Game Controls\n2) Buying trains\n3) Transporting your first passengers" 
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}

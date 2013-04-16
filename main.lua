@@ -455,6 +455,13 @@ else
 		
 		print("Will look for AIs in:",AI_DIRECTORY)
 		
+		lang = configFile.getValue( "language" )
+		if lang then
+			selectLanguage(lang)
+		else
+			selectLanguage("English")
+		end
+		
 	end
 
 	function finishStartupProcess()
@@ -612,14 +619,14 @@ else
 					err = mapGenerateThread:get("error")
 					if err then
 						print("Error in thread", err)
-						statusMsg.new("Something went wrong in a thread while generating the map. Sorry about that, please restart the game and try again.", true)
+						statusMsg.new(LNG.err_rendering, true)
 					end
 					curMap = map.generate()
 				elseif map.rendering() then
 					err = mapRenderThread:get("error")
 					if err then
 						print("Error in thread", err)
-						statusMsg.new("Something went wrong in a thread while rendering the map. Sorry about that, please restart the game and try again.", true)
+						statusMsg.new(LNG.err_rendering, true)
 					end
 				
 					--if simulation.isRunning() then
@@ -751,7 +758,7 @@ else
 		if simulationMap and fastForward then
 			love.graphics.setFont(FONT_HUGE)
 			love.graphics.setColor(255,255,255,255)
-			love.graphics.print("FAST FORWARD TO CATCH UP WITH SERVER", 0.5*(love.graphics.getWidth()- FONT_HUGE:getWidth("FAST FORWARD TO CATCH UP WITH SERVER")), 0.5*love.graphics.getHeight() -10)
+			love.graphics.print(LNG.fast_forward, 0.5*(love.graphics.getWidth()- FONT_HUGE:getWidth(LNG.fast_forward)), 0.5*love.graphics.getHeight() -10)
 		end
 	end
 	

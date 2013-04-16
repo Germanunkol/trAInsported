@@ -167,7 +167,7 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	menuButtons.buttonRandomMatch = button:new(x, y, LNG.menu_random, randomMatch, nil, nil, nil, nil, LNG.menu_random_tooltip)
 	y = y + 60
-	menuButtons.buttonSettings = button:new(x, y, "Settings", menu.settings, nil, nil, nil, nil, LNG.menu_settings_tooltip)
+	menuButtons.buttonSettings = button:new(x, y, LNG.menu_settings, menu.settings, nil, nil, nil, nil, LNG.menu_settings_tooltip)
 	y = y + 45
 	menuButtons.buttonExit = button:new(x, y, LNG.menu_exit, confirmCloseGame, nil)
 	y = y + 45

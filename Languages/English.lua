@@ -26,13 +26,13 @@ LNG.menu_return_to_main_menu_tooltip = [[Go back to main menu]]
 LNG.menu_choose_ai = [[Choose AIs for Match:]]
 LNG.menu_choose_ai_tooltip = [[Choose this AI for the match?]]
 
-LNG.menu_choose_dimension = [[Width and Height:]]
-LNG.menu_choose_dimension_tooltip1 = [[Select width]]
-LNG.menu_choose_dimension_tooltip2 = [[Select height]]
+LNG.menu_choose_dimensions = [[Width and Height:]]
+LNG.menu_choose_dimensions_tooltip1 = [[Select width]]
+LNG.menu_choose_dimensions_tooltip2 = [[Select height]]
 
 LNG.menu_choose_timemode = [[Time and Mode:]]
 
-LNG_menu_choose_region = [[Region:]]
+LNG.menu_choose_region = [[Region:]]
 
 LNG.menu_start = [[Start]]
 LNG.menu_start_tooltip = [[Start the match with these settings]]

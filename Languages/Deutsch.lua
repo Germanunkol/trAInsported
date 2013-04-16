@@ -98,7 +98,7 @@ LNG.exit_confirm = [[Spiel verlassen?]]
 LNG.confirm_resolution = [[Diese neue Auflösung beibehalten?]]
 LNG.agree = [[Ja]]
 LNG.disagree = [[Nein]]
-
+LNG.cancel = [[Abbrechen]]
 
 -------------------------------------------------
 -- ERRORS:

@@ -50,7 +50,7 @@ function msgBox:new(x, y, msg, ... )
 			local priority = button.getPriority() + 1		-- make sure I'm the most important!
 			for j = 1, #arg, 1 do
 				if arg[j] == "remove" then
-					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, "Cancel", msgBox.remove, msgBoxList[i], priority, nil, true)
+					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, LNG.cancel, msgBox.remove, msgBoxList[i], priority, nil, true)
 				else
 					b = button:new(x + (j-0.5)*(msgBoxBG:getWidth()/#arg) - STND_BUTTON_WIDTH/2 -5, y + msgBoxBG:getHeight() - 60, arg[j].name, msgBoxEvent(msgBoxList[i], arg[j].event), arg[j].args, priority, nil, true)
 				end

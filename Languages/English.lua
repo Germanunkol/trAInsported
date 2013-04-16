@@ -98,7 +98,7 @@ LNG.exit_confirm = [[Sure you want to quit?]]
 LNG.confirm_resolution = [[Keep this new resolution?]]
 LNG.agree = [[Yes]]
 LNG.disagree = [[No]]
-
+LNG.cancel = [[Cancel]]
 
 -------------------------------------------------
 -- ERRORS:

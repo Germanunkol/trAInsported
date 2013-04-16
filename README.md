@@ -50,3 +50,14 @@ The game creates a folder called **trAInsported** in your local home folder. Dep
 - **Mac:** /Users/user/Library/Application Support/LOVE/ 
 - **Windows XP:** C:\Documents and Settings\user\Application Data\LOVE\ or %appdata%\LOVE\
 - **Windows Vista and 7:** C:\Users\user\AppData\Roaming\LOVE or %appdata%\LOVE\
+
+Translations:
+------------------------------
+If you want to translate the Game into your own language, please do the following:
+- Get the source code from github: https://github.com/Germanunkol/trainsported
+- Copy the file English.lua in the Languages/ subfolder of the game. Rename it to the name of your Language.
+- Edit the new file (for example: Deutsch.lua) to contain the correct translations of all the text strings in there.
+- When you save the file and start the game, you should be able to load your new language by going into the settings menu.
+- Copy the four Tutorial .lua Files from the Tutorial/ subfolder of the game into the Language/ folder. Add LANGUAGE_ to the beginning of all four file names, where LANGUAGE is the same as the name of your translation file in this folder. Example: Deutsch.lua Deutsch\_Tutorial1.lua Deutsch\_Tutorial2.lua etc.
+- Send me the files! Either give them to me through gitHub, or send them to me some other way (file upload, or via email).
+- Thanks!

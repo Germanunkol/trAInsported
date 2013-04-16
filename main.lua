@@ -455,11 +455,10 @@ else
 		
 		print("Will look for AIs in:",AI_DIRECTORY)
 		
+		selectLanguage("English") -- fallback! Don't delete, because other languages might not have all strings defined.			
 		lang = configFile.getValue( "language" )
 		if lang then
 			selectLanguage(lang)
-		else
-			selectLanguage("English")
 		end
 		
 	end

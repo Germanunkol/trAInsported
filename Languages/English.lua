@@ -51,6 +51,8 @@ LNG.menu_clouds_off = [[Clouds: Off]]
 LNG.menu_clouds_on_tooltip = [[Click to enable cloud rendering.]]
 LNG.menu_clouds_off_tooltip = [[Click to disable cloud rendering.]]
 LNG.menu_settings_language = [[Language:]]
+LNG.menu_setttings_language_tooltip1 = [[Click to switch game language to]]	-- before lang name
+LNG.menu_setttings_language_tooltip2 = [[]]	-- after lang name
 
 -- Menu errors:
 LNG.menu_err_min_ai = [[Need to choose at least one AI!]]
@@ -84,12 +86,12 @@ LNG.transported1 = [[]]		-- before X
 LNG.transported2 = [[ of ]]		-- between X and Y
 LNG.transported3 = [[ passengers]]		-- after Y
 
-LNG.round_ends = [[Round ends in]]		-- after Y
-LNG.seconds = [[secs]]		-- after Y
-LNG.minutes = [[min]]		-- after Y
-LNG.hours = [[h]]		-- after Y
-LNG.days = [[days]]		-- after Y
-LNG.end_of_match = [[Match is over!]]		-- after Y
+LNG.round_ends = [[Round ends in]]
+LNG.seconds = [[secs]]
+LNG.minutes = [[min]]
+LNG.hours = [[h]]
+LNG.days = [[days]]
+LNG.end_of_match = [[Match is over!]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

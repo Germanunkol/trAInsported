@@ -560,6 +560,7 @@ function selectLanguage(lang)
 	print("Loading language file: Languages/" .. lang .. ".lua")
 	ok, chunk = pcall(love.filesystem.load, "Languages/" .. lang .. ".lua")
 	if ok then
+		setupFonts()	-- reset them all incase the previous language changed them!
 		ok, msg = pcall(chunk)
 		if ok then	
 			CURRENT_LANGUAGE = lang
@@ -630,7 +631,7 @@ function menu.settings()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	for k = 1, #LANGUAGES do
-		menuButtons["option" .. LANGUAGES[k]] = button:newSmall(x, y, LANGUAGES[k], menu.languageChosen, LANGUAGES[k], nil, nil, "Click to switch game language to '".. LANGUAGES[k] .. "'")
+		menuButtons["option" .. LANGUAGES[k]] = button:newSmall(x, y, LANGUAGES[k], menu.languageChosen, LANGUAGES[k], nil, nil, LNG.menu_language_tooltip1 .. " '".. LANGUAGES[k] .. "' " .. LNG.menu_language_tooltip2)
 		y = y + 37
 	end
 end

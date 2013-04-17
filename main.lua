@@ -458,7 +458,7 @@ else
 		
 		tbl = love.filesystem.enumerate("Languages")
 		for k, file in pairs(tbl) do
-			if not file:find("_") and #file - file:find(".lua") == 3 then
+			if not file:find("_") and file:find(".lua") and #file - file:find(".lua") == 3 then
 				print(file, file:find(".lua"), #file - file:find(".lua"))
 				table.insert(LANGUAGES, file:sub(1, #file-4))
 			end

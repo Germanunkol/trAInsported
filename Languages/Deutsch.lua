@@ -1,4 +1,3 @@
-
 -- Language file for trAInsported. Make a copy of this to translate into your own language.
 -- Please don't change the order of the entries in this file.
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 17 )
@@ -51,7 +50,7 @@ LNG.menu_clouds_on = [[Wolken: An]]
 LNG.menu_clouds_off = [[Wolken: Aus]]
 LNG.menu_clouds_on_tooltip = [[Wolken ausschalten.]]
 LNG.menu_clouds_off_tooltip = [[Wolken anschalten.]]
-LNG.menu_settings_language = [[Srache:]]
+LNG.menu_settings_language = [[Sprache:]]
 
 -- Menu errors:
 LNG.menu_err_min_ai = [[Mindestens eine KI benötigt!]]

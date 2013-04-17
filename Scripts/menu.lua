@@ -631,7 +631,7 @@ function menu.settings()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	for k = 1, #LANGUAGES do
-		menuButtons["option" .. LANGUAGES[k]] = button:newSmall(x, y, LANGUAGES[k], menu.languageChosen, LANGUAGES[k], nil, nil, LNG.menu_language_tooltip1 .. " '".. LANGUAGES[k] .. "' " .. LNG.menu_language_tooltip2)
+		menuButtons["option" .. LANGUAGES[k]] = button:newSmall(x, y, LANGUAGES[k], menu.languageChosen, LANGUAGES[k], nil, nil, LNG.menu_settings_language_tooltip1 .. " '".. LANGUAGES[k] .. "' " .. LNG.menu_settings_language_tooltip2)
 		y = y + 37
 	end
 end

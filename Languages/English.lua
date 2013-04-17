@@ -51,8 +51,8 @@ LNG.menu_clouds_off = [[Clouds: Off]]
 LNG.menu_clouds_on_tooltip = [[Click to enable cloud rendering.]]
 LNG.menu_clouds_off_tooltip = [[Click to disable cloud rendering.]]
 LNG.menu_settings_language = [[Language:]]
-LNG.menu_setttings_language_tooltip1 = [[Click to switch game language to]]	-- before lang name
-LNG.menu_setttings_language_tooltip2 = [[]]	-- after lang name
+LNG.menu_settings_language_tooltip1 = [[Click to switch game language to]]	-- before lang name
+LNG.menu_settings_language_tooltip2 = [[]]	-- after lang name
 
 -- Menu errors:
 LNG.menu_err_min_ai = [[Need to choose at least one AI!]]

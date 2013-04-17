@@ -51,7 +51,7 @@ LNG.menu_clouds_on = [[Wolken: An]]
 LNG.menu_clouds_off = [[Wolken: Aus]]
 LNG.menu_clouds_on_tooltip = [[Wolken ausschalten.]]
 LNG.menu_clouds_off_tooltip = [[Wolken anschalten.]]
-LNG.menu_settings_language = [[Srache:]]
+LNG.menu_settings_language = [[Sprache:]]
 LNG.menu_settings_language_tooltip1 = [[Sprache zu]]	-- before lang name
 LNG.menu_settings_language_tooltip2 = [[ändern]]	-- after lang name
 

@@ -20,12 +20,13 @@ Many of these are covered in the tutorials, so make sure to play them!
 Callback Events
 --------------------
 
-###function ai.init(map, money)###
+###function ai.init(map, money, maximumTrains)###
 This event is called, at the beginning of the round. The current map is passed to it, so you can analize it, get it ready for pathfinding and search it for important junctions, Hotspots, shortest paths etc.  
 **Passed Arguments:**
 
 - map: A 2D representation of the current map. "map" has a field map.width and a field map.height to check the size of the map. It also holds information about what's on the map, which is stored by x and y coordinates. For example, to see what's at the position x=3, y=5, you only have to check map[3][5]. A map field can be filled with: "C" (Connected Rail), "H" (House), "S" (Hotspot)
 - money: The amount of money that you currently have. You can use this to check how many trains you may buy (one train costs 25 credits).
+- maximumTrains: the max number of trains each AI is allowed to buy on this map.
 
 **Example**
 

@@ -272,7 +272,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the fourth tutorial! Now you should be ready to start the challenges.\nYou can also let specific AIs compete using the 'New Match' entry in the main menu.\nIf you're stuck, check out the wiki on " .. MAIN_SERVER_IP .. "!\nThere is also a full Documentation of all the ai functions available in the .love file. Simply use a zip-program to extract it!"
+	tutorialSteps[k].message = "You've completed the fourth tutorial! Now you should be ready to start the challenges.\nYou can also let specific AIs compete using the 'New Match' entry in the main menu.\nIf you're stuck, check out the wiki on " .. MAIN_SERVER_IP .. "!\nThere is also a full Documentation of all the ai functions available in the .love file (you'll have to download the Source of the game on Windows if you only downloaded the Executable up to now). Simply use a zip-program to extract it!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}

@@ -229,7 +229,7 @@ function ai.init()
 		print("Initialising AI:", "ID: " .. aiID, "Name: ", aiList[aiID].name, aiList[aiID].scriptName)
 		if aiList[aiID].init then
 			local crInit = coroutine.create(runAiFunctionCoroutine)
-			ok, msg = coroutine.resume(crInit, aiList[aiID].init, MAX_LINES_LOADING, copyTable(curMap), stats.getMoney(aiID))
+			ok, msg = coroutine.resume(crInit, aiList[aiID].init, MAX_LINES_LOADING, copyTable(curMap), stats.getMoney(aiID), MAX_NUM_TRAINS)
 			if not ok then print("NEW ERROR:", msg) end
 			if coroutine.status(crInit) ~= "dead" then
 				crInit = nil

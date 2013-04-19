@@ -93,6 +93,10 @@ LNG.hours = [[h]]
 LNG.days = [[days]]
 LNG.end_of_match = [[Match is over!]]
 
+LNG.live_match = [[LIVE MATCH]]
+LNG.lost_connection = [[LOST CONNECTION]]
+
+
 -------------------------------------------------
 -- MESSAGE BOX:
 -------------------------------------------------

@@ -8,7 +8,7 @@ FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
 -- Menu:
 -------------------------------------------------
 LNG.menu_live = [[Live]]
-LNG.menu_live_tooltip = [[Beobachte die hochgeladenen KIs in online spielen!]]
+LNG.menu_live_tooltip = [[Beobachte die hochgeladenen KIs in Online-Spielen!]]
 LNG.menu_tutorial = [[Anleitung]]
 LNG.menu_tutorial_tooltip = [[Lerne das Spiel und die Programmiersprache]]
 LNG.menu_challenge = [[Herausforderung]]
@@ -72,7 +72,7 @@ LNG.confirm_leave = [[Momentanes Match verlassen?]]
 
 LNG.reload = [[Neu Laden]]
 LNG.reload_confirm = [[Runde neu starten?]]
-LNG.reload_tooltip = [[Lädt die KIs neu und started dann die Runde neu.]]
+LNG.reload_tooltip = [[Lädt die KIs neu und startet dann die Runde neu.]]
 LNG.disconnect = [[Trennen]]
 LNG.end_match = [[Match beenden]]
 
@@ -83,16 +83,16 @@ LNG.pause = [[Pausiert Spiel]]
 LNG.by = [[von]]
 LNG.transported = [[Bereits transportiert:]]
 -- the following three strings are for the string "X of Y passengers"
-LNG.transported1 = [[]]		-- before X
-LNG.transported2 = [[ von ]]		-- between X and Y
-LNG.transported3 = [[ Passagieren]]		-- after Y
+LNG.transported1 = [[]]	-- before X
+LNG.transported2 = [[ von ]]	-- between X and Y
+LNG.transported3 = [[ Passagieren]]	-- after Y
 
-LNG.round_ends = [[Runde endet in]]		-- after Y
-LNG.seconds = [[sec]]		-- after Y
-LNG.minutes = [[min]]		-- after Y
-LNG.hours = [[h]]		-- after Y
-LNG.days = [[Tage]]		-- after Y
-LNG.end_of_match = [[Runde ist vorbei!]]		-- after Y
+LNG.round_ends = [[Runde endet in]]	-- after Y
+LNG.seconds = [[sek]]	-- after Y
+LNG.minutes = [[min]]	-- after Y
+LNG.hours = [[h]]	-- after Y
+LNG.days = [[Tage]]	-- after Y
+LNG.end_of_match = [[Runde ist vorbei!]]	-- after Y
 
 -------------------------------------------------
 -- MESSAGE BOX:

@@ -359,7 +359,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You've completed the third tutorial, well done!\nWith this tutorial, you've covered all the basics. Click 'More Ideas' for your first real challenge!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassengers: check if train.ID is 1. Then, check if passengers[1]'s destX is smaller than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West. IMPORTANT: #passengers is the length of the list! Remember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassengers: check if train.ID is 1. Then, check if passengers[1]'s destX is greater than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West. IMPORTANT: #passengers is the length of the list! Remember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	

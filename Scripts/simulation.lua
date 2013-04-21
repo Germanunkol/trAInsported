@@ -629,15 +629,15 @@ function simulation.show(dt)
 		love.graphics.setFont(FONT_BUTTON)
 		liveSymbolBlinkTime = liveSymbolBlinkTime + dt*2
 		love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
-		love.graphics.print("LIVE MATCH", liveSymbolX-2, liveSymbolY+6)
+		love.graphics.print(LNG.live_match, liveSymbolX-2, liveSymbolY+6)
 		love.graphics.setColor(255,255,255,205*math.sin(liveSymbolBlinkTime)^2+50)
-		love.graphics.print("LIVE MATCH", liveSymbolX, liveSymbolY)
+		love.graphics.print(LNG.live_match, liveSymbolX, liveSymbolY)
 		
 		if lostConnection then
 			love.graphics.setColor(0,0,0,105*math.sin(liveSymbolBlinkTime)^2+10)
-			love.graphics.print("LOST CONNECTION", lostConnectionSymbolX-2, lostConnectionSymbolY+6)
+			love.graphics.print(LNG.lost_connection, lostConnectionSymbolX-2, lostConnectionSymbolY+6)
 			love.graphics.setColor(255,64,64,205*math.sin(liveSymbolBlinkTime)^2+50)
-			love.graphics.print("LOST CONNECTION", lostConnectionSymbolX, lostConnectionSymbolY)
+			love.graphics.print(LNG.lost_connection, lostConnectionSymbolX, lostConnectionSymbolY)
 		end
 	end
 end

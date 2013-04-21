@@ -432,12 +432,12 @@ function menu.newRound()
 	x = x + 20
 	y = defaultMenuY + bgBoxSmall:getHeight()+5
 	for k, timeOption in pairs(POSSIBLE_TIMES) do
-		timeButtons[timeOption] = button:newSmall(x, y, timeOption, selectTime, timeOption, nil, nil, POSSIBLE_TIMES_TOOLTIPS[k])
+		timeButtons[timeOption] = button:newSmall(x, y, LNG.menu_time_name[k], selectTime, timeOption, nil, nil, LNG.menu_time_tooltip[k])
 		y = y + 37
 	end
 	y = defaultMenuY + bgBoxSmall:getHeight()+5
 	for k, modeOption in pairs(POSSIBLE_MODES) do
-		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, modeOption, selectMode, modeOption, nil, nil, POSSIBLE_MODES_TOOLTIPS[k])
+		modeButtons[modeOption] = button:newSmall(x + SMALL_BUTTON_WIDTH + 40, y, LNG.menu_mode_name[k], selectMode, modeOption, nil, nil, LNG.menu_mode_tooltip[k])
 		y = y + 37
 	end
 	
@@ -447,7 +447,7 @@ function menu.newRound()
 	x = x + 20
 	y = y + bgBoxSmall:getHeight()+5
 	for k, regionOption in pairs(POSSIBLE_REGIONS) do
-		regionButtons[regionOption] = button:newSmall(x, y, regionOption, selectRegion, regionOption, nil, nil, POSSIBLE_REGIONS_TOOLTIPS[k])
+		regionButtons[regionOption] = button:newSmall(x, y, LNG.menu_region_name[k], selectRegion, regionOption, nil, nil, LNG.menu_region_tooltip[k])
 		y = y + 37
 	end
 end
@@ -467,11 +467,11 @@ function menu.startSimulation(IP)
 			loadingScreen.reset()
 			
 			attemptingToConnect = true
-			loadingScreen.addSection("Connecting")
-			loadingScreen.addSubSection("Connecting", "Server: " .. IP)
+			loadingScreen.addSection(LNG.load_connecting)
+			loadingScreen.addSubSection(LNG.load_connecting, "Server: " .. IP)
 			connection.startClient(IP, PORT)
 		else
-			loadingScreen.addSubSection("Connecting", "Failed!")
+			loadingScreen.addSubSection(LNG.load_connecting, LNG.load_failed)
 			print("Error: already rendering a map - can't start simulation")
 			statusMsg.new(LNG.err_wait_for_rendering, true)
 		end
@@ -493,11 +493,11 @@ function menu.simulation()
 			--load connection to main server:
 			--loadingScreen.reset()
 			attemptingToConnect = true
-			loadingScreen.addSection("Connecting")
-			loadingScreen.addSubSection("Connecting", "Server: " .. (CL_SERVER_IP or FALLBACK_SERVER_IP))
+			loadingScreen.addSection(LNG.load_connecting)
+			loadingScreen.addSubSection(LNG.load_connecting, "Server: " .. (CL_SERVER_IP or FALLBACK_SERVER_IP))
 			connection.startClient(CL_SERVER_IP or FALLBACK_SERVER_IP, PORT)
 		else
-			loadingScreen.addSubSection("Connecting", "Failed!")
+			loadingScreen.addSubSection(LNG.load_connecting, LNG.load_failed)
 			print("Error: already rendering a map - can't start simulation")
 			statusMsg.new(LNG.err_wait_for_rendering, true)
 		end

@@ -136,7 +136,7 @@ function connection.handleConnection()
 				menuButtons.buttonAbortSimulation = button:new(x, y, "Return", menu.init, nil, nil, nil, nil, "Return to main menu")
 			end
 			connection.closeConnection()
-			loadingScreen.addSubSection("Connecting", "Failed!")
+			loadingScreen.addSubSection(LNG.load_connecting, LNG.load_failed)
 		end
 	end
 	

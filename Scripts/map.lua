@@ -51,7 +51,6 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 
 		curMap = nil
 		
-		print("Choosing map size:", MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		width = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		height = math.random(MAP_MINIMUM_SIZE, MAP_MAXIMUM_SIZE)
 		time = POSSIBLE_TIMES[math.random(#POSSIBLE_TIMES)]
@@ -72,13 +71,24 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 		
 	else
 	
-		loadingScreen.addSection("New Map")
-		loadingScreen.addSubSection("New Map", "Size: " .. width .. "x" .. height)
-		loadingScreen.addSubSection("New Map", "Time: Day")
-		if GAME_TYPE == GAME_TYPE_TIME then
-			loadingScreen.addSubSection("New Map", "Mode: Round Time (" .. ROUND_TIME .. "s)")
-		elseif GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
-			loadingScreen.addSubSection("New Map", "Mode: Transport enough Passengers")
+		loadingScreen.addSection(LNG.load_new_map)
+		loadingScreen.addSubSection(LNG.load_new_map, LNG.load_map_size .. width .. "x" .. height)
+		for k = 1,#POSSIBLE_TIMES do
+			if time == POSSIBLE_TIMES[k] then			
+				loadingScreen.addSubSection(LNG.load_new_map, LNG.load_map_time .. LNG.menu_time_name[k])
+				break
+			end
+		end
+		for k = 1,#POSSIBLE_TIMES do
+			if time == POSSIBLE_TIMES[k] then			
+				loadingScreen.addSubSection(LNG.load_new_map, LNG.load_map_time .. LNG.menu_time_name[k])
+				break
+			end
+		end
+		if gameMode == GAME_TYPE_TIME then
+			loadingScreen.addSubSection(LNG.load_new_map, LNG.load_map_mode_time .. "(" .. ROUND_TIME .. LNG.seconds .. ")")
+		elseif gameMode == GAME_TYPE_MAX_PASSENGERS then
+			loadingScreen.addSubSection(LNG.load_new_map, LNG.load_map_mode_passengers)
 		end
 		
 		train.resetImages()
@@ -299,7 +309,7 @@ function map.generate(width, height, seed, tutorialMap)
 			
 			simulation.stop()
 			
-			loadingScreen.addSection("Generating Map")
+			loadingScreen.addSection(LNG.load_generating_map)
 		end
 	
 		mapImage,mapShadowImage,mapObjectImage = nil,nil,nil
@@ -348,7 +358,7 @@ function map.generate(width, height, seed, tutorialMap)
 	
 		percent = mapGenerateThread:get("percentage")
 		if percent and loadingScreen then
-			loadingScreen.percentage("Generating Map", percent)
+			loadingScreen.percentage(LNG.load_generating_map, percent)
 		end
 		
 		
@@ -376,7 +386,7 @@ function map.generate(width, height, seed, tutorialMap)
 		status = mapGenerateThread:get("status" .. mapGenerateStatusNum)
 		if status and loadingScreen then
 			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
-			loadingScreen.addSubSection("Generating Map", status)
+			loadingScreen.addSubSection(LNG.load_generating_map, LNG.load_generation[status])
 		end
 		
 		status = mapGenerateThread:get("status")
@@ -389,7 +399,7 @@ function map.generate(width, height, seed, tutorialMap)
 			curMapOccupiedExits = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedExits"))
 			
 			if loadingScreen then
-				loadingScreen.percentage("Generating Map", 100)
+				loadingScreen.percentage(LNG.load_generating_map, 100)
 			end
 			map.print("Finished Map:")
 			--mapGenerateThread:wait()
@@ -404,8 +414,6 @@ function map.generate(width, height, seed, tutorialMap)
 			collectgarbage("collect")
 			
 			return curMap
---		elseif status and loadingScreen then
---			loadingScreen.addSubSection("Generating Map", status)
 		end
 	end
 end
@@ -1255,18 +1263,18 @@ function map.render(map)
 		if tutorial and tutorial.noTrees then
 			mapRenderThread:set("NO_TREES", true)
 		end
-		loadingScreen.addSection("Rendering Map")
+		loadingScreen.addSection(LNG.load_rendering_map)
 		renderingMapStartTime = os.time()
 	else
 		percent = mapRenderThread:get("percentage")
 		if percent then
-			loadingScreen.percentage("Rendering Map", percent)
+			loadingScreen.percentage(LNG.load_rendering_map, percent)
 		end
 		
 		status = mapRenderThread:get("status" .. mapRenderThreadStatusNum)
 		if status then
 			mapRenderThreadStatusNum = incrementID(mapRenderThreadStatusNum)
-			loadingScreen.addSubSection("Rendering Map", status)
+			loadingScreen.addSubSection(LNG.load_rendering_map, status)
 		end
 		
 		status = mapRenderThread:get("status")
@@ -1306,7 +1314,7 @@ function map.render(map)
 			--shadowData = mapRenderThread:get("shadowData")
 			--objectData = mapRenderThread:get("objectData")
 			
-			loadingScreen.percentage("Rendering Map", 100)
+			loadingScreen.percentage(LNG.load_rendering_map, 100)
 			
 			currentlyRenderingMap = false
 			-- mapRenderThread = nil

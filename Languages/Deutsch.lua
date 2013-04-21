@@ -4,6 +4,14 @@
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 17 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
 
+LNG.menu_mode_name = {}
+LNG.menu_mode_tooltip = {}
+LNG.menu_time_name = {}
+LNG.menu_time_tooltip = {}
+LNG.menu_region_name = {}
+LNG.menu_region_tooltip = {}
+LNG.load_generation = {}
+
 -------------------------------------------------
 -- Menu:
 -------------------------------------------------
@@ -32,8 +40,20 @@ LNG.menu_choose_dimensions_tooltip1 = [[Breite]]
 LNG.menu_choose_dimensions_tooltip2 = [[Höhe]]
 
 LNG.menu_choose_timemode = [[Spielzeit und Modus:]]
+LNG.menu_time_name[1] = [[Tagsüber]]
+LNG.menu_time_name[2] = [[Rushhour]]
+LNG.menu_time_tooltip[1] = [[Durchschnittlich viele Passagiere]]
+LNG.menu_time_tooltip[2] = [[Viele VIPs!]]
+LNG.menu_mode_name[1] = [[Zeitlimit]]
+LNG.menu_mode_name[2] = [[Passagiere]]
+LNG.menu_mode_tooltip[1] = [[Transportiere die Passagiere bevor die Zeit vorbei ist.]]
+LNG.menu_mode_tooltip[2] = [[Vorberechnete maximale Anzahl von Passagieren.]]
 
 LNG.menu_choose_region = [[Region:]]
+LNG.menu_region_name[1] = [[Ländlich]]
+LNG.menu_region_name[2] = [[Stadt]]
+LNG.menu_region_tooltip[1] = [[Ruhige Landschaft.]]
+LNG.menu_region_tooltip[2] = [[Doppelte Anzahl von Passagieren.]]
 
 LNG.menu_start = [[Starten]]
 LNG.menu_start_tooltip = [[Generiere die Karte mit den ausgewählten Optionen.]]
@@ -87,16 +107,32 @@ LNG.transported1 = [[]]	-- before X
 LNG.transported2 = [[ von ]]	-- between X and Y
 LNG.transported3 = [[ Passagieren]]	-- after Y
 
-LNG.round_ends = [[Runde endet in]]	-- after Y
-LNG.seconds = [[sek]]	-- after Y
-LNG.minutes = [[min]]	-- after Y
-LNG.hours = [[h]]	-- after Y
-LNG.days = [[Tage]]	-- after Y
-LNG.end_of_match = [[Runde ist vorbei!]]	-- after Y
+LNG.round_ends = [[Runde endet in]]
+LNG.seconds = [[sek]]
+LNG.minutes = [[min]]
+LNG.hours = [[h]]
+LNG.days = [[Tage]]
+LNG.end_of_match = [[Runde ist vorbei!]]
 
 LNG.live_match = [[ONLINE]]
 LNG.lost_connection = [[VERBINDUNG UNTERBROCHEN]]
 
+-------------------------------------------------
+-- LOADING SCREEN:
+-------------------------------------------------
+LNG.load_new_map = [[Neue Karte]]
+LNG.load_map_size = [[Größe: ]]
+LNG.load_map_time = [[Zeit: ]]
+LNG.load_map_mode_time = [[Modus: Max. Rundenzeit: ]]
+LNG.load_map_mode_passengers = [[Modus: Max. Anzahl Passagiere]]
+LNG.load_generating_map = [[Generiere Karte]]
+LNG.load_rendering_map = [[Rendere Karte]]
+LNG.load_connecting = [[Verbindund]]
+LNG.load_failed = [[Fehlgeschlagen!]]
+-- leave ["rails"] etc, just translate the right part of the equal sign:
+LNG.load_generation["rails"] = [[Schienen]]
+LNG.load_generation["houses"] = [[Häuser]]
+LNG.load_generation["hotspots"] = [[Hotspots]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

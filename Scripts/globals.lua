@@ -94,14 +94,17 @@ MIN_VIP_TIME = 10
 
 -- game options:
 
-POSSIBLE_TIMES = {"Day", "Rushhour"}
-POSSIBLE_TIMES_TOOLTIPS = {"Normal setup, average amount of passengers", "More VIPs!"}
+POSSIBLE_TIMES = {}
+POSSIBLE_TIMES[1] ="Day"
+POSSIBLE_TIMES[2]= "Rushhour"
 
-POSSIBLE_MODES = {"Time", "Passengers"}
-POSSIBLE_MODES_TOOLTIPS = {"Transport the most passengers in a set amount of time.", "There will be a set amount of passengers only. You have to try to transport more than any other AI."}
+POSSIBLE_MODES = {}
+POSSIBLE_MODES[1] = "Time"
+POSSIBLE_MODES[2] = "Passengers"
 
-POSSIBLE_REGIONS = {"Suburban", "Urban"}
-POSSIBLE_REGIONS_TOOLTIPS = {"Peaceful village setting.", "Twice as many passengers as Suburban setting has."}
+POSSIBLE_REGIONS = {}
+POSSIBLE_REGIONS[1] = "Suburban"
+POSSIBLE_REGIONS[2] = "Urban"
 
 -- Game Settings:
 

@@ -2,6 +2,13 @@
 -- Language file for trAInsported. Make a copy of this to translate into your own language.
 -- Please don't change the order of the entries in this file.
 
+LNG.menu_mode_name = {}
+LNG.menu_mode_tooltip = {}
+LNG.menu_time_name = {}
+LNG.menu_time_tooltip = {}
+LNG.menu_region_name = {}
+LNG.menu_region_tooltip = {}
+LNG.load_generation = {}
 
 -------------------------------------------------
 -- Menu:
@@ -31,8 +38,20 @@ LNG.menu_choose_dimensions_tooltip1 = [[Select width]]
 LNG.menu_choose_dimensions_tooltip2 = [[Select height]]
 
 LNG.menu_choose_timemode = [[Time and Mode:]]
+LNG.menu_time_name[1] = [[Day]]
+LNG.menu_time_name[2] = [[Rushhour]]
+LNG.menu_time_tooltip[1] = [[Normal setup, average amount of passengers]]
+LNG.menu_time_tooltip[2] = [[More VIPs!]]
+LNG.menu_mode_name[1] = [[Time Limit]]
+LNG.menu_mode_name[2] = [[Passengers]]
+LNG.menu_mode_tooltip[1] = [[Transport the most passengers in a set amount of time.]]
+LNG.menu_mode_tooltip[2] = [[Fixed amount of passengers. You have to try to transport more than any other AI.]]
 
 LNG.menu_choose_region = [[Region:]]
+LNG.menu_region_name[1] = [[Rural]]
+LNG.menu_region_name[2] = [[Urban]]
+LNG.menu_region_tooltip[1] = [[Peaceful village setting.]]
+LNG.menu_region_tooltip[2] = [[Twice as many passengers as rural setting has.]]
 
 LNG.menu_start = [[Start]]
 LNG.menu_start_tooltip = [[Start the match with these settings]]
@@ -96,6 +115,22 @@ LNG.end_of_match = [[Match is over!]]
 LNG.live_match = [[LIVE MATCH]]
 LNG.lost_connection = [[LOST CONNECTION]]
 
+-------------------------------------------------
+-- LOADING SCREEN:
+-------------------------------------------------
+LNG.load_new_map = [[New Map]]
+LNG.load_map_size = [[Size: ]]
+LNG.load_map_time = [[Time: ]]
+LNG.load_map_mode_time = [[Mode: Round time: ]]
+LNG.load_map_mode_passengers = [[Mode: Transport enough Passengers]]
+LNG.load_generating_map = [[Generating Map]]
+LNG.load_rendering_map = [[Rendering Map]]
+LNG.load_connecting = [[Connecting]]
+LNG.load_failed = [[Failed!]]
+-- leave ["rails"] etc, just translate the right part of the equal sign:
+LNG.load_generation["rails"] = [[Rails]]
+LNG.load_generation["houses"] = [[Houses]]
+LNG.load_generation["hotspots"] = [[Hotspots]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

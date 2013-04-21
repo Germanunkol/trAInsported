@@ -1,6 +1,7 @@
 local simulation = {}
 
 local simulationRunning = false
+local showCoordinates = false
 
 local packetList = {}		-- stores all the events that were received from the server ()
 
@@ -600,7 +601,7 @@ function simulation.show(dt)
 
 		--map.drawOccupation()
 		
-		if love.keyboard.isDown("m") then
+		if showCoordinates then
 			map.showCoordinates(simulationMap)
 		end
 		
@@ -846,12 +847,12 @@ function simulation.passengerShowAll(dt)
 		-- draw passenger:
 		if not p.reachedDestination then
 			if p.train and p.onTrain and not p.gettingOff then
-				if love.keyboard.isDown(" ") or p.train.selected then 
+				if displayDebugInformation or p.train.selected then
 					love.graphics.setColor(255,255,128,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end
 			else
-				if love.keyboard.isDown(" ") or p.selected then 
+				if displayDebugInformation or p.selected then
 					love.graphics.setColor(64,128,255,100)
 					love.graphics.line(x + p.image:getWidth()/2, y + p.image:getHeight()/2, p.destX*TILE_SIZE + TILE_SIZE/2, p.destY*TILE_SIZE + TILE_SIZE/2)
 				end

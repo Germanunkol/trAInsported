@@ -22,6 +22,7 @@ local mapSeed = 0
 --------------------------------------------------------------
 
 newMapStarting = false
+local showCoordinates = false
 
 function map.startupProcess()
 	if newMapStarting == true then
@@ -1479,7 +1480,7 @@ function map.show()
 	end
 
 	--map.drawOccupation()
-	if love.keyboard.isDown("m") then
+	if showCoordinates then
 		map.showCoordinates(curMap)
 	end
 	
@@ -1610,5 +1611,8 @@ function map.handleClick()
 	end
 end
 
+function map.toggleShowCoordinates()
+	showCoordinates = not showCoordinates
+end
 
 return map

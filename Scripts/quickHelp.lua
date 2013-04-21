@@ -25,7 +25,7 @@ Zoom view
 Toggle console
 Speed up
 Slow down
-Show map coordinates
+Toggle map coordinates
 Screenshot
 Toggle this Help
 Hide AI stats

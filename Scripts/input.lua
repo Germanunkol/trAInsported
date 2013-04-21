@@ -130,6 +130,8 @@ function love.keypressed(key, unicode)
 		stats.print()
 	elseif key == "m" then
 		map.toggleShowCoordinates()
+	elseif key == " " then
+		displayDebugInformation = not displayDebugInformation
 --	else
 	elseif unicode == 104 then
 		hideAIStatistics = not hideAIStatistics

@@ -36,6 +36,7 @@ chart = require("Scripts/generateChart")
 configFile = require("Scripts/configFile")
 
 challenges = require("Scripts/challenges")
+displayDebugInformation = false
 
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:
@@ -743,7 +744,7 @@ else
 		menu.render()
 		statusMsg.display(dt)
 	
-		if love.keyboard.isDown(" ") then
+		if displayDebugInformation then
 			love.graphics.setFont(FONT_CONSOLE)
 			love.graphics.setColor(255,255,255,255)
 			local y = 160

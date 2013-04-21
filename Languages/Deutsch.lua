@@ -95,7 +95,7 @@ LNG.days = [[Tage]]	-- after Y
 LNG.end_of_match = [[Runde ist vorbei!]]	-- after Y
 
 LNG.live_match = [[ONLINE]]
-LNG.lost_connection = [[VERBINDUNG VERLOREN]
+LNG.lost_connection = [[VERBINDUNG UNTERBROCHEN]]
 
 
 -------------------------------------------------

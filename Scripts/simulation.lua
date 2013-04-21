@@ -1,6 +1,7 @@
 local simulation = {}
 
 local simulationRunning = false
+local showCoordinates = false
 
 local packetList = {}		-- stores all the events that were received from the server ()
 
@@ -600,7 +601,7 @@ function simulation.show(dt)
 
 		--map.drawOccupation()
 		
-		if love.keyboard.isDown("m") then
+		if showCoordinates then
 			map.showCoordinates(simulationMap)
 		end
 		

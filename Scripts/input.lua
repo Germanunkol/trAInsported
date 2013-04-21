@@ -128,6 +128,8 @@ function love.keypressed(key, unicode)
 		slowGameDown()
 	elseif key == "p" then
 		stats.print()
+	elseif key == "m" then
+		map.toggleShowCoordinates()
 --	else
 	elseif unicode == 104 then
 		hideAIStatistics = not hideAIStatistics

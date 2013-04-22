@@ -4,6 +4,15 @@
 
 FONT_BUTTON = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 16 )
 FONT_BUTTON_SMALL = love.graphics.newFont( "UbuntuFont/Ubuntu-B.ttf", 15 )
+
+LNG.menu_mode_name = {}
+LNG.menu_mode_tooltip = {}
+LNG.menu_time_name = {}
+LNG.menu_time_tooltip = {}
+LNG.menu_region_name = {}
+LNG.menu_region_tooltip = {}
+LNG.load_generation = {}
+
 -------------------------------------------------
 -- Menu:
 -------------------------------------------------
@@ -32,8 +41,20 @@ LNG.menu_choose_dimensions_tooltip1 = [[Выберите ширину]]
 LNG.menu_choose_dimensions_tooltip2 = [[Выберите высоту]]
 
 LNG.menu_choose_timemode = [[Настройки режима:]]
+LNG.menu_time_name[1] = [[День]]
+LNG.menu_time_name[2] = [[Час пик]]
+LNG.menu_time_tooltip[1] = [[Стандартный вариант - среднее количество пассажиров]]
+LNG.menu_time_tooltip[2] = [[Больше VIP'ов!]]
+LNG.menu_mode_name[1] = [[На время]]
+LNG.menu_mode_name[2] = [[Пассажиры]]
+LNG.menu_mode_tooltip[1] = [[Перевезите как можно боьше пассажиров за отведенное время.]]
+LNG.menu_mode_tooltip[2] = [[Количество пассажиров на карте ограничено. Опереди соперников!]]
 
 LNG.menu_choose_region = [[Ландшафт:]]
+LNG.menu_region_name[1] = [[Сельский]]
+LNG.menu_region_name[2] = [[Городской]]
+LNG.menu_region_tooltip[1] = [[Спокойный сельский расклад.]]
+LNG.menu_region_tooltip[2] = [[В два раза больше пассажиров на карте.]]
 
 LNG.menu_start = [[Старт]]
 LNG.menu_start_tooltip = [[Начать матч с этими настройками.]]
@@ -81,7 +102,7 @@ LNG.pause = [[Пауза]]
 LNG.by = [[автор]]
 LNG.transported = [[Перевезено]]
 -- the following three strings are for the string "X of Y passengers"
-LNG.transported1 = [[]]  	-- before X
+LNG.transported1 = [[]]    -- before X
 LNG.transported2 = [[ из ]]		-- between X and Y
 LNG.transported3 = [[ пассажиров]]		-- after Y
 
@@ -91,6 +112,26 @@ LNG.minutes = [[мин]]		-- after Y
 LNG.hours = [[ч]]		-- after Y
 LNG.days = [[дней]]		-- after Y
 LNG.end_of_match = [[Матч закончен!]]		-- after Y
+
+LNG.live_match = [[ПРЯМАЯ ТРАНСЛЯЦИЯ]]
+LNG.lost_connection = [[СОЕДИНЕНИЕ ПОТЕРЯНО]]
+
+-------------------------------------------------
+-- LOADING SCREEN:
+-------------------------------------------------
+LNG.load_new_map = [[Новая Карта]]
+LNG.load_map_size = [[Размер: ]]
+LNG.load_map_time = [[Время: ]]
+LNG.load_map_mode_time = [[Режим: время ]]
+LNG.load_map_mode_passengers = [[Режим: Пассажиры]]
+LNG.load_generating_map = [[Генерация карты]]
+LNG.load_rendering_map = [[Отрисовка карты]]
+LNG.load_connecting = [[Соединение]]
+LNG.load_failed = [[Ошибка!]]
+-- leave ["rails"] etc, just translate the right part of the equal sign:
+LNG.load_generation["rails"] = [[Пути]]
+LNG.load_generation["houses"] = [[Дома]]
+LNG.load_generation["hotspots"] = [[Ключевые точки]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

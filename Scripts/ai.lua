@@ -146,6 +146,7 @@ function ai.new(scriptName)
 	fh = io.open( scriptName,"r")
 	if fh and fh.read then
 		ok, chunk = pcall(fh.read, fh, "*all" )
+		fh:close()
 		
 		if chunk:byte(1) == 27 then error("Binary bytecode prohibited. Open source ftw!")
 			console.add("Binary bytecode prohibited. Open source ftw!", {r=255,g=50,b=50})

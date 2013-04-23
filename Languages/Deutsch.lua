@@ -127,7 +127,7 @@ LNG.load_map_mode_time = [[Modus: Max. Rundenzeit: ]]
 LNG.load_map_mode_passengers = [[Modus: Max. Anzahl Passagiere]]
 LNG.load_generating_map = [[Generiere Karte]]
 LNG.load_rendering_map = [[Rendere Karte]]
-LNG.load_connecting = [[Verbindund]]
+LNG.load_connecting = [[Verbindung]]
 LNG.load_failed = [[Fehlgeschlagen!]]
 -- leave ["rails"] etc, just translate the right part of the equal sign:
 LNG.load_generation["rails"] = [[Schienen]]

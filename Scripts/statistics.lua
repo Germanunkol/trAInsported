@@ -270,54 +270,54 @@ function statistics.addStatWindow(newStat)
 				statWindows[i].title = TITLE
 				statWindows[i].text = TXT
 				if ID then
-					if TITLE == LNG.stat_most_picked_up_title then
+					if TITLE == LNG.stat_most_picked_up_title or TITLE == [[Hospitality]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Fleetus Maximus" then
+					if TITLE == LNG.stat_most_trains_title or TITLE == [[Fleetus Maximus]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=24, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Earned Your Pay" then
+					if TITLE == LNG.stat_most_transported_title or TITLE == [[Earned Your Pay]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Socialist" then
+					if TITLE == LNG.stat_most_normal_transported_title or TITLE == [[Socialist]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Get lost..." then
+					if TITLE == LNG.stat_dropped_title or TITLE == [[Get lost...]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 						statWindows[i].bg = statBoxNegative
 					end
-					if TITLE == "Capitalist" then
+					if TITLE == LNG.stat_most_money_title or TITLE == [[Capitalist]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
 	
 					--trains:
-					if TITLE == "Busy little Bee!" then
+					if TITLE == LNG.stat_tr_most_picked_up_title or TITLE == [[Busy little Bee!]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Home sweet Home" then
+					if TITLE == LNG.stat_tr_most_transported_title or TITLE == [[Home sweet Home]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
 					end
-					if TITLE == "Why don't you walk?" then
+					if TITLE == LNG.stat_tr_dropped_title or TITLE == [[Why don't you walk?]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 						statWindows[i].bg = statBoxNegative
 					end
-					if TITLE == "Line is busy..." then
+					if TITLE == LNG.stat_tr_blocked_title or TITLE == [[Line is busy...]] then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=25, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_TIME,x=50, y=20})
 						statWindows[i].bg = statBoxNegative

@@ -496,7 +496,7 @@ function statistics.generateStatWindows()
 	
 	if mostPickedUpID then
 		if mostPickedUp ~= 1 then
-			text = LNG.stat_most_picked_up--"AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."
+			text = LNG.stat_most_picked_up --"AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."
 		else
 			text = LNG.stat_most_picked_up_sing--"AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passenger."
 		end

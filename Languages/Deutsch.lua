@@ -108,8 +108,8 @@ LNG.transported2 = [[ von ]]	-- between X and Y
 LNG.transported3 = [[ Passagieren]]	-- after Y
 
 LNG.round_ends = [[Runde endet in]]
-LNG.seconds = [[sek]]
-LNG.minutes = [[min]]
+LNG.seconds = [[Sek]]
+LNG.minutes = [[Min]]
 LNG.hours = [[h]]
 LNG.days = [[Tage]]
 LNG.end_of_match = [[Runde ist vorbei!]]

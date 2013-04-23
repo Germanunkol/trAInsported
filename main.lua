@@ -217,6 +217,8 @@ if DEDICATED then
 		math.randomseed(os.time())
 		
 		AI_DIRECTORY = love.filesystem.getWorkingDirectory() .. "/AI/"
+		
+		selectLanguage("English") -- fallback! Don't delete, because other languages might not have all strings defined.
 	end
 	
 	local countSeconds = 0
@@ -465,7 +467,7 @@ else
 			end
 		end
 		
-		selectLanguage("English") -- fallback! Don't delete, because other languages might not have all strings defined.			
+		selectLanguage("English") -- fallback! Don't delete, because other languages might not have all strings defined.
 		lang = configFile.getValue( "language" )
 		if lang then
 			selectLanguage(lang)

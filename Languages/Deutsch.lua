@@ -135,6 +135,48 @@ LNG.load_generation["houses"] = [[Häuser]]
 LNG.load_generation["hotspots"] = [[Hotspots]]
 
 -------------------------------------------------
+-- ROUND END STATISTICS:
+-------------------------------------------------
+-- The round statistics here are placed together using these strings as base. Some have versions in plural and in singular forms. If there's no difference in your language, please just copy the one version into both strings - do NOT delete the singular form!
+-- In these strings, _AINAME_ and _NUMBER_ will be replaced by the appropriate values, so make sure to include them!
+LNG.stat_most_picked_up_title = [[Gastfreundschaft]]
+LNG.stat_most_picked_up = [[KI _AINAME_ hat _NUMBER_ Passagiere aufgenommen.]]
+LNG.stat_most_picked_up_sing = [[KI _AINAME_ hat _NUMBER_ Passagier aufgenommen.]]
+
+LNG.stat_most_trains_title = [[Fleetus Maximus]]
+LNG.stat_most_trains = [[KI _AINAME_ hat _NUMBER_ Züge gekauft.]]
+LNG.stat_most_trains_sing = [[KI _AINAME_ hat _NUMBER_ Zug gekauft.]]
+
+LNG.stat_most_transported_title = [[Hast's dir verdient!]]
+LNG.stat_most_transported = [[KI _AINAME_ hat _NUMBER_ Passagiere ans Ziel befördert.]]
+LNG.stat_most_transported_sing = [[KI _AINAME_ hat _NUMBER_ Passagier ans Ziel befördert.]]
+
+LNG.stat_most_normal_transported_title = [[Sozialist]]
+LNG.stat_most_normal_transported = [[KI _AINAME_ hat _NUMBER_ nicht-VIP Passagiere ans Ziel gebracht.]]
+LNG.stat_most_normal_transported_sing = [[KI _AINAME_ hat _NUMBER_ nicht-VIP Passagier ans Ziel gebracht.]]
+
+LNG.stat_dropped_title = [[Raus hier!]]
+LNG.stat_dropped = [[KI _AINAME_ hat _NUMBER_ Passagiere zu früh abgesetzt.]]
+LNG.stat_dropped_sing = [[KI _AINAME_ hat _NUMBER_ Passagier zu früh abgesetzt.]]
+
+LNG.stat_most_money_title = [[Kapitalist]]
+LNG.stat_most_money = [[KI _AINAME_ hat _NUMBER_ Credits verdient.]]
+
+-- Some of the following can take up to three arguments: _NUMBER_, _AINAME_ and _TRAINNAME_:
+LNG.stat_tr_most_picked_up_title = [[Einsteigen!]]
+LNG.stat_tr_most_picked_up = [[_TRAINNAME_ [_AINAME_] hat mehr Passagiere als alle anderen Züge aufgenommen.]]
+
+LNG.stat_tr_most_transported_title = [[Zu Hause...!]]
+LNG.stat_tr_most_transported = [[_TRAINNAME_ [_AINAME_] hat mehr Passagiere an ihr Ziel gebracht als alle anderen Züge.]]
+
+LNG.stat_tr_dropped_title = [[Lauf doch einfach!]]
+LNG.stat_tr_dropped = [[_TRAINNAME_ [_AINAME_] hat _NUMBER_ Passagiere ausgesetzt!]]
+LNG.stat_tr_dropped_sing = [[_TRAINNAME_ [_AINAME_] hat _NUMBER_ Passagier ausgesetzt!]]
+
+LNG.stat_tr_blocked_title = [[Anstellen Bitte!]]
+LNG.stat_tr_blocked = [[_TRAINNAME_ [_AINAME_] war _NUMBER_ Sekunden lang blockiert.]]
+
+-------------------------------------------------
 -- MESSAGE BOX:
 -------------------------------------------------
 LNG.exit_confirm = [[Spiel verlassen?]]

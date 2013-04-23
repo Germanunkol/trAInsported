@@ -270,7 +270,7 @@ function statistics.addStatWindow(newStat)
 				statWindows[i].title = TITLE
 				statWindows[i].text = TXT
 				if ID then
-					if TITLE == "Hospitality" then
+					if TITLE == LNG.stat_most_picked_up_title then
 						table.insert(statWindows[i].icons, {img=train.getTrainImage(ID),x=55, y=20, shadow=true})
 						table.insert(statWindows[i].icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
 						statWindows[i].bg = statBoxPositive
@@ -496,65 +496,77 @@ function statistics.generateStatWindows()
 	
 	if mostPickedUpID then
 		if mostPickedUp ~= 1 then
-			text = "AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."
+			text = LNG.stat_most_picked_up--"AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passengers."
 		else
-			text = "AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passenger."
+			text = LNG.stat_most_picked_up_sing--"AI " .. aiStats[mostPickedUpID].name .. " picked up " .. mostPickedUp .. " passenger."
 		end
+		text = text:gsub("_AINAME_", aiStats[mostPickedUpID].name)
+		text = text:gsub("_NUMBER_", mostPickedUp)
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Hospitality", text=text, bg=statBoxPositive, icons=icons, ID=mostPickedUpID})
+		table.insert( allPossibleStats, {title=LNG.stat_most_picked_up_title, text=text, bg=statBoxPositive, icons=icons, ID=mostPickedUpID})
 	end
 	if mostTrainsID then
 		if mostTrains ~= 1 then
-			text = "AI " .. aiStats[mostTrainsID].name .. " owned " .. mostTrains .. " trains."
+			text = LNG.stat_most_trains
 		else
-			text = "AI " .. aiStats[mostTrainsID].name .. " owned " .. mostTrains .. " train."
+			text = LNG.stat_most_trains_sing
 		end
+		text = text:gsub("_AINAME_", aiStats[mostTrainsID].name)
+		text = text:gsub("_NUMBER_", mostTrains)
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=train.getTrainImage(mostTrainsID),x=24, y=30, shadow=true})
-		table.insert( allPossibleStats, {title="Fleetus Maximus", text=text, bg=statBoxPositive, icons=icons, ID=mostTrainsID})
+		table.insert( allPossibleStats, {title=LNG.stat_most_trains_title, text=text, bg=statBoxPositive, icons=icons, ID=mostTrainsID})
 	end
 	if mostTransportedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostTransported ~= 1 then
-			text = "AI " .. aiStats[mostTransportedID].name .. " brought " .. mostTransported .. " passengers to their destinations."
+			text = LNG.stat_most_transported
 		else
-			text = "AI " .. aiStats[mostTransportedID].name .. " brought " .. mostTransported .. " passenger to her/his destinations."
+			text = LNG.stat_most_transported_sing
 		end
-		table.insert( allPossibleStats, {title="Earned Your Pay", text=text, bg=statBoxPositive, icons=icons, ID=mostTransportedID})
+		text = text:gsub("_AINAME_", aiStats[mostTransportedID].name)
+		text = text:gsub("_NUMBER_", mostTransported)
+		table.insert( allPossibleStats, {title=LNG.stat_most_transported_title, text=text, bg=statBoxPositive, icons=icons, ID=mostTransportedID})
 	end
 	if mostNormalTransportedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostNormalTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
 		if mostNormalTransported ~= 1 then
-			text = "AI " .. aiStats[mostNormalTransportedID].name .. " brought " .. mostNormalTransported .. " non-VIP passengers to their destinations."
+			text = LNG.stat_most_normal_transported
 		else
-			text = "AI " .. aiStats[mostNormalTransportedID].name .. " brought " .. mostNormalTransported .. " non-VIP passenger to her/his destinations."
+			text = LNG.stat_most_normal_transported_sing
 		end
-		table.insert( allPossibleStats, {title="Socialist", text=text, bg=statBoxPositive, icons=icons, ID=mostNormalTransportedID})
+		text = text:gsub("_AINAME_", aiStats[mostNormalTransportedID].name)
+		text = text:gsub("_NUMBER_", mostNormalTransported)
+		table.insert( allPossibleStats, {title=LNG.stat_most_normal_transported_title, text=text, bg=statBoxPositive, icons=icons, ID=mostNormalTransportedID})
 	end
 	if mostWrongDestinationID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostWrongDestinationID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if mostWrongDestination ~= 1 then
-			text = "AI " .. aiStats[mostWrongDestinationID].name .. " dropped off " .. mostWrongDestination .. " passengers where they didn't want to go!"
+			text = LNG.stat_dropped
 		else
-			text = "AI " .. aiStats[mostWrongDestinationID].name .. " dropped off " .. mostWrongDestination .. " passenger where he/she didn't want to go!"
+			text = LNG.stat_dropped_sing
 		end
-		table.insert( allPossibleStats, {title="Get lost...", text=text, bg=statBoxNegative, icons=icons, ID=mostWrongDestinationID})
+		text = text:gsub("_AINAME_", aiStats[mostWrongDestinationID].name)
+		text = text:gsub("_NUMBER_", mostWrongDestination)
+		table.insert( allPossibleStats, {title=LNG.stat_dropped_title, text=text, bg=statBoxNegative, icons=icons, ID=mostWrongDestinationID})
 	end
 	if mostMoneyID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(mostMoneyID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_CASH,x=40, y=26, shadow=true})
-		text = "AI " .. aiStats[mostMoneyID].name .. " earned " .. mostMoney .. " credits."
-		table.insert( allPossibleStats, {title="Capitalist", text=text, bg=statBoxPositive, icons=icons, ID=mostMoneyID})
+		text = LNG.stat_most_money
+		text = text:gsub("_AINAME_", aiStats[mostMoneyID].name)
+		text = text:gsub("_NUMBER_", mostMoney)
+		table.insert( allPossibleStats, {title=LNG.stat_most_money_title, text=text, bg=statBoxPositive, icons=icons, ID=mostMoneyID})
 	end
 	
 	--trains:
@@ -562,33 +574,43 @@ function statistics.generateStatWindows()
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trMostPickedUpID),x=55, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_PICKUP,x=24, y=30, shadow=true})
-		text = trMostPickedUpName .. " [" .. aiStats[trMostPickedUpID].name .. "] " .. " picked up more passengers than any other train."
-		table.insert( allPossibleStats, {title="Busy little Bee!", text=text, bg=statBoxPositive, icons=icons, ID=trMostPickedUpID})
+		text = LNG.stat_tr_most_picked_up
+		text = text:gsub("_AINAME_", aiStats[trMostPickedUpID].name)
+		text = text:gsub("_TRAINNAME_", trMostPickedUpName)
+		table.insert( allPossibleStats, {title=LNG.stat_tr_most_picked_up_title, text=text, bg=statBoxPositive, icons=icons, ID=trMostPickedUpID})
 	end
 	if trMostTransportedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trMostTransportedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF,x=37, y=30, shadow=true})
-		text = trMostTransportedName .. " [" .. aiStats[trMostTransportedID].name .. "] " .. " brought more passengers to their destination than any other train."
-		table.insert( allPossibleStats, {title="Home sweet Home", text=text, bg=statBoxPositive, icons=icons, ID=trMostTransportedID})
+		text = LNG.stat_tr_most_transported
+		text = text:gsub("_AINAME_", aiStats[trMostTransportedID].name)
+		text = text:gsub("_TRAINNAME_", trMostTransportedName)
+		table.insert( allPossibleStats, {title=LNG.stat_tr_most_transported_title, text=text, bg=statBoxPositive, icons=icons, ID=trMostTransportedID})
 	end
 	if trMostWrongDestinationID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trMostWrongDestinationID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_DROPOFF_WRONG,x=37, y=30, shadow=true})
 		if trMostWrongDestination ~= 1 then
-			text = trMostWrongDestinationName .. " [" .. aiStats[trMostWrongDestinationID].name .. "] " .. " left " .. trMostWrongDestination .. " passengers in the middle of nowhere!"
+			text = LNG.stat_tr_dropped
 		else
-			text = trMostWrongDestinationName .. " [" .. aiStats[trMostWrongDestinationID].name .. "] " .. " left " .. trMostWrongDestination .. " passenger in the middle of nowhere!"
+			text = LNG.stat_tr_dropped_sing
 		end
-		table.insert( allPossibleStats, {title="Why don't you walk?", text=text, bg=statBoxNegative, icons=icons, ID=trMostWrongDestinationID})
+		text = text:gsub("_AINAME_", aiStats[trMostWrongDestinationID].name)
+		text = text:gsub("_TRAINNAME_", trMostWrongDestinationName)
+		text = text:gsub("_NUMBER_", trMostWrongDestination)
+		table.insert( allPossibleStats, {title=LNG.stat_tr_dropped_title, text=text, bg=statBoxNegative, icons=icons, ID=trMostWrongDestinationID})
 	end
 	if trLongestBlockedID then
 		icons = {}
 		table.insert(icons, {img=train.getTrainImage(trLongestBlockedID),x=25, y=20, shadow=true})
 		table.insert(icons, {img=IMAGE_STATS_TIME,x=50, y=20})
-		text = trLongestBlockedName .. " [" .. aiStats[trLongestBlockedID].name .. "] " .. " was blocked for a total of " .. math.floor(10*trLongestBlocked)/10 .. " seconds."
-		table.insert( allPossibleStats, {title="Line is busy...", text=text, bg=statBoxNegative, icons=icons, ID=trLongestBlockedID})
+		text = LNG.stat_tr_blocked
+		text = text:gsub("_AINAME_", aiStats[trLongestBlockedID].name)
+		text = text:gsub("_TRAINNAME_", trLongestBlockedName)
+		text = text:gsub("_NUMBER_", math.floor(10*trLongestBlocked)/10)
+		table.insert( allPossibleStats, {title=LNG.stat_tr_blocked_title, text=text, bg=statBoxNegative, icons=icons, ID=trLongestBlockedID})
 	end
 	
 	for k, v in pairs(allPossibleStats) do

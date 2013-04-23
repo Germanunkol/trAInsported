@@ -556,22 +556,6 @@ function toggleOptionClouds(enable)
 	menu.settings() -- re-initialise the menu.
 end
 
-function selectLanguage(lang)
-	print("Loading language file: Languages/" .. lang .. ".lua")
-	ok, chunk = pcall(love.filesystem.load, "Languages/" .. lang .. ".lua")
-	if ok then
-		setupFonts()	-- reset them all incase the previous language changed them!
-		ok, msg = pcall(chunk)
-		if ok then	
-			CURRENT_LANGUAGE = lang
-			return true
-		else
-			print(msg)
-		end
-	else
-		print(chunk)
-	end
-end
 
 function menu.languageChosen(lang)
 print("Attempt to load new language:", lang)

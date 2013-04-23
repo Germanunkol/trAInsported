@@ -85,6 +85,26 @@ function loadConfiguration()
 		RENDER_CLOUDS = false
 	end
 end
+
+
+function selectLanguage(lang)
+	print("Loading language file: Languages/" .. lang .. ".lua")
+	ok, chunk = pcall(love.filesystem.load, "Languages/" .. lang .. ".lua")
+	if ok then
+		setupFonts()	-- reset them all incase the previous language changed them!
+		ok, msg = pcall(chunk)
+		if ok then	
+			CURRENT_LANGUAGE = lang
+			return true
+		else
+			print(msg)
+		end
+	else
+		print(chunk)
+	end
+end
+
+
 ---------------------------------------
 
 
@@ -211,6 +231,9 @@ function makeTimeReadable(time)
 	if seconds > 0 then str = str .. math.floor(seconds) .. " " .. LNG.seconds .. " " end
 	return str
 end
+
+
+
 
 ------------------------------------
 -- Thread utilities:

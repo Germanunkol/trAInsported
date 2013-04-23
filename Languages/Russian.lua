@@ -1,4 +1,3 @@
-
 -- Language file for trAInsported. Make a copy of this to translate into your own language.
 -- Please don't change the order of the entries in this file.
 
@@ -132,6 +131,48 @@ LNG.load_failed = [[Ошибка!]]
 LNG.load_generation["rails"] = [[Пути]]
 LNG.load_generation["houses"] = [[Дома]]
 LNG.load_generation["hotspots"] = [[Ключевые точки]]
+
+-------------------------------------------------
+-- ROUND END STATISTICS:
+-------------------------------------------------
+-- The round statistics here are placed together using these strings as base. Some have versions in plural and in singular forms. If there's no difference in your language, please just copy the one version into both strings - do NOT delete the singular form!
+-- In these strings, _AINAME_ and _NUMBER_ will be replaced by the appropriate values, so make sure to include them!
+LNG.stat_most_picked_up_title = [[Гостеприимство]]
+LNG.stat_most_picked_up = [[ИИ _AINAME_ взял на борт _NUMBER_ пассажиров.]]
+LNG.stat_most_picked_up_sing = [[ИИ _AINAME_ взял на борт _NUMBER_ пассажира.]]
+
+LNG.stat_most_trains_title = [[Флотус Максимус]]
+LNG.stat_most_trains = [[ИИ _AINAME_ Купил _NUMBER_ поездов.]]
+LNG.stat_most_trains_sing = [[ИИ _AINAME_ купил _NUMBER_ поезд]]
+
+LNG.stat_most_transported_title = [[Честно заработанные]]
+LNG.stat_most_transported = [[ИИ _AINAME_ отвёз _NUMBER_ пассажиров до места назначения.]]
+LNG.stat_most_transported_sing = [[ИИ _AINAME_ отвёз _NUMBER_ пассажира до места назначения.]]
+
+LNG.stat_most_normal_transported_title = [[Социалист]]
+LNG.stat_most_normal_transported = [[ИИ _AINAME_ отвёз _NUMBER_ не-VIP пассажиров до места назначения.]]
+LNG.stat_most_normal_transported_sing = [[ИИ _AINAME_ отвёз _NUMBER_ не-VIP пассажира до места назначения.]]
+
+LNG.stat_dropped_title = [[Я заблудился...]]
+LNG.stat_dropped = [[ИИ _AINAME_ высадил _NUMBER_ пассажиров не в том месте.]]
+LNG.stat_dropped_sing = [[ИИ _AINAME_ высадил _NUMBER_ пассажира не в том месте.]]
+
+LNG.stat_most_money_title = [[Капиталист]]
+LNG.stat_most_money = [[ИИ _AINAME_ заработал _NUMBER_ кредитов.]]
+
+-- Some of the following can take up to three arguments: _NUMBER_, _AINAME_ and _TRAINNAME_:
+LNG.stat_tr_most_picked_up_title = [[Трудится как пчёлка!]]
+LNG.stat_tr_most_picked_up = [[_TRAINNAME_ [_AINAME_] взял на борт больше всех пассажиров.]]
+
+LNG.stat_tr_most_transported_title = [[Милый дом]]
+LNG.stat_tr_most_transported = [[_TRAINNAME_ [_AINAME_] перевез больше всех пассажиров.]]
+
+LNG.stat_tr_dropped_title = [[Почему бы вам не прогуляться?]]
+LNG.stat_tr_dropped = [[_TRAINNAME_ [_AINAME_] высадил _NUMBER_ пассажиров неизвестно где!]]
+LNG.stat_tr_dropped_sing = [[_TRAINNAME_ [_AINAME_] высадил _NUMBER_ пассажира неизвестно где!]]
+
+LNG.stat_tr_blocked_title = [[Линия загружена...]]
+LNG.stat_tr_blocked = [[_TRAINNAME_ [_AINAME_] был заблокирован _NUMBER_ секунд.]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

@@ -53,6 +53,7 @@ The game creates a folder called **trAInsported** in your local home folder. Dep
 
 Translations:
 ------------------------------
+Before you get started, please check if there is someone already working on the translation and has posted about it [on the forum](http://www.indiedb.com/games/trainsported/forum) or on [GitHub](https://github.com/Germanunkol/trainsported/issues). Feel free to collaborate with them if this is the case!
 If you want to translate the Game into your own language, please do the following:
 - Get the source code from github: https://github.com/Germanunkol/trainsported
 - Copy the file English.lua in the Languages/ subfolder of the game. Rename it to the name of your Language.

@@ -72,6 +72,8 @@ LNG.menu_clouds_off = [[Без облаков]]
 LNG.menu_clouds_on_tooltip = [[Нажмите, чтоб включить отображение облаков.]]
 LNG.menu_clouds_off_tooltip = [[Нажмите, чтоб отключить отображение облаков.]]
 LNG.menu_settings_language = [[Язык игры:]]
+LNG.menu_settings_language_tooltip1 = [[Нажмите, чтоб сменить язык на ]]  -- before lang name
+LNG.menu_settings_language_tooltip2 = [[]]	-- after lang name
 
 -- Menu errors:
 LNG.menu_err_min_ai = [[Необходимо выбрать хотя бы один ИИ!]]
@@ -142,7 +144,7 @@ LNG.stat_most_picked_up = [[ИИ _AINAME_ взял на борт _NUMBER_ пас
 LNG.stat_most_picked_up_sing = [[ИИ _AINAME_ взял на борт _NUMBER_ пассажира.]]
 
 LNG.stat_most_trains_title = [[Флотус Максимус]]
-LNG.stat_most_trains = [[ИИ _AINAME_ Купил _NUMBER_ поездов.]]
+LNG.stat_most_trains = [[ИИ _AINAME_ купил _NUMBER_ поездов.]]
 LNG.stat_most_trains_sing = [[ИИ _AINAME_ купил _NUMBER_ поезд]]
 
 LNG.stat_most_transported_title = [[Честно заработанные]]
@@ -161,7 +163,7 @@ LNG.stat_most_money_title = [[Капиталист]]
 LNG.stat_most_money = [[ИИ _AINAME_ заработал _NUMBER_ кредитов.]]
 
 -- Some of the following can take up to three arguments: _NUMBER_, _AINAME_ and _TRAINNAME_:
-LNG.stat_tr_most_picked_up_title = [[Трудится как пчёлка!]]
+LNG.stat_tr_most_picked_up_title = [[Трудился, как пчёлка!]]
 LNG.stat_tr_most_picked_up = [[_TRAINNAME_ [_AINAME_] взял на борт больше всех пассажиров.]]
 
 LNG.stat_tr_most_transported_title = [[Милый дом]]
@@ -171,7 +173,7 @@ LNG.stat_tr_dropped_title = [[Почему бы вам не прогулятьс
 LNG.stat_tr_dropped = [[_TRAINNAME_ [_AINAME_] высадил _NUMBER_ пассажиров неизвестно где!]]
 LNG.stat_tr_dropped_sing = [[_TRAINNAME_ [_AINAME_] высадил _NUMBER_ пассажира неизвестно где!]]
 
-LNG.stat_tr_blocked_title = [[Линия загружена...]]
+LNG.stat_tr_blocked_title = [[Линия занята...]]
 LNG.stat_tr_blocked = [[_TRAINNAME_ [_AINAME_] был заблокирован _NUMBER_ секунд.]]
 
 -------------------------------------------------

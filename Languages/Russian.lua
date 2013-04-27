@@ -90,6 +90,9 @@ LNG.menu_err_resolution = [[Ошибка при смене разрешения!
 LNG.fast_forward = [[ДОГОНЯЕМ СЕРВЕР]]
 LNG.confirm_leave = [[Прервать текущий матч и выйти в главное меню?]]
 
+LNG.open_folder = [[Открыть папку]]
+LNG.open_folder_tooltip = [[Открыть папку: AI_FOLDER_DIRECTORY]]
+
 LNG.reload = [[Рестарт]]
 LNG.reload_confirm = [[Начать раунд заново?]]
 LNG.reload_tooltip = [[Перезагрузка ИИ и начало нового раунда.]]

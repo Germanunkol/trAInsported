@@ -44,6 +44,18 @@ function scandir(directory)
 	end
 	return t
 end
+
+---------------------------------------
+-- Attempt to open a file browser with the AI folder.
+function openAIFolder()
+	if love._os == "OS X" then
+		os.execute("open " .. AI_DIRECTORY)
+	elseif love._os == "Windows" then
+		os.execute("start " .. AI_DIRECTORY)
+	else
+		os.execute("xdg-open " .. AI_DIRECTORY)
+	end
+end
 ---------------------------------------
 
 

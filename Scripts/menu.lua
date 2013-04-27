@@ -167,8 +167,10 @@ function menu.init(menuX, menuY)
 	y = y + 45
 	menuButtons.buttonRandomMatch = button:new(x, y, LNG.menu_random, randomMatch, nil, nil, nil, nil, LNG.menu_random_tooltip)
 	y = y + 60
-	menuButtons.buttonSettings = button:new(x, y, LNG.menu_settings, menu.settings, nil, nil, nil, nil, LNG.menu_settings_tooltip)
+	menuButtons.buttonOpenFolder = button:new(x, y, LNG.open_folder, openAIFolder, nil, nil, nil, nil, LNG.open_folder_tooltip:gsub("AI_FOLDER_DIRECTORY", AI_DIRECTORY))
 	y = y + 45
+	menuButtons.buttonSettings = button:new(x, y, LNG.menu_settings, menu.settings, nil, nil, nil, nil, LNG.menu_settings_tooltip)
+	y = y + 60
 	menuButtons.buttonExit = button:new(x, y, LNG.menu_exit, confirmCloseGame, nil)
 	y = y + 45
 	
@@ -803,6 +805,7 @@ function menu.ingame()
 	x = love.graphics.getWidth() - defaultMenuX - STND_BUTTON_WIDTH-10
 	y = love.graphics.getHeight() - defaultMenuY - STND_BUTTON_HEIGHT
 	if not simulation.isRunning() then
+		menuButtons.buttonOpenFolder = button:new(x-STND_BUTTON_WIDTH-10, y, LNG.open_folder, openAIFolder, nil, nil, nil, nil, LNG.open_folder_tooltip:gsub("AI_FOLDER_DIRECTORY", AI_DIRECTORY))
 		menuButtons.buttonReload = button:new(x, y, LNG.reload, confirmReload, nil, nil, nil, nil, LNG.reload_tooltip)
 	end
 end

@@ -247,7 +247,7 @@ tutorialSteps[k].buttons[1] = {name = "Zurück", event = prevTutorialStep}
 k = k + 1
 
 tutorialSteps[k] = {}
-tutorialSteps[k].message = "Gut. Weiter im Text.\n\nDas Spiel hat einen Unterordner erstellt namens '" .. AI_DIRECTORY .. "'\n Darin findest du eine neue Datei die ich gerade erstellt habe, 'TutorialAI1.lua'. Öffne sie in einem beliebigen Text-Editor und lies den Text. "
+tutorialSteps[k].message = "Gut. Weiter im Text.\nAlle Skripte die du schreibst werden in einem Ordner abgespeichert. Öffne den Ordner mithilfe des 'Ordner Öffnen'-Knopfes. Dann öffne die darin liegende TutorialAI1.lua mit einem beliebigen Text-Editor und lies sie.\nSollte das nicht funktionieren, findest du den Ordner hier: " .. AI_DIRECTORY
 tutorialSteps[k].buttons = {}
 tutorialSteps[k].buttons[1] = {name = "Zurück", event = prevTutorialStep}
 if love.filesystem.getWorkingDirectory() then

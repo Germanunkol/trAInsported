@@ -8,17 +8,7 @@
 -- Add path to all other Scripts:
 package.path = "Scripts/?.lua;" .. package.path
 
---[[
-_require = require
-
-function require(fileName)
-	ok, module = pcall(_require(fileName))
-	if not ok then
-		ok, module = pcall(_require("Scripts/" ..fileName))
-	end
-	return module
-end
-]]--
+DEBUG = false
 
 -- Add Scripts used by both client and server:
 --require("globals")

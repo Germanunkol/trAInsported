@@ -88,6 +88,9 @@ LNG.menu_err_resolution = [[Failed to set resolution!]]
 LNG.fast_forward = [[FAST FORWARD TO CATCH UP WITH SERVER]]
 LNG.confirm_leave = [[Leave the current match and return to menu?]]
 
+LNG.open_folder = [[Open Folder]]
+LNG.open_folder_tooltip = [[Opens the folder: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+
 LNG.reload = [[Reload]]
 LNG.reload_confirm = [[Reload the AIs?]]
 LNG.reload_tooltip = [[Reloads the AI scripts and restarts the round.]]

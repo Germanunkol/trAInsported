@@ -291,7 +291,7 @@ local mapRenderThreadNumber = 0
 function map.generate(width, height, seed, tutorialMap)
 	if not map.generating() then
 	
-		if file_exists("log.txt") then
+		if file_exists("log.txt") and DEBUG then
 			local f = io.open("log.txt", "w")
 			f:write("")
 			f:close()

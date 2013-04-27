@@ -90,6 +90,9 @@ LNG.menu_err_resolution = [[Konnte die Auflösung nicht einstellen!]]
 LNG.fast_forward = [[Zeitraffer um mit Server zu synchronisieren]]
 LNG.confirm_leave = [[Momentanes Match verlassen?]]
 
+LNG.open_folder = [[Ordner öffnen]]
+LNG.open_folder_tooltip = [[Öffnet den Ordner: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+
 LNG.reload = [[Neu Laden]]
 LNG.reload_confirm = [[Runde neu starten?]]
 LNG.reload_tooltip = [[Lädt die KIs neu und startet dann die Runde neu.]]

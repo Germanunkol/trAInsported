@@ -248,7 +248,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Good. Let's keep going.\n\nThe game has created a subfolder called 'AI' at '" .. AI_DIRECTORY .. "'\nIn it, you'll find a new file that I just generated. It's called 'TutorialAI1.lua'.\nOpen this file in any text editor of your choice and read it."
+	tutorialSteps[k].message = "Good. Let's keep going.\nOpen the folder in which all your Scripts will be stored by pressing the 'Open Folder' button. In it, you'll find the file TutorialAI1.lua. Open it with any text editor and read it.\nIf the button doesn't work, you can also find the folder here: " .. AI_DIRECTORY
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then

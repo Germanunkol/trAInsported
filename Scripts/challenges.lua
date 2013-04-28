@@ -122,6 +122,8 @@ function challenges.execute(data)
 			return
 		end
 		
+		
+		
 		if not c.start or not type(c.start) == "function" then
 			print("Error in challenge: No starting function found.")
 			statusMsg.new("Error in challenge: No starting function found.", true)

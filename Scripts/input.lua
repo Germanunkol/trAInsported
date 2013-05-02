@@ -102,6 +102,7 @@ function pauseGame()
 		timeFactorIndexRemember = false
 	else
 		if not simulation.isRunning() then
+			timeFactorIndexRemember = timeFactorIndex
 			timeFactorIndex = 1
 		end
 	end

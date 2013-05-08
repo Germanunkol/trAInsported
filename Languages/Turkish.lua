@@ -1,4 +1,3 @@
-
 -- Language file for trAInsported. Make a copy of this to translate into your own language.
 -- Please don't change the order of the entries in this file.
 

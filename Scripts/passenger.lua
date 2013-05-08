@@ -90,7 +90,6 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 		
 		local vip = false
 		if VIP_RATIO > 0 and VIP_RATIO < 1 and not dontCreateVIP then
-			print("Game TIME", GAME_TIME, 1/VIP_RATIO, math.floor(1/(VIP_RATIO*5)))
 			if GAME_TIME == "Rushhour" then
 				if math.random(math.floor(1/(VIP_RATIO*5))) <= 1 then
 					vip = true

@@ -100,12 +100,12 @@ LNG.speed_up = [[Nopeuta peliä]]
 LNG.slow_down = [[Hidasta peliä]]
 LNG.pause = [[Pysäytä peli]]
 
-LNG.by = [[]]
-LNG.transported = [[Kuljettanut]]
+LNG.by = [[]]   -- by author
+LNG.transported = [[Kuljetettu]]
 -- the following three strings are for the string "X of Y passengers"
 LNG.transported1 = [[]]		-- before X
 LNG.transported2 = [[ / ]]		-- between X and Y
-LNG.transported3 = [[ matkustajasta]]		-- after Y
+LNG.transported3 = [[ matkustajaa]]		-- after Y
 
 LNG.round_ends = [[Ottelua jäljellä]]
 LNG.seconds = [[s]]

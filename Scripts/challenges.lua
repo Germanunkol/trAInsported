@@ -191,6 +191,28 @@ function challenges.createEmptyMap(width, height)
 	return m
 end
 
+function challenges.convertTableToMap(table)
+  	local map = {}
+	local _mapAssoc = {}
+	_mapAssoc[0] = nil
+	_mapAssoc[1] = "C"
+	_mapAssoc[2] = "H"
+	_mapAssoc[3] = "S"
+	_mapAssoc[4] = "STORE"
+	map[0] = {}
+	for i,row in ipairs(table) do
+		for j,value in ipairs(row) do
+			if value > 0 then
+				map[j][i] = _mapAssoc[value]
+			end
+		end	
+	end
+	map[j+1] = {}
+	map.width = j
+	map.height = i
+	return map
+end
+
 function challenges.setMessage(msg)
 	if currentTutBox then
 		TUT_BOX_X = currentTutBox.x

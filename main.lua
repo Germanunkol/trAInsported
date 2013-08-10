@@ -26,7 +26,7 @@ chart = require("Scripts/generateChart")
 configFile = require("Scripts/configFile")
 
 challenges = require("Scripts/challenges")
-displayDebugInformation = false
+displayDebugInformation = true
 
 -- Command line options are parsed in conf.lua. If anything is wrong with them, the INVALID_ flags are set.
 -- Handle these here:

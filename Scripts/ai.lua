@@ -185,7 +185,7 @@ function ai.new(scriptName)
 			aiList[i].scriptName = scriptName
 			
 			local s,e, owner = scriptName:find(".*/(.-)/")
-			if owner == name then
+			if owner == name and not DEDICATED then
 				s,e, owner = scriptName:find(".*/(.-)/(.-)/")
 			end
 			print("OWNER:",owner)

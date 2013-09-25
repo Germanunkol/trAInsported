@@ -209,7 +209,7 @@ The money the player starts with.
 Use this to print something to the in-game console.  
 **Passed Arguments:**
 
-- message: Coordinates of the place where the passenger should spawn
+- message: Text
 - color: A table containing r,g and b values (red, green and blue). Console message will be displayed in this color.
 
 		console.add("Beware of Zombies!", {r=255,g=50,b=50})

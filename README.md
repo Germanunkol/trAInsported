@@ -62,3 +62,6 @@ If you want to translate the Game into your own language, please do the followin
 - Copy the four Tutorial .lua Files from the Tutorial/ subfolder of the game into the Language/ folder. Add LANGUAGE_ to the beginning of all four file names, where LANGUAGE is the same as the name of your translation file in this folder. Example: Deutsch.lua Deutsch\_Tutorial1.lua Deutsch\_Tutorial2.lua etc.
 - Send me the files! Either give them to me through gitHub, or send them to me some other way (file upload, or via email).
 - Thanks!
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Germanunkol/trainsported/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

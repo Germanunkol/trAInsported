@@ -66,6 +66,3 @@ If you want to translate the Game into your own language, please do the followin
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Germanunkol/trainsported/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Germanunkol/trainsported/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

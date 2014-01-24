@@ -287,7 +287,7 @@ function tutorial.createTutBoxes()
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Buying the first train!"
-	tutorialSteps[k].message = "Now, add the code on the left below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n(Press and hold 'M' to see all coordinates!)\nWhen done, save and click 'Reload'."
+	tutorialSteps[k].message = "Now, add the code on the right below your print call. This will buy your first train and place it at the position x=1, y=3. The map is split up into squares (you might have to zoom in to see them).\nX (left to right) and Y (top to bottom) are the coordinates.\n(Press and hold 'M' to see all coordinates!)\nWhen done, save and click 'Reload'."
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}

@@ -431,7 +431,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Open up the newly created TutorialAI2.lua, from inside the same folder as before.\n\nThere's already some code in the file, which is why there's already a train on the map.\nAdd the code on the left (replace the already existing ai.init), then press 'Reload'."
+	tutorialSteps[k].message = "Open up the newly created TutorialAI2.lua, from inside the same folder as before.\n\nThere's already some code in the file, which is why there's already a train on the map.\nAdd the code on the right (replace the already existing ai.init), then press 'Reload'."
 	tutorialSteps[k].event = eventCounter(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}

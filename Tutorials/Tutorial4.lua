@@ -223,7 +223,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "First, we need a way to decide which distance is the shortest. To do this, let's define a function called 'distance'.\nWe'll use the well-known pythagorian theorem:\na²+b² = c² or c = sqrt(a²+b²) in our case.\nType the code on the left into TutorialAI4.lua, then press Next."
+	tutorialSteps[k].message = "First, we need a way to decide which distance is the shortest. To do this, let's define a function called 'distance'.\nWe'll use the well-known pythagorian theorem:\na²+b² = c² or c = sqrt(a²+b²) in our case.\nType the code on the right into TutorialAI4.lua, then press Next."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_eucledianDist)

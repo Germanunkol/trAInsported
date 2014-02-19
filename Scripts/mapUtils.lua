@@ -575,8 +575,8 @@ function generateMapQuads()
 	mapQuads.TREE02_SHADOW = newQuad( 7, 2, objectShadowSheet )
 	mapQuads.TREE03 = newQuad( 7, 3, objectSheet )
 	mapQuads.TREE03_SHADOW = newQuad( 7, 3, objectShadowSheet )
-	mapQuads.BUSH01 = newQuad( 8, 2, objectSheet )
-	mapQuads.BUSH01_SHADOW = newQuad( 8, 2, objectShadowSheet )
+	mapQuads.BUSH01 = newQuad( 8, 3, objectSheet )
+	mapQuads.BUSH01_SHADOW = newQuad( 8, 3, objectShadowSheet )
 
 	mapQuads.PARK = newQuad( 3, 5 )
 end

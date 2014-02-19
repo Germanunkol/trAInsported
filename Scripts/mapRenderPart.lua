@@ -284,9 +284,6 @@ function getRailImage( railType )
 	return nil
 end
 
-
-
-
 xBorder = 0
 yBorder = 0
 startX = 1

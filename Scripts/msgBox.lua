@@ -124,65 +124,8 @@ function msgBox.handleClick()
 	end
 end
 
-local msgBoxBGThread
-
 function msgBox.init(maxNumThreads)
-	local initialMaxNumThreads = maxNumThreads
-	
-	if not msgBoxBGThread and not msgBoxBG then		-- only start thread once!
-		if not CL_FORCE_RENDER and versionCheck.getMatch() then
-			ok, msgBoxBG = pcall(love.graphics.newImage, "msgBoxBG.png")
-			if not ok then msgBoxBG = nil end
-		end
-		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
-		
-			maxNumThreads = maxNumThreads - 1
-			
-			msgBoxBG = nil
-			loadingScreen.addSection("Rendering Message Box")
-			msgBoxBGThread = love.thread.newThread("msgBoxBGThread", "Scripts/renderImageBox.lua")
-			msgBoxBGThread:start()
-	
-			msgBoxBGThread:set("width", MSG_BOX_WIDTH )
-			msgBoxBGThread:set("height", MSG_BOX_HEIGHT )
-			msgBoxBGThread:set("shadow", true )
-			msgBoxBGThread:set("shadowOffsetX", 6 )
-			msgBoxBGThread:set("shadowOffsetY", 1 )
-			msgBoxBGThread:set("colR", MSG_BOX_R )
-			msgBoxBGThread:set("colG", MSG_BOX_G )
-			msgBoxBGThread:set("colB", MSG_BOX_B )
-		end
-	else
-		if not msgBoxBG then	-- if there's no button yet, that means the thread is still running...
-		
-			percent = msgBoxBGThread:get("percentage")
-			if percent then
-				loadingScreen.percentage("Rendering Message Box", percent)
-			end
-			err = msgBoxBGThread:get("error")
-			if err then
-				print("Error in thread:", err)
-			end
-		
-			status = msgBoxBGThread:get("status")
-			if status == "done" then
-				msgBoxBG = msgBoxBGThread:get("imageData")		-- get the generated image data from the thread
-				msgBoxBG:encode("msgBoxBG.png")
-				msgBoxBG = love.graphics.newImage(msgBoxBG)
-				msgBoxBGThread:wait()
-				msgBoxBGThread = nil
-				
-				maxNumThreads = maxNumThreads + 1
-			end
-		end
-	end
-	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
-end
-
-function msgBox.initialised()
-	if msgBoxBG then
-		return true
-	end
+	msgBoxBG = love.graphics.newImage( "Images/msgBoxBG.png" )
 end
 
 return msgBox

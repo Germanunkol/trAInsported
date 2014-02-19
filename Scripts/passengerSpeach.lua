@@ -24,63 +24,8 @@ vipSpeach = {
 
 local pSpeach = {}
 
-function pSpeach.init(maxNumThreads)
-	local initialMaxNumThreads = maxNumThreads
-
-	if not pSpeachBubbleThread and not pSpeachBubble then		-- only start thread once!
-		if not CL_FORCE_RENDER and versionCheck.getMatch() then
-			ok, pSpeachBubble = pcall(love.graphics.newImage, "pSpeachBubble.png")
-			if not ok then pSpeachBubble = nil end
-		end
-		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
-		
-			maxNumThreads = maxNumThreads - 1
-			
-			pSpeachBubble = nil
-			loadingScreen.addSection("Rendering Speach Bubble Box")
-			pSpeachBubbleThread = love.thread.newThread("pSpeachBubbleThread", "Scripts/renderImageBox.lua")
-			pSpeachBubbleThread:start()
-	
-			pSpeachBubbleThread:set("width", BUBBLE_WIDTH )
-			pSpeachBubbleThread:set("height", BUBBLE_HEIGHT )
-			pSpeachBubbleThread:set("shadow", true )
-			pSpeachBubbleThread:set("shadowOffsetX", 6 )
-			pSpeachBubbleThread:set("shadowOffsetY", 1 )
-			pSpeachBubbleThread:set("colR", BUBBLE_R )
-			pSpeachBubbleThread:set("colG", BUBBLE_G )
-			pSpeachBubbleThread:set("colB", BUBBLE_B )
-		end
-	else
-		if not pSpeachBubble then	-- if there's no button yet, that means the thread is still running...
-		
-			percent = pSpeachBubbleThread:get("percentage")
-			if percent then
-				loadingScreen.percentage("Rendering Speach Bubble Box", percent)
-			end
-			err = pSpeachBubbleThread:get("error")
-			if err then
-				print("Error in thread:", err)
-			end
-		
-			status = pSpeachBubbleThread:get("status")
-			if status == "done" then
-				pSpeachBubble = pSpeachBubbleThread:get("imageData")		-- get the generated image data from the thread
-				pSpeachBubble:encode("pSpeachBubble.png")
-				pSpeachBubble = love.graphics.newImage(pSpeachBubble)
-				pSpeachBubbleThread:wait()
-				pSpeachBubbleThread = nil
-				
-				maxNumThreads = maxNumThreads + 1
-			end
-		end
-	end
-	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
-end
-
-function pSpeach.initialised()
-	if pSpeachBubble then
-		return true
-	end
+function pSpeach.init( )
+	pSpeachBubble = love.graphics.newImage( "Images/pSpeachBubble.png" )
 end
 
 return pSpeach

@@ -384,8 +384,6 @@ else
 	local floatPanX, floatPanY = 0,0	-- keep "floating" into the same direction for a little while...
 
 	local renderingProcessStarted
-	local toRenderList = {}
-	local renderingList = {}
 	local numberOfThreads = 0
 	local maxNumberOfThreads = 4	--default
 
@@ -415,7 +413,7 @@ else
 		curMap = false
 		showQuickHelp = false
 		showConsole = true
-		initialising = true
+		--initialising = true
 
 		loadingScreen.reset()	
 		love.graphics.setBackgroundColor(BG_R, BG_G, BG_B, 255)
@@ -462,7 +460,18 @@ else
 		if lang then
 			selectLanguage(lang)
 		end
-		
+			
+			button.init()
+			msgBox.init()
+			loadingScreen.init()
+			quickHelp.init()
+			stats.init()
+			tutorialBox.init()
+			codeBox.init()
+			statusMsg.init()
+			pSpeach.init()
+
+			finishStartupProcess()
 	end
 
 	function finishStartupProcess()
@@ -477,8 +486,8 @@ else
 	-- Runs every frame:
 	function love.update(dt)
 			
+			--[[	
 		if initialising then
-		
 			if not renderingProcessStarted then
 				renderingProcessStarted = true
 				numberOfThreads = 0
@@ -491,30 +500,8 @@ else
 				end
 				
 				startRenderingTime = os.time()
-				
-				-- queue up all modules which need rendering (all of them must have the functions .init and .initialised!!)
-				table.insert(toRenderList, button)
-				table.insert(toRenderList, msgBox)
-				table.insert(toRenderList, loadingScreen)
-				table.insert(toRenderList, quickHelp)
-				table.insert(toRenderList, stats)
-				table.insert(toRenderList, tutorialBox)
-				table.insert(toRenderList, codeBox)
-				table.insert(toRenderList, statusMsg)
-				table.insert(toRenderList, pSpeach)
-				
 			end
-			
-			numberOfThreads = numberOfThreads + button.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + msgBox.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + loadingScreen.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + quickHelp.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + stats.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + tutorialBox.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + codeBox.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + statusMsg.init(maxNumberOfThreads - numberOfThreads)
-			numberOfThreads = numberOfThreads + pSpeach.init(maxNumberOfThreads - numberOfThreads)
-			
+				
 			
 			if button.initialised() and msgBox.initialised() and loadingScreen.initialised()
 				and quickHelp.initialised() and stats.initialised() and tutorialBox.initialised()
@@ -524,7 +511,7 @@ else
 					print("Rendered/Loaded images in " .. os.time() - startRenderingTime .. " seconds.")
 			end
 			
-		else
+		else]]
 	
 			connection.handleConnection()
 			functionQueue.run()
@@ -677,7 +664,7 @@ else
 					end
 				end
 			end
-		end
+		--end
 	
 		--limit FPS: 
 		if dt < 1/30 then
@@ -690,10 +677,10 @@ else
 	-- Runs every frame, displays everything on the screen:
 	function love.draw()
 
-		if initialising then		--only runs once at startup, until all images are rendered.
+		--[[if initialising then		--only runs once at startup, until all images are rendered.
 			loadingScreen.render()
 			return
-		end
+		end]]
 
 		-- love.graphics.rectangle("fill",50,50,300,300)
 		dt = love.timer.getDelta()
@@ -724,8 +711,9 @@ else
 			end
 		end
 
-		if roundEnded and (curMap or simulationMap) and mapImage then stats.display(love.graphics.getWidth()/2-175, 40, dt) end
-	
+		if roundEnded and (curMap or simulationMap) and mapImage then
+			stats.display(love.graphics.getWidth()/2-175, 40, dt)
+		end
 	
 		button.show()
 	

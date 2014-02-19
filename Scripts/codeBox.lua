@@ -115,63 +115,7 @@ function codeBox.handleClick()
 end
 
 function codeBox.init(maxNumThreads)
-	local initialMaxNumThreads = maxNumThreads
-	
-	if not codeBoxBGThread and not codeBoxBG then		-- only start thread once!
-		if not CL_FORCE_RENDER and versionCheck.getMatch() then
-			ok, codeBoxBG = pcall(love.graphics.newImage, "codeBoxBG.png")
-			if not ok then codeBoxBG = nil end
-		end
-		if (not ok or not versionCheck.getMatch() or CL_FORCE_RENDER) and maxNumThreads > 0 then
-		
-			maxNumThreads = maxNumThreads - 1
-		
-			codeBoxBG = nil
-			loadingScreen.addSection("Rendering Code Box")
-			codeBoxBGThread = love.thread.newThread("codeBoxBGThread", "Scripts/renderImageBox.lua")
-			codeBoxBGThread:start()
-	
-			codeBoxBGThread:set("alpha", 200 )
-			codeBoxBGThread:set("width", CODE_BOX_WIDTH )
-			codeBoxBGThread:set("height", CODE_BOX_HEIGHT )
-			codeBoxBGThread:set("shadow", true )
-			codeBoxBGThread:set("shadowOffsetX", 6 )
-			codeBoxBGThread:set("shadowOffsetY", 1 )
-			codeBoxBGThread:set("colR", CODE_BOX_R )
-			codeBoxBGThread:set("colG", CODE_BOX_G )
-			codeBoxBGThread:set("colB", CODE_BOX_B )
-		end
-	else
-		if not codeBoxBG then	-- if there's no button yet, that means the thread is still running...
-		
-			percent = codeBoxBGThread:get("percentage")
-			if percent then
-				loadingScreen.percentage("Rendering Code Box", percent)
-			end
-			err = codeBoxBGThread:get("error")
-			if err then
-				print("Error in thread:", err)
-			end
-		
-			status = codeBoxBGThread:get("status")
-			if status == "done" then
-				codeBoxBG = codeBoxBGThread:get("imageData")		-- get the generated image data from the thread
-				codeBoxBG:encode("codeBoxBG.png")
-				codeBoxBG = love.graphics.newImage(codeBoxBG)
-				codeBoxBGThread:wait()
-				codeBoxBGThread = nil
-				
-				maxNumThreads = maxNumThreads + 1
-			end
-		end
-	end
-	return initialMaxNumThreads - maxNumThreads 	-- return how many threads have been started or removed
-end
-
-function codeBox.initialised()
-	if codeBoxBG then
-		return true
-	end
+	codeBoxBG = love.graphics.newImage( "Images/codeBoxBG.png")
 end
 
 return codeBox

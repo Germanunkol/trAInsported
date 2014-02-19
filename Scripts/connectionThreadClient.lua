@@ -74,7 +74,7 @@ while true do
 			--thisThread:set("newMap", data:sub(5,#data))
 			channelOut:push({key="newMap", data:sub(5,#data)})
 		elseif data:find("U:") == 1 then
-			newPacket(data:sub(3,#data))
+			channelOut:push({key="packet", data:sub(3,#data)})
 		elseif data:find("NEXT_MATCH:") == 1 then
 			timeUntilNextMatch = tonumber(data:sub(12, #data))
 			--thisThread:set("nextMatch", timeUntilNextMatch)

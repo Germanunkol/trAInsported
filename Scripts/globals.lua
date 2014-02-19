@@ -4,7 +4,7 @@
 ----------------------------------
 
 -- General:
-VERSION = "5"
+VERSION = "4"
 CONFIG_FILE = "trAInsported.conf"
 DEFAULT_RES_X = 1024
 DEFAULT_RES_Y = 600
@@ -14,8 +14,6 @@ AI_DIRECTORY = "AI/" -- fallback
 FALLBACK_SERVER_IP = "127.0.0.1"
 MAIN_SERVER_IP = "trainsportedgame.no-ip.org"
 PORT = 5556
-
---
 
 if not DEDICATED then
 

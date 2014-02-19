@@ -187,7 +187,6 @@ function runMap(restart)
 		
 		curMap.time = 0		-- start map timer.
 		
-		
 		roundEnded = false
 		
 		if restart and challenges.isRunning() then
@@ -1258,7 +1257,6 @@ if not crash then crash() end
 --
 
 function map.render(map)
-
 	if not currentlyRenderingMap or map ~= nil then
 		--currentlyRenderingMap = true
 		

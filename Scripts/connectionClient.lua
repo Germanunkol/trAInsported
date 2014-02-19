@@ -84,7 +84,7 @@ function connection.handleConnection()
 			if packet[1]:find(".U:") then
 				print("Error: Received bad packet", packet[1])
 				statusMsg.new("Error in connection. Received a bad packet content. Will automatically retry when current match is over.", true)
-			else	
+			else
 				simulation.addUpdate(packet[1])
 			end
 		end
@@ -137,6 +137,7 @@ function connection.handleConnection()
 			map.render(simulationMap)
 			newMapStarting = true
 			menu.exitOnly()
+			simulation.runMap()
 		end
 		connection.serverVersionMatch = false
 		connection.mapReceived = false

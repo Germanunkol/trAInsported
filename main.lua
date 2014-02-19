@@ -631,20 +631,23 @@ else
 				if train.isRenderingImages() then
 					train.renderTrainImage()
 				end
-			
-				if not train.isRenderingImages() and not map.generating() and not map.rendering() then	-- done rendering everything!
-					if simulation.isRunning() then
+		
+				--if not train.isRenderingImages() and not map.generating() and not map.rendering() then	-- done rendering everything!
+					--[[if simulation.isRunning() then
 						simulation.runMap()
 					else
 						runMap()	-- start the map!
+					end]]
+					if not simulation.isRunning() then
+						runMap()	-- start the map!
 					end
-				end
+				--end
+				--end
 			else
 				if menu.isRenderingImages() then
 					menu.renderTrainImages()
 				end
 			end
-		
 		
 			if not roundEnded and not newMapStarting then
 				train.moveAll()

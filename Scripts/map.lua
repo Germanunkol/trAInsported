@@ -17,6 +17,11 @@ local status = nil
 
 local mapSeed = 0
 
+groundSheetGrass = love.graphics.newImage("Images/GroundSheet.png")
+groundSheetStone = love.graphics.newImage("Images/GroundSheet_Stone.png")
+objectSheet = love.graphics.newImage("Images/ObjectSheet.png")
+objectShadowSheet = love.graphics.newImage("Images/ObjectShadowsSheet.png")
+
 --------------------------------------------------------------
 --		INITIALISE MAP:
 --------------------------------------------------------------
@@ -67,7 +72,8 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 		
 		--IMPORTANT!
 		if connection.thread then
-			connection.thread:set("reset", "true")	-- reset all packets that have been sent last round!
+			-- reset all packets that have been sent last round!
+			connection.channelIn:push({key="reset", true})
 		end
 		
 	else
@@ -335,128 +341,130 @@ function map.generate(width, height, seed, tutorialMap)
 			print("Generating new map. Width: " .. width .. " Height: " .. height)
 		end
 		-- mapImage, mapShadowImage, mapObjectImage = map.render()
-			mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
-		if not mapGenerateThread then 
-			mapGenerateThread = love.thread.newThread("mapGeneratingThread" .. mapGenerateThreadNumber, "Scripts/mapGenerate.lua")
-			mapGenerateThread:start()
+		--mapGenerateThreadNumber = incrementID(mapGenerateThreadNumber) -- don't generate same name twice!
+		mapGenerateThread = love.thread.newThread("Scripts/mapGenerate.lua")
+		mapGenerateThreadChannelIn = love.thread.newChannel()
+		mapGenerateThreadChannelOut = love.thread.newChannel()
+		mapGenerateThread:start( mapGenerateThreadChannelIn, mapGenerateThreadChannelOut,
+				width, height, seed, tutorialMap, CURRENT_REGION )
+		--[[	
+		if tutorialMap then
+		--mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap))
+			mapGenerateThreadChannelIn:push({key="tutorialMap", TSerial.pack(tutorialMap)} )
 		end
-		
-		if tutorialMap then mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap)) end
-		mapGenerateThread:set("width", width )
-		mapGenerateThread:set("height", height )
-		mapGenerateThread:set("seed", seed )
-		mapGenerateThread:set("ID", mapGenerateThreadNumber )
+		mapGenerateThreadChannelIn({key="width", width })
+		mapGenerateThreadChannelIn({key="height", height })
+		mapGenerateThreadChannelIn({key="seed", seed })
 		if CURRENT_REGION then
-			mapGenerateThread:set("region", CURRENT_REGION)
-		end
+			mapGenerateThreadChannelIn({key="region", CURRENT_REGION})
+		end]]
 		
-		mapGenerateStatusNum = 0
 		currentlyGeneratingMap = true
 		
-		mapGenerateMsgNumber = 0
 		prevStr = nil
 	else
 	
-		percent = mapGenerateThread:get("percentage")
-		if percent and loadingScreen then
-			loadingScreen.percentage(LNG.load_generating_map, percent)
+		local packet = mapGenerateThreadChannelOut:pop()
+		if packet then
+			if packet.key == "percentage" and loadingScreen then
+				loadingScreen.percentage(LNG.load_generating_map, packet[1])
+			end
+
+			-- first, look for new messages:
+			if packet.key == "msg" then
+				print(packet[1])
+				--[[if prevStr == packet[1] and packet[1] == "I'm done!" then
+					print("Error: Same message twice!")
+					love.event.quit()
+				end
+				prevStr = packet[1]]
+			end
+
+			if packet.key == "curMap" then
+				curMap = TSerial.unpack(packet[1])
+			elseif packet.key == "curMapRailTypes" then
+				curMapRailTypes = TSerial.unpack(packet[1])
+			elseif packet.key == "curMapOccupiedTiles" then
+				curMapOccupiedTiles = TSerial.unpack(packet[1])
+			elseif packet.key == "curMapOccupiedExits" then
+				curMapOccupiedExits = TSerial.unpack(packet[1])
+			end
+
+			if packet.key == "status" then
+				if loadingScreen then
+					loadingScreen.addSubSection(LNG.load_generating_map, LNG.load_generation[packet[1]])
+				end
+				if packet[1] == "done" then
+					print("Generating done!")
+
+					if loadingScreen then
+						loadingScreen.percentage(LNG.load_generating_map, 100)
+					end
+					map.print("Finished Map:")
+
+					currentlyGeneratingMap = false
+					mapGenerateThread = nil
+
+					if not DEDICATED then
+						print("Start rendering:", curMap )
+						map.render(curMap)
+					else
+						sendMap()		-- important! send before running the map!
+						runMap()
+					end
+					collectgarbage("collect")
+
+					return curMap
+				end
+			end
 		end
-		
-		
-		-- first, look for new messages:
-		str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
-		while str do
-			print(str, mapGenerateMsgNumber)
-			if prevStr == str and str == "I'm done!" then
-				print("Error: Same message twice!")
+			-- then, check if there was an error:
+			err = mapGenerateThread:getError()
+			if err then
+				print("MAP GENERATING THREAD error: " .. err)
 				love.event.quit()
 			end
-			prevStr = str
-			mapGenerateMsgNumber = incrementID(mapGenerateMsgNumber)
-			str = mapGenerateThread:get("msg" .. mapGenerateMsgNumber)
-		end
-		
-		-- then, check if there was an error:
-		err = mapGenerateThread:get("error")
-		if err then
-			print("MAP GENERATING THREAD error: " .. err)
-			love.event.quit()
-		end
-		
-		
-		status = mapGenerateThread:get("status" .. mapGenerateStatusNum)
-		if status and loadingScreen then
-			mapGenerateStatusNum = incrementID(mapGenerateStatusNum)
-			loadingScreen.addSubSection(LNG.load_generating_map, LNG.load_generation[status])
-		end
-		
-		status = mapGenerateThread:get("status")
-		if status == "done" then
-			print("Generating done!")
-			
-			curMap = TSerial.unpack(mapGenerateThread:demand("curMap"))
-			curMapRailTypes = TSerial.unpack(mapGenerateThread:demand("curMapRailTypes"))
-			curMapOccupiedTiles = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedTiles"))
-			curMapOccupiedExits = TSerial.unpack(mapGenerateThread:demand("curMapOccupiedExits"))
-			
-			if loadingScreen then
-				loadingScreen.percentage(LNG.load_generating_map, 100)
-			end
-			map.print("Finished Map:")
-			--mapGenerateThread:wait()
-			currentlyGeneratingMap = false
-			--mapGenerateThread = nil
-			if not DEDICATED then
-				map.render(curMap)
-			else
-				sendMap()		-- important! send before running the map!
-				runMap()
-			end
-			collectgarbage("collect")
-			
-			return curMap
 		end
 	end
-end
 
-function map.generating()
-	if currentlyGeneratingMap then return true end
-end
+	function map.generating()
+		if currentlyGeneratingMap then return true end
+	end
 
---------------------------------------------------------------
---		MAP TILE OCCUPATION:
---------------------------------------------------------------
+	--------------------------------------------------------------
+	--		MAP TILE OCCUPATION:
+	--------------------------------------------------------------
 
 
-function map.drawOccupation()
-	love.graphics.setColor(255,128,128,255)
-	for i = 1, curMap.width do
-		for j = 1, curMap.height do
-			if curMapOccupiedExits[i][j]["N"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+20, 5)
-			end
-			if curMapOccupiedExits[i][j]["S"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+TILE_SIZE-20, 5)
-			end
-			if curMapOccupiedExits[i][j]["W"] then
-				love.graphics.circle("fill", i*TILE_SIZE+20, j*TILE_SIZE+TILE_SIZE/2, 5)
-			end
-			if curMapOccupiedExits[i][j]["E"] then
-				love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE-20, j*TILE_SIZE+TILE_SIZE/2, 5)
+	function map.drawOccupation()
+		love.graphics.setColor(255,128,128,255)
+		for i = 1, curMap.width do
+			for j = 1, curMap.height do
+				if curMapOccupiedExits[i][j]["N"] then
+					love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+20, 5)
+				end
+				if curMapOccupiedExits[i][j]["S"] then
+					love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE/2, j*TILE_SIZE+TILE_SIZE-20, 5)
+				end
+				if curMapOccupiedExits[i][j]["W"] then
+					love.graphics.circle("fill", i*TILE_SIZE+20, j*TILE_SIZE+TILE_SIZE/2, 5)
+				end
+				if curMapOccupiedExits[i][j]["E"] then
+					love.graphics.circle("fill", i*TILE_SIZE+TILE_SIZE-20, j*TILE_SIZE+TILE_SIZE/2, 5)
+				end
 			end
 		end
 	end
-end
 
-function map.getIsTileOccupied(x, y, f, t)
-	if not f or not t then
-		if curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
-		then
-			return true
-		end
-		
-		for k, v in pairs(curMapOccupiedExits[x][y]) do
-			if v then
+	function map.getIsTileOccupied(x, y, f, t)
+		if not f or not t then
+			if curMapOccupiedTiles[x][y]["NS"] or curMapOccupiedTiles[x][y]["SN"] or curMapOccupiedTiles[x][y]["EW"] or curMapOccupiedTiles[x][y]["WE"] or curMapOccupiedTiles[x][y]["NE"] or curMapOccupiedTiles[x][y]["EN"] or curMapOccupiedTiles[x][y]["ES"] or curMapOccupiedTiles[x][y]["SE"] or curMapOccupiedTiles[x][y]["SW"] or curMapOccupiedTiles[x][y]["WS"] or curMapOccupiedTiles[x][y]["WN"] or curMapOccupiedTiles[x][y]["NW"]
+				then
+					return true
+				end
+
+				for k, v in pairs(curMapOccupiedExits[x][y]) do
+					if v then
 				return true
 			end
 		end
@@ -623,6 +631,10 @@ end
 --------------------------------------------------------------
 
 function map.init()
+	
+	-- create the quads used for the sprite batch, to render the maps later:
+	generateMapQuads()
+
 	pathNS = {}
 	pathNS[1] = {x=48,y=0}
 	pathNS[2] = {x=48,y=128}
@@ -1240,78 +1252,139 @@ if(!(crash == true)){
 crash();
 }
 
--- micha's Ã¼bersetzung:
+-- micha's Übersetzung:
 if not crash then crash() end
 ]]--
 --
 
 function map.render(map)
+
+	if not currentlyRenderingMap or map ~= nil then
+		--currentlyRenderingMap = true
+		
+		print("Rendering Map...")
+		
+		map = map or curMap
+
+		local groundData, shadowData, objectData = renderMap( map,
+			curMapRailTypes,
+			tutorial and tutorial.noTrees,
+			CURRENT_REGION )
+		--currentlyRenderingMap = false
+		print("Rendering done!")
+		print("Rendered map with " .. map.width .. "x" .. map.height .. " tiles.")
+		attemptingToConnect = false 	-- no longer show loading screen!
+
+		loadingScreen.percentage(LNG.load_rendering_map, 100)
+
+		currentlyRenderingMap = false
+
+		--print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
+
+		if not DEDICATED then
+			m = curMap or simulationMap
+			if m then
+				for i = 1, m.width do
+					for j = 1, m.height do
+						if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
+							m[i][j] = "S"
+						end
+						if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
+							m[i][j] = "H"
+						end
+					end				
+				end
+			end
+		end
+
+		mapImage, mapShadowImage, mapObjectImage = groundData,shadowData,objectData
+	end
+
+	--[[
 	if not currentlyRenderingMap or map ~= nil then		-- if a new map is given, render this new map!
 		print("Rendering Map...")
-		if not mapRenderThread then
-			mapRenderThread = love.thread.newThread("mapRenderingThread" .. mapRenderThreadNumber, "Scripts/mapRender.lua")
+			mapRenderThread = love.thread.newThread("Scripts/mapRender.lua")
 			mapRenderThreadNumber = mapRenderThreadNumber + 1
-			mapRenderThread:start()
-		end
+			mapRenderThreadChannelIn = love.thread.newChannel()
+			mapRenderThreadChannelOut = love.thread.newChannel()
+			mapRenderThread:start( mapRenderThreadChannelIn, mapRenderThreadChannelOut )
+
 		map = map or curMap
-		mapRenderThread:set("curMap", TSerial.pack( map ) )
-		mapRenderThread:set("curMapRailTypes", TSerial.pack(curMapRailTypes) )
-		mapRenderThread:set("TILE_SIZE", TILE_SIZE)
+		mapRenderThreadChannelIn:push({key="TILE_SIZE", TILE_SIZE})
+		mapRenderThreadChannelIn:push({key="curMapRailTypes", TSerial.pack(curMapRailTypes) })
 		
-		mapRenderThreadStatusNum = 0
 		currentlyRenderingMap = true
 		
 		if tutorial and tutorial.noTrees then
-			mapRenderThread:set("NO_TREES", true)
+			--mapRenderThread:set("NO_TREES", true)
+			mapRenderThreadChannelIn:push({key="NO_TREES", true})
 		end
+		-- must be last, because as soon as curMap is received, thread starts rendering:
+		mapRenderThreadChannelIn:push({key="curMap", TSerial.pack( map )})
+
 		loadingScreen.addSection(LNG.load_rendering_map)
 		renderingMapStartTime = os.time()
+
+		dimensionX, dimensionY = nil,nil
 	else
-		percent = mapRenderThread:get("percentage")
-		if percent then
-			loadingScreen.percentage(LNG.load_rendering_map, percent)
+		local packet = mapRenderThreadChannelOut:pop()
+
+		--percent = mapRenderThread:get("percentage")
+		if packet then
+		if packet.key == "percent" then
+			loadingScreen.percentage(LNG.load_rendering_map, packet[1])
 		end
 		
-		status = mapRenderThread:get("status" .. mapRenderThreadStatusNum)
-		if status then
-			mapRenderThreadStatusNum = incrementID(mapRenderThreadStatusNum)
-			loadingScreen.addSubSection(LNG.load_rendering_map, status)
+		--status = mapRenderThread:get("status" .. mapRenderThreadStatusNum)
+		if packet.key == "status" then
+			--mapRenderThreadStatusNum = incrementID(mapRenderThreadStatusNum)
+			loadingScreen.addSubSection(LNG.load_rendering_map, packet[1])
 		end
-		
-		status = mapRenderThread:get("status")
-		if status == "done" then
+
+		if packet.key == "dimensionX" then
+			dimensionX = packet[1]
+			groundData = {}
+			shadowData = {}
+			objectData = {}
+			for i = 1, dimensionX do	
+				groundData[i] = {}
+				shadowData[i] = {}
+				objectData[i] = {}
+			end
+		elseif packet.key == "dimensionY" then
+			dimensionY = packet[1]
+		end
+		if dimensionX and dimensionY then
+			for i = 1, dimensionX do
+				for j = 1, dimensionY do
+					if packet.key == "groundData:" .. i .. "," .. j then
+						groundData[i][j] = love.graphics.newImage(packet[1])
+					end
+					if packet.key == "shadowData:" .. i .. "," .. j then
+						shadowData[i][j] = love.graphics.newImage(packet[1])
+					end
+					if packet.key == "objectData:" .. i .. "," .. j then
+						objectData[i][j] = love.graphics.newImage(packet[1])
+					end
+				end
+			end
+			if packet.key == "highlightList" then
+				highlightList = TSerial.unpack(packet[1])
+				for i = 1,20 do
+					highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
+				end
+			end
+		end
+
+		--status = mapRenderThread:get("status")
+		if packet.key == "done" then
 			print("Rendering done!")
 			attemptingToConnect = false 	-- no longer show loading screen!
 			
 			local groundData = nil
 			local shadowData = nil
 			local objectData = nil
-			local dimensionX = mapRenderThread:get("dimensionX")
-			local dimensionY = mapRenderThread:get("dimensionY")
 			print("Receiving map with " .. dimensionX .. "x" .. dimensionY .. " pieces.")
-			groundData = {}
-			shadowData = {}
-			objectData = {}
-			if dimensionX and dimensionY then
-				for i = 1, dimensionX do
-					groundData[i] = {}
-					shadowData[i] = {}
-					objectData[i] = {}
-					for j = 1, dimensionY do
-						tmp = mapRenderThread:get("groundData:" .. i .. "," .. j)
-						if tmp then	groundData[i][j] = love.graphics.newImage(tmp) end
-						tmp = mapRenderThread:get("shadowData:" .. i .. "," .. j)
-						if tmp then	shadowData[i][j] = love.graphics.newImage(tmp) end
-						tmp = mapRenderThread:get("objectData:" .. i .. "," .. j)
-						if tmp then	objectData[i][j] = love.graphics.newImage(tmp) end
-					end
-				end
-				
-				highlightList = TSerial.unpack(mapRenderThread:get("highlightList"))
-				for i = 1,20 do
-					highlightListQuads[i] = love.graphics.newQuad( (i-1)*33, 0, 33, 32, 660, 32 )
-				end
-			end
 			--shadowData = mapRenderThread:get("shadowData")
 			--objectData = mapRenderThread:get("objectData")
 			
@@ -1339,8 +1412,9 @@ function map.render(map)
 			
 			return groundData,shadowData,objectData
 		end
-		
 	end
+		
+	end]]
 end
 
 function map.rendering()
@@ -1348,11 +1422,14 @@ function map.rendering()
 end
 
 function map.abortRendering()
-	if mapRenderThread then
-		mapRenderThread:set("abort", true)
+	--[[if mapRenderThread then
+		--mapRenderThread:set("abort", true)
+		mapRenderThreadChannelIn:push({key="abort", true})
+
 		mapRenderThread:wait()
 		mapRenderThread = nil
 	end
+	]]--
 	currentlyRenderingMap = false
 end
 
@@ -1400,7 +1477,6 @@ function map.show()
 	mapMouseX = mapMouseX + TILE_SIZE*(curMap.width+2)/2
 	mapMouseY = mapMouseY + TILE_SIZE*(curMap.height+2)/2
 	
-	
 	love.graphics.push()
 	love.graphics.scale(camZ)
 	
@@ -1408,12 +1484,15 @@ function map.show()
 	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.rotate(CAM_ANGLE)
+
+
+	-- Draw map shadow:
 	love.graphics.setColor(30,10,5, 200)
 	
-
-
-	x = -TILE_SIZE*(curMap.width+2)/2 -20
-	for i = 1, #mapImage do
+	x = -TILE_SIZE*(curMap.width+2)/2 - 20
+	y = -TILE_SIZE*(curMap.height+2)/2 + 35
+	love.graphics.draw( mapImage, x, y )
+	--[[for i = 1, #mapImage do
 		y = -TILE_SIZE*(curMap.height+2)/2 +35
 		for j = 1, #mapImage[i] do
 			if i == 1 or j == #mapImage[i] then
@@ -1425,11 +1504,13 @@ function map.show()
 				x = x + mapImage[i][j]:getWidth()
 			end
 		end
-	end
+	end]]
 	love.graphics.setColor(255,255,255, 255)
 	x = -TILE_SIZE*(curMap.width+2)/2
-	for i = 1, #mapImage do
-		y = -TILE_SIZE*(curMap.height+2)/2
+	y = -TILE_SIZE*(curMap.height+2)/2
+	love.graphics.draw( mapImage, x, y )
+	love.graphics.draw( mapShadowImage, x, y )
+	--[[for i = 1, #mapImage do
 		for j = 1, #mapImage[i] do
 			love.graphics.draw(mapImage[i][j], x,  y)
 			love.graphics.draw(mapShadowImage[i][j], x,  y)
@@ -1438,26 +1519,25 @@ function map.show()
 				x = x + mapImage[i][j]:getWidth()
 			end
 		end
-	end
-
+	end]]
 
 	centerX, centerY = 0,0
 	
-	
 	love.graphics.push()
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
-
 
 	passenger.showAll(passedTime)
 	train.showAll()
 	passenger.showVIPs(passedTime)
 	love.graphics.pop()
 
-
+	
+	-- draw the objects (houses, trees ... ):
 	love.graphics.setColor(255,255,255,255)
 	x = -TILE_SIZE*(curMap.width+2)/2
-	for i = 1, #mapImage do
-		y = -TILE_SIZE*(curMap.height+2)/2
+	y = -TILE_SIZE*(curMap.height+2)/2
+	love.graphics.draw( mapObjectImage, x, y )
+	--[[for i = 1, #mapImage do
 		for j = 1, #mapImage[i] do
 			love.graphics.draw(mapObjectImage[i][j], x,  y)
 			y = y + mapImage[i][j]:getHeight()
@@ -1466,7 +1546,7 @@ function map.show()
 				x = x + mapImage[i][j]:getWidth()
 			end
 		end
-	end
+	end]]
 
 	love.graphics.translate(-TILE_SIZE*(curMap.width+2)/2, -TILE_SIZE*(curMap.height+2)/2)
 	

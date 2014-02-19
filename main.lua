@@ -422,8 +422,8 @@ else
 
 		versionCheck.start()
 		
-		love.filesystem.mkdir("AI")
-		love.filesystem.mkdir("Maps")
+		love.filesystem.createDirectory("AI")
+		love.filesystem.createDirectory("Maps")
 		
 		if not love.filesystem.isFile("Maps/ExampleChallenge.lua") then
 			if love.filesystem.isFile("Challenges/Smalltown1.lua") then
@@ -449,7 +449,7 @@ else
 		print("Will look for AIs in:",AI_DIRECTORY)
 		
 		
-		tbl = love.filesystem.enumerate("Languages")
+		tbl = love.filesystem.getDirectoryItems("Languages")
 		for k, file in pairs(tbl) do
 			if not file:find("_") and file:find(".lua") and #file - file:find(".lua") == 3 then
 				print(file, file:find(".lua"), #file - file:find(".lua"))
@@ -617,17 +617,18 @@ else
 				end
 			elseif map.startupProcess() then
 				if map.generating() then
-					err = mapGenerateThread:get("error")
+					err = mapGenerateThread:getError()
 					if err then
 						print("Error in thread", err)
 						statusMsg.new(LNG.err_rendering, true)
 					end
-					curMap = map.generate()
-				elseif map.rendering() then
-					err = mapRenderThread:get("error")
+					map.generate()
+				--[[elseif map.rendering() then
+					err = mapRenderThread:getError()
 					if err then
 						print("Error in thread", err)
 						statusMsg.new(LNG.err_rendering, true)
+						map.abortRendering()
 					end
 				
 					--if simulation.isRunning() then
@@ -638,6 +639,7 @@ else
 					--else
 						--simulationMapImage,mapShadowImage,mapObjectImage = map.render()
 					--end
+					]]
 				end
 				if train.isRenderingImages() then
 					train.renderTrainImage()

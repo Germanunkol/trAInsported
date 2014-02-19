@@ -7,8 +7,9 @@ function initServer()
 	
 	connection.thread = love.thread.newThread("connectionThread" .. connectionThreadNum, "Scripts/connectionThreadServer.lua")
 	connectionThreadNum = connectionThreadNum + 1
-	connection.thread:start()
-	connection.thread:set("PORT", PORT)
+	connection.channelIn = love.thread.newChannel()
+	connection.channelOut = love.thread.newChannel()
+	connection.thread:start( connection.channelIn, connection.channelOut, PORT )
 	connection.msgNumber = 0
 	connection.packetNum = 0
 	

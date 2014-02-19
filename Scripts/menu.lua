@@ -20,7 +20,7 @@ end
 
 local trainImagesCreated = false
 
-local modes = love.graphics.getModes()
+local modes = love.window.getFullscreenModes()--love.graphics.getModes()
 	
 for k = 1, #RESOLUTIONS do
 	skip = false
@@ -253,12 +253,17 @@ function selectAI(k)
 		chosenAIs[k] = k
 		if not menuTrainImages[k] then
 			print("starting thread...selectAI", k .. ".lua")
-			col = generateColour(k, 1)
-			trainImageThreads[k] = love.thread.newThread("menuTraimImageThread" .. totalNumImageThreads, "Scripts/renderTrainImage.lua")
-			totalNumImageThreads = totalNumImageThreads + 1
-			trainImageThreads[k]:start()
-			trainImageThreads[k]:set("seed", k)
-			trainImageThreads[k]:set("colour", TSerial.pack(col))
+			--col = generateColour(k, 1)
+
+			local thread = love.thread.newThread("Scripts/renderTrainImage.lua")
+			local cIn = love.thread.newChannel()
+			local cOut = love.thread.newChannel()
+
+			--totalNumImageThreads = totalNumImageThreads + 1
+			thread:start( cIn, cOut, k )
+			--trainImageThreads[k]:set("colour", TSerial.pack(col))
+
+			trainImageThreads[k] = { thread = thread, cIn = cIn, cOut = cOut }
 			currentNumImageThreads = currentNumImageThreads + 1
 		else
 			table.insert( menuIcons,  {img = menuTrainImages[k], angle=math.pi/3, x = menuButtons[k].x +  menuButtons[k].imageOff:getWidth()+15, y = menuButtons[k].y - 5, index = k})
@@ -348,26 +353,27 @@ end
 
 function menu.renderTrainImages()
 	for k, t in pairs(trainImageThreads) do
-		status = t:get("status")
-		err = t:get("error")
+		err = t.thread:getError()
 		if err then
 			print("Error in train image thread:" .. err)
 			trainImageThreads[k] = nil
-		end
-		if status == "done" then
-			img = t:get("image")
-			if img then
-				menuTrainImages[k] = love.graphics.newImage(img)
-			else
-				print("Error rendering train image!")
-			end
-			trainImageThreads[k] = nil
 			currentNumImageThreads = currentNumImageThreads - 1
-			if menuButtons[k] then
-				table.insert( menuIcons,  {img = menuTrainImages[k], angle=math.pi/3, x = menuButtons[k].x +  menuButtons[k].imageOff:getWidth()+15, y = menuButtons[k].y - 5, index = k})
+		end
+
+		local packet = 	t.cOut:pop()
+		if packet then
+			if packet.key == "status" then
+				print("Image Thread:", status)
+				if packet[1] == "done" then
+					trainImageThreads[k] = nil
+					currentNumImageThreads = currentNumImageThreads - 1
+				end
+			elseif packet.key == "image" then
+				menuTrainImages[k] = love.graphics.newImage( packet[1] )
+				if menuButtons[k] then
+					table.insert( menuIcons,  {img = menuTrainImages[k], angle=math.pi/3, x = menuButtons[k].x +  menuButtons[k].imageOff:getWidth()+15, y = menuButtons[k].y - 5, index = k})
+				end
 			end
-		elseif status then
-			print("Image Thread:", status)
 		end
 	end
 end
@@ -523,7 +529,7 @@ function selectResolution(res)
 	lastX, lastY = love.graphics.getWidth(), love.graphics.getHeight()
 	
 	-- attempt to change screen resolution:
-	success = love.graphics.setMode( res.width, res.height, false, true )
+	success = love.window.setMode( res.width, res.height )
 	
 	if not success then
 		print("Failed to set resolution!")
@@ -541,7 +547,7 @@ function acceptResolution()
 end
 
 function resetResolution()
-	success = love.graphics.setMode( lastX, lastY, false, true )
+	success = love.window.setMode( lastX, lastY )
 	menu.settings() -- re-initialise the menu.
 end
 
@@ -633,7 +639,7 @@ local function alphabetical(a, b)
 end
 
 function findTutorialFiles()
-	local files = love.filesystem.enumerate("Tutorials")		-- load subdirectory
+	local files = love.filesystem.getDirectoryItems("Tutorials")		-- load subdirectory
 	local foundFiles = {}
 	for k, file in ipairs(files) do
 		s, e = file:find(".lua")
@@ -652,10 +658,12 @@ end
 
 function menu.executeTutorial(fileName)
 	if not map.generating() and not map.rendering() then
-		ok, tutorialData = pcall(love.filesystem.load, "Languages/" .. CURRENT_LANGUAGE .. "_" .. fileName)
-		if not ok then			
+		tutorialData = love.filesystem.load( "Languages/" .. CURRENT_LANGUAGE .. "_" .. fileName)
+		print(ok,tutorialData)
+		if not tutorialData then	-- fallback:
 			tutorialData = love.filesystem.load("Tutorials/" .. fileName)
 		end
+		print(tutorialData)
 		local result = tutorialData() -- execute the chunk
 		tutorial.start()
 	else
@@ -687,7 +695,7 @@ end
 function findChallengeMapsFiles()
 	local foundFiles = {}
 
-	local files = love.filesystem.enumerate("Challenges")	-- load Maps subdirectory (in the .love file)
+	local files = love.filesystem.getDirectoryItems("Challenges")	-- load Maps subdirectory (in the .love file)
 	for k, file in ipairs(files) do
 		s, e = file:find(".lua")
 		if e == #file then
@@ -696,7 +704,7 @@ function findChallengeMapsFiles()
 		end
 	end
 
-	local files = love.filesystem.enumerate("Maps")		-- load user maps subdirectory (in the saveDirectory)
+	local files = love.filesystem.getDirectoryItems("Maps")		-- load user maps subdirectory (in the saveDirectory)
 	for k, file in ipairs(files) do
 		s, e = file:find(".lua")
 		if e == #file then

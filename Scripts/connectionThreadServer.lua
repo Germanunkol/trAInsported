@@ -1,4 +1,10 @@
-thisThread = love.thread.getThread()
+--thisThread = love.thread.getThread()
+
+local args = { ... }
+local channelIn = args[1]
+local channelOut = args[2]
+
+local PORT = args[3]
 
 PORT = thisThread:demand("PORT")
 
@@ -26,16 +32,17 @@ local server, client
 
 clientList = {}
 
-print = function(...)
-	sendStr = ""
+print = function( ... )
+	str = ""
 	local arg = { ... }
-	for i = 1, #arg do
+	for i=1,#arg do
 		if arg[i] then
-			sendStr = sendStr .. arg[i] .. "\t"
+			str = str .. arg[i] .. "\t"
+		else
+			str = str .. "nil\t"
 		end
 	end
-	thisThread:set("msg" .. msgNumber, sendStr)
-	msgNumber = incrementID(msgNumber)
+	channelOut:push({key="print", str})
 end
 
 function connection.startServer()
@@ -124,72 +131,74 @@ print("Connection started.")
 
 curTime = os.time()
 
+local packet
+
 while true do
 	dt = os.time()-curTime
 	curTime = os.time()
 
-	input = thisThread:get("input")
-	if input == "close" then
-		return
-	end
 	connection.handleServer()
 
-	reset = thisThread:get("reset")
-	if reset then
-		sendPackets.init()			-- important! if there's a new map, reset everything you did last round!
-	end
-
-	newMap = thisThread:get("curMap")
-	if newMap then
-		curMapStr = newMap		-- careful: in this thread, it's only in string form, not in a table!
-		
-		serverTime = 0
-		for k, cl in pairs(clientList) do
-			ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
-			ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
-			--print(cl[1], "SENT:","MAP:" .. curMapStr)
-		end
-		
-	end
-	
-	str = thisThread:get("nextMatch")
-	if str then
-		timeUntilNextMatch = tonumber(str)
-	end
-	timeUntilNextMatch = timeUntilNextMatch - dt
-	
-	local msg = thisThread:get("packet" .. packetNumber)
-	if msg then
-	
-		newPacketID = sendPackets.getPacketNum() + 1
-	
-		if msg:find("U:") then
-			print("PANIC!!", msg)
-		end
-	
-		for k, cl in pairs(clientList) do
-			ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
-			--print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
-		end
-		packetNumber = incrementID(packetNumber)
-		
-		s, e = msg:find("|")
-		if not s then
-			print("ERROR: no timestamp found in packet! Aborting.")
+	--input = thisThread:get("input")
+	packet = channelIn:pop()
+	if packet then
+		if packet.key == "close" then
 			return
 		end
-		time = tonumber(msg:sub(1, s-1))
-		msg = msg:sub(e+1, #msg)
-		sendPackets.add(newPacketID, msg, time)
-		
-	end
-	
-	t = thisThread:get("time")		-- tell the clients at what time they should currently be.
-	if t then
-		serverTime = t
-		for k, cl in pairs(clientList) do
-			ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
+
+		if packet.key == "reset" then
+			sendPackets.init()			-- important! if there's a new map, reset everything you did last round!
 		end
+
+		if packet.key == "curMap" then
+			curMapStr = packet[1]		-- careful: in this thread, it's only in string form, not in a table!
+
+			serverTime = 0
+			for k, cl in pairs(clientList) do
+				ok, msg = cl:send("MAP:" .. curMapStr .. "\n")
+				ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
+				--print(cl[1], "SENT:","MAP:" .. curMapStr)
+			end
+
+		end
+
+		if packet.key == "nextMatch" then
+			timeUntilNextMatch = tonumber(packet[1])
+		end
+
+		if packet.key == "packet" then
+			local msg = packet[1]
+
+			newPacketID = sendPackets.getPacketNum() + 1
+
+			if msg:find("U:") then
+				print("PANIC!!", msg)
+			end
+
+			for k, cl in pairs(clientList) do
+				ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.
+				--print(cl[1], "SENT:","U:" .. newPacketID .. "|" .. msg)
+			end
+			packetNumber = incrementID(packetNumber)
+
+			s, e = msg:find("|")
+			if not s then
+				print("ERROR: no timestamp found in packet! Aborting.")
+				return
+			end
+			time = tonumber(msg:sub(1, s-1))
+			msg = msg:sub(e+1, #msg)
+			sendPackets.add(newPacketID, msg, time)
+		end
+
+		-- tell the clients at what time they should currently be:
+		if packet.key == "time" then
+			serverTime = packet[1]
+			for k, cl in pairs(clientList) do
+				ok, err = cl:send("T:" .. serverTime .. "\n")		-- send update to clients.
+			end
+		end
+
 	end
-	
+	timeUntilNextMatch = timeUntilNextMatch - dt
 end

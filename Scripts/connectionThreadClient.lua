@@ -1,4 +1,4 @@
-thisThread = love.thread.getThread()
+--thisThread = love.thread.getThread()
 
 --package.path = "Scripts/?.lua;" .. package.path
 require("love.filesystem")
@@ -12,21 +12,14 @@ pcall(require,"socket")
 
 require("Scripts/misc")
 
+local args = { ... }
 
-ip = thisThread:demand("ip")
-port = thisThread:demand("port")
+local channelIn = args[1]
+local channelOut = args[2]
 
-sendMsgNumber = 0
-function incrementID( num )
-	if num == 99999 then
-		num = 0
-	else
-		num = num + 1
-	end
-	return num
-end
+local ip = args[3]
+local port = args[4]
 
-printLineNumber = 0
 print = function( ... )
 	str = ""
 	local arg = { ... }
@@ -37,63 +30,59 @@ print = function( ... )
 			str = str .. "nil\t"
 		end
 	end
-	thisThread:set("print" .. printLineNumber, str)
-	
-	printLineNumber = incrementID(printLineNumber)
+	channelOut:push({key="print", str})
 end
 
-
-
-
-
-packetNumber = 0
 function newPacket(text)
-	--print("thread-packet", packetNumber, text)
-	thisThread:set("packet" .. packetNumber, text)
-	packetNumber = incrementID(packetNumber)
+	channelOut:push({key="packet", text})
 end
-
 
 print("Attempting to connect to:", ip .. ":" .. port)
 ok, client = pcall(socket.connect, ip, port)
 if not ok or not client then
-	thisThread:set("statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance.")
+	channelOu:push({key="statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance."})
 	error("Could not connect!")
 	return
 else
-	thisThread:set("statusMsg", "Connected to server.")
+	channelOut:push({key="statusMsg", "Connected to server."})
 	print("Connected.")
 end
 
+local packet
+
 startTime = os.time()
 while true do
-	msg = thisThread:get("sendMsg" .. sendMsgNumber)
-	if msg then
-		ok, msg = client:send(msg .. "\n")
-		sendMsgNumber = incrementID(sendMsgNumber)
+	packet = channelIn:pop()
+	if packet then
+		if packet.key == "msg" then
+			ok, msg = client:send(packet[1] .. "\n")
+		end
+
+		if packet.key == "closeConnection" then
+			return
+		end
 	end
-	
-	if thisThread:get("closeConnection") then
-		return
-	end
-	
+
 	data, msg = client:receive()
 	if data and not msg then
-		
+
 		if data:find(".U:") and not data:find("MAP:") == 1 then
 			print("RECEIVED: faulty packet")
 		end
-	
+
 		if data:find("MAP:") == 1 then
-			thisThread:set("newMap", data:sub(5,#data))
+			--thisThread:set("newMap", data:sub(5,#data))
+			channelOut:push({key="newMap", data:sub(5,#data)})
 		elseif data:find("U:") == 1 then
 			newPacket(data:sub(3,#data))
 		elseif data:find("NEXT_MATCH:") == 1 then
 			timeUntilNextMatch = tonumber(data:sub(12, #data))
-			thisThread:set("nextMatch", timeUntilNextMatch)
+			--thisThread:set("nextMatch", timeUntilNextMatch)
+			channelOut:push({key="nextMatch", timeUntilNextMatch})
 		elseif data:find("T:") == 1 then
 			serverTime = tonumber(data:sub(3, #data))
-			thisThread:set("serverTime", serverTime)
+			--thisThread:set("serverTime", serverTime)
+			channelOut:push({key="serverTime", serverTime})
 		end
 	else
 		print("error: " .. msg)

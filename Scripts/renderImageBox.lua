@@ -1,4 +1,7 @@
-thisThread = love.thread.getThread()
+--thisThread = love.thread.getThread()
+local channelIn = love.thread.getChannel("imageBoxChannelIn")
+local channelOut = love.thread.getChannel("imageBoxChannelOut")
+local channelPercentage = love.thread.getChannel("imageBoxPercentage")
 
 package.path = "Scripts/?.lua;" .. package.path
 
@@ -10,18 +13,19 @@ pcall(require, "misc")
 pcall(require, "Scripts/misc")
 
 thisThread:set("percentage", 0)
+channelPercentage:push(0)
 
-width = thisThread:demand("width")
-thisThread:set("status", "got width")
-height = thisThread:demand("height")
-shadow = thisThread:demand("shadow")
-shadowOffsetX = thisThread:demand("shadowOffsetX")
-shadowOffsetY = thisThread:demand("shadowOffsetY")
-colR = thisThread:demand("colR")
-colG = thisThread:demand("colG")
-colB = thisThread:demand("colB")
-brightness = thisThread:get("brightness")
-alpha = thisThread:get("alpha")
+width = channelIn:demand("width")
+channelStatus:set("status", )
+height = channelIn:demand()
+shadow = channelIn:demand()
+shadowOffsetX = channelIn:demand()
+shadowOffsetY = channelIn:demand()
+colR = channelIn:demand()
+colG = channelIn:demand()
+colB = channelIn:demand()
+brightness = channelIn:demand()
+alpha = channelIn:demand()
 if not brightness then
 	brightness = 35
 end

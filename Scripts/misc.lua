@@ -18,7 +18,7 @@ function scandir(directory)
 	local i, t = 0, {}
 	
 	if not DEDICATED then
-		t = love.filesystem.enumerate("AI")
+		t = love.filesystem.getDirectoryItems("AI")
 	end
 	
 	if #t < 1 then
@@ -77,7 +77,7 @@ function loadConfiguration()
 
 	if x and y then
 		print("Found resolution:",x,y)
-		success = love.graphics.setMode( x, y, false, true )
+		success = love.window.setMode( x, y )
 		if success then
 			resSet = true
 		end
@@ -86,7 +86,7 @@ function loadConfiguration()
 	-- backup:
 	if not resSet then
 		print("Setting resolution to default values because no configuration has been found: ", DEFAULT_RES_X .. "x" .. DEFAULT_RES_Y)
-		love.graphics.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y, false, true )
+		love.window.setMode(  DEFAULT_RES_X,  DEFAULT_RES_Y )
 	end
 	
 	local clouds = configFile.getValue("render_clouds")
@@ -258,13 +258,14 @@ function incrementID( num )
 	return num
 end
 
-function threadSendStatus( t, status )
+--[[
+function threadSendStatus( channel, status )
 	if not statusNum then
 		statusNum = 0
 	end
 	t:set("status".. statusNum, status)
 	statusNum = incrementID(statusNum)
-end
+end]]
 
 local CPU_NUMBER
 

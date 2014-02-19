@@ -484,7 +484,7 @@ else
 				love.graphics.setColor(255,255,255,200)
 				p.vipTime = math.max(p.vipTime - dt, 0)
 				num = clamp(1+math.floor((p.maxVipTime-p.vipTime)/p.maxVipTime*10),1,11)
-				love.graphics.drawq(passengerVIPClock,vipClockImages[num], x-6, y-6)
+				love.graphics.draw(passengerVIPClock,vipClockImages[num], x-6, y-6)
 				if p.vipTime <= 0 then
 					p.vip = false
 				end

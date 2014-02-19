@@ -86,12 +86,12 @@ function challenges.execute(data)
 
 	if not map.generating() and not map.rendering() then
 		print("Looking for: ","Maps/" .. fileName)
-		ok, challengeData = pcall(love.filesystem.load, "Maps/" .. fileName)
-		if not ok then
+		challengeData = love.filesystem.load( "Maps/" .. fileName)
+		if not challengeData then
 			print("Problem in challenge: Couldn't find/execute map. Error:", challengeData)
 			print("Fallback: Looking for file in internal path...")
-			ok, challengeData = pcall(love.filesystem.load, "Challenges/" .. fileName)
-			if not ok then
+			challengeData = love.filesystem.load( "Challenges/" .. fileName)
+			if not challengeData then
 				print("Error in challenge: Couldn't execute map:", challengeData)
 				return
 			else
@@ -101,18 +101,19 @@ function challenges.execute(data)
 		
 		local ok, c
 		do		-- just in case. I don't think this actually does anything.
-			ok, c = pcall(challengeData) -- execute the chunk
+			c = challengeData() -- execute the chunk
 		end
-		
+	--[[	
 		if not ok then
 			print(c)
 			statusMsg.new("Could not execute challenge script. See console for more details.", true)
 			menu.init()
-		end
+		end]]
 		
 		if not c then
 			print("Error in challenge: You must return a lua table containing your challenge's data. See example file!")
 			statusMsg.new("Error in challenge: You must return a lua table containing your challenge's data. See example file!", true)
+			menu.init()
 			return
 		end
 		

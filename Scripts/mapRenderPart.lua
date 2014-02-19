@@ -1,4 +1,15 @@
-thisThread = love.thread.getThread()
+--thisThread = love.thread.getThread()
+--
+args = {...}
+
+channelIn = args[1]
+channelOut = args[2]
+m = TSerial.unpack(args[3])
+curMapRailTypes = TSerial.unpack(args[4])
+startCoordinateX = args[5]
+startCoordinateY = args[6]
+region = args[7]
+seed = args[8] + startCoordinateX + startCoordinateY
 
 require("love.image")
 require("love.filesystem")
@@ -13,18 +24,19 @@ pcall(require, "globals")
 pcall(require, "Scripts/globals")
 DEDICATED = rememberDedi
 
-m = TSerial.unpack(thisThread:demand("map"))
+--[[m = TSerial.unpack(thisThread:demand("map"))
 curMapRailTypes = TSerial.unpack(thisThread:demand("curMapRailTypes"))
 startCoordinateX = thisThread:demand("startCoordinateX")
 startCoordinateY = thisThread:demand("startCoordinateY")
 region = thisThread:get("region")
-seed = thisThread:demand("seed") + startCoordinateX + startCoordinateY
+seed = thisThread:demand("seed") + startCoordinateX + startCoordinateY]]
 
 function checkAborted()
 	if abort then
 		return true
 	end
-	if thisThread:get("abort") then
+	packet = channelIn:pop()
+	if packet and packet.key == "abort" then
 		abort = true
 		return true
 	end
@@ -102,7 +114,6 @@ end
 
 IMAGE_PARK = love.image.newImageData("Images/Park_Stone.png")
 
-
 --Rails:
 if region == "Urban" then
 	IMAGE_RAIL_NS = love.image.newImageData("Images/Rail_NS_Stone.png")
@@ -174,7 +185,6 @@ IMAGE_HOTSPOT_HOSPITAL_SHADOW01 = love.image.newImageData("Images/Hotspot_Hospit
 IMAGE_HOTSPOT_HOSPITAL_SHADOW11 = love.image.newImageData("Images/Hotspot_Hospital_Shadow-1-1.png")
 
 
-
 --Environment/Misc:
 IMAGE_HOUSE01 = love.image.newImageData("Images/House1.png")
 IMAGE_HOUSE01_SHADOW = love.image.newImageData("Images/House1_Shadow.png")
@@ -217,8 +227,6 @@ IMAGE_TREE03 = love.image.newImageData("Images/Tree3.png")
 IMAGE_TREE03_SHADOW = love.image.newImageData("Images/Tree3_Shadow.png")
 IMAGE_BUSH01 = love.image.newImageData("Images/Bush.png")
 IMAGE_BUSH01_SHADOW = love.image.newImageData("Images/Bush_Shadow.png")
-
-
 
 function getRailImage( railType )
 	--	N		S		W		E
@@ -577,10 +585,16 @@ if not NO_TREES then
 		end
 	end
 end
-thisThread:set("groundData", ground)
+
+channelOut:push({key="groundData", ground})
+channelOut:push({key="shadowData", shadow})
+channelOut:push({key="objectData", objects})
+channelOut:push({key="status", "done"})
+
+--[[thisThread:set("groundData", ground)
 thisThread:set("shadowData", shadows)
 thisThread:set("objectData", objects)
-thisThread:set("status", "done")
+thisThread:set("status", "done")]]
 return
 
 

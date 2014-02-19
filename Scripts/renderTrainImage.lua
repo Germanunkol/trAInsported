@@ -1,10 +1,13 @@
 -- to be run as a seperate thread!
 
-thisThread = love.thread.getThread()
+local args = {...}
+channelIn = args[1]
+channelOut = args[2]
+seed = args[3]
 
 package.path = "Scripts/?.lua;" .. package.path
 
-thisThread:set("status", "started")
+channelOut:push({key="status", "started"})
 require("love.image")
 require("love.filesystem")
 pcall(require,"misc")
@@ -13,7 +16,7 @@ pcall(require,"TSerial")
 pcall(require,"Scripts/TSerial")
 pcall(require,"imageManipulation")
 pcall(require,"Scripts/imageManipulation")
-seed = thisThread:demand("seed")
+
 col = generateColour(seed) --TSerial.unpack(thisThread:demand("colour"))
 
 trainImage = love.image.newImageData("Images/Train1.png")
@@ -42,5 +45,5 @@ for i=0,trainImage:getWidth()-1 do
 end
 trainImagePlayerData = transparentPaste(trainImagePlayerData, trainImagePlayerDataLower, 0, 0)
 
-thisThread:set("image", trainImagePlayerData)
-thisThread:set("status", "done")
+channelOut:push({key="image", trainImagePlayerData})
+channelOut:push({key="status", "done"})

@@ -455,3 +455,386 @@ function getRailType(i, j, map)
 	end
 end
 
+local mapQuads = {}
+
+function newQuad( x, y, img, w, h )
+	img = img or groundSheetGrass
+	w = w or 1
+	h = h or 1
+	return love.graphics.newQuad( (x-1)*TILE_SIZE, (y-1)*TILE_SIZE,
+								TILE_SIZE*h, TILE_SIZE*h,
+								img:getWidth(), img:getHeight() )
+end
+
+function generateMapQuads()
+
+	mapQuads.plain = newQuad( 2, 2 )		-- center, empty piece
+
+	mapQuads.borderLT = newQuad( 1, 1 )		-- left top border
+	mapQuads.borderCT = newQuad( 2, 1 )		-- center top border
+	mapQuads.borderRT = newQuad( 3, 1 )		-- right top border
+	mapQuads.borderLM = newQuad( 1, 2 )		-- left middle border
+	mapQuads.borderRM = newQuad( 3, 2 )		-- right middle border
+	mapQuads.borderLB = newQuad( 1, 3 )		-- left bottom border
+	mapQuads.borderCB = newQuad( 2, 3 )		-- center bottom border
+	mapQuads.borderRB = newQuad( 3, 3 )		-- right bottom border
+
+	-- Rails:
+	mapQuads[NS] = newQuad( 5, 3 )
+	mapQuads[EW] = newQuad( 4, 3 )
+
+	mapQuads[NW] = newQuad( 5, 5 )
+	mapQuads[SW] = newQuad( 5, 4 )
+	mapQuads[NE] = newQuad( 4, 5 )
+	mapQuads[ES] = newQuad( 4, 4 )
+
+	mapQuads[NEW] = newQuad( 1, 5 )
+	mapQuads[NES] = newQuad( 1, 4 )
+	mapQuads[ESW] = newQuad( 2, 5 )
+	mapQuads[NSW] = newQuad( 2, 4 )
+
+	mapQuads[NESW] = newQuad( 3, 4 )
+
+	mapQuads[WW] = newQuad( 4, 2 )
+	mapQuads[EE] = newQuad( 5, 1 )
+	mapQuads[NN] = newQuad( 5, 2 )
+	mapQuads[SS] = newQuad( 4, 1 )
+
+
+--Hotspots/special Buildings:
+	mapQuads.HOTSPOT01 = newQuad( 1, 1, objectSheet )
+	mapQuads.HOTSPOT01_SHADOW = newQuad( 1, 1, objectShadowSheet )
+
+-- Misc/Tutorial:
+	mapQuads.HOTSPOT_HOME = newQuad( 1, 4, objectSheet )
+	mapQuads.HOTSPOT_SCHOOL = newQuad( 1, 4, objectSheet )
+	mapQuads.HOTSPOT_PLAYGROUND = newQuad( 8, 1, objectSheet )
+	mapQuads.HOTSPOT_PLAYGROUND_SHADOW = newQuad( 8, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_PIESTORE = newQuad( 10, 1, objectSheet )
+	mapQuads.HOTSPOT_BOOKSTORE = newQuad( 5, 3, objectSheet )
+	mapQuads.HOTSPOT_STORE = newQuad( 9, 1, objectSheet )
+	mapQuads.HOTSPOT_STORE_SHADOW = newQuad( 9, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_CINEMA = newQuad( 6, 3, objectSheet )
+	mapQuads.HOTSPOT_CINEMA_SHADOW = newQuad( 6, 3, objectShadowSheet )
+
+	mapQuads.HOTSPOT_SCHOOL00 = newQuad( 3, 1, objectSheet )
+	mapQuads.HOTSPOT_SCHOOL10 = newQuad( 4, 1, objectSheet )
+	mapQuads.HOTSPOT_SCHOOL01 = newQuad( 3, 2, objectSheet )
+	mapQuads.HOTSPOT_SCHOOL11 = newQuad( 4, 2, objectSheet )
+	mapQuads.HOTSPOT_SCHOOL_SHADOW00 = newQuad( 3, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_SCHOOL_SHADOW10 = newQuad( 4, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_SCHOOL_SHADOW01 = newQuad( 3, 2, objectShadowSheet )
+	mapQuads.HOTSPOT_SCHOOL_SHADOW11 = newQuad( 4, 2, objectShadowSheet )
+
+	mapQuads.HOTSPOT_HOSPITAL00 = newQuad( 1, 1, objectSheet )
+	mapQuads.HOTSPOT_HOSPITAL10 = newQuad( 2, 1, objectSheet )
+	mapQuads.HOTSPOT_HOSPITAL01 = newQuad( 1, 2, objectSheet )
+	mapQuads.HOTSPOT_HOSPITAL11 = newQuad( 2, 2, objectSheet )
+	mapQuads.HOTSPOT_HOSPITAL_SHADOW00 = newQuad( 1, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_HOSPITAL_SHADOW10 = newQuad( 2, 1, objectShadowSheet )
+	mapQuads.HOTSPOT_HOSPITAL_SHADOW01 = newQuad( 1, 2, objectShadowSheet )
+	mapQuads.HOTSPOT_HOSPITAL_SHADOW11 = newQuad( 2, 2, objectShadowSheet )
+
+--Environment/Misc:
+	mapQuads.HOUSE01 = newQuad( 3, 4, objectSheet )
+	mapQuads.HOUSE01_SHADOW = newQuad( 3, 4, objectShadowSheet, 1.5, 1.5 )
+	mapQuads.HOUSE02 = newQuad( 5, 4, objectSheet )
+	mapQuads.HOUSE02_SHADOW = newQuad( 5, 4, objectShadowSheet, 1.5, 1.5 )
+	mapQuads.HOUSE03 = newQuad( 7, 4, objectSheet )
+	mapQuads.HOUSE03_SHADOW = newQuad( 7, 4, objectShadowSheet, 1.5, 1.5 )
+	mapQuads.HOUSE04 = newQuad( 9, 4, objectSheet )
+	mapQuads.HOUSE04_SHADOW = newQuad( 9, 4, objectShadowSheet, 1.5, 1.5 )
+
+	mapQuads.HOUSE05 = newQuad( 8, 2, objectSheet )
+	mapQuads.HOUSE05_SHADOW = newQuad( 8, 2, objectShadowSheet )
+	mapQuads.HOUSE06 = newQuad( 9, 2, objectSheet )
+	mapQuads.HOUSE06_SHADOW = newQuad( 9, 2, objectShadowSheet )
+	mapQuads.HOUSE07 = newQuad( 10, 2, objectSheet )
+	mapQuads.HOUSE07_SHADOW = newQuad( 10, 2, objectShadowSheet )
+
+	mapQuads.HOUSE01_L11 = newQuad( 6, 1, objectSheet )
+	mapQuads.HOUSE01_L_SHADOW11 = newQuad( 6, 1, objectShadowSheet )
+	mapQuads.HOUSE01_L12 = newQuad( 6, 2, objectSheet )
+	mapQuads.HOUSE01_L_SHADOW12 = newQuad( 6, 2, objectShadowSheet )
+	mapQuads.HOUSE02_L11 = newQuad( 5, 1, objectSheet )
+	mapQuads.HOUSE02_L_SHADOW11 = newQuad( 5, 1, objectShadowSheet )
+	mapQuads.HOUSE02_L12 = newQuad( 5, 2, objectSheet )
+	mapQuads.HOUSE02_L_SHADOW12 = newQuad( 5, 2, objectShadowSheet )
+	mapQuads.HOUSE03_L11 = newQuad( 3, 3, objectSheet )
+	mapQuads.HOUSE03_L_SHADOW11 = newQuad( 3, 3, objectShadowSheet )
+	mapQuads.HOUSE03_L21 = newQuad( 4, 3, objectSheet )
+	mapQuads.HOUSE03_L_SHADOW21 = newQuad( 4, 3, objectShadowSheet )
+	mapQuads.HOUSE04_L11 = newQuad( 1, 3, objectSheet )
+	mapQuads.HOUSE04_L_SHADOW11 = newQuad( 1, 3, objectShadowSheet )
+	mapQuads.HOUSE04_L21 = newQuad( 2, 3, objectSheet )
+	mapQuads.HOUSE04_L_SHADOW21 = newQuad( 2, 3, objectShadowSheet )
+
+	mapQuads.TREE01 = newQuad( 7, 1, objectSheet )
+	mapQuads.TREE01_SHADOW = newQuad( 7, 1, objectShadowSheet )
+	mapQuads.TREE02 = newQuad( 7, 2, objectSheet )
+	mapQuads.TREE02_SHADOW = newQuad( 7, 2, objectShadowSheet )
+	mapQuads.TREE03 = newQuad( 7, 3, objectSheet )
+	mapQuads.TREE03_SHADOW = newQuad( 7, 3, objectShadowSheet )
+	mapQuads.BUSH01 = newQuad( 8, 2, objectSheet )
+	mapQuads.BUSH01_SHADOW = newQuad( 8, 2, objectShadowSheet )
+
+	mapQuads.PARK = newQuad( 3, 5 )
+end
+
+function renderMap( map, curMapRailTypes, noTrees, region )
+
+	local groundData
+	if region == "Urban" then
+		groundData = love.graphics.newSpriteBatch( groundSheetStone, (map.width+2)*(map.height+2) * 2)
+	else
+		groundData = love.graphics.newSpriteBatch( groundSheetGrass, (map.width+2)*(map.height+2))
+	end
+
+	local shadowData = love.graphics.newSpriteBatch( objectShadowSheet, (map.width+2)*(map.height+2) )
+	local objectData = love.graphics.newSpriteBatch( objectSheet, (map.width+2)*(map.height+2))
+
+	--printTable(curMapRailTypes)
+
+	-- border:
+	groundData:add( mapQuads.borderLT, 0,0 )
+	groundData:add( mapQuads.borderRT, (map.width+1)*TILE_SIZE,0 )
+	groundData:add( mapQuads.borderLB, 0,(map.height+1)*TILE_SIZE )
+	groundData:add( mapQuads.borderRB, (map.width+1)*TILE_SIZE,(map.height+1)*TILE_SIZE )
+
+	for x = 1, map.width do
+		groundData:add( mapQuads.borderCT, x*TILE_SIZE, 0 )
+		groundData:add( mapQuads.borderCB, x*TILE_SIZE, (map.height+1)*TILE_SIZE )
+	end
+	for y = 1, map.height do
+		groundData:add( mapQuads.borderLM, 0, y*TILE_SIZE )
+		groundData:add( mapQuads.borderRM, (map.width+1)*TILE_SIZE, y*TILE_SIZE )
+	end
+
+	for x = 1, map.width do
+		for y = 1, map.height do
+
+			if map[x][y] == "C" and mapQuads[curMapRailTypes[x][y]] then
+
+				groundData:add( mapQuads[curMapRailTypes[x][y]], x*TILE_SIZE, y*TILE_SIZE )
+			else
+				groundData:add( mapQuads.plain, x*TILE_SIZE, y*TILE_SIZE )
+			end
+
+			-- Houses etc:
+			if map[x][y] == "H" then
+				randX, randY = math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8), math.floor(myRandom()*TILE_SIZE/4-TILE_SIZE/8)
+				--[[if x == endX then randX = -TILE_SIZE/8 end
+				if j == endY then randY = -TILE_SIZE/8 end
+				if x == startX then randX = TILE_SIZE/8 end
+				if j == startX then randY = TILE_SIZE/8 end]]
+				if region == "Urban" then
+					houseType = myRandom(3)
+					col = {r = myRandom(40)-20, g = 0, b = 0}
+					if houseType == 1 then
+						shadowData:add( mapQuads.HOUSE05_SHADOW, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+						objectData:add( mapQuads.HOUSE05, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					elseif houseType == 2 then
+						shadowData:add( mapQuads.HOUSE06_SHADOW, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+						objectData:add( mapQuads.HOUSE06, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					elseif houseType == 3 then
+						shadowData:add( mapQuads.HOUSE07_SHADOW, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+						objectData:add( mapQuads.HOUSE07, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					end
+				else
+					houseType = myRandom(4)
+					col = {r = myRandom(40)-20, g = 0, b = 0}
+					if houseType == 1 then
+						shadowData:add( mapQuads.HOUSE01_SHADOW, (x)*TILE_SIZE+randX-26, (y)*TILE_SIZE+randY-26)
+						objectData:add( mapQuads.HOUSE01, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					elseif houseType == 2 then
+						shadowData:add( mapQuads.HOUSE02_SHADOW, (x)*TILE_SIZE+randX-26, (y)*TILE_SIZE+randY-26)
+						objectData:add( mapQuads.HOUSE02, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					elseif houseType == 3 then
+						shadowData:add( mapQuads.HOUSE03_SHADOW, (x)*TILE_SIZE+randX-26, (y)*TILE_SIZE+randY-26)
+						objectData:add( mapQuads.HOUSE03, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					elseif houseType == 4 then
+						shadowData:add( mapQuads.HOUSE04_SHADOW, (x)*TILE_SIZE+randX-26, (y)*TILE_SIZE+randY-26)
+						objectData:add( mapQuads.HOUSE04, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+					end
+				end
+			elseif map[x][y] == "S" then
+				if region == "Urban" then
+					choice = myRandom(5)
+				else
+					choice = myRandom(4)
+				end
+				if choice == 1 then
+					shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+					objectData:add( mapQuads.HOTSPOT_STORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				elseif choice == 2 then
+					shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+					objectData:add( mapQuads.HOTSPOT_PIESTORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				elseif choice == 3 then
+					shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+					objectData:add( mapQuads.HOTSPOT_BOOKSTORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				elseif choice == 4 then
+					shadowData:add( mapQuads.HOTSPOT_PLAYGROUND_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+					objectData:add( mapQuads.HOTSPOT_PLAYGROUND, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				else
+					shadowData:add( mapQuads.HOTSPOT_CINEMA_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+					objectData:add( mapQuads.HOTSPOT_CINEMA, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				end
+			elseif map[x][y] == "PS" then	-- pie store...
+				shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_PIESTORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "STORE" then	-- store...
+				shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_STORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HO" then	-- home
+				shadowData:add( mapQuads.HOTSPOT01_SHADOW, (x)*TILE_SIZE-26, (y)*TILE_SIZE-26)
+				objectData:add( mapQuads.HOTSPOT_HOME, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "SCHOOL11" then	-- school
+				shadowData:add( mapQuads.HOTSPOT_SCHOOL_SHADOW00, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_SCHOOL00, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "SCHOOL12" then	-- school
+				shadowData:add( mapQuads.HOTSPOT_SCHOOL_SHADOW01, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_SCHOOL01, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "SCHOOL21" then	-- school
+				shadowData:add( mapQuads.HOTSPOT_SCHOOL_SHADOW10, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_SCHOOL10, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "SCHOOL22" then	-- school
+				shadowData:add( mapQuads.HOTSPOT_SCHOOL_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_SCHOOL11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOSPITAL11" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOTSPOT_HOSPITAL_SHADOW00, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_HOSPITAL00, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOSPITAL12" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOTSPOT_HOSPITAL_SHADOW01, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_HOSPITAL01, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOSPITAL21" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOTSPOT_HOSPITAL_SHADOW10, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_HOSPITAL10, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOSPITAL22" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOTSPOT_HOSPITAL_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_HOSPITAL11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_1_LARGE11" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE01_L_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE01_L11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_1_LARGE12" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE01_L_SHADOW12, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE01_L12, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_2_LARGE11" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE02_L_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE02_L11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_2_LARGE12" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE02_L_SHADOW12, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE02_L12, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_3_LARGE11" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE03_L_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE03_L11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_3_LARGE21" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE03_L_SHADOW21, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE03_L21, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_4_LARGE11" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE04_L_SHADOW11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE04_L11, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "HOUSE_4_LARGE21" then	-- HOSPITAL
+				shadowData:add( mapQuads.HOUSE04_L_SHADOW21, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOUSE04_L21, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "PL" then	-- playground
+				shadowData:add( mapQuads.HOTSPOT_PLAYGROUND_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_PLAYGROUND, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			end
+		end
+	end
+
+	-- Foilage
+	if not NO_TREES then
+
+		if region == "Urban" then
+			local treetype = 0
+			for x = 0,map.width+1 do		-- randomly place trees/bushes etc
+				for y = 0,map.height+1 do
+					if (not map[x] or not map[x][y]) and myRandom(4) == 1 then
+						if x ~= 0 and x ~= map.width+1 and y ~= 0 and y~= map.height+1 then
+							groundData:add( mapQuads.PARK, (x)*TILE_SIZE, (y)*TILE_SIZE)
+						end
+						numTries = myRandom(5)+1
+						for k = 1, numTries do
+							randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+							treetype = myRandom(3)
+
+							if treetype == 1 then
+								s = mapQuads.TREE01_SHADOW
+								o = mapQuads.TREE01
+							elseif treetype == 2 then
+								s = mapQuads.TREE02_SHADOW
+								o = mapQuads.TREE02
+							else
+								s = mapQuads.TREE03_SHADOW
+								o = mapQuads.TREE03
+							end
+
+							--[[if i == startX then randX = math.max(0, randX) end
+							if j == startY then randY = math.max(0, randY) end
+							if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
+							if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end]]
+
+							shadowData:add( s, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+							objectData:add( o, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY )
+						end
+					end
+				end
+			end
+		else
+			for x = 0,map.width+1 do		-- randomly place trees/bushes etc
+				for y = 0,map.height+1 do
+					if (not map[x] or not map[x][y]) and myRandom(4) == 1 then
+						numTries = myRandom(3)+1
+						for k = 1, numTries do
+							--col = {r = myRandom(20)-10, g = myRandom(40)-30, b = 0}
+							randX, randY = TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), TILE_SIZE/4+math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+
+							if i == startX then randX = math.max(0, randX) end
+							if j == startY then randY = math.max(0, randY) end
+							if i == endX then randX = math.min(TILE_SIZE*0.5, randX) end
+							if j == endY then randY = math.min(TILE_SIZE*0.5, randY) end
+							shadowData:add( mapQuads.BUSH01_SHADOW, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+							objectData:add( mapQuads.BUSH01, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY )
+						end
+					end
+				end
+			end
+
+			local treetype = 0
+			for x = 0,map.width+1 do		-- randomly place trees/bushes etc
+				for y = 0,map.height+1 do
+					if (not map[x] or not map[x][y]) and myRandom(3) == 1 then
+						numTries = myRandom(5)+1
+						for k = 1, numTries do
+							randX, randY = math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2), math.floor(myRandom()*TILE_SIZE-TILE_SIZE/2)
+							treetype = myRandom(3)
+
+							if treetype == 1 then
+								s = mapQuads.TREE01_SHADOW
+								o = mapQuads.TREE01
+							elseif treetype == 2 then
+								s = mapQuads.TREE02_SHADOW
+								o = mapQuads.TREE02
+							else
+								s = mapQuads.TREE03_SHADOW
+								o = mapQuads.TREE03
+							end
+
+							--[[if i == startX then randX = math.max(0, randX) end
+							if j == startY then randY = math.max(0, randY) end
+							if i == endX then randX = math.min(TILE_SIZE-s:getWidth(), randX) end
+							if j == endY then randY = math.min(TILE_SIZE-s:getHeight(), randY) end]]
+
+							shadowData:add( s, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY)
+							objectData:add( o, (x)*TILE_SIZE+randX, (y)*TILE_SIZE+randY )
+						end
+					end
+				end
+			end
+		end
+	end
+
+	return groundData, shadowData, objectData
+end
+

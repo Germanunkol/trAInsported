@@ -27,7 +27,6 @@ end
 local trainImages = {}
 local trainImageThreads = {}
 local numTrainImageThreads = 0
-local totalNumImageThreads = 0
 
 --[[
 trainImagePlayer1
@@ -73,37 +72,41 @@ function train.getTrainImage( ID )
 	return trainImages[ID]
 end
 
+
 function train.renderTrainImage( name, ID )
 	if name and ID then
 		print("starting thread...train.renderTrainImage", name .. ".lua")
 		--col = generateColour(name .. ".lua", 1)
-		trainImageThreads[ID] = love.thread.newThread("traimImageThread" .. totalNumImageThreads, "Scripts/renderTrainImage.lua")
-		totalNumImageThreads = totalNumImageThreads + 1
-		trainImageThreads[ID]:start()
-		trainImageThreads[ID]:set("seed", name .. ".lua")
+		local thread = love.thread.newThread("Scripts/renderTrainImage.lua")
+		local cIn = love.thread.newChannel()
+		local cOut = love.thread.newChannel()
+		thread:start( cIn, cOut, name .. ".lua" )
 		--trainImageThreads[ID]:set("colour", TSerial.pack(col))
-		numTrainImageThreads = numTrainImageThreads + 1
+
 		trainImages[ID] = nil
+		trainImageThreads[ID] = { thread = thread, cIn = cIn, cOut = cOut }
+
+		numTrainImageThreads = numTrainImageThreads + 1
 	else
 		for k, t in pairs(trainImageThreads) do
-			status = t:get("status")
-			err = t:get("error")
+			err = t.thread:getError()
 			if err then
 				print("Error in train image thread:" .. err)
 				trainImageThreads[k] = nil
-			end
-			if status == "done" then
-				print("Rendered train image:", k)
-				img = t:get("image")
-				if img then
-					trainImages[k] = love.graphics.newImage(img)
-				else
-					print("Error rendering train image!")
-				end
-				trainImageThreads[k] = nil
 				numTrainImageThreads = numTrainImageThreads - 1
-			elseif status then
-				print("Image Thread:", status)
+			end
+
+			local packet = t.cOut:pop()
+			if packet then
+				if packet.key == "status" then
+					print("Image Thread:", status)
+					if packet[1] == "done" then
+						trainImageThreads[k] = nil
+						numTrainImageThreads = numTrainImageThreads - 1
+					end
+				elseif packet.key == "image" then
+					trainImages[k] = love.graphics.newImage( packet[1] )
+				end
 			end
 		end
 	end

@@ -535,7 +535,9 @@ function simulation.show(dt)
 		love.graphics.setColor(30,10,5, 150)
 		
 		x = -TILE_SIZE*(simulationMap.width+2)/2 -20
-		for i = 1, #mapImage do
+		y = -TILE_SIZE*(simulationMap.height+2)/2 +35
+		love.graphics.draw( mapImage, x, y )
+		--[[for i = 1, #mapImage do
 			y = -TILE_SIZE*(simulationMap.height+2)/2 +35
 			for j = 1, #mapImage[i] do
 				if i == 1 or j == #mapImage[i] then
@@ -547,10 +549,13 @@ function simulation.show(dt)
 					x = x + mapImage[i][j]:getWidth()
 				end
 			end
-		end
+		end]]
 		love.graphics.setColor(255,255,255, 255)
 		x = -TILE_SIZE*(simulationMap.width+2)/2
-		for i = 1, #mapImage do
+		y = -TILE_SIZE*(simulationMap.height+2)/2
+		love.graphics.draw( mapImage, x, y )
+		love.graphics.draw( mapShadowImage, x, y )
+		--[[for i = 1, #mapImage do
 			y = -TILE_SIZE*(simulationMap.height+2)/2
 			for j = 1, #mapImage[i] do
 				love.graphics.draw(mapImage[i][j], x,  y)
@@ -562,7 +567,7 @@ function simulation.show(dt)
 					x = x + mapImage[i][j]:getWidth()
 				end
 			end
-		end
+		end]]
 		
 		love.graphics.push()
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
@@ -575,7 +580,9 @@ function simulation.show(dt)
 		love.graphics.pop()
 		love.graphics.setColor(255,255,255,255)
 		x = -TILE_SIZE*(simulationMap.width+2)/2
-		for i = 1, #mapImage do
+		y = -TILE_SIZE*(simulationMap.height+2)/2
+		love.graphics.draw( mapObjectImage, x, y )
+		--[[for i = 1, #mapImage do
 			y = -TILE_SIZE*(simulationMap.height+2)/2
 			for j = 1, #mapImage[i] do
 				love.graphics.draw(mapObjectImage[i][j], x,  y)
@@ -586,7 +593,7 @@ function simulation.show(dt)
 					x = x + mapImage[i][j]:getWidth()
 				end
 			end
-		end
+		end]]
 		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
 	
 	

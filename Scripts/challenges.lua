@@ -123,8 +123,6 @@ function challenges.execute(data)
 			return
 		end
 		
-		
-		
 		if not c.start or not type(c.start) == "function" then
 			print("Error in challenge: No starting function found.")
 			statusMsg.new("Error in challenge: No starting function found.", true)
@@ -144,18 +142,45 @@ function challenges.restart()
 	print("RESTART!")
 	
 	if not map.generating() and not map.rendering() then
-		print("Looking for: ","/Maps/" .. fileName)
-		ok, challengeData = pcall(love.filesystem.load, "Maps/" .. fileName)
-		if not ok then
-			print("Error in challenge: Couldn't execute map:", challengeData)
-			ok, challengeData = pcall(love.filesystem.load, "Challenges/" .. fileName)
-			if not ok then
+
+		print("Looking for: ","Maps/" .. fileName)
+		challengeData = love.filesystem.load( "Maps/" .. fileName)
+		if not challengeData then
+			print("Problem in challenge: Couldn't find/execute map. Error:", challengeData)
+			print("Fallback: Looking for file in internal path...")
+			challengeData = love.filesystem.load( "Challenges/" .. fileName)
+			if not challengeData then
 				print("Error in challenge: Couldn't execute map:", challengeData)
 				return
+			else
+				print("Success: Map found in Challenges/ subfolder!")
 			end
 		end
 		
-		local ok, c = pcall(challengeData) -- execute the chunk
+		local ok, c
+		do		-- just in case. I don't think this actually does anything.
+			c = challengeData() -- execute the chunk
+		end
+
+		if not c then
+			print("Error in challenge: You must return a lua table containing your challenge's data. See example file!")
+			statusMsg.new("Error in challenge: You must return a lua table containing your challenge's data. See example file!", true)
+			menu.init()
+			return
+		end
+
+		if not c.map or type(c.map) ~= "table" then
+			print("Error in challenge: The returned map must be a valid lua table containing map data.")
+			statusMsg.new("Error in challenge: The returned map must be a valid lua table containing map data.", true)
+			return
+		end
+
+		if not c.start or not type(c.start) == "function" then
+			print("Error in challenge: No starting function found.")
+			statusMsg.new("Error in challenge: No starting function found.", true)
+			return
+		end
+
 		challenges.setEvents(c)
 		c.map.time = 0
 		

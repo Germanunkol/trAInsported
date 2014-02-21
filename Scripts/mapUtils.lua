@@ -503,7 +503,7 @@ function generateMapQuads()
 
 --Hotspots/special Buildings:
 	mapQuads.HOTSPOT01 = newQuad( 1, 1, objectSheet )
-	mapQuads.HOTSPOT01_SHADOW = newQuad( 1, 1, objectShadowSheet )
+	mapQuads.HOTSPOT01_SHADOW = newQuad( 1, 4, objectShadowSheet )
 
 -- Misc/Tutorial:
 	mapQuads.HOTSPOT_HOME = newQuad( 1, 4, objectSheet )

@@ -345,7 +345,9 @@ function map.generate(width, height, seed, tutorialMap)
 		mapGenerateThreadChannelIn = love.thread.newChannel()
 		mapGenerateThreadChannelOut = love.thread.newChannel()
 		mapGenerateThread:start( mapGenerateThreadChannelIn, mapGenerateThreadChannelOut,
-				width, height, seed, tutorialMap, CURRENT_REGION )
+			width, height, seed,
+			tutorialMap and TSerial.pack(tutorialMap),-- only call .pack if tutorialMap not nil!!
+			CURRENT_REGION )
 		--[[	
 		if tutorialMap then
 		--mapGenerateThread:set("tutorialMap", TSerial.pack(tutorialMap))
@@ -1483,7 +1485,7 @@ function map.show()
 	
 	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 	love.graphics.translate(math.floor(camX + love.graphics.getWidth()/(2*camZ)), math.floor( camY + love.graphics.getHeight()/(2*camZ)))
-	love.graphics.rotate(math.floor(CAM_ANGLE))
+	love.graphics.rotate(CAM_ANGLE)
 
 
 	-- Draw map shadow:

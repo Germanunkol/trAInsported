@@ -1,15 +1,4 @@
 
-local args = {...}
-
-local channelIn = args[1]
-local channelOut = args[2]
-
-local width = args[3]
-local height = args[4]
-local seed = args[5]
-local tutorialMap = args[6]
-local region = args[7]
-
 require("love.filesystem")
 package.path = "Scripts/?.lua;" .. package.path
 
@@ -20,9 +9,22 @@ pcall(require, "Scripts/TSerial")
 pcall(require, "misc")
 pcall(require, "Scripts/misc")
 
+local args = {...}
+
+local channelIn = args[1]
+local channelOut = args[2]
+
+local width = args[3]
+local height = args[4]
+local seed = args[5]
+local tutorialMap = args[6]
+
+print("tutorialMap:", type(tutorialMap) )
+local region = args[7]
+
 print = function(...)
 	local sendStr = ""
-	
+
 	local arg = { ... }
 	for i = 1, #arg do
 		if arg[i] then
@@ -31,6 +33,7 @@ print = function(...)
 	end
 	channelOut:push({key="msg", sendStr})
 end
+
 
 ------------------------------------
 -- Start generating the map:

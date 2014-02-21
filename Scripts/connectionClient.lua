@@ -63,7 +63,6 @@ function connection.handleConnection()
 
 	if packet then
 		if packet.key == "print" then
-			print("CONNECTION:", packet[1])
 			if packet[1]:find("closed") then
 				lostConnection = true
 			end

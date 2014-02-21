@@ -62,7 +62,6 @@ while true do
 			return
 		end
 	end
-
 	data, msg = client:receive()
 	if data and not msg then
 

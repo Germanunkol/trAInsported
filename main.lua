@@ -226,7 +226,6 @@ if DEDICATED then
 		
 		countSeconds = countSeconds + dt
 		if countSeconds >= 1 then
-			print("time:", dt, love.timer.getFPS())
 			countSeconds = countSeconds - 1
 		end
 		
@@ -295,7 +294,7 @@ if DEDICATED then
 					
 					loggedMatch = false
 								
-					connection.thread:set("nextMatch", timeUntilNextMatch)
+					connection.channelIn:push({key="nextMatch", timeUntilNextMatch})
 				else
 					if not loggedMatch then
 						loggedMatch = true
@@ -308,14 +307,14 @@ if DEDICATED then
 				end
 			end
 		end
-		if curMap and not roundEnded then
+		if curMap and not roundEnded and not map.generating() then
 			map.handleEvents(dt)
 			passenger.showAll(dt*timeFactor)
 		end
 		
 		if connection.thread and lastServerTimeUpdate - timeUntilMatchEnd >= 5 then
 			lastServerTimeUpdate = timeUntilMatchEnd
-			connection.thread:set("time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd)
+			connection.channelIn:push({key="time", (CL_ROUND_TIME or FALLBACK_ROUND_TIME) - timeUntilMatchEnd})
 		end
 		
 		--limit FPS: 
@@ -476,6 +475,8 @@ else
 
 	function finishStartupProcess()
 		console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
+		
+		--love.graphics.setLineStyle("smooth")
 	
 		map.init()
 
@@ -637,10 +638,10 @@ else
 						simulation.runMap()
 					else
 						runMap()	-- start the map!
-					end]]
+					end
 					if not simulation.isRunning() then
 						runMap()	-- start the map!
-					end
+					end]]
 				--end
 				--end
 			else

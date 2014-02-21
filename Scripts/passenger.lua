@@ -47,7 +47,7 @@ end
 function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 	
 	if givenX or givenY then dontCreateVIP = true end
-	
+
 	if curMap and (#passengerList < MAX_NUM_PASSENGERS or givenX or givenY or givenDestX or givenDestY) then	-- allow more than MAX_NUM_PASSENGERS if forced by tutorial.
 		if #curMap.railList < 1 then
 			print("Error in map: No rails found!")
@@ -75,7 +75,7 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 				end
 			end
 		end
-		
+
 		while curMap.railList[dIndex].x == curMap.railList[sIndex].x and curMap.railList[dIndex].y == curMap.railList[sIndex].y do
 			dIndex = dIndex + 1		-- don't allow destination to be the same as the origin.
 			sIndex = math.random(#curMap.railList)
@@ -149,7 +149,6 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 				if not passengerList[i].speach then
 					passengerList[i].speach = " "
 				end
-				
 				table.insert( passengerPositions[passengerList[i].tileX][passengerList[i].tileY], passengerList[i] )
 				
 				if DEDICATED then
@@ -323,7 +322,6 @@ function passenger.printAll()
 end
 
 function passenger.init( max )
-
 	if not DEDICATED then
 		vipClockImages = {}
 		for i = 1,11,1 do

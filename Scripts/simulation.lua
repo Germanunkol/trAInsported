@@ -17,7 +17,7 @@ function simulation.init()
 		map.abortRendering()
 		loadingScreen.reset()
 	end
-	
+
 	simulationRunning = true
 	
 	curMapOccupiedTiles = {}
@@ -61,7 +61,6 @@ function simulation.init()
 	end
 	
 	calculateRailTypes(simulationMap)
-	
 end
 
 function simulation.isRunning()
@@ -528,7 +527,7 @@ function simulation.show(dt)
 		love.graphics.push()
 		love.graphics.scale(camZ)
 	
-		love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
+		love.graphics.translate(math.floor(camX + love.graphics.getWidth()/(2*camZ)), math.floor( camY + love.graphics.getHeight()/(2*camZ)))
 		love.graphics.rotate(CAM_ANGLE)
 		--love.graphics.rectangle("fill", -TILE_SIZE*(simulationMap.width+2)/2-120,-TILE_SIZE*(simulationMap.height+2)/2-80, TILE_SIZE*(simulationMap.width+2)+200, TILE_SIZE*(simulationMap.height+2)+200)
 		--love.graphics.setColor(0,0,0, 100)
@@ -571,7 +570,7 @@ function simulation.show(dt)
 		end]]
 		
 		love.graphics.push()
-		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+		love.graphics.translate(math.floor(-TILE_SIZE*(simulationMap.width+2)/2),math.floor( -TILE_SIZE*(simulationMap.height+2)/2))
 	
 		simulation.passengerShowAll(passedTime)
 		simulation.trainShowAll()
@@ -595,7 +594,7 @@ function simulation.show(dt)
 				end
 			end
 		end]]
-		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+		love.graphics.translate(math.floor(-TILE_SIZE*(simulationMap.width+2)/2), math.floor(-TILE_SIZE*(simulationMap.height+2)/2))
 	
 	
 		simulation.passengerShowSelected()
@@ -618,9 +617,9 @@ function simulation.show(dt)
 		love.graphics.push()
 		love.graphics.scale(camZ*1.5)
 	
-		love.graphics.translate(camX + love.graphics.getWidth()/(camZ*3), camY + love.graphics.getHeight()/(camZ*3))
+		love.graphics.translate(math.floor(camX + love.graphics.getWidth()/(camZ*3)), math.floor(camY + love.graphics.getHeight()/(camZ*3)))
 		love.graphics.rotate(CAM_ANGLE)
-		love.graphics.translate(-TILE_SIZE*(simulationMap.width+2)/2, -TILE_SIZE*(simulationMap.height+2)/2)
+		love.graphics.translate(math.floor(-TILE_SIZE*(simulationMap.width+2)/2), math.floor(-TILE_SIZE*(simulationMap.height+2)/2))
 	
 		if RENDER_CLOUDS then
 			clouds.render()

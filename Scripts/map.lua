@@ -11,16 +11,16 @@ local curMapOccupiedExits = {}	-- stores whether a certain exit of a tile is alr
 
 if not DEDICATED then
 	IMAGE_HOTSPOT_HIGHLIGHT = love.graphics.newImage("Images/HotSpotHighlight.png")
+	groundSheetGrass = love.graphics.newImage("Images/GroundSheet.png")
+	groundSheetStone = love.graphics.newImage("Images/GroundSheet_Stone.png")
+	objectSheet = love.graphics.newImage("Images/ObjectSheet.png")
+	objectShadowSheet = love.graphics.newImage("Images/ObjectShadowsSheet.png")
 end
 
 local status = nil
 
 local mapSeed = 0
 
-groundSheetGrass = love.graphics.newImage("Images/GroundSheet.png")
-groundSheetStone = love.graphics.newImage("Images/GroundSheet_Stone.png")
-objectSheet = love.graphics.newImage("Images/ObjectSheet.png")
-objectShadowSheet = love.graphics.newImage("Images/ObjectShadowsSheet.png")
 
 --------------------------------------------------------------
 --		INITIALISE MAP:
@@ -381,6 +381,7 @@ function map.generate(width, height, seed, tutorialMap)
 
 			if packet.key == "curMap" then
 				curMap = TSerial.unpack(packet[1])
+				print("new curMap:", curMap)
 			elseif packet.key == "curMapRailTypes" then
 				curMapRailTypes = TSerial.unpack(packet[1])
 			elseif packet.key == "curMapOccupiedTiles" then
@@ -412,16 +413,16 @@ function map.generate(width, height, seed, tutorialMap)
 						runMap()
 					end
 					collectgarbage("collect")
-
-					return curMap
 				end
 			end
 		end
 			-- then, check if there was an error:
-			err = mapGenerateThread:getError()
-			if err then
-				print("MAP GENERATING THREAD error: " .. err)
-				love.event.quit()
+			if mapGenerateThread then
+				err = mapGenerateThread:getError()
+				if err then
+					print("MAP GENERATING THREAD error: " .. err)
+					love.event.quit()
+				end
 			end
 		end
 	end
@@ -632,7 +633,9 @@ end
 function map.init()
 	
 	-- create the quads used for the sprite batch, to render the maps later:
-	generateMapQuads()
+	if not DEDICATED then
+		generateMapQuads()
+	end
 
 	pathNS = {}
 	pathNS[1] = {x=48,y=0}
@@ -1279,23 +1282,22 @@ function map.render(map)
 
 		--print("Map was rendered in " .. os.time()-renderingMapStartTime .. " seconds.")
 
-		if not DEDICATED then
-			m = curMap or simulationMap
-			if m then
-				for i = 1, m.width do
-					for j = 1, m.height do
-						if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
-							m[i][j] = "S"
-						end
-						if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
-							m[i][j] = "H"
-						end
-					end				
-				end
+		m = curMap or simulationMap
+		if m then
+			for i = 1, m.width do
+				for j = 1, m.height do
+					if m[i][j] == "SCHOOL" or m[i][j] == "HOSPITAL" then		--reset to normal hotspot - names were just there for rendering.
+						m[i][j] = "S"
+					end
+					if m[i][j] and m[i][j]:find("HOUSE") then		--reset to normal house - names were just there for rendering.
+						m[i][j] = "H"
+					end
+				end				
 			end
 		end
 
 		mapImage, mapShadowImage, mapObjectImage = groundData,shadowData,objectData
+		runMap()	-- start the map!
 	end
 
 	--[[
@@ -1480,8 +1482,8 @@ function map.show()
 	
 	
 	--love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-	love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
-	love.graphics.rotate(CAM_ANGLE)
+	love.graphics.translate(math.floor(camX + love.graphics.getWidth()/(2*camZ)), math.floor( camY + love.graphics.getHeight()/(2*camZ)))
+	love.graphics.rotate(math.floor(CAM_ANGLE))
 
 
 	-- Draw map shadow:

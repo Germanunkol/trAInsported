@@ -5,8 +5,7 @@ local channelIn = args[1]
 local channelOut = args[2]
 
 local PORT = args[3]
-
-PORT = thisThread:demand("PORT")
+local timeUntilNextMatch = args[4]
 
 local socket = require("socket")
 
@@ -24,7 +23,6 @@ local msgNumber = 0
 local statusNumber = 0
 local packetNumber = 0
 
-local timeUntilNextMatch = 0
 
 local connection = {}
 
@@ -152,7 +150,6 @@ while true do
 
 		if packet.key == "curMap" then
 			curMapStr = packet[1]		-- careful: in this thread, it's only in string form, not in a table!
-
 			serverTime = 0
 			for k, cl in pairs(clientList) do
 				ok, msg = cl:send("MAP:" .. curMapStr .. "\n")

@@ -157,12 +157,12 @@ function sandbox.createNew(aiID, scriptName)
 	sb.xpcall = xpcall
 	
 	sb.coroutine = {}
-	sb.coroutine.create = coroutine.create
+	--[[sb.coroutine.create = coroutine.create
 	sb.coroutine.resume = coroutine.resume
 	sb.coroutine.running = coroutine.running
 	sb.coroutine.status = coroutine.status
 	sb.coroutine.wrap = coroutine.wrap
-	sb.coroutine.yield = coroutine.yield
+	sb.coroutine.yield = coroutine.yield]]
 
 	sb.random = math.random
 	sb.sqrt = math.sqrt

@@ -1,24 +1,23 @@
 
 function initServer()
 	if connection.thread then
-		connection.thread:set("input", "close")	-- tell the current thread to close
+		connection.channelIn:push({key="input", "close"})	-- tell the current thread to close
 	end
 	print("Initialising Server")
 	
-	connection.thread = love.thread.newThread("connectionThread" .. connectionThreadNum, "Scripts/connectionThreadServer.lua")
-	connectionThreadNum = connectionThreadNum + 1
+	connection.thread = love.thread.newThread("Scripts/connectionThreadServer.lua")
+	--connectionThreadNum = connectionThreadNum + 1
 	connection.channelIn = love.thread.newChannel()
 	connection.channelOut = love.thread.newChannel()
-	connection.thread:start( connection.channelIn, connection.channelOut, PORT )
+	connection.thread:start( connection.channelIn, connection.channelOut, PORT, timeUntilNextMatch )
 	connection.msgNumber = 0
 	connection.packetNum = 0
 	
-	connection.thread:set("nextMatch", timeUntilNextMatch)
 end
 
 function stopServer()
 	if connection.thread then
-		connection.thread:set("input", "close")	-- tell the current thread to close
+		connection.channelIn:push({key="input", "close"})	-- tell the current thread to close
 		connection.thread = nil
 		curMap = nil
 	end
@@ -29,13 +28,14 @@ function sendMapUpdate(event)
 	if curMap then
 		t = curMap.time
 	end
-	connection.thread:set("packet" .. connection.packetNum, t .. "|" .. event)
-	connection.packetNum = incrementID(connection.packetNum)
+	connection.channelIn:push({key="packet", t .. "|" .. event})
+	--connection.packetNum = incrementID(connection.packetNum)
 end
 
 function sendMap()
 	if connection.thread then
-		connection.thread:set("curMap", TSerial.pack(curMap))
+		--connection.thread:set("curMap", TSerial.pack(curMap))
+		connection.channelIn:push({key="curMap", TSerial.pack(curMap)})
 	end
 end
 
@@ -56,17 +56,17 @@ function handleThreadMessages( container )
 	if container.thread then
 	
 		-- first, look for new messages:
-		str = container.thread:get("msg" .. container.msgNumber)
-		while str do
-			print(str)
-			container.msgNumber = incrementID(container.msgNumber)
-			str = container.thread:get("msg" .. container.msgNumber)
+		--str = container.thread:get("msg" .. container.msgNumber)
+		local packet = container.channelOut:pop()
+		while packet do
+			print(packet[1])
+			packet = container.channelOut:pop()
 		end
 		
 		-- then, check if there was an error:
-		err = container.thread:get("error")
+		err = container.thread:getError()
 		if err then
-			print("THREAD error: " .. err)
+			print("Server thread error:", err)
 			love.event.quit()
 		end
 	end

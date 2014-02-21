@@ -218,9 +218,9 @@ end
 if not DEDICATED then
 
 	love.conf = function(t)
-		t.screen.width = 800
-		t.screen.height = 600
-		t.screen.fullscreen = false
+		--t.screen.width = 800
+		--t.screen.height = 600
+		--t.screen.fullscreen = false
 		t.title = "trAInsported"        -- The title of the window the game is in (string)
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
@@ -230,9 +230,9 @@ else
 
 	love.conf = function(t)
 	
-		t.screen.width = 50
-		t.screen.height = 25
-		t.screen.fullscreen = false
+		--t.screen.width = 50
+		--t.screen.height = 25
+		--t.screen.fullscreen = false
 		t.title = "trAInsported"        -- The title of the window the game is in (string)
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
@@ -242,6 +242,7 @@ else
 		t.modules.keyboard = true   -- Enable the keyboard module (boolean)
 		t.modules.event = true      -- Enable the event module (boolean)
 		t.modules.image = false      -- Enable the image module (boolean)
+		t.modules.window = false    -- Enable the physics module (boolean)
 		t.modules.graphics = false   -- Enable the graphics module (boolean)
 		t.modules.timer = true      -- Enable the timer module (boolean)
 		t.modules.mouse = false      -- Enable the mouse module (boolean)

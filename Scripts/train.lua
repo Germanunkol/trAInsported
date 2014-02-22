@@ -704,6 +704,10 @@ if not DEDICATED then
 		x = x - FONT_SMALL:getWidth(str)/2 - 5
 		love.graphics.setColor(r or 128, g or 128, b or 128, 200)
 		love.graphics.rectangle( "fill", x, y, FONT_SMALL:getWidth(str) + 10, FONT_SMALL:getHeight() + 10 )
+		love.graphics.setLineWidth(2)
+		love.graphics.setColor( r and r/5 or 16, g and g/5 or 16, b and b/5 or 16, 250 )
+		love.graphics.rectangle( "line", x, y, FONT_SMALL:getWidth(str) + 10, FONT_SMALL:getHeight() + 10 )
+		love.graphics.setLineWidth(1)
 		love.graphics.setColor(0,0,0)
 		love.graphics.print(str, x+5, y+5)
 	end

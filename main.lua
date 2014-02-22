@@ -476,7 +476,7 @@ else
 	function finishStartupProcess()
 		console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
 		
-		--love.graphics.setLineStyle("smooth")
+		love.graphics.setLineStyle("smooth")
 	
 		map.init()
 

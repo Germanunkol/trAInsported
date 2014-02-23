@@ -246,7 +246,7 @@ end
 function ai.chooseDirection()
 	counter = counter + 1
 	if counter == 1 then
-		print("First junction! Go East!")
+		print("First junction! Go east!")
 		return "E"
 	else
 		print("Go South!")
@@ -386,7 +386,7 @@ function tutorial.createTutBoxes()
 	local k = 1
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Where to go?"
-	tutorialSteps[k].message = "Welcome to the second Tutorial!\n\nHere, you'll learn:\n1) How to handle junctions\n2) Lua basics\n3) What to do with multiple passengers\n4) What VIPs are"
+	tutorialSteps[k].message = "Welcome to the second Tutorial!\n\nHere, you'll learn:\n1) How to handle junctions\n2) Lua basics\n\nSadly, we'll have to cover some theory here - but it will be worth it when we get to Tutorials 3 and 4!"
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
@@ -564,7 +564,7 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Every time the train reaches the junction, it will print something and then continue.\nThe next step is to choose a direction for the train. The current default behaviour is to go North or - if it can't go North - it'll go South.\n\nIf the function ai.chooseDirection() returns \"E\", then the game will know that the train wants to go East at the junction. Make your function return \"E\", then reload."
+	tutorialSteps[k].message = "Every time the train reaches the junction, it will print something and then continue.\nThe next step is to choose a direction for the train. The current default behaviour is to go north or - if it can't go north - it'll go south.\n\nIf the function ai.chooseDirection() returns \"E\", then the game will know that the train wants to go east at the junction. Make your function return \"E\", then reload."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = eventChooseEast(k)
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
@@ -575,11 +575,11 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You did it! Your train will now travel East whenever it can...\n\nLet's try one more thing: I now want the train to go East the first time it reaches the junction, and then only go South or North. Use the junction counter we coded before and an 'if-then-else' statement. Remember: to check if a variable is equal to something you need to use '==', not '=' ..."
+	tutorialSteps[k].message = "You did it! Your train will now travel east whenever it can...\n\nLet's try one more thing: I now want the train to go east the first time it reaches the junction, and then only go south or north. Use the junction counter we coded before and an 'if-then-else' statement. Remember: to check if a variable is equal to something you need to use '==', not '=' ..."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = eventChooseEastThenSouth(k)
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("It will be sufficient to tell the trAIn to go East the first time and otherwise go South, because, when it's coming from the South and you tell it to go South, it will automatically default to North (because it can't go South)...\n\nThere's more than one solution to this. But be careful: Everything you do after a 'return' statement won't get executed, because when the game reaches the 'return', it will end the function."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("It will be sufficient to tell the trAIn to go east the first time and otherwise go south, because, when it's coming from the south and you tell it to go south, it will automatically default to north (because it can't go south)...\n\nThere's more than one solution to this. But be careful: Everything you do after a 'return' statement won't get executed, because when the game reaches the 'return', it will end the function."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Hint!", event = function()
 		if cBox then codeBox.remove(cBox) end
 		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_hintGoEastThenSouth)
@@ -664,7 +664,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "You've completed the second tutorial, well done!\nClick 'More Ideas' for some ideas of what you can try on your own before going to the next tutorial.\n\nWith this tutorial, we've covered most of the dry theory - the next tutorials will be more practical."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go East, then North, then South, then East again and so on (East, North, South, East, North, South, East ...).\n To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time the game calls ai.chooseDirection. Then return \"E\", \"N\" or \"S\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go east, then north, then south, then east again and so on (east, north, south, east, north, south, east ...).\n To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time the game calls ai.chooseDirection. Then return \"E\", \"N\" or \"S\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	

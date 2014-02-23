@@ -18,6 +18,10 @@ function console.add( text, colour )
 	if DEDICATED then
 		return
 	end
+
+	if not type(text) == "string" then error("Passing wrong arguments to function console.add!") end
+
+	colour = type(colour) == "table" and colour or {r=255,g=255,b=255}
 	
 	local nextLine = nil
 	newLinePos = text:find("\n")
@@ -27,7 +31,6 @@ function console.add( text, colour )
 	end
 	
 	local str = ""
-	if colour == nil then colour = {r=255,g=255,b=255} end
 	
 	if tutorial and tutorial.consoleEvent then		-- if the tutorial has registered an event for me, run it now.
 		tutorial.consoleEvent(text)

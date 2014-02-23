@@ -475,6 +475,7 @@ function map.generate(width, height, seed, tutorialMap)
 	end
 	directionStr = f .. t
 	railType = getRailType(x,y)
+	print(directionStr, x, y, curMapOccupiedTiles )
 --	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
 	--	return false
 	if curMapOccupiedTiles[x][y][directionStr] then		-- if someone's moving in the direction that I've been meaning to move,block.
@@ -1490,6 +1491,7 @@ function map.show()
 
 	-- Draw map shadow:
 	love.graphics.setColor(30,10,5, 200)
+
 	
 	x = -TILE_SIZE*(curMap.width+2)/2 - 20
 	y = -TILE_SIZE*(curMap.height+2)/2 + 35
@@ -1507,6 +1509,7 @@ function map.show()
 			end
 		end
 	end]]
+
 	love.graphics.setColor(255,255,255, 255)
 	x = -TILE_SIZE*(curMap.width+2)/2
 	y = -TILE_SIZE*(curMap.height+2)/2

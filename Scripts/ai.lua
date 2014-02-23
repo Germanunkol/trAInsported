@@ -169,7 +169,6 @@ function ai.new(scriptName)
 		return
 	end
 	
-	
 	local aiID = 0
 	
 	for i = 1,#aiList+1,1 do
@@ -551,6 +550,8 @@ function ai.backupTutorialAI( fileName )
 		--file:write(contents)
 		--file:close()
 		print("Backed up tutorial AI to: " .. "AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua" )
+
+		statusMsg.new("Found old AI for this tutorial!\nBacked up to:" .. "AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua", true)
 	end
 
 end

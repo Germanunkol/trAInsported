@@ -659,11 +659,11 @@ end
 function menu.executeTutorial(fileName)
 	if not map.generating() and not map.rendering() then
 		tutorialData = love.filesystem.load( "Languages/" .. CURRENT_LANGUAGE .. "_" .. fileName)
-		print(ok,tutorialData)
+		--print(ok,tutorialData)
 		if not tutorialData then	-- fallback:
 			tutorialData = love.filesystem.load("Tutorials/" .. fileName)
 		end
-		print(tutorialData)
+		--print(tutorialData)
 		local result = tutorialData() -- execute the chunk
 		tutorial.start()
 	else

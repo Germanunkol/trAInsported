@@ -141,7 +141,7 @@ end
 
 function ai.new(scriptName)
 	--local ok, chunk = pcall(love.filesystem.read, scriptName
-	print("scriptName", scriptName)
+	print("ScriptName:", scriptName)
 	local ok, chunk = false, false
 	fh = io.open( scriptName,"r")
 	if fh and fh.read then
@@ -155,7 +155,6 @@ function ai.new(scriptName)
 	else
 		scriptName = scriptName:gsub(AI_DIRECTORY, "")
 		scriptName = "AI/" .. scriptName
-		print("scriptName 2", scriptName)
 		ok, chunk = pcall(love.filesystem.read, scriptName)
 	end
 	

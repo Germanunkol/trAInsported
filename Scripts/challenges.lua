@@ -38,9 +38,8 @@ function challenges.start(c, aiFileName)
 	challengeRunning = true
 	
 	MAX_NUM_TRAINS = c.maxTrains
-	STARTUP_MONEY = c.startMoney
 	
-	stats.start( 1 )
+	stats.start( 1, c.startMoney )
 	
 	-- correct anything that might have gone wrong with the map:
 	c.map.time = 0
@@ -185,8 +184,7 @@ function challenges.restart()
 		c.map.time = 0
 		
 		MAX_NUM_TRAINS = c.maxTrains
-		STARTUP_MONEY = c.startMoney
-		stats.start( 1 )
+		--stats.start( 1, c.startMoney )
 		
 		c.start()
 		challengeRunning = true

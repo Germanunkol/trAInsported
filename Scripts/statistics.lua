@@ -81,7 +81,7 @@ end
 function statistics.getMoneyAI( aiID )
 	return function ()
 		if aiStats[aiID] then
-			return (aiStats[aiID].money)
+			return aiStats[aiID].money
 		end
 	end
 end
@@ -834,12 +834,19 @@ function statistics.getAIColor(i)
 	end
 end
 
-function statistics.start( ais )
+local rememberAIs, rememberMinimumMoney
+function statistics.start( ais, minimumMoney )
+	if not ais then ais = rememberAIs end
+	if not minimumMoney then minimumMoney = rememberMinimumMoney end
+
+	rememberAIs = ais
+	rememberMinimumMoney = minimumMoney
+
 	aiStats = {}
 	passengerStats = {}
 	for i = 1,ais do
 		aiStats[i] = {}
-		aiStats[i].money = STARTUP_MONEY
+		aiStats[i].money = minimumMoney or STARTUP_MONEY
 		aiStats[i].moneyEarnedTotal = 0
 		aiStats[i].pPickedUp = 0		-- number of passengers which were picked up
 		aiStats[i].pDroppedOff = 0	-- number of passengers dropped off

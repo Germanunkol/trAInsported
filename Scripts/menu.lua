@@ -183,6 +183,7 @@ function menu.init(menuX, menuY)
 	
 	--reset challenge events!:
 	challenges.resetEvents()
+
 end
 
 

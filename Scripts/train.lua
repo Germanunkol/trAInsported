@@ -120,6 +120,7 @@ end
 
 function train.buyNew(aiID)
 	return function (posX, posY, dir)
+		--print("buying new train...")
 		
 		if #trainList[aiID] >= MAX_NUM_TRAINS then
 			console.add("[" .. ai.getName(aiID) .. "] !Max number of trAIns reached!", {r=255,g=50,b=50})

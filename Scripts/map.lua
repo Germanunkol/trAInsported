@@ -108,7 +108,7 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 	GAME_TYPE = gameMode
 	GAME_TIME = time
 	ai.restart()	-- make sure aiList is reset!
-	stats.start( #AIs )
+	stats.start( #AIs, STARTUP_MONEY )
 	train.init()
 	
 	map.generate(width, height, math.random(1000))
@@ -209,7 +209,7 @@ function map.restart()
 	AIs = ai.restart()	-- get list of current ais, and remove the current ais.
 
 	printTable(AIs)
-	stats.start( #AIs )
+	stats.start()
 	train.init()
 	
 	clearAllOccupations()

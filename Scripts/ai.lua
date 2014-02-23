@@ -170,7 +170,6 @@ function ai.new(scriptName)
 	end
 	
 	
-	
 	local aiID = 0
 	
 	for i = 1,#aiList+1,1 do
@@ -544,13 +543,14 @@ end
 
 function ai.backupTutorialAI( fileName )
 
-	if io.open( AI_DIRECTORY .. fileName ) then
-		local file = io.open( AI_DIRECTORY .. fileName, "r")
-		local contents = file:read("*all")
+	if love.filesystem.exists( "AI/" .. fileName ) then
+		local content = love.filesystem.read( "AI/".. fileName )
+		--local contents = file:read("*all")
 		
-		file = io.open( AI_DIRECTORY .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua","w")
-		file:write(contents)
-		file:close()
+		love.filesystem.write( "AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua", content)
+		--file:write(contents)
+		--file:close()
+		print("Backed up tutorial AI to: " .. "AI/" .. fileName:sub(1, #fileName-4) .. "-(" .. os.time() .. ")-Backup.lua" )
 	end
 
 end
@@ -559,8 +559,9 @@ function ai.createNewTutAI( fileName, fileContent)
 	ai.backupTutorialAI( fileName )
 	print("Attempt to create tutorial file:", fileName)
 	print("Path:", AI_DIRECTORY .. fileName)
-	file = io.open( AI_DIRECTORY .. fileName, "w")
-	print("File result:", file)
+
+	love.filesystem.write( "AI/" .. fileName, fileContent )
+	--[[file = io.open( AI_DIRECTORY .. fileName, "w")
 	if not file then
 		print("Path2:", "AI/" .. fileName)
 		file = io.open( "AI/" .. fileName, "w")
@@ -570,6 +571,6 @@ function ai.createNewTutAI( fileName, fileContent)
 		print("Writing to tut file:", fileContent:sub(1, 20) .. "...")
 		file:write(fileContent)
 		file:close()
-	end
+	end]]
 end
 return ai

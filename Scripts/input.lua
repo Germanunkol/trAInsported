@@ -121,11 +121,11 @@ function love.keypressed(key, unicode)
 		getScreenshot()
 	elseif key == "f1" then
 		quickHelp.toggle()
-	elseif unicode == 99 then--key == "c" then
+	elseif key == "c" then -- unicode == 99 then--key == "c" then
 		console.toggle()
-	elseif unicode == 43 then -- key == "+" then
+	elseif key == "+" then -- unicode == 43 then -- key == "+" then
 		speedGameUp()
-	elseif unicode == 45 then --key == "-" then
+	elseif key == "-" then -- unicode == 45 then --key == "-" then
 		slowGameDown()
 	elseif key == "p" then
 		stats.print()
@@ -138,6 +138,5 @@ function love.keypressed(key, unicode)
 		hideAIStatistics = not hideAIStatistics
 	end
 		--print(key, unicode)
-	
 end
 

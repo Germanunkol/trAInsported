@@ -153,6 +153,28 @@ function challenges.execute(data)
 	end
 end
 
+function removeSingleRails( m )
+	print(m[6][2])
+	for x = 1, m.width do
+		for y = 1, m.height do
+			if m[x][y] == "C" then
+				local num = 0
+				num = num + (m[x+1] and (m[x+1][y] == "C" and 1) or 0)
+				num = num + (m[x-1] and (m[x-1][y] == "C" and 1) or 0)
+				num = num + (m[x][y+1] == "C" and 1 or 0)
+				num = num + (m[x][y-1] == "C" and 1 or 0)
+				
+				if num == 0 then
+					m[x][y] = nil
+					return true
+				end
+			end
+		end
+	end
+	print(m[6][2])
+	print(m[6][2])
+end
+
 function challenges.fixMap( m )
 
 	printTable(m)
@@ -172,6 +194,7 @@ function challenges.fixMap( m )
 
 	print( "Set width and height:", width, height )
 
+	-- copy only the fields in the map's data which are inside the valid region:
 	for x = 0, width+1 do
 		new[x] = {}
 		for y = 1, height+1 do
@@ -187,7 +210,11 @@ function challenges.fixMap( m )
 	end
 
 	new.width, new.height = width, height
-
+	
+	-- remove all rails which aren't connected:
+	while removeSingleRails( new ) do
+	end
+	
 	return new
 end
 

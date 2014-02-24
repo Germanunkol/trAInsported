@@ -461,7 +461,7 @@ function newQuad( x, y, img, w, h )
 	img = img or groundSheetGrass
 	w = w or 1
 	h = h or 1
-	return love.graphics.newQuad( (x-1)*TILE_SIZE, (y-1)*TILE_SIZE,
+		return love.graphics.newQuad( (x-1)*(TILE_SIZE+2)+1, (y-1)*(TILE_SIZE+2)+1,
 								TILE_SIZE*h, TILE_SIZE*h,
 								img:getWidth(), img:getHeight() )
 end

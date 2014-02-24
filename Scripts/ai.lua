@@ -114,20 +114,20 @@ function runAiFunctionCoroutine(f, lines, ... )
 
 	args = {...}
 	local ok, msg = xpcall(function() return f( unpack(args) ) end, traceback)
+	print("After execution:", ok, msg)
 	if not ok then
 		local shorterMessage = ""
 		local found = false
 		console.add("Error occured when calling function: " .. msg, {r=255,g=50,b=50})
 		for line in msg:gmatch("[^\n]-\n") do
 			if line:find("Taking too long") then
-			shorterMessage = shorterMessage .. line
+				shorterMessage = shorterMessage .. line
 			else
 				if line:find("%[string.*%]") then
 					found = true
 				end
 				if found then
 					shorterMessage = shorterMessage .. line
-				else
 				end
 			end
 		end
@@ -198,6 +198,7 @@ function ai.new(scriptName)
 	--this first coroutine compiles and runs the source code of the user's AI script:
 	local crLoad = coroutine.create(safelyLoadAI)
 	local ok, err = pcall(coroutine.resume, crLoad, chunk, scriptName, sb)
+	print("OK", ok, err)
 	if coroutine.status(crLoad) ~= "dead" then
 		crLoad = nil
 		error("\tCoroutine stopped prematurely: " .. aiList[aiID].name)

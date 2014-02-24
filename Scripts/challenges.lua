@@ -154,7 +154,6 @@ function challenges.execute(data)
 end
 
 function removeSingleRails( m )
-	print(m[6][2])
 	for x = 1, m.width do
 		for y = 1, m.height do
 			if m[x][y] == "C" then
@@ -166,24 +165,24 @@ function removeSingleRails( m )
 				
 				if num == 0 then
 					m[x][y] = nil
-					return true
+					return x, y
 				end
 			end
 		end
 	end
-	print(m[6][2])
-	print(m[6][2])
 end
 
 function challenges.fixMap( m )
 
-	printTable(m)
 	local new = {}
 	local width = m.width
 	local height = m.height
 
+	local errorDimensions
+
 	if not width then
 		width = #m
+		errorDimensions = true
 	end
 	if not height then
 		height = 0
@@ -191,8 +190,6 @@ function challenges.fixMap( m )
 			height = math.max(#m[x], height)
 		end
 	end
-
-	print( "Set width and height:", width, height )
 
 	-- copy only the fields in the map's data which are inside the valid region:
 	for x = 0, width+1 do
@@ -212,7 +209,16 @@ function challenges.fixMap( m )
 	new.width, new.height = width, height
 	
 	-- remove all rails which aren't connected:
-	while removeSingleRails( new ) do
+	local x, y
+	repeat
+		x,y = removeSingleRails( new )
+		if x and y then
+			statusMsg.new("Error: Single, non-connected rail tile found at [" .. x .. "," .. y .. "] Please fix!", true)
+		end
+	until x == nil
+
+	if #m ~= m.width or #m[1] ~= m.height then
+		statusMsg.new("Error: Map width and height are not set correctly. Some tiles might be outside of the given area. Please fix!", true)
 	end
 	
 	return new

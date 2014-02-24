@@ -43,6 +43,15 @@ local function safeprint(aiID)
 	end
 end
 
+local function pause( aiID )
+	if not DEDICATED then
+		return function()
+			console.add( "AI [" ..ai.getName(aiID) .. "]  paused the game." )
+			pauseGame()
+		end
+	end
+end
+
 
 local function safeDofile(scriptName)
 	_, pos = scriptName:find(".*/")		-- find last occurrance of /
@@ -150,6 +159,7 @@ function sandbox.createNew(aiID, scriptName)
 	
 	sb.print = safeprint(aiID)
 	sb.clearConsole = console.flush
+	sb.pause = pause(aiID)
 	
 	sb.error = error
 	sb.pcall = sandboxPcall

@@ -345,5 +345,4 @@ function challenges.setStatus(msg)
 	challengeStatus = msg
 end
 
-
 return challenges

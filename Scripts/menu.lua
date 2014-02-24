@@ -47,13 +47,11 @@ table.sort(modes, sortResolutions )   -- sort from smallest to largest
 
 
 function randomMatch()
-	
 	if map.generating() or map.rendering() then --mapRenderThread or mapGenerateThread then
 		print("Already generating new map!")
 		statusMsg.new(LNG.err_already_generating_map, true)
 		return
 	end
-	
 	
 	local width = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)
 	local height = math.random(MAP_MINIMUM_SIZE,MAP_MAXIMUM_SIZE)

@@ -416,6 +416,34 @@ If you want to know the system time without multiplication then use os.time inst
 <pre><code>    print("Sheldon likes trains!", 1, tbl[1])
 </code></pre>
 
+<h3>pause()</h3>
+
+<p>Pauses the game. This is very useful for debugging!
+The pause() calls will be ignored on the server.</p>
+
+<p><strong>Arguments:</strong></p>
+
+<ul>
+<li>none</li>
+</ul>
+
+<p><strong>Returns:</strong></p>
+
+<ul>
+<li>nothing</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>    function ai.chooseDirection( tr, dirs )
+        print("Possible directions:")
+        for k, v in pairs( dirs ) do
+            print(k, v)
+        end
+        pause()
+    end
+</code></pre>
+
 <h3>clearConsole()</h3>
 
 <p>Clears the ingame console to make space for new Messages. <br />

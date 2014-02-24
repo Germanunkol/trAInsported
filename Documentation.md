@@ -346,6 +346,28 @@ Prints the given objects to the ingame-console (make sure it's visible by pressi
 **Example:**
   
 		print("Sheldon likes trains!", 1, tbl[1])
+	
+###pause()###
+Pauses the game. This is very useful for debugging!
+The pause() calls will be ignored on the server.
+
+**Arguments:**
+
+- none
+
+**Returns:**
+
+- nothing
+
+**Example:**
+ 
+ 		function ai.chooseDirection( tr, dirs )
+			print("Possible directions:")
+			for k, v in pairs( dirs ) do
+				print(k, v)
+			end
+			pause()
+		end
 		
 ###clearConsole()###
 Clears the ingame console to make space for new Messages.  

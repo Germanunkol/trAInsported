@@ -43,7 +43,23 @@ function challenges.start(c, aiFileName)
 	
 	-- correct anything that might have gone wrong with the map:
 	c.map.time = 0
-	
+--[[	
+	print(c.map.height, c.map.width)
+	local m = c.map
+		local str = ""
+		for j = 0,m.height+1,1 do
+			str = ""
+			for i = 0,m.width+1,1 do
+				if m[i][j] then
+					str = str .. m[i][j] .. " "
+				else
+					str = str .. "- "
+				end
+			end
+			print(str)
+		end]]
+
+
 	loadingScreen.reset()
 	loadingScreen.addSection("New Map")
 	loadingScreen.addSubSection("New Map", "Size: " .. c.map.width .. "x" .. c.map.height)
@@ -120,6 +136,8 @@ function challenges.execute(data)
 			print("Error in challenge: The returned map must be a valid lua table containing map data.")
 			statusMsg.new("Error in challenge: The returned map must be a valid lua table containing map data.", true)
 			return
+		else
+			c.map = challenges.fixMap( c.map )
 		end
 		
 		if not c.start or not type(c.start) == "function" then
@@ -127,12 +145,50 @@ function challenges.execute(data)
 			statusMsg.new("Error in challenge: No starting function found.", true)
 			return
 		end
-		
+
 		challenges.start(c, aiFileName)
 		
 	else
 		statusMsg.new("Wait for rendering to finish...", true)
 	end
+end
+
+function challenges.fixMap( m )
+
+	printTable(m)
+	local new = {}
+	local width = m.width
+	local height = m.height
+
+	if not width then
+		width = #m
+	end
+	if not height then
+		height = 0
+		for x = 1, width do
+			height = math.max(#m[x], height)
+		end
+	end
+
+	print( "Set width and height:", width, height )
+
+	for x = 0, width+1 do
+		new[x] = {}
+		for y = 1, height+1 do
+			if x == 0 or x == width+1 or y == 0 or y == height+1 then
+				if m[x] then
+					m[x][y] = nil
+				end
+			end
+			if m[x] and m[x][y] then
+				new[x][y] = m[x][y]
+			end
+		end
+	end
+
+	new.width, new.height = width, height
+
+	return new
 end
 
 function challenges.restart()

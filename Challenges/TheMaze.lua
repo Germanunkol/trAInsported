@@ -118,7 +118,6 @@ function drunkardWalk()
 			if ch.map[curX-2][curY] ~= "C" then ch.map[curX-1][curY] = "C" end
 			curX = curX-2
 		end
-		map.print(ch.map)
 	end
 end
 
@@ -174,7 +173,7 @@ function ch.start()
 	
 	passengerStartX, passengerStartY = findClosestRail(1,1)
 	passengerEndX, passengerEndY = findClosestRail(ch.map.width, ch.map.height)
-
+	print("NEW PASSENGER")
 	passenger.new(passengerStartX, passengerStartY, passengerEndX, passengerEndY)
 end
 

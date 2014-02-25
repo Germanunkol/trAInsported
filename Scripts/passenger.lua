@@ -45,6 +45,7 @@ function passenger.clearList()
 end
 
 function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
+	print("creating passenger")
 	
 	if givenX or givenY then dontCreateVIP = true end
 

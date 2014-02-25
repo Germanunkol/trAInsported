@@ -362,7 +362,6 @@ function map.generate(width, height, seed, tutorialMap)
 		
 		prevStr = nil
 	else
-	
 		local packet = mapGenerateThreadChannelOut:pop()
 		if packet then
 			if packet.key == "percentage" and loadingScreen then
@@ -473,7 +472,6 @@ function map.generate(width, height, seed, tutorialMap)
 	end
 	directionStr = f .. t
 	railType = getRailType(x,y)
-	print(directionStr, x, y, curMapOccupiedTiles )
 --	if railType == NS or railType == EW or railType == NW or railType == WS or railType == SE or railType == NE or railType == NN or railType == SS or railType == EE or railType == WW then
 	--	return false
 	if curMapOccupiedTiles[x][y][directionStr] then		-- if someone's moving in the direction that I've been meaning to move,block.

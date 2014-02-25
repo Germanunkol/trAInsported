@@ -275,7 +275,7 @@ function challenges.restart()
 		MAX_NUM_TRAINS = c.maxTrains
 		--stats.start( 1, c.startMoney )
 		
-		c.start()
+		--c.start()
 		challengeRunning = true
 	end
 end

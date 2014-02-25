@@ -173,7 +173,6 @@ function ch.start()
 	
 	passengerStartX, passengerStartY = findClosestRail(1,1)
 	passengerEndX, passengerEndY = findClosestRail(ch.map.width, ch.map.height)
-	print("NEW PASSENGER")
 	passenger.new(passengerStartX, passengerStartY, passengerEndX, passengerEndY)
 end
 

@@ -45,8 +45,7 @@ function passenger.clearList()
 end
 
 function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
-	print("creating passenger")
-	
+
 	if givenX or givenY then dontCreateVIP = true end
 
 	if curMap and (#passengerList < MAX_NUM_PASSENGERS or givenX or givenY or givenDestX or givenDestY) then	-- allow more than MAX_NUM_PASSENGERS if forced by tutorial.

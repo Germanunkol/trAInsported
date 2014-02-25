@@ -1,7 +1,7 @@
 local ch = {}
 
 ch.name = "TheMaze"
-ch.version = "2"
+ch.version = "5"
 
 ch.maxTrains = 1
 ch.startMoney = 25

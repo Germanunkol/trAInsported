@@ -119,13 +119,11 @@ function setupMatch( width, height, time, maxTime, gameMode, AIs, region )
 			print("Err: " .. name)
 		else
 			stats.setAIName(i, name, owner)
-			if not DEDICATED then
-				train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
-			end
+		end
+		if not DEDICATED then
+			train.renderTrainImage(AIs[i]:sub(1, #AIs[i]-4), i)
 		end
 	end
-	
-	
 end
 
 -- called when map has been generated and rendered

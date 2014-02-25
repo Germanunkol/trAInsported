@@ -79,8 +79,8 @@ function challenges.start(c, aiFileName)
 			aiName = aiFileName:sub(1, #aiFileName-4)
 		end
 		stats.setAIName(1, aiName)
-		train.renderTrainImage(aiFileName:sub(1, #aiFileName-4), 1)
 	end
+	train.renderTrainImage(aiFileName:sub(1, #aiFileName-4), 1)
 	
 	challenges.setEvents(c)
 	

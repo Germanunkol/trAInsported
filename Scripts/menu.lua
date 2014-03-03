@@ -722,6 +722,9 @@ end
 
 
 function menu.choseChallenge(mapFile)
+
+	error("tesT")
+
 	menu.removeAll()
 	hideLogo = true
 	x = defaultMenuX
@@ -777,6 +780,44 @@ function menu.challenge()
 	
 end
 
+
+--[[
+function menu.newError( msg )
+	menu.removeAll()
+
+	map.endRound()
+	curMap = nil
+	mapImage = nil
+
+	hideLogo = true
+	x = defaultMenuX
+	y = love.graphics.getHeight() - 50
+	
+	menuButtons.buttonExit = button:new(x, y, LNG.menu_return, menu.init, nil)
+
+	menuButtons.copyError = button:new(x, y, LNG.copy_error, reportToClipboard( msg ), nil)
+
+	menuButtons.buttonOpenBrowser = button:new(x, y, LNG.open_issues, openIssuesPage, nil)
+
+	menu.errorMessage = msg
+	menu.error_height = FONT_STANDARD:getWrap( p, love.graphics.getWidth() - 140 )*15 + 120 + 30
+	menu.error_width = love.graphics.getWidth() - 70
+end
+
+function menu.showError()
+
+	love.graphics.setColor( 255,255,255,255 )
+
+	love.graphics.setFont( FONT_BUTTON )
+	love.graphics.printf( LNG.error_header, 60, 70, menu.error_width )
+
+	love.graphics.setFont( FONT_STANDARD )
+	love.graphics.printf( menu.errorMessage, 70, 120, menu.error_width )
+
+	love.graphics.setFont( FONT_BUTTON )
+	love.graphics.printf( LNG.error_steps, 60, menu.error_height, menu.error_width )
+end
+]]
 
 --------------------------------------------------------------
 --		ETC:

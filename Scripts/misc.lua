@@ -57,7 +57,22 @@ function openAIFolder()
 	end
 end
 ---------------------------------------
-
+-- Attempt to open browser:
+function openIssuesPage()
+	if love._os == "OS X" then
+		os.execute("open https://github.com/Germanunkol/trAInsported/issues")
+	elseif love._os == "Windows" then
+		os.execute("start https://github.com/Germanunkol/trAInsported/issues")
+	else
+		os.execute("xdg-open https://github.com/Germanunkol/trAInsported/issues")
+	end
+end
+---------------------------------------
+-- 
+function reportToClipboard( msg )
+	love.system.setClipboardText( msg )
+end
+--------------------------------------
 
 function createTrainCopy(train)
 	local tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir, nextX=train.nextX, nextY=train.nextY}		-- don't give the original data to the ai!

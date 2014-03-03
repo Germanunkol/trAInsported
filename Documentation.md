@@ -308,7 +308,7 @@ Will try to buy a train and place it at the position [X][Y]. If there's no rail 
 
 - x (The x-coordinate of the position at which to place the train)
 - y (The y-coordinate of the position)
-- dir (The direction in which the train should go. Note: this is **not** necessarily the direction the train will actually face - instead it's the direction into which the train will leave the tile. Passing "W", for example, will make sure the next tile the train will be on will be the one to the left of the current tile - if possible. If an invalid direction is passed (or if it's 'nil') then the game tries to use default directions in the following order: North, South, East, West.
+- dir (The direction in which the train should go. Note: This is **not** necessarily the direction the train will actually face - instead it's the direction into which the train will leave the tile. Passing "W", for example, will make sure the next tile the train will be on will be the one to the left of the current tile - if possible. If an invalid direction is passed (or if it's 'nil') then the game tries to use default directions in the following order: North, South, East, West.
 
 **Example:**
 

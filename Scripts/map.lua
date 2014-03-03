@@ -160,6 +160,7 @@ function runMap(restart)
 			end
 		end
 		
+		
 		ai.init()
 		
 		if challengeEvents.mapRenderingDoneCallback then
@@ -307,7 +308,6 @@ function map.generate(width, height, seed, tutorialMap)
 		mapSeed = seed
 	
 		if not DEDICATED then
-			console.init(love.graphics.getWidth(),love.graphics.getHeight()/2)
 	
 			love.graphics.translate(camX + love.graphics.getWidth()/(2*camZ), camY + love.graphics.getHeight()/(2*camZ))
 			

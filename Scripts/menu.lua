@@ -145,6 +145,8 @@ function menu.init(menuX, menuY)
 	
 	simulation.stop()
 	lostConnection = false
+
+	console.flush()
 	
 	if connectionThread then
 		connectionThread:set("quit", true)
@@ -537,6 +539,8 @@ function selectResolution(res)
 		menu.settings() -- re-initialise the menu.
 		msgBox:new(love.graphics.getWidth()/2-210, love.graphics.getHeight()/2-100, LNG.confirm_resolution, {name=LNG.agree,event=acceptResolution, args=nil},{name=LNG.disagree,event=resetResolution, args=nil})
 	end
+
+	console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
 end
 
 function acceptResolution()
@@ -548,6 +552,7 @@ end
 function resetResolution()
 	success = love.window.setMode( lastX, lastY )
 	menu.settings() -- re-initialise the menu.
+	console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
 end
 
 function toggleOptionClouds(enable)

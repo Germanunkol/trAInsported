@@ -38,8 +38,11 @@ function newLineCountHook( maxLines )
 			linesUsed = linesUsed + 1
 			time = love.timer.getTime()
 			if lines == maxLines then
-				err = {msg="Taking too long, stopping. Time taken: " .. time-startTime .. "s."}
+				err = {msg="Taking too long, stopping. Time taken: " .. math.floor((time-startTime)*1000) .. " ms."}
 				setmetatable(err, hookfunctionMetatable)
+				print("------------------------")
+				print(debug.traceback())
+				print("------------------------")
 				error(err)
 			end
 			ai_currentLines = lines
@@ -114,6 +117,7 @@ function runAiFunctionCoroutine(f, lines, ... )
 
 	args = {...}
 	local ok, msg = xpcall(function() return f( unpack(args) ) end, traceback)
+	debug.sethook()
 	if not ok then
 		local shorterMessage = ""
 		local found = false
@@ -133,7 +137,6 @@ function runAiFunctionCoroutine(f, lines, ... )
 		if shorterMessage then console.add("Error found in your function: " .. shorterMessage, {r=255,g=50,b=50}) end
 		coroutine.yield()
 	end
-	debug.sethook()
 	--print("Took: (ms)", (socket.gettime() - t)*1000)
 	return msg
 end

@@ -513,7 +513,7 @@ ok, msg = pcall(foo, 10)
 if not ok then
 	print("Error: " .. msg)
 end
-```lua
+```
 
 ###table, math, string functions###
 You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.

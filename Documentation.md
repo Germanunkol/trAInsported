@@ -301,10 +301,45 @@ Available Functions
 You can define your own functions inside your code.  
 This is a list of functions that are already specified and which you can call at any time. Be careful not to overuse them - they all take some time to compute and your code will be aborted if it takes too long!
 
+###buyTrain(x, y, dir)###
+Will try to buy a train and place it at the position [X][Y]. If there's no rail at the given position, the game will place the train at the rail closest to [X][Y]. If the rail is blocked, the game waits until the blocking trains have left the rail. This means the train WILL be bought, but might be placed at a different position or go in a different direction than what you anticipate.
+
+**Arguments:**
+
+- x (The x-coordinate of the position at which to place the train)
+- y (The y-coordinate of the position)
+- dir (The direction in which the train should go. Note: this is **not** necessarily the direction the train will actually face - instead it's the direction into which the train will leave the tile. Passing "W", for example, will make sure the next tile the train will be on will be the one to the left of the current tile - if possible. If an invalid direction is passed (or if it's 'nil') then the game tries to use default directions in the following order: North, South, East, West.
+
+**Example:**
+
+```lua
+function ai.init(map, money)
+	while money > 25 do		-- check if I still have enough money to buy a train?
+		money = money - 25	-- 25 is the standard cost for a train
+		
+		xPos = random(map.width)
+		yPos = random(map.height)
+		
+		randomDir = random(4)
+		if randomDir == 1 then
+			buyTrain(xPos, yPos, "N")	-- try to buy a train, place it at the position and make it go North.
+		elseif randomDir == 2
+			buyTrain(xPos, yPos, "S")	-- try to buy a train, place it at the position and make it go South.
+		elseif randomDir == 3
+			buyTrain(xPos, yPos, "E")	-- try to buy a train, place it at the position and make it go South.
+		elseif randomDir == 4
+			buyTrain(xPos, yPos, "W")	-- try to buy a train, place it at the position and make it go South.
+		else
+			buyTrain(xPos, yPos)	-- don't care what direction to go in.
+		end
+	end
+end
+```
+
 ###getMapSettings()###
 Returns a table with general info about the map (game mode etc) to be used by the game. This function only needs to be called once - the data won't change during a round.
 
-**Returns**
+**Returns:**
 
 - t: A table which can hold the following values: (Note - depending on the game mode, some of these may not be set! Make sure to check if they're available before using them, see example below.)
 	- GAME_TYPE ( current game mode )
@@ -315,7 +350,7 @@ Returns a table with general info about the map (game mode etc) to be used by th
 	- NUM_AIS ( how many AIs - or players - are currently on this map )
 	- VERSION ( game version )
 
-**Example**
+**Example:**
 ```lua
 function ai.init()
 	print("More info:")
@@ -554,41 +589,6 @@ There is a few exceptions, but most functions in these libraries are available.
 
 ###dropPassenger(train)###
 Will drop of the passenger of the train at its current position.
-
-###buyTrain(x, y, dir)###
-Will try to buy a train and place it at the position [X][Y]. If there's no rail at the given position, the game will place the train at the rail closest to [X][Y]. If the rail is blocked, the game waits until the blocking trains have left the rail. This means the train WILL be bought, but might be placed at a different position or go in a different direction than what you anticipate.
-
-**Arguments:**
-
-- x (The x-coordinate of the position at which to place the train)
-- y (The y-coordinate of the position)
-- dir (The direction in which the train should go. If an invalid direction is passed (or if it's 'nil') then the game tries to use default directions in the following order: North, South, East, West.
-
-**Example:**
-
-```lua
-function ai.init(map, money)
-	while money > 25 do		-- check if I still have enough money to buy a train?
-		money = money - 25	-- 25 is the standard cost for a train
-		
-		xPos = random(map.width)
-		yPos = random(map.height)
-		
-		randomDir = random(4)
-		if randomDir == 1 then
-			buyTrain(xPos, yPos, "N")	-- try to buy a train, place it at the position and make it go North.
-		elseif randomDir == 2
-			buyTrain(xPos, yPos, "S")	-- try to buy a train, place it at the position and make it go South.
-		elseif randomDir == 3
-			buyTrain(xPos, yPos, "E")	-- try to buy a train, place it at the position and make it go South.
-		elseif randomDir == 4
-			buyTrain(xPos, yPos, "W")	-- try to buy a train, place it at the position and make it go South.
-		else
-			buyTrain(xPos, yPos)	-- don't care what direction to go in.
-		end
-	end
-end
-```
 
 ###getMoney()###
 

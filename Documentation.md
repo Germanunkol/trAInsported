@@ -301,6 +301,38 @@ Available Functions
 You can define your own functions inside your code.  
 This is a list of functions that are already specified and which you can call at any time. Be careful not to overuse them - they all take some time to compute and your code will be aborted if it takes too long!
 
+###getMapSettings()###
+Returns a table with general info about the map (game mode etc) to be used by the game. This function only needs to be called once - the data won't change during a round.
+
+**Returns**
+
+- t: A table which can hold the following values: (Note - depending on the game mode, some of these may not be set! Make sure to check if they're available before using them, see example below.)
+	- GAME_TYPE ( current game mode )
+	- MAX_NUM_PASSENGERS ( how many passengers will spawn in "passenger limit" mode )
+	- ROUND_TIME ( full time the round will last, in seconds )
+	- CURRENT_REGION ( Urban or Suburban )
+	- MAX_NUM_TRAINS ( how many trains the AI may buy this round )
+	- NUM_AIS ( how many AIs - or players - are currently on this map )
+	- VERSION ( game version )
+
+**Example**
+```lua
+function ai.init()
+	print("More info:")
+
+	-- print all the values given:
+	t = getMapSettings()
+	for k, v in pairs(t) do
+		print(k, v)
+	end
+	if t.CURRENT_REGION == "Urban" then
+		print("I'm in town.")
+	elseif t.CURRENT_REGION == "Suburban" then
+		print("I'm on a lovely countryside!")
+	end
+end
+```
+
 ###getNumberOfLines()###
 Every one of your events (ai.init, ai.chooseDirection etc) gets aborted after a certain number of lua line executions. A line often - but not always - corresponds to a line of code. This function lets you see how many executions you have left before the game will abort your function.  
 An important note: Calling game functions (like "print") will also use up lines. "print()", for example, uses up quite a lot of lines.  

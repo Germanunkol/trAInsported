@@ -331,7 +331,6 @@ function map.generate(width, height, seed, tutorialMap)
 			height = MAP_MINIMUM_SIZE
 		end
 
-	
 		if tutorialMap then
 			print("Generating new tutorial map. Width: " .. tutorialMap.width .. " Height: " .. tutorialMap.height)
 		else

@@ -95,6 +95,28 @@ function sandboxPcall(...)
 	end
 end
 
+-- If the ai needs more info about the current map, get it using this function:
+local function getMapSettings()
+	local t = {}
+	if challenges.isRunning() then
+		t.GAME_TYPE = "challenge"	
+	else
+		if GAME_TYPE == GAME_TYPE_MAX_PASSENGERS then
+			t.GAME_TYPE = "passenger limit"
+			t.MAX_NUM_PASSENGERS = MAX_NUM_PASSENGERS
+		elseif GAME_TYPE == GAME_TYPE_TIME then
+			t.GAME_TYPE = "time limit"
+			t.ROUND_TIME = ROUND_TIME
+		end
+		t.CURRENT_REGION = CURRENT_REGION
+	end
+	t.MAX_NUM_TRAINS = MAX_NUM_TRAINS
+	if aiList then
+		t.NUM_AIS = #aiList
+	end
+	t.VERSION = VERSION
+	return t
+end
 
 function sandbox.createNew(aiID, scriptName)
 	sb = {}
@@ -166,6 +188,7 @@ function sandbox.createNew(aiID, scriptName)
 	sb.clearConsole = console.flush
 	sb.pause = pause(aiID)
 	sb.pauseOnError = pauseOnError
+	sb.getMapSettings = getMapSettings
 	
 	sb.error = error
 	sb.pcall = sandboxPcall

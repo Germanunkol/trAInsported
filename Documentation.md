@@ -30,19 +30,19 @@ This event is called, at the beginning of the round. The current map is passed t
 
 **Example**
 ```lua
-		function ai.init(map, money)
+function ai.init(map, money)
 	
-			-- go through the entire map and search for all hotspots:
-			for x = 1, map.width, 1 do
-				for y = 1, map.height, 1 do
-					if map[x][y] == "S" then	-- if the field at [x][y] is "S" then print the coordinates on the screen:
-						print("Hotspot found at: " .. x .. ", " .. y .. "!")
-					end
-				end
+	-- go through the entire map and search for all hotspots:
+	for x = 1, map.width, 1 do
+		for y = 1, map.height, 1 do
+			if map[x][y] == "S" then	-- if the field at [x][y] is "S" then print the coordinates on the screen:
+				print("Hotspot found at: " .. x .. ", " .. y .. "!")
 			end
-	
-			buyTrain(random(map.width), random(map.height))		-- place train at random position
 		end
+	end
+	
+	buyTrain(random(map.width), random(map.height))		-- place train at random position
+end
 ```
 ###function ai.newTrain(train)###
 Called when the train you bought using buyTrain has successfully been created.  
@@ -51,12 +51,13 @@ Called when the train you bought using buyTrain has successfully been created.
 - train: a Lua table representing the train. See ai.chooseDirection for details.
 
 **Example**
+```lua
+function ai.newTrain(train)
+	print("Bought new train:", train.name)
+	print("Train is starting at:", train.x, train.y)
+end
+```
 
-		function ai.newTrain(train)
-			print("Bought new train:", train.name)
-			print("Train is starting at:", train.x, train.y)
-		end
-		
 ###function ai.chooseDirection(train, possibleDirections)###
 Called just before a train enters a junction. This function is essential: It lets your train tell the game where it wants to go. If this function returns a valid direction (N, E, S or W) and the direction is not blocked by another train, the train will continue in that direction.  
 
@@ -77,24 +78,24 @@ Called just before a train enters a junction. This function is essential: It let
 - The function should return a string holding one of the directions which are stored in possibleDirections ("N", "S", "E", "W" are the possible values). If a wrong value is returned, or nothing is returned then the game will automatically try the directions in the following order: N, S, E, W
 
 **Example**
+```lua
+function ai.chooseDirection(train, possibleDirections)
 
-		function ai.chooseDirection(train, possibleDirections)
-		
-			-- let train 1 go South if possible
-			if train.ID == 1 then
-				if possibleDirection["S"] == true then
-					return "S"
-				end
-			end
-			
-			-- let all trains go North if possible
-			if possibleDirections["N"] == true then
-				return "N"
-			end
-			
-			-- if the above directions were not possible, the let the game choose a direction (i.e. choose nothing)
+	-- let train 1 go South if possible
+	if train.ID == 1 then
+		if possibleDirection["S"] == true then
+			return "S"
 		end
-
+	end
+	
+	-- let all trains go North if possible
+	if possibleDirections["N"] == true then
+		return "N"
+	end
+	
+	-- if the above directions were not possible, the let the game choose a direction (i.e. choose nothing)
+end
+```
 ###function ai.blocked(train, possibleDirections, prevDirection)###
 Called after a train was blocked by another train and can't move in that direction. By returning the prevDirection, you can keep trying to go in the same direction. However, you should not try to keep moving in the same direction forever, because then trains could block each other for the rest of the match.  
 **Passed Arguments**
@@ -108,47 +109,47 @@ Called after a train was blocked by another train and can't move in that directi
 - The function should return a string holding one of the directions which are stored in possibleDirections ("N", "S", "E", "W" are the possible values). If a wrong value is returned, or nothing is returned then the game will automatically try the directions in the following order: N, S, E, W
 
 **Example**
-
-		function ai.blocked(train, possibleDirections, prevDirection)
-			if prevDirection == "N" then		-- if i've tried North before, then try South, then East, then West
-				if possibleDirections["S"] == true then
-					return "S"
-				elseif possibleDirections["E"] == true then
-					return "E"
-				elseif possibleDirections["W"] == true then
-					return "W"
-				else return "N"
-				end
-			elseif prevDirection == "S" then
-				if possibleDirections["E"] == true then
-					return "E"
-				elseif possibleDirections["W"] == true then
-					return "W"
-				elseif possibleDirections["N"] == true then
-					return "N"
-				else return "S"
-				end
-			elseif prevDirection == "E" then
-				if possibleDirections["W"] == true then
-					return "W"
-				elseif possibleDirections["N"] == true then
-					return "N"
-				elseif possibleDirections["S"] == true then
-					return "S"
-				else return "E"
-				end
-			else
-				if possibleDirections["N"] == true then
-					return "N"
-				elseif possibleDirections["S"] == true then
-					return "S"
-				elseif possibleDirections["E"] == true then
-					return "E"
-				else return "W"
-				end
-			end
+```lua
+function ai.blocked(train, possibleDirections, prevDirection)
+	if prevDirection == "N" then		-- if i've tried North before, then try South, then East, then West
+		if possibleDirections["S"] == true then
+			return "S"
+		elseif possibleDirections["E"] == true then
+			return "E"
+		elseif possibleDirections["W"] == true then
+			return "W"
+		else return "N"
 		end
-
+	elseif prevDirection == "S" then
+		if possibleDirections["E"] == true then
+			return "E"
+		elseif possibleDirections["W"] == true then
+			return "W"
+		elseif possibleDirections["N"] == true then
+			return "N"
+		else return "S"
+		end
+	elseif prevDirection == "E" then
+		if possibleDirections["W"] == true then
+			return "W"
+		elseif possibleDirections["N"] == true then
+			return "N"
+		elseif possibleDirections["S"] == true then
+			return "S"
+		else return "E"
+		end
+	else
+		if possibleDirections["N"] == true then
+			return "N"
+		elseif possibleDirections["S"] == true then
+			return "S"
+		elseif possibleDirections["E"] == true then
+			return "E"
+		else return "W"
+		end
+	end
+end
+```
 
 ###function ai.foundPassengers(train, passengers)###
 This function is called when a train arrives at a position where passengers are waiting to be picked up. If one of the passengers in the list is returned, then this passenger is picked up (but only if the train does not have a passenger at the moment). If you want to pick up a passenger but you're already trainsporting another passenger, you can drop the current passenger using the function 'dropPassenger'.  
@@ -165,13 +166,15 @@ This function is called when a train arrives at a position where passengers are 
 - Passenger: The passenger in the list who is to be picked up. (i.e. passengers[1] or passengers[2])
 
 **Example:**
+```lua
 
-		function ai.foundPassengers(train, passengers)
-			print("I'll pick up passenger: " .. passengers[1].name)
-			print("Taking him to: " .. passenger[1].destX .. ", " .. passenger[1].destY)
-			return passengers[1]
-		end
-		
+function ai.foundPassengers(train, passengers)
+	print("I'll pick up passenger: " .. passengers[1].name)
+	print("Taking him to: " .. passenger[1].destX .. ", " .. passenger[1].destY)
+	return passengers[1]
+end
+```
+
 ###function ai.foundDestination(train)###
 This function is called when a train which is carrying a passenger arrives at the position where the passenger wants to go. This way, you can drop off the passenger by calling 'dropPassenger'.  
 **Passed Arguments**
@@ -184,11 +187,13 @@ This function is called when a train which is carrying a passenger arrives at th
 
 **Example:**
 
-		function ai.foundDestination(train)
-			print("Dropping of my passenger @ " .. train.x .. ", " .. train.y)
-			dropPassenger(train)
-		end
-		
+```lua
+function ai.foundDestination(train)
+	print("Dropping of my passenger @ " .. train.x .. ", " .. train.y)
+	dropPassenger(train)
+end
+```
+
 ###function ai.enoughMoney(money)###
 Whenever the player earns money, the game checks if the player now has enough money to buy a new train. If that is the case, then this function is called so that the player can decide whether to buy a new train by calling buyTrain() and if so, where to place it.  
 **Passed Arguments**
@@ -201,21 +206,23 @@ Whenever the player earns money, the game checks if the player now has enough mo
 
 **Example:**
 
-		rememberMap = nil
+```lua
+rememberMap = nil
 
-		function ai.enoughMoney(money)
-			x = random(rememberMap.width)	-- important! this only works because the map was stored in the global "rememberap" in ai.init()
-			y = random(rememberMap.height)
-			while money >= 25 do		-- 25c is cost of one train
-				buyTrain(x, y)
-				money = money - 25
-			end
-		end
-		
-		function ai.init(map, money)
-			rememberMap = map
-			buyTrain(random(map.width), random(map.height))
-		end
+function ai.enoughMoney(money)
+	x = random(rememberMap.width)	-- important! this only works because the map was stored in the global "rememberap" in ai.init()
+	y = random(rememberMap.height)
+	while money >= 25 do		-- 25c is cost of one train
+		buyTrain(x, y)
+		money = money - 25
+	end
+end
+
+function ai.init(map, money)
+	rememberMap = map
+	buyTrain(random(map.width), random(map.height))
+end
+```
 
 ###function ai.newPassenger(name, x, y, destX, destY, vipTime)###
 Will be called whenever a new passenger spawns on the map, or if a passenger has been dropped off at a place that was not his destination.  
@@ -231,17 +238,19 @@ Will be called whenever a new passenger spawns on the map, or if a passenger has
 - nothing
 
 **Example**
+```lua
 
-		passengerList = {}	-- create an empty list to save the passengers in
-		function ai.newPassenger(name, x, y, destX, destY)
-		
-			-- create a new table which holds the info about the new passenger:
-			local passenger = {x=x, y=y, destX=destX, destY=destY}
-			
-			-- save the passenger into the global list, to "remember" him for later use.
-			-- use the name as an index to easily find the passenger later on.
-			passengerList[name] = passenger
-		end
+passengerList = {}	-- create an empty list to save the passengers in
+function ai.newPassenger(name, x, y, destX, destY)
+
+	-- create a new table which holds the info about the new passenger:
+	local passenger = {x=x, y=y, destX=destX, destY=destY}
+	
+	-- save the passenger into the global list, to "remember" him for later use.
+	-- use the name as an index to easily find the passenger later on.
+	passengerList[name] = passenger
+end
+```
 
 ###function ai.passengerBoarded(train, passenger)###
 Will be called whenever a train of another player has taken a passenger aboard. You can use this function to make sure your trains no longer try to go to that passenger, if that was their plan.  
@@ -257,22 +266,23 @@ Note: This function is NOT called when one of your own trains takes a passenger 
 
 **Example**
 
-		passengerList = {}	-- create an empty list to save the passengers in
-		function ai.newPassenger(name, x, y, destX, destY)
-		
-			-- create a new table which holds the info about the new passenger:
-			local passenger = {x=x, y=y, destX=destX, destY=destY}
-			
-			-- save the passenger into the global list, to "remember" him for later use.
-			-- use the name as an index to easily find the passenger later on.
-			passengerList[name] = passenger
-		end
-		
-		function ai.passengerBoarded(train, passenger)
-			-- set the entry in the passengerList for the passenger to nil. This is the accepted way of "deleting" the entry in Lua.
-			passengerList[passenger] = nil
-		end
-		
+```lua
+passengerList = {}	-- create an empty list to save the passengers in
+function ai.newPassenger(name, x, y, destX, destY)
+
+	-- create a new table which holds the info about the new passenger:
+	local passenger = {x=x, y=y, destX=destX, destY=destY}
+	
+	-- save the passenger into the global list, to "remember" him for later use.
+	-- use the name as an index to easily find the passenger later on.
+	passengerList[name] = passenger
+end
+
+function ai.passengerBoarded(train, passenger)
+	-- set the entry in the passengerList for the passenger to nil. This is the accepted way of "deleting" the entry in Lua.
+	passengerList[passenger] = nil
+end
+```
 
 ###function ai.mapEvent(...)###
 Some challenge-matches need more events than listed above, to notify you if something has happened.  
@@ -285,7 +295,6 @@ The description of the map should always make sure you know what arguments the m
 **Returns:**
 
 - nothing
-
 
 Available Functions
 --------------------
@@ -304,12 +313,14 @@ Also, ai.init gets to use a lot more lines than the other functions. Try to do h
 
 **Example:**
 
-		-- use this to see how many lines of code you can execute in ai.chooseDirection():
-		function ai.chooseDirection(train, directions)
-			print(getNumberOfLines())
-			-- the rest of your code.
-		end
-		
+```lua
+-- use this to see how many lines of code you can execute in ai.chooseDirection():
+function ai.chooseDirection(train, directions)
+	print(getNumberOfLines())
+	-- the rest of your code.
+end
+```
+
 ###mapTime()###
 Get the time in seconds that have passed since the map started. Note - this time is multiplied by the speed multiplyer, so if the game is sped up, this still gives the correct time.
 If you want to know the system time without multiplication then use os.time instead.
@@ -320,18 +331,19 @@ If you want to know the system time without multiplication then use os.time inst
 - time when the game ends (Only if the game mode is the "Time" mode! Otherwise it does not return a second value!)
 
 **Example:**
+```lua
+function ai.init()
+	time, totalTime = mapTime()
+	if totalTime then
+		print("Game type is 'time' - Game will end after " ..  .. " seconds!")
+	end
+end
 
-		function ai.init()
-			time, totalTime = mapTime()
-			if totalTime then
-				print("Game type is 'time' - Game will end after " ..  .. " seconds!")
-			end
-		end
-		
-		function ai.chooseDirection()
-			time, totalTime = mapTime()
-			print( totalTime - time .. " seconds left until round ends.")
-		end
+function ai.chooseDirection()
+	time, totalTime = mapTime()
+	print( totalTime - time .. " seconds left until round ends.")
+end
+```
 
 ###print(...)###
 Prints the given objects to the ingame-console (make sure it's visible by pressing 'C' in the game!)  
@@ -345,7 +357,9 @@ Prints the given objects to the ingame-console (make sure it's visible by pressi
 
 **Example:**
   
-		print("Sheldon likes trains!", 1, tbl[1])
+```lua
+print("Sheldon likes trains!", 1, tbl[1])
+```
 	
 ###pause()###
 Pauses the game. This is very useful for debugging!
@@ -361,13 +375,15 @@ The pause() calls will be ignored on the server.
 
 **Example:**
  
- 		function ai.chooseDirection( tr, dirs )
-			print("Possible directions:")
-			for k, v in pairs( dirs ) do
-				print(k, v)
-			end
-			pause()
-		end
+```lua
+function ai.chooseDirection( tr, dirs )
+	print("Possible directions:")
+	for k, v in pairs( dirs ) do
+		print(k, v)
+	end
+	pause()
+end
+```
 
 ###pauseOnError( bool )###
 Will auto-pause the game whenever an error occurs. Will be ignored on the server.
@@ -383,11 +399,13 @@ Note: Before calling this function (and thus enabling pausing on errors) the gam
 
 **Example:**
 
-		function ai.init()
-			pauseOnError(true)
-			print("Pausing on errors enabled. Happy debugging!")
-		end
-		
+```lua
+function ai.init()
+	pauseOnError(true)
+	print("Pausing on errors enabled. Happy debugging!")
+end
+```
+
 ###clearConsole()###
 Clears the ingame console to make space for new Messages.  
 **Arguments:**
@@ -400,8 +418,9 @@ Clears the ingame console to make space for new Messages.
 
 **Example:**
   
-		clearConsole()
-
+```lua
+clearConsole()
+```
 
 ###pairs(tbl)###
 The standard Lua pairs value. See a Lua documentation for more examples.  
@@ -415,10 +434,11 @@ The standard Lua pairs value. See a Lua documentation for more examples.
 
 **Example:**
 
-		for k, value in pairs(map) do
-			print(k, value)
-		end
-
+```lua
+for k, value in pairs(map) do
+	print(k, value)
+end
+```
 
 ###type(variable)###
 Returns the type of the given variable.  
@@ -432,13 +452,15 @@ Returns the type of the given variable.
 
 **Example:**
 
-		if type(myValue) == "number" then
-			print("my Value is a number!")
-		elseif type(myValue) == "string" then
-			print("my Value is a string!")
-		else
-			print("my Value is neither a number, nor a string. It's of type " .. type(myValue))
-		end
+```lua
+if type(myValue) == "number" then
+	print("my Value is a number!")
+elseif type(myValue) == "string" then
+	print("my Value is a string!")
+else
+	print("my Value is neither a number, nor a string. It's of type " .. type(myValue))
+end
+```
 
   
 ###pcall(chunk, args)###
@@ -455,14 +477,16 @@ Will safely execute the code given by chunk (can be a function). This way, you c
 
 **Example:**
 
-		function foo( argument )
-			... -- do stuff in here
-		end
-		bar = 1
-		ok, result = pcall(foo, bar)	-- call the function "foo" with the argument "bar"
-		if not ok then
-			print("Error in 'foo': " .. result)
-		end
+```lua
+function foo( argument )
+	... -- do stuff in here
+end
+bar = 1
+ok, result = pcall(foo, bar)	-- call the function "foo" with the argument "bar"
+if not ok then
+	print("Error in 'foo': " .. result)
+end
+```
 
 ###error(msg)###
 Throws an error. If the function in which the error is thrown is called using pcall, then the pcall will return this error as its error message. Otherwise, the error is printed in the ingame console.
@@ -473,22 +497,24 @@ Throws an error. If the function in which the error is thrown is called using pc
 
 **Example:**
 
-		-- absolutely useless code (but works)
-		function foo( b )
-			a = 1
-			while a < 100 do
-				if b > a then
-					error("b is greater than a!")
-				end
-				a = a + 1
-			end
+```lua
+-- absolutely useless code (but works)
+function foo( b )
+	a = 1
+	while a < 100 do
+		if b > a then
+			error("b is greater than a!")
 		end
-		
-		ok, msg = pcall(foo, 10)
-		if not ok then
-			print("Error: " .. msg)
-		end
-		
+		a = a + 1
+	end
+end
+
+ok, msg = pcall(foo, 10)
+if not ok then
+	print("Error: " .. msg)
+end
+```lua
+
 ###table, math, string functions###
 You also have access to all of Lua's table-functions: table.sort, table.insert, table.remove etc. See a Lua Documentation for details.
 Same goes for math functions (math.sin, math.cos, math.floor, math.random etc) and the string functions (string.sub, string.find etc).
@@ -508,27 +534,29 @@ Will try to buy a train and place it at the position [X][Y]. If there's no rail 
 
 **Example:**
 
-		function ai.init(map, money)
-			while money > 25 do		-- check if I still have enough money to buy a train?
-				money = money - 25	-- 25 is the standard cost for a train
-				
-				xPos = random(map.width)
-				yPos = random(map.height)
-				
-				randomDir = random(4)
-				if randomDir == 1 then
-					buyTrain(xPos, yPos, "N")	-- try to buy a train, place it at the position and make it go North.
-				elseif randomDir == 2
-					buyTrain(xPos, yPos, "S")	-- try to buy a train, place it at the position and make it go South.
-				elseif randomDir == 3
-					buyTrain(xPos, yPos, "E")	-- try to buy a train, place it at the position and make it go South.
-				elseif randomDir == 4
-					buyTrain(xPos, yPos, "W")	-- try to buy a train, place it at the position and make it go South.
-				else
-					buyTrain(xPos, yPos)	-- don't care what direction to go in.
-				end
-			end
+```lua
+function ai.init(map, money)
+	while money > 25 do		-- check if I still have enough money to buy a train?
+		money = money - 25	-- 25 is the standard cost for a train
+		
+		xPos = random(map.width)
+		yPos = random(map.height)
+		
+		randomDir = random(4)
+		if randomDir == 1 then
+			buyTrain(xPos, yPos, "N")	-- try to buy a train, place it at the position and make it go North.
+		elseif randomDir == 2
+			buyTrain(xPos, yPos, "S")	-- try to buy a train, place it at the position and make it go South.
+		elseif randomDir == 3
+			buyTrain(xPos, yPos, "E")	-- try to buy a train, place it at the position and make it go South.
+		elseif randomDir == 4
+			buyTrain(xPos, yPos, "W")	-- try to buy a train, place it at the position and make it go South.
+		else
+			buyTrain(xPos, yPos)	-- don't care what direction to go in.
 		end
+	end
+end
+```
 
 ###getMoney()###
 
@@ -542,13 +570,15 @@ Will try to buy a train and place it at the position [X][Y]. If there's no rail 
 
 **Example:**
 
-		myMoney = getMoney()
-		if myMoney > 10 then
-			print("I'm rich!")
-		else
-			print("I'm not so rich...")
-		end
-		
+```lua
+myMoney = getMoney()
+if myMoney > 10 then
+	print("I'm rich!")
+else
+	print("I'm not so rich...")
+end
+```
+
 ###require(filename), dofile(filename), loadfile(filename)###
 
 These functions are used to add additional files to your code. There is a few things to consider:

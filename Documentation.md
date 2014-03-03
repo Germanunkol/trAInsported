@@ -29,7 +29,7 @@ This event is called, at the beginning of the round. The current map is passed t
 - maximumTrains: the max number of trains each AI is allowed to buy on this map.
 
 **Example**
-
+```lua
 		function ai.init(map, money)
 	
 			-- go through the entire map and search for all hotspots:
@@ -43,7 +43,7 @@ This event is called, at the beginning of the round. The current map is passed t
 	
 			buyTrain(random(map.width), random(map.height))		-- place train at random position
 		end
-		
+```
 ###function ai.newTrain(train)###
 Called when the train you bought using buyTrain has successfully been created.  
 **Passed Arguments:**
@@ -367,6 +367,25 @@ The pause() calls will be ignored on the server.
 				print(k, v)
 			end
 			pause()
+		end
+
+###pauseOnError( bool )###
+Will auto-pause the game whenever an error occurs. Will be ignored on the server.
+Note: Before calling this function (and thus enabling pausing on errors) the game will not halt when an error occurs. This means the game will **not** pause when syntax errors are found - because the AI scripts is first interpreted, and then run.
+
+**Arguments**
+
+- bool (true or false) - enable or disable auto-pausing.
+
+**Returns**
+
+- nothing
+
+**Example:**
+
+		function ai.init()
+			pauseOnError(true)
+			print("Pausing on errors enabled. Happy debugging!")
 		end
 		
 ###clearConsole()###

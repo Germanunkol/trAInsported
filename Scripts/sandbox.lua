@@ -52,6 +52,11 @@ local function pause( aiID )
 	end
 end
 
+local function pauseOnError( bool )
+	if not DEDICATED then
+		PAUSE_ON_ERROR = bool and true or false
+	end
+end
 
 local function safeDofile(scriptName)
 	_, pos = scriptName:find(".*/")		-- find last occurrance of /
@@ -160,6 +165,7 @@ function sandbox.createNew(aiID, scriptName)
 	sb.print = safeprint(aiID)
 	sb.clearConsole = console.flush
 	sb.pause = pause(aiID)
+	sb.pauseOnError = pauseOnError
 	
 	sb.error = error
 	sb.pcall = sandboxPcall

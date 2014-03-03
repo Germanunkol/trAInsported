@@ -40,9 +40,6 @@ function newLineCountHook( maxLines )
 			if lines == maxLines then
 				err = {msg="Taking too long, stopping. Time taken: " .. math.floor((time-startTime)*1000) .. " ms."}
 				setmetatable(err, hookfunctionMetatable)
-				print("------------------------")
-				print(debug.traceback())
-				print("------------------------")
 				error(err)
 			end
 			ai_currentLines = lines
@@ -134,7 +131,7 @@ function runAiFunctionCoroutine(f, lines, ... )
 				end
 			end
 		end
-		if shorterMessage then console.add("Error found in your function: " .. shorterMessage, {r=255,g=50,b=50}) end
+		--if shorterMessage then console.add("Error found in your function: " .. shorterMessage, {r=255,g=50,b=50}) end
 		coroutine.yield()
 	end
 	--print("Took: (ms)", (socket.gettime() - t)*1000)
@@ -235,6 +232,9 @@ function ai.init()
 				crInit = nil
 				console.add(aiList[aiID].name .. ": Stopped function: ai.init()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".init()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		else
 			print("\tNo ai.init() function found for this AI")
@@ -282,6 +282,9 @@ function ai.chooseDirection(train, possibleDirs)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.chooseDirection()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".chooseDirection()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 			
 			if tutorial and tutorial.chooseDirectionEventCleanup then
@@ -315,6 +318,9 @@ function ai.newTrain(train)
 			ok, result = coroutine.resume(cr, aiList[train.aiID].newTrain, MAX_LINES_EXECUTING, tr)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.newTrain()", {r = 255,g=50,b=50})
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end
@@ -338,6 +344,9 @@ function ai.blocked(train, possibleDirs, lastDir)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.blocked()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".blocked()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end
@@ -360,6 +369,9 @@ function ai.newPassenger(p)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.newPassenger()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".newPassenger()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 			cr = nil
 		end
@@ -384,6 +396,9 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundPassenger()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundPassengers()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end
@@ -416,6 +431,9 @@ function ai.passengerBoarded(train, passenger)		-- called when another player's 
 				if not ok or coroutine.status(cr) ~= "dead" then		
 					console.add(aiList[i].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 					--print("\tCoroutine stopped prematurely: " .. aiList[i].name .. ".foundDestination()")
+					if PAUSE_ON_ERROR then
+						pauseGame()
+					end
 				end
 			end
 		end
@@ -437,6 +455,9 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 			if not ok or coroutine.status(cr) ~= "dead" then		
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end
@@ -453,6 +474,9 @@ function ai.mapEvent(aiID, ... )		-- called when the map script wants to.
 			if not ok or coroutine.status(cr) ~= "dead" then		
 				console.add(aiList[aiID].name .. ": Stopped function: ai.mapEvent()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[train.aiID].name .. ".foundDestination()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end
@@ -468,6 +492,9 @@ function ai.enoughMoney(aiID, cash)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})
 				--print("\tCoroutine stopped prematurely: " .. aiList[aiID].name .. ".enoughMoney()")
+				if PAUSE_ON_ERROR then
+					pauseGame()
+				end
 			end
 		end
 	end

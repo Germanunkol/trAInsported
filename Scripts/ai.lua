@@ -238,6 +238,7 @@ function ai.init()
 			end
 		else
 			print("\tNo ai.init() function found for this AI")
+			console.add("No ai.init() found for " .. aiList[aiID].name .. ".", {r=255,g=150,b=80})
 		end
 		crInit = nil
 		

@@ -134,7 +134,7 @@ function love.keypressed(key, unicode)
 	elseif key == " " then
 		displayDebugInformation = not displayDebugInformation
 --	else
-	elseif unicode == 104 then
+	elseif key == "h" then
 		hideAIStatistics = not hideAIStatistics
 	end
 		--print(key, unicode)

@@ -223,10 +223,6 @@ function challenges.fixMap( m )
 		end
 	until x == nil
 
-	if #m ~= m.width or #m[1] ~= m.height then
-		statusMsg.new("Error: Map width and height are not set correctly. Some tiles might be outside of the given area. Please fix!", true)
-	end
-
 	return new
 end
 

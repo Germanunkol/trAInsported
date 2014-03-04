@@ -195,7 +195,7 @@ LNG.err_rendering = [[Something went wrong in a thread while generating the map.
 LNG.err_already_connecting = [[Already attempting to start connection.]]
 
 LNG.error_header = [[Oh no, there was an error!]]
-LNG.error_steps = [[If you're currently working on your own challenge map, this might have been caused by your challengge. You can get help on the forums:
+LNG.error_steps = [[If you're currently working on your own challenge map, this might have been caused by your challenge. You can get help on the forums:
 http://www.indiedb.com/games/trainsported/forum
 
 If this was not caused by your own code, you can report the error on the issues page:

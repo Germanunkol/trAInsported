@@ -47,7 +47,7 @@ ch.map[5][6] = "C"
 ch.map[6][6] = "C"
 
 ch.map[8][5] = "H"
-ch.map[8][6] = "STORE"
+ch.map[8][6] = "W"
 ch.map[9][5] = "H"
 ch.map[9][6] = "H"
 

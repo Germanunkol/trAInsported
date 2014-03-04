@@ -44,7 +44,7 @@ function passenger.clearList()
 	end
 end
 
-function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
+function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach, forceVIP )
 
 	if givenX or givenY then dontCreateVIP = true end
 
@@ -89,7 +89,13 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach )
 		xEnd, yEnd = randPassengerPos()
 		
 		local vip = false
-		if VIP_RATIO > 0 and VIP_RATIO < 1 and not dontCreateVIP then
+		if forceVIP then
+			if forceVIP == "off" then
+				vip = false
+			elseif forceVIP == "on" then
+				vip = true
+			end
+		elseif VIP_RATIO > 0 and VIP_RATIO < 1 and not dontCreateVIP then
 			if GAME_TIME == "Rushhour" then
 				if math.random(math.floor(1/(VIP_RATIO*5))) <= 1 then
 					vip = true

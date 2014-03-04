@@ -198,7 +198,7 @@ LNG.error_header = [[Oh no, there was an error!]]
 LNG.error_steps = [[If you're currently working on your own challenge map, this might have been caused by your challengge. You can get help on the forums:
 http://www.indiedb.com/games/trainsported/forum
 
-If this was not caused by your own code, can report the error on the issues page:
+If this was not caused by your own code, you can report the error on the issues page:
 https://github.com/Germanunkol/trAInsported/issues
 
 Press 'c' to copy the error message to your clipboard.
@@ -206,5 +206,3 @@ Press 'o' to open the GitHub issues website.
 Press 'esc' to close.
 ]]
 LNG.error_copied = [[Copied!]]
-LNG.open_issues = [[Report]]
-LNG.copy_error = [[To Clipboard]]

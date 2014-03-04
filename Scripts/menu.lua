@@ -723,8 +723,6 @@ end
 
 function menu.choseChallenge(mapFile)
 
-	error("tesT")
-
 	menu.removeAll()
 	hideLogo = true
 	x = defaultMenuX

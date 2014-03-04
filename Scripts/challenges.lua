@@ -146,6 +146,11 @@ function challenges.execute(data)
 			return
 		end
 
+		if c.region and string.lower(c.region) == "urban" then
+			CURRENT_REGION = "Urban"
+		else
+			CURRENT_REGION = "Suburban"
+		end
 
 		challenges.start(c, aiFileName)
 		

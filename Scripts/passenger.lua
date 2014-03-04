@@ -138,9 +138,13 @@ function passenger.new( givenX, givenY, givenDestX, givenDestY, givenSpeach, for
 					if not DEDICATED then
 						passengerList[i].sprite = love.graphics.newSpriteBatch(passengerVIPClock)
 					end
-					local num = math.random(#vipSpeach)
-					if vipSpeach[num] then		-- just to make sure
-						passengerList[i].speach = vipSpeach[num]
+					if givenSpeach then
+						passengerList[i].speach = givenSpeach
+					else
+						local num = math.random(#vipSpeach)
+						if vipSpeach[num] then		-- just to make sure
+							passengerList[i].speach = vipSpeach[num]
+						end
 					end
 				else
 					if givenSpeach then

@@ -845,9 +845,9 @@ else
 				elseif e == "keypressed" and a == "c" then
 					if copied == false then
 						copied = true
-						nextSteps = nextSteps .. LNG.error_copied
+						nextSteps = nextSteps .. "\n" .. LNG.error_copied
 			--			reportToClipboard( p )
-	love.system.setClipboardText( p )
+						love.system.setClipboardText( p )
 					end
 				elseif e == "keypressed" and a == "o" then
 					openIssuesPage()

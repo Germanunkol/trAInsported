@@ -195,3 +195,16 @@ LNG.err_already_generating_map = [[Es wird bereits eine Karte generiert! Bitte a
 LNG.err_wait_for_rendering = [[Es wird schon eine Karte gerendert...]]
 LNG.err_rendering = [[Ein Fehler ist beim Rendern der Karte aufgetreten. Das tut mir Leid, bitte Spiel neu starten...]]
 LNG.err_already_connecting = [[Es wird bereits eine Verbindung aufgebaut.]]
+
+LNG.error_header = [[Oh nein, ein Fehler!]]
+LNG.error_steps = [[Falls du gerade an deiner eigenen Herausforderungs-Karte gearbeitet hast (Challenge), hat der Fehler eventuell mit deinem Code zu tun. Falls du nicht weiter weißt findest du Hilfe unter:
+http://www.indiedb.com/games/trainsported/forum
+
+Falls es nicht an deinem Code lag, kannst du den Fehler hier in die Liste einfügen:
+https://github.com/Germanunkol/trAInsported/issues
+
+Die Taste 'c' kopiert die Fehlermeldung ins Clipboard.
+Mit 'o' kannst du die Issues-Seite auf GitHub im Standardbrowser öffnen.
+'Esc' beendet das Spiel.
+]]
+LNG.error_copied = [[Kopiert!]]

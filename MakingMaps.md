@@ -153,13 +153,16 @@ You can use special characters like "\n" to break the lines.
 ###challenges.removeMessage()###
 Removes the current message box.  
 
-###passenger.new( x, y, destX, destY )###
-Call this to create a new passenger on the map.  
+###passenger.new( x, y, destX, destY, text, forceVIP )###
+Call this to create a new passenger on the map.
 If you don't give x and y or if you don't give destX and destY, these parameters will be chosen randomly.  
+Important: The call will also work if the x, y, destX and destY are not set correctly (i.e. they don't point to rail tiles) but then the positions will be chosen randomly.
 **Passed Arguments:**
 
 - x, y: Coordinates of the place where the passenger should spawn
 - destX, destY: Coordinates of where the passenger should go.
+- text: The message that the passenger should say when clicked on.
+- forceVIP: "on" (will force the passenger to be a VIP) or "off" (will force passenger to not be a VIP).
 
 ###ai.mapEvent(aiID, ... )###
 This function is very useful. It allows you to pass your own messages and events to an AI at any time.  

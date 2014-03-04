@@ -262,7 +262,7 @@ function clearLargeJunctions()
 end
 
 
-function placeHouses()
+function placeHouses( region )
 
 	local placed = false
 	local schoolPlaced = false
@@ -306,7 +306,7 @@ function placeHouses()
 			end
 		end
 	end
-	
+
 	if region == "Urban" then
 		for i = 1, curMap.width do
 			for j = 1, curMap.height do
@@ -457,13 +457,66 @@ end
 
 local mapQuads = {}
 
+
+function interpretMapCodes( map )
+	-- interpret shorter map codes
+	for x = 0, map.width+1 do
+		if map[x] then
+			for y = 0, map.height+1 do
+				if map[x][y] == "R" or map[x][y] == "#" then
+					map[x][y] = "C"
+				elseif map[x][y] == "s" then
+					map[x+1] = map[x+1] or {}
+					map[x][y] = "SCHOOL11"
+					map[x][y+1] = "SCHOOL12"
+					map[x+1][y] = "SCHOOL21"
+					map[x+1][y+1] = "SCHOOL22"
+				elseif map[x][y] == "+" then
+					map[x+1] = map[x+1] or {}
+					map[x][y] = "HOSPITAL11"
+					map[x][y+1] = "HOSPITAL12"
+					map[x+1][y] = "HOSPITAL21"
+					map[x+1][y+1] = "HOSPITAL22"
+				elseif map[x][y] == "v" then
+					if math.random(2) == 1 then
+						map[x][y] = "HOUSE_1_LARGE11"
+						map[x][y+1] = "HOUSE_1_LARGE12"
+					else
+						map[x][y] = "HOUSE_2_LARGE11"
+						map[x][y+1] = "HOUSE_2_LARGE12"
+					end
+				elseif map[x][y] == "h" then
+					map[x+1] = map[x+1] or {}
+					if math.random(2) == 1 then
+						map[x][y] = "HOUSE_3_LARGE11"
+						map[x+1][y] = "HOUSE_3_LARGE21"
+					else
+						map[x][y] = "HOUSE_4_LARGE11"
+						map[x+1][y] = "HOUSE_4_LARGE21"
+					end
+				elseif map[x][y] == "W" then
+					map[x][y] = "STORE"
+				elseif map[x][y] == "P" or map[x][y] == "PS" then
+					map[x][y] = "PIESTORE"
+				elseif map[x][y] == "B" then
+					map[x][y] = "BOOKSTORE"
+				elseif map[x][y] == "p" or map[x][y] == "PL" then
+					map[x][y] = "PLAYGROUND"
+				end
+			end
+		end
+	end
+	return map
+end
+
+
 function newQuad( x, y, img, w, h )
 	img = img or groundSheetGrass
 	w = w or 1
 	h = h or 1
-		return love.graphics.newQuad( (x-1)*(TILE_SIZE+2)+1, (y-1)*(TILE_SIZE+2)+1,
-								TILE_SIZE*h, TILE_SIZE*h,
-								img:getWidth(), img:getHeight() )
+	return love.graphics.newQuad( (x-1)*(TILE_SIZE+2)+1, (y-1)*(TILE_SIZE+2)+1,
+	TILE_SIZE*h, TILE_SIZE*h,
+	img:getWidth(), img:getHeight() )
 end
 
 function generateMapQuads()
@@ -583,6 +636,8 @@ end
 
 function renderMap( map, curMapRailTypes, noTrees, region )
 
+	map = interpretMapCodes(map)
+
 	local groundData
 	if region == "Urban" then
 		groundData = love.graphics.newSpriteBatch( groundSheetStone, (map.width+2)*(map.height+2) * 2)
@@ -679,9 +734,12 @@ function renderMap( map, curMapRailTypes, noTrees, region )
 					shadowData:add( mapQuads.HOTSPOT_CINEMA_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
 					objectData:add( mapQuads.HOTSPOT_CINEMA, (x)*TILE_SIZE, (y)*TILE_SIZE)
 				end
-			elseif map[x][y] == "PS" then	-- pie store...
+			elseif map[x][y] == "PIESTORE" then	-- pie store...
 				shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
 				objectData:add( mapQuads.HOTSPOT_PIESTORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
+			elseif map[x][y] == "BOOKSTORE" then	-- book store...
+				shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
+				objectData:add( mapQuads.HOTSPOT_BOOKSTORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
 			elseif map[x][y] == "STORE" then	-- store...
 				shadowData:add( mapQuads.HOTSPOT_STORE_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
 				objectData:add( mapQuads.HOTSPOT_STORE, (x)*TILE_SIZE, (y)*TILE_SIZE)
@@ -736,7 +794,7 @@ function renderMap( map, curMapRailTypes, noTrees, region )
 			elseif map[x][y] == "HOUSE_4_LARGE21" then	-- HOSPITAL
 				shadowData:add( mapQuads.HOUSE04_L_SHADOW21, (x)*TILE_SIZE, (y)*TILE_SIZE)
 				objectData:add( mapQuads.HOUSE04_L21, (x)*TILE_SIZE, (y)*TILE_SIZE)
-			elseif map[x][y] == "PL" then	-- playground
+			elseif map[x][y] == "PLAYGROUND" then	-- playground
 				shadowData:add( mapQuads.HOTSPOT_PLAYGROUND_SHADOW, (x)*TILE_SIZE, (y)*TILE_SIZE)
 				objectData:add( mapQuads.HOTSPOT_PLAYGROUND, (x)*TILE_SIZE, (y)*TILE_SIZE)
 			end

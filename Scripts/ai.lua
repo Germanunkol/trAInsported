@@ -38,7 +38,7 @@ function newLineCountHook( maxLines )
 			linesUsed = linesUsed + 1
 			time = love.timer.getTime()
 			if lines == maxLines then
-				err = {msg="Taking too long, stopping. Time taken: " .. math.floor((time-startTime)*1000) .. " ms."}
+				err = {msg="Taking too long, stopping. Time taken: " .. math.floor((time-startTime)*1000000)/1000 .. " ms."}
 				setmetatable(err, hookfunctionMetatable)
 				error(err)
 			end

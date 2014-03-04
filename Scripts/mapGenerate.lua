@@ -111,7 +111,7 @@ channelOut:push({key="percentage", 50})
 if not tutorialMap then
 
 	channelOut:push({key="status","houses"})
-	placeHouses()
+	placeHouses( region )
 	channelOut:push({key="percentage", 60})
 
 	channelOut:push({key="status","hotspots"})

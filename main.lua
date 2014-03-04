@@ -715,7 +715,8 @@ else
 		end
 
 		if roundEnded and (curMap or simulationMap) and mapImage then
-			stats.display(love.graphics.getWidth()/2-175, 40, dt)
+			local x = math.min(love.graphics.getWidth()/2-175, love.graphics.getWidth() - roundStats:getWidth() - 40 - 175*2 )
+			stats.display(x, 40, dt)
 		end
 	
 		button.show()

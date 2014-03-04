@@ -796,7 +796,7 @@ function statistics.displayStatus()
 	
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.setFont(FONT_STAT_MSGBOX)
-	if tutorial and tutorial.roundStats then		-- let the tutorial draw the winning message
+	if tutorial and tutorial.roundStats then		-- let the tutorial draw the status display
 		tutorial.roundStats()
 	elseif challenges.isRunning() then
 		challenges.roundStats()

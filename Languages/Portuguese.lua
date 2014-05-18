@@ -63,7 +63,7 @@ LNG.menu_local_server_tooltip = [[Conecte-se a um servidor rodando nesta máquin
 
 -- Settings menu:
 LNG.menu_settings_resolution = [[Tamanho da tela:]]
-LNG.menu_resolution_tooltip = [[Defina uma nove resolução de tela]]
+LNG.menu_resolution_tooltip = [[Defina uma nova resolução de tela]]
 LNG.menu_settings_options = [[Opções:]]
 LNG.menu_clouds_on = [[Nuvens: On]]
 LNG.menu_clouds_off = [[Nuvens: Off]]

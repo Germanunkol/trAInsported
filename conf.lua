@@ -24,11 +24,11 @@ function seperateStrings(str)
 	tbl = {}
 	index = 1
 	
-	if str:sub(#str,#str) ~= "," then		-- gfind will not capture a substring unless there's a comma following
+	if str:sub(#str,#str) ~= "," then		-- gmatch will not capture a substring unless there's a comma following
 		str = str .. ","
 	end
 	
-	for val in string.gfind(str, ".-,") do
+	for val in string.gmatch(str, ".-,") do
 		tbl[index] = val:sub(1,#val-1)
 		pos = #val+1
 		index = index + 1

@@ -48,7 +48,8 @@ function console.add( text, colour )
 		end
 	end
 	
-	for c in text:gfind(".") do
+    print(type(text))
+	for c in text:gmatch(".") do
 		if c == "\t" then
 			str = str .. "   "
 		else

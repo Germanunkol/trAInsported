@@ -389,6 +389,10 @@ else
 	-------------------------------
 	-- Main function, runs at startup:
 	function love.load(args)
+
+		for k, v in pairs(args) do
+			print("---", k, v)
+		end
 	
 		love.filesystem.setIdentity("trAInsported")
 	

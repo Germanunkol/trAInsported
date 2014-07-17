@@ -61,16 +61,16 @@ variable3 = variable2 .. variable1
 local CODE_counter = parseCode([[
 function ai.init()
 	buyTrain(1,1)
-	-- erstelle eine Variable "zähler"
-	zähler = 0
+	-- erstelle eine Variable "zaehler"
+	zaehler = 0
 end
 
 function ai.chooseDirection()
 	-- zähle die Kreuzungen:
-	zähler = zähler + 1
+	zaehler = zaehler + 1
 	
 	-- zeige an, wie vile Kreuzungen bereits befahren wurden:
-	print("Dies ist die Kreuzung Nummer " .. zähler)
+	print("Dies ist die Kreuzung Nummer " .. zaehler)
 end
 ]])
 

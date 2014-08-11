@@ -71,7 +71,7 @@ Called just before a train enters a junction. This function is essential: It let
 	- train.dir (the direction the train is going in - "N", "S", "E" or "W")
 	- train.passenger (table representing passenger who's currently on the train, if any - holds the passengers name, destX and destY. See ai.foundPassengers for more details.)
 	- (**NOTE:** The trains' .x and .y fields are the coordinates of the tile it's coming from. So in this function, there's also a .nextX and .nextY field to describe the tile of the junction the train is moving to. Not all functions that get a train have these fields, usually just .x and .y do the job.)
-- possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indieces are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.
+- possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indices are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.
 
 **Returns**
 
@@ -101,7 +101,7 @@ Called after a train was blocked by another train and can't move in that directi
 **Passed Arguments**
 
 - train: same as above (see ai.chooseDirection)
-- possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indieces are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.
+- possibleDirections: a Lua table showing the directions which the train can choose from. One of these directions should be returned by the function, to make the train go that way. The table's indices are the direction ("N","S","E","W") and if the value at the index is true, then this direction is one that the train can move in.
 - prevDirection: the direction that the train previously tried to move in, but was blocked.
 
 **Returns**

@@ -21,7 +21,7 @@ Callback Events
 --------------------
 
 ###function ai.init(map, money, maximumTrains)###
-This event is called, at the beginning of the round. The current map is passed to it, so you can analize it, get it ready for pathfinding and search it for important junctions, Hotspots, shortest paths etc.  
+This event is called, at the beginning of the round. The current map is passed to it, so you can analyze it, get it ready for pathfinding and search it for important junctions, Hotspots, shortest paths etc.  
 **Passed Arguments:**
 
 - map: A 2D representation of the current map. "map" has a field map.width and a field map.height to check the size of the map. It also holds information about what's on the map, which is stored by x and y coordinates. For example, to see what's at the position x=3, y=5, you only have to check map[3][5]. A map field can be filled with: "C" (Connected Rail), "H" (House), "S" (Hotspot)

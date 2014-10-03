@@ -529,6 +529,7 @@ function selectResolution(res)
 
 	lastX, lastY = love.graphics.getWidth(), love.graphics.getHeight()
 	
+	love.window.setFullscreen(false, "desktop")
 	-- attempt to change screen resolution:
 	success = love.window.setMode( res.width, res.height )
 	
@@ -546,13 +547,27 @@ end
 function acceptResolution()
 	configFile.setValue("resolution_x", love.graphics.getWidth())
 	configFile.setValue("resolution_y", love.graphics.getHeight())
+	toggleFullScreen(false)
 	menu.settings() -- re-initialise the menu.
 end
 
 function resetResolution()
 	success = love.window.setMode( lastX, lastY )
+	love.window.setFullscreen(FULLSCREEN, "desktop")
 	menu.settings() -- re-initialise the menu.
 	console.init( love.graphics.getWidth(),love.graphics.getHeight()/2 )
+end
+
+function toggleFullScreen(enable)
+	print(enable)
+	if enable then
+		FULLSCREEN = true
+	else
+		FULLSCREEN = false
+	end
+	love.window.setFullscreen(enable, "desktop")
+	configFile.setValue("fullscreen", enable)
+	menu.settings()
 end
 
 function toggleOptionClouds(enable)
@@ -620,7 +635,14 @@ function menu.settings()
 	else
 		menuButtons["optionClouds"] = button:newSmall(x, y, LNG.menu_clouds_off, toggleOptionClouds, true, nil, nil, LNG.menu_clouds_on_tooltip)
 	end
-	
+
+	y = y + 37
+
+	if FULLSCREEN then
+		menuButtons["fullscreen"] = button:newSmall(x, y, LNG.menu_fullscreen_on, toggleFullScreen, false, nil, nil, LNG.menu_fullscreen_off_tooltip)
+	else
+		menuButtons["fullscreen"] = button:newSmall(x, y, LNG.menu_fullscreen_off, toggleFullScreen, true, nil, nil, LNG.menu_fullscreen_on_tooltip)
+	end
 	x = defaultMenuX + 200 + columnWidth*2
 	y = defaultMenuY
 	table.insert(menuDividers, {x = x, y = defaultMenuY, txt = LNG.menu_settings_language})

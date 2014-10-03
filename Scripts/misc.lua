@@ -111,6 +111,16 @@ function loadConfiguration()
 	if clouds == "false" then
 		RENDER_CLOUDS = false
 	end
+
+	local fullscreen = configFile.getValue("fullscreen")
+	if fullscreen == "true" then
+		FULLSCREEN = true
+		love.window.setFullscreen(true, "desktop")
+	end
+	if fullscreen == "false" then
+		FULLSCREEN = false
+		love.window.setFullscreen(false, "desktop")
+	end
 end
 
 

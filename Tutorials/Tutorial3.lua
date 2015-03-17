@@ -188,10 +188,10 @@ function tutorial.start()
 	map.print()
 	
 	loadingScreen.reset()
-	loadingScreen.addSection("Novo Mapa")
-	loadingScreen.addSubSection("Novo Mapa", "Tamanho: " .. tutMap.width .. "x" .. tutMap.height)
-	loadingScreen.addSubSection("Novo Mapa", "Tempo: Dia")
-	loadingScreen.addSubSection("Novo Mapa", "Tutorial 3: Seja Inteligente!")
+	loadingScreen.addSection("New Map")
+	loadingScreen.addSubSection("New Map", "Size: " .. tutMap.width .. "x" .. tutMap.height)
+	loadingScreen.addSubSection("New Map", "Time: Day")
+	loadingScreen.addSubSection("New Map", "Tutorial 3: Be smart!")
 
 	train.init()
 	train.resetImages()
@@ -262,113 +262,113 @@ function tutorial.createTutBoxes()
 	local k = 1
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Check!"
-	tutorialSteps[k].message = "O terceiro Tutorial irá lhe ensinar:\n\n1) Como fazer escolhas mais inteligentes dependendo de onde seus passageiros querem ir\n2) Usando múltiplos trens."
+	tutorialSteps[k].message = "The third Tutorial will teach you:\n\n1) How to make smarter choices depending on where your passengers want to go\n2) Using multiple trains."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Começar Tutorial", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Nesse mapa, há algumas crianças. Como são estudantes, alguns querem ir para a escola, alguns preferem não ir.\nComo programadores de trAIn, não é nosso trabalho julgar isso...\n(Segure a barra de espaço ou clique nos passageiros para ver seus destinos)"
+	tutorialSteps[k].message = "On this map, there are some kids. As it is with students, some want to go to school, some would rather not.\nAs trAIn programmers, it is not our job to judge that, though...\n(Hold down the space bar or click on the passengers to see their destinations)"
 	tutorialSteps[k].event =  startCreatingPassengers(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Seu trabalho é deslocar os passageiros para onde eles querem ir.\nNós poderiamos simplesmente tentar todas as direções até que cheguemos ao destino do passageiro, porém não seríamos muito competitivos para as outras AIs mais inteligentes. Em vez disso, nós iremos checar onde os passageiros querem ir e então deslocá-los conformemente."
+	tutorialSteps[k].message = "Your job is to move the passengers where they want to go.\nWe could just try out all the directions until we reach the passenger's destination, but then we wouldn't be much of a competition for other, smarter AIs. Instead, we'll try to check where our passengers want to go and then move accordingly."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Para fazer isso, iremos adicionar dois parâmetros para a função ai.chooseDirection, chamado de 'train' e 'directions'.\nAbra TutorialAI3.lua e adicione o código da caixa de código."
+	tutorialSteps[k].message = "To do this, we will add two parameters to function ai.chooseDirection, called 'train' and 'directions'.\nOpen up TutorialAI3.lua and add the code in the code box."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionFunction1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "O parâmetro 'train' irá automaticamente ser preenchido com uma tabela representando o trem. A tabela tem os seguintes elementos: 'ID', 'name', 'x' e 'y'. Se o trem já estiver transportando um passageiro, então haverá mais um elemento na tabela chamado 'passenger' (uma tabela representando o passageiro). Essa tabela, novamente, tem os elementos 'destX' e 'destY' que armazenam o destino do passageiro e 'name' - o nome do passageiro. Adicione o novo código para sua função."
+	tutorialSteps[k].message = "The 'train' parameter will automatically be filled with a table representing the train. It has the following elements: 'ID', 'name', 'x' and 'y'. If the train is currently transporting a passenger, then there's one more element in the table called 'passenger' (a table representing the passenger). This table, again, has elements 'destX' and 'destY' which hold the destination of the passenger and 'name' - the name of the passenger. Add the new code to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionFunction2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Como no Tutorial1, nós precisamos adicionar o código para pegar o passageiro. Adicione-o para seu script...\n\nQuando você terminar, recarreque e veja se funcionou!"
+	tutorialSteps[k].message = "As in Tutorial1, we need to add code to pick up a passenger. Add it to your script...\n\nWhen you're done, reload and see if it works!"
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_pickUpPassenger)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "O próximo passo será: Sempre que o trem alcançar a junção e não houver passageiros a bordo, ele deverá ir para o sul. Adicione a linha de código conforme."
+	tutorialSteps[k].message = "The next step will be: Whenever the train reaches the junction and has no passenger on board, it should go south. Add the code line accordingly."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionWithPassenger1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Se houver um passageiro a bordo, iremos comparar as coordenadas X da posição atual do trem (train.x) com a do destino do passageiro (train.passenger.destX). Se o destino for para o Oeste (destino X é menor que o X do trem) então iremos para o Oeste. Se não, iremos para o Leste.\nAdicione as novas partes na sua função."
+	tutorialSteps[k].message = "If there is a passenger on board, we'll compare the X-coordinates of the train's current position (train.x) and the passenger's destination (train.passenger.destX). If the destination lies in the West (destination X is smaller than the train's X) then we'll go West. Otherwise, we'll go East.\nAdd the new parts to your function."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_chooseDirectionWithPassenger2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "O último passo é largar o passageiro como fizemos antes.\n\nLogo que terminar todo o código, recarregue e observe se o trem larga os passageiros!\n(Você pode mudar a velocidade do tutorial pressionando + ou - )"
+	tutorialSteps[k].message = "The last step is to drop the passenger off as we did before.\n\nOnce you've coded all of that, reload and watch the train drop off passengers!\n(You can change the speed of the tutorial by pressing + or - )"
 	tutorialSteps[k].event = waitingForPassengersEvent(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("O jogo irá automaticamente para o próximo passo quando você largar um passageiro no Leste e o outro no Oeste."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The game will automatically go to the next step when you've dropped off one passenger in the East and one in the West."), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Parece que você fez tudo certo, muito bem! Mais isso iria muito mais rápido se tivéssemos mais de um trem. Você começa o tutorial com um trem e 15 créditos. Um novo trem custa " .. TRAIN_COST .. " créditos. Sempre que você largar um passageiro, você ganhará dinheiro. Quando você tiver dinheiro suficiente para um novo trem, a função 'ai.enoughMoney' é chamada. Use-a para comprar um novo trem.\nQuando você terminar de escrever o código, recarregue."
+	tutorialSteps[k].message = "You seem to be getting it right, well done! But this would go much, much faster if we had more than one train. You start the tutorial with one train and 15 credits. A new train costs " .. TRAIN_COST .. " credits. Whenever you drop off a passenger, you earn money. Once you have enough money for a new train, the function 'ai.enoughMoney' is called. Use it to buy a new train.\nOnce you have written the code, reload."
 	tutorialSteps[k].event = enoughMoneyEvent(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Agora você possui dois trens!\nAgora sente-se, relaxe e assista seus trens transportarem 10 passageiros para seus destinos. Você fez um bom trabalho!\n\n0 de 10 transportados."
+	tutorialSteps[k].message = "You now own two trains!\nNow sit back, relax and watch your trains carry 10 passengers to their destination. You've done a good job!\n\n0 out of 10 transported."
 	tutorialSteps[k].event = waitFor10Passengers(k)
 	tutorialSteps[k].buttons = {}
 	--tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Feito!"
-	tutorialSteps[k].message = "Você completou o terceiro tutorial, muito bem!\nCom esse tutorial, você viu todo o básico. Clique em 'Mais Ideias' para seu primeiro desafio de verdade!"
+	tutorialSteps[k].stepTitle = "Done!"
+	tutorialSteps[k].message = "You've completed the third tutorial, well done!\nWith this tutorial, you've covered all the basics. Click 'More Ideas' for your first real challenge!"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Ideias", event = additionalInformation("Tente fazer seu primeiro trem carregar somente os passageiros que querem ir para o Leste. Para fazer isso:\nNo ai.foundPassengers: cheque se train.ID é 1. Então, cheque se passengers[1] destX é maior que train.x.\nSe esse for o caso, pegue-o, caso não, vá para o passengers[2] e assim por diante. \nSe possível, use um while loop para ir através da lista de passageiros. Finalmente, faça seu segundo trem pegar somente os passageiros que querem ir para o Oeste. IMPORTANTE: #passengers é o comprimento da lista! Lembre-se 'break' lhe permite encerrar um loop quando encontrar um passageiro.", CODE_moreIdeas), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("Try to make the first train only transport passengers who want to go to the East. To do this:\nIn ai.foundPassengers: check if train.ID is 1. Then, check if passengers[1]'s destX is greater than train.x.\nIf that's the case, pick him up, otherwise go on to passengers[2] and so on. \nIf possible, use a while loop to go through the passenger list. Finally, make the second train only pickup passengers who want to go West. IMPORTANT: #passengers is the length of the list! Remember 'break' lets you end a loop when you've found your passenger.", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Vá diretamente para o próximo tutorial ou retorne para o menu."
+	tutorialSteps[k].message = "Go directly to the next tutorial or return to the menu."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Sair", event = endTutorial}
-	tutorialSteps[k].buttons[3] = {name = "Próximo Tutorial", event = nextTutorial}
+	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
+	tutorialSteps[k].buttons[3] = {name = "Next Tutorial", event = nextTutorial}
 	--tutorialSteps[k].buttons[3] = {name = "Next Tutorial", event = nextTutorial}
 	k = k + 1
 end
@@ -430,7 +430,7 @@ function waitFor10Passengers(k)
 			tutorial.passengersEnRoute = tutorial.passengersEnRoute - 1
 			numPassengers = numPassengers + 1
 			if currentStep == k then
-				currentTutBox.text = "Agora você possui dois trens!\nAgora sente-se, relaxe e assista seus trens transportarem 10 passageiros para seus destinos. Você fez um bom trabalho!\n\n" .. numPassengers .. " de 10 transportados."
+				currentTutBox.text = "You now own two trains!\nNow sit back, relax and watch your trains carry 10 passengers to their destination. You've done a good job!\n\n" .. numPassengers .. " out of 10 transported."
 				if numPassengers >= 10 then
 					nextTutorialStep()
 					tutorialBox.succeed()
@@ -465,7 +465,7 @@ function tutorial.roundStats()
 	y = 20
 	love.graphics.draw(roundStats, x, y)
 	
-	love.graphics.print("Tutorial 3: Seja Inteligente!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 3: Seja Inteligente!")/2, y+10)
+	love.graphics.print("Tutorial 3: Be smart!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 3: Be smart!")/2, y+10)
 	love.graphics.print(currentStepTitle, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(currentStepTitle)/2, y+30)
 end
 
@@ -492,13 +492,13 @@ function tutorial.handleEvents(dt)
 end
 
 kidSpeaches = {}
-kidSpeaches[1] = "Eu devo ter sido reprovado no teste de matemática..."
-kidSpeaches[2] = "Tive aula de programação hoje. Ouvi dizer que iremos começar com algo chamado 'Lua'. Whatever."
-kidSpeaches[3] = "Eu esqueci meu dever de casa."
-kidSpeaches[4] = "Passar ou não passar, eis a questão..."
-kidSpeaches[5] = "Isso será minha desgraça."
-kidSpeaches[6] = "Último dia de aula!"
-kidSpeaches[7] = "Tá vendo a luz do sol? Está dizendo: 'Nãããoooo... não vá para a escola!'"
+kidSpeaches[1] = "I should flunk that math test..."
+kidSpeaches[2] = "Got programming class today. I heard we'll start with something called 'Lua'. Whatever."
+kidSpeaches[3] = "I forgot my homework."
+kidSpeaches[4] = "To skip or not to skip, that is the question..."
+kidSpeaches[5] = "This will be my doom."
+kidSpeaches[6] = "Last day of school!"
+kidSpeaches[7] = "See that sunshine? It's saying: 'Noooo... don't go to school!'"
 
 fileContent = [[
 -- Tutorial 3: Be smart!

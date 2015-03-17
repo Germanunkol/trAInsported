@@ -321,10 +321,10 @@ function tutorial.start()
 	map.print()
 	
 	loadingScreen.reset()
-	loadingScreen.addSection("New Map")
-	loadingScreen.addSubSection("New Map", "Size: " .. tutMap.width .. "x" .. tutMap.height)
-	loadingScreen.addSubSection("New Map", "Time: Day")
-	loadingScreen.addSubSection("New Map", "Tutorial 2: Left or Right?")
+	loadingScreen.addSection("Novo Mapa")
+	loadingScreen.addSubSection("Novo Mapa", "Tamanho: " .. tutMap.width .. "x" .. tutMap.height)
+	loadingScreen.addSubSection("Novo Mapa", "Tempo: Dia")
+	loadingScreen.addSubSection("Novo Mapa", "Tutorial 2: Esquerda ou Direita?")
 
 	train.init()
 	train.resetImages()
@@ -385,122 +385,122 @@ function tutorial.createTutBoxes()
 	
 	local k = 1
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Where to go?"
-	tutorialSteps[k].message = "Welcome to the second Tutorial!\n\nHere, you'll learn:\n1) How to handle junctions\n2) Lua basics\n\nSadly, we'll have to cover some theory here - but it will be worth it when we get to Tutorials 3 and 4!"
+	tutorialSteps[k].stepTitle = "Para onde ir?"
+	tutorialSteps[k].message = "Bem-Vindo ao segundo Tutorial!\n\nAqui, você irá aprender:\n1) Como manusear junções\n2) Básicos de Lua\n\nInfelizmente, nós vamos ter que cobrir alguma teoria aqui - mas vai valer a pena quando chegarmos aos Tutoriais 3 e 4!"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Começar Tutorial", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Lua: Variables"
-	tutorialSteps[k].message = "I now need to teach you how to code in Lua.\nThere's a lot I could tell you; I've tried to boil it down to the basics. It might seem a lot if you've never coded before, but try to hang in there - you don't need to remember it all just yet.\nIn Lua, you can create variables simply by assigning some value (right of the '=') to a name (left of the '=').\nSee examples in the code box."
+	tutorialSteps[k].stepTitle = "Lua: Variáveis"
+	tutorialSteps[k].message = "Agora eu preciso lhe ensinar como escrever o código em Lua.\nHá muita coisa que eu poderia lhe dizer; Eu tentei reduzir para o básico. Pode parecer muito, se você nunca programou antes, mas tente aguentar firme - você não precisa lembrar de tudo ainda.\nEm Lua, você pode criar variáveis simplesmente atribuíndo algum valor (a direita do '=') para um nome (esquerda do '=').\nVeja alguns exemplos na caixa de código."
 	tutorialSteps[k].event = function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_variables1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You can also assign text or other things to a variable name. To tell Lua that something should be handled as text, you need to surround the text by quotes (\").\n\nYou can't just add text and numbers together, because Lua doesn't know how to 'add' text.\nAgain, there's an example in the code box."
+	tutorialSteps[k].message = "Você também pode atribuir textos ou outras coisas para o nome da variável. Para dizer a Lua que algo deve ser manipulado como texto, você precisa cercar o texto por aspas (\").\n\nVocê não pode simplesmente adicionar texto e números juntos, porque Lua não sabe como 'adicionar' texto.\nNovamente, há um exemplo na caixa de código."
 	tutorialSteps[k].event = function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_variables2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("If you've programmed another language before, be careful: Lua is very forgiving when it comes to variable types. You can put text into a variable that was holding a number before and vice versa. This won't crash your program, but might give you problems later on."), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Se você já programou outra linguagem antes, seja cuidadoso: Lua é muito indulgente quando se trata de tipos de variáveis. Você pode colocar texto dentro de uma variáviel que antes estava armazenando um número e vice versa. Isso não irá quebrar seu programa, mas pode lhe dar problemas mais tarde."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "If you want to append text or numbers together, you can do this by writing .. between them. The result will be text, which you can store in a new variable, print to the console, or do other things with.\n\nExample, as always, in the code box."
+	tutorialSteps[k].message = "Se você quiser acrescentar textos ou números juntos, você pode fazer isso escrevendo .. entre eles. O resultado será o texto, que você pode armazenar em outra variável, imprimir no console, ou fazer outras coisas.\n\nO exemplo, como sempre, está na caixa de código."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_variables3)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Let's try it out!\nWe'll write code that will count the junctions the train passes.\nWhen a trAIn reaches a junction, the game will always try to call the function 'ai.chooseDirection()' in your AI's code. This means that if your AI file has a function ai.chooseDirection, then you can do something every time a trAIn reaches a junction."
+	tutorialSteps[k].message = "Vamos tentar!\nNós iremos escrever o código que irá contar as junções que o trem passar.\nQuando um trAIn alcançar uma junção, o jogo sempre irá tentar chamar a função 'ai.chooseDirection()' no seu código de AI. Isso significa que se seu arquivo de AI conter a função ai.chooseDirection, você poderá fazer algo toda vez que um trAIn alcançar uma junção."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Open up the newly created TutorialAI2.lua, from inside the same folder as before.\n\nThere's already some code in the file, which is why there's already a train on the map.\nAdd the code on the right (replace the already existing ai.init), then press 'Reload'."
+	tutorialSteps[k].message = "Abra o recém criado TutorialAI2.lua, de dentro da mesma pasta de antes.\n\nJá tem algum código no arquivo, e é por isso que já tem um trem no mapa.\nAdicione o código na direita (substitua o ai.init que já existe), então pressione 'Recarregar'."
 	tutorialSteps[k].event = eventCounter(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The code will fail if you forget the line 'counter = 0', because before you can add 1 to the counter variable, it needs to be initialised. Since ai.init will always run BEFORE ai.chooseDirection, so the code will work."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("O código irá falhar se você esquecer a linha 'counter = 0', porque antes que você possa adicionar 1 para a variável, ela precisa ser inicializada. Desde que ai.init rode ANTES de ai.chooseDirection, então o código irá funcionar"), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "That seemed to work!\n\nSee if the AI counts the junctions correctly. If it doesn't, modify your code until it does. If it works, press Next to continue."
+	tutorialSteps[k].message = "Isso parece funcionar!\n\nVeja se a AI conta as junções corretamente. Se não, modifique seu código até funcionar. Se funcionou, pressione Próximo para continuar."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Lua: if, then, else"
-	tutorialSteps[k].message = "You'll need to make decisions in your code. For this, 'if-then-else' statements are useful.\nAn 'if' statement checks if some EXPRESSION is true and if so, executes the code following the 'then' statement. After that, you can either follow by 'elseif', 'else' or 'end' to end the code block.\nCheck out the example."
+	tutorialSteps[k].message = "Você irá precisar fazer decisões em seu código. Para isso, 'if-then-else' são úteis.\nUm 'if' checa se alguma EXPRESSÃO é verdadeira, se for, executa o código depois do 'then'. Depois disso, você pode prosseguir com o 'elseif', 'else' ou 'end' para finalizar o bloco de cóodigo.\nConfira o exemplo."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_ifthenelse1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "An 'EXPRESSION' is a piece of code that Lua will interpret as either true or false. If Lua finds the expression to be true, it'll execute the code, otherwise it won't. Examples of expressions are presented in the code box. Note that here, you can't use '='. Instead, you'll need '=='! Otherwise it would be an assignment, not something for Lua to check.\nCheck out 'More Info' for valid expressions."
+	tutorialSteps[k].message = "Uma 'EXPRESSÃO' é um pedaço de código que Lua irá interpretar como verdadeiro ou falso. Se Lua achar que a expressão é verdadeira, irá executar o código, caso contrário, não irá executar. Os exemplos dessas expressões estão na caixa de código. Note que aqui, você não pode usar '='. Em vez, você irá precisar de '=='! Caso contrário seria uma atribuição, que não é algo para Lua checar.\nConfira 'Mais Info' para expressões válidas."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_ifthenelse2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("1) A == B (are A and B equal?)\n2) A > B (A greater than B?)\n3) A <= B (Is A smaller or equal to B?)\n4) A ~= B (A does not equal B)"), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("1) A == B (A e B são iguais?)\n2) A > B (A é maior que B?)\n3) A <= B (A é menor ou igual a B?)\n4) A ~= B (A não é igual a B)"), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "A last note on expressions: If you've programmed before, you might know the A != B (A does not equal B) expression. For some reason, Lua uses A ~= B instead!\n\nif variable ~= 10 then\n...\nend"
+	tutorialSteps[k].message = "Uma  última nota sobre expressões: Se você já programou antes, você deve saber que A != B (A não é igual a B). Por alguma razão, Lua usa A ~= B em vez!\n\nif variable ~= 10 then\n...\nend"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Lua: Loops"
-	tutorialSteps[k].message = "While-Loops are also a handy feature. They let you repeat something until an EXPRESSION is false.\n\nwhile EXPRESSION do\n(your code to repeat)\nend"
+	tutorialSteps[k].message = "While-Loops também são recursos úteis. Eles lhe permitem repetir algo até que uma EXPRESSÃO seja falsa.\n\nwhile EXPRESSION do\n(your code to repeat)\nend"
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_whileLoop)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Time to try it!\nWe'll modify our ai.chooseDirection. Instead of printing a number at each junction, we'll now print the letter 'x' as many times as we've passed the junction. (The first time we'll print 'x', the second time we'll print 'xx' and so on.)\nTo do that, we'll use the 'counter' variable, just like before. Then, we'll add 'x' to the end of a text as many times as 'counter' is high, and then print the text."
+	tutorialSteps[k].message = "Hora de tentar!\nNós iremos modificar o ai.chooseDirection. Em vez de imprimir um número a cada junção, nós iremos imprimir a letra 'x' o tanto de vezes que passarmos pela junção. (A primeira vez iremos imprimir 'x', a segunda vez iremos imprimir 'xx' e assim por diante.)\nPara fazer isso, nós utilizaremos a variável 'counter', assim como antes. Então adicionaremos 'x' no fim de um texto quando 'counter' estiver alta, e então imprimir o texto."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "... and here's the code. The line text = \"\" creates an empty text (also called 'string'), and i=0 starts a new counter, so we can count how many 'x' we've added to the text.\nChange your ai.chooseDirection function, reload, and try it out.\n\nIf it works, cheer, and press 'Next'."
+		tutorialSteps[k].message = "... a aqui está o código. A linha de texto = \"\" cria um texto vazio (também chamado de 'string'), e i=0 começa um novo contador, então nós podemos contar quantos 'x' nós adicionamos para o texto.\nAltere sua função ai.chooseDirection, recarregue, e experimente.\n\nSe funcionar, comemore, e pressione 'Próximo'."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_whileLoop2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	--[[
@@ -517,163 +517,163 @@ function tutorial.createTutBoxes()
 	]]--
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Lua: Functions!"
-	tutorialSteps[k].message = "You already learned a bit about functions in the first tutorial.\nA function is introduced by using the keyword 'function', followed by the function name and the arguments it takes in parantheses (). Then there's the function body where your code goes. If you want to, pass back any numbers or text using the 'return' statement."
+	tutorialSteps[k].stepTitle = "Lua: Funções!"
+	tutorialSteps[k].message = "Você já aprendeu um pouco sobre funções no primeiro tutorial.\nUma função é criada usando a keyword 'function', seguida pelo nome da função e os argumentos que ficam entre parênteses (). Então é no corpo da função onde seu código fica. Se você quiser, pode retornar qualquer número ou texto utilizando 'return'."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_functions1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The function ends with the 'end' keyword.\nOnce the function has been defined, you can call it using the function name and pass arguments to it."
+	tutorialSteps[k].message = "A função termina com a keyword 'end'.\nUma vez que a função foi definida, vodê pode chamá-la usando o nome da função e passar os argumentos."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_functions1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Here's another simple example.\n When this function is called, it returns a number (c), which is saved directly into a variable (result). This variable is then printed to the console."
+	tutorialSteps[k].message = "Aqui está outro exemplo simples.\n Quando essa função é chamada, ela retorna o número (c), que é salva diretamente em uma variável (result). Essa variável é então impressa no console."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_functions2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "On this map, there's a new element: A junction. Whenever a train reaches a junction-square, your AI needs to decide where the train should go. There's four directions that the train can move in: north, south, east and west. For example, the junction on this map will allow a train to go north (up), east (right) and south (down).\nIn the code, the directions will be called \"N\", \"S\", \"E\" and \"W\"."
+	tutorialSteps[k].message = "Nesse mapa, há um novo elemento: Uma junção. Sempre que um trem alcança um conjunto de junções, seu AI precisa decidir para onde seu trem deve ir. Há quatro direções que o trem pode se mover: norte, sul, leste e oeste. Por exemplo, a junção nesse mapa irá permitir um trem ir para o norte (cima), leste (direita) e sul (baixo).\nNo código, as direções serão chamadas de \"N\", \"S\", \"E\" e \"W\"."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Notice the train on the map. When it reaches the junction, it doesn't know what to do because we have not told it yet.\nThe default behaviour is to go \"N\" if it can. If it can't (because it's coming from \"N\" or because the junction doesn't have a \"N\" exit), then it'll try \"S\", then \"E\", then \"W\", unless we tell it otherwise, which we'll do now."
+	tutorialSteps[k].message = "Repare no trem do mapa. Quando ele chegar na junção, ele não saberá o que fazer porque não lhe dissemos ainda.\nO comportamento padrão é ir para o \"N\" se possível. Se não puder (quando vier do \"N\" ou porque a junção não possuir uma saída \"N\"), então ele irá tentar \"S\", então \"E\", então \"W\", a não ser que lhe dissermos outra coisa, que é o que iremos fazer agora."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Every time the train reaches the junction, it will print something and then continue.\nThe next step is to choose a direction for the train. The current default behaviour is to go north or - if it can't go north - it'll go south.\n\nIf the function ai.chooseDirection() returns \"E\", then the game will know that the train wants to go east at the junction. Make your function return \"E\", then reload."
+	tutorialSteps[k].message = "Toda vez que o trem alcançar a junção, irá imprimir algo e então continuar.\nO próximo passo é escolhar uma direção para o trem. O comportamento padrão atual é ir para o norte ou - se não puder ir para o norte - irá para o sul.\n\nSe a função ai.chooseDirection() retornar \"E\", entã o jogo ira saber que o trem quer ir para o lest na junção. Faça sua função retornar \"E\", então recarregue."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = eventChooseEast(k)
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Hint!", event = function()
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Dica!", event = function()
 		if cBox then codeBox.remove(cBox) end
 		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_hintGoEast)
 		end, inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You did it! Your train will now travel east whenever it can...\n\nLet's try one more thing: I now want the train to go east the first time it reaches the junction, and then only go south or north. Use the junction counter we coded before and an 'if-then-else' statement. Remember: to check if a variable is equal to something you need to use '==', not '=' ..."
+	tutorialSteps[k].message = "Você conseguiu! Seu trem agora irá viajar para o leste sempre que puder...\n\nVamos tentar mais uma coisa: Agora eu quero que o trem vá para o leste na primeira vez que alcançar a junção, e então ir somente para o sul ou norte. Use o contador de junção que escrevemos antes e um 'if-then-else'. Lembre-se: para checar se uma variável é igual a algo, você precisa usar '==', não '=' ..."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = eventChooseEastThenSouth(k)
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("It will be sufficient to tell the trAIn to go east the first time and otherwise go south, because, when it's coming from the south and you tell it to go south, it will automatically default to north (because it can't go south)...\n\nThere's more than one solution to this. But be careful: Everything you do after a 'return' statement won't get executed, because when the game reaches the 'return', it will end the function."), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Hint!", event = function()
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Isso será o suficiente para dizer ao trAIn para ir ao leste na primeira vez e caso contrário ir para o sul, porque, quando estiver vindo do sul e você mandar ir para o sul, ele irá automaticamente por padrão ir para o norte (porque ele não pode ir para o sul)...\n\nHá mais de uma solução para isso. Mas seja cuidadoso: Tudo que você fizer depois do 'return' não será executado, porque quando o jogo chegar no 'return', irá terminar a função."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Dica!", event = function()
 		if cBox then codeBox.remove(cBox) end
 		cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_hintGoEastThenSouth)
 		end, inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "It worked!"
+	tutorialSteps[k].message = "Funcionou!"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
 	tutorialSteps[k].stepTitle = "Lua: Tables"
-	tutorialSteps[k].message = "We're almost done with the theoretical part.\nThere's one more thing we need, though, which is Lua tables.\nTables are probably the most powerful functionality Lua has to offer."
+	tutorialSteps[k].message = "Nós estamos quase terminando a parte teórica.\nHá mais uma coisa que precisamos, entretanto, que são Lua tables.\nTabelas são provavelmente, a funcionalidade mais poderosa que Lua tem a oferecer."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Basically, a table is a 'container' for more variables. You can define a table using curly brackets { }. Inside the curly brackets, you can again define variables, just like you did before (seperate them by commas)."
+	tutorialSteps[k].message = "Basicamente, uma tabela é um 'container' para mais variáveis. Você definir um tabela usando colchetes { }. Dentro dos colchetes, você pode definir novamente variáveis, assim como você fez anteriormente (separando elas por vírgulas)."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Once a table has been defined, you can access the individual elements by using a fullstop, like this:\nTABLE.ELEMENT\nSee the example..."
+	tutorialSteps[k].message = "Uma vez que a tabela foi definida, você pode acessar os elementos individualmente utilizando um ponto final, como:\nTABLE.ELEMENT\nVeja o exemplo..."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You can also add new elements (by assigning them a number or text) and remove them (by assigning 'nil')."
+	tutorialSteps[k].message = "Você também pode adicionar novos elementos (atribuíndo a eles um número ou texto) e remover eles (atribuíndo 'nil')."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables3)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The 'passengers' list we used in tutorial 1 was a table. Here, we used numbers to name the elements, instead of names. If you choose to do that, then you can access the individual elements using the [ ] brackets, just like we did in tutorial 1."
+	tutorialSteps[k].message = "A lista de 'passageiros' que usamos no tutorial 1 era uma tabela. Aqui, usamos número para nomear os elementos, em vez de nomes. Se você optar por fazer isso, então você pode acessar elementos individuais usando os  [ ] colchetes, como fizemos no tutorial 1."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_tables4)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "A more complex example: You can end a loop prematurely if some condition is true. For example, if you're looking for a passenger in a table and have found him, you can jump to the end of the loop using 'break'.\n(A '#' infront of passengers gives you the length of that list. This only works if you used numbers to name the elements.)\nDon't worry if this went a little too fast for you; there will be an example for this in Tutorial3."
+	tutorialSteps[k].message = "Um exemplo mais complexo: Você pode terminar um loop prematuramente se alguma condição for verdadeira. Por exemplo, se você está procurando por um passageiro numa tabela e tiver que encontrá-lo, você pode pular para o fim do loop usando 'break'.\n(Um '#' em frente aos passageiros lhe dá o comprimento dessa lista. Isso só irá funcionar se você usou números para nomear os elementos.)\nNão se preocupe se isso foi um pouco rápido para você; haverá outros exemplos para isso no Tutorial3."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_loop3)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "That's all you need to know about Lua for now!"
+	tutorialSteps[k].message = "Isso é tudo que você precisa saber sobre Lua por enquanto!"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the second tutorial, well done!\nClick 'More Ideas' for some ideas of what you can try on your own before going to the next tutorial.\n\nWith this tutorial, we've covered most of the dry theory - the next tutorials will be more practical."
+	tutorialSteps[k].stepTitle = "Feito!"
+	tutorialSteps[k].message = "Você completou o segundo tutorial, muito bem!\nClique em 'Mais Ideias' para algumas ideias do que você pode tentar sozinho antes de ir para o próximo tutorial.\n\nCom esse tutorial, nós cobrimos a teoria - os próximos tutoriais serão mais práticos."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Ideas", event = additionalInformation("You can try to go east, then north, then south, then east again and so on (east, north, south, east, north, south, east ...).\n To do this, create a variable in ai.init(), call it \"dir\". Then add 1 to dir (dir = dir + 1) every time the game calls ai.chooseDirection. Then return \"E\", \"N\" or \"S\" if dir is 1, 2 or 3. Don't forget to set dir back to 0 or 1 when it's greater than 3!", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Ideias", event = additionalInformation("Você pode tentar ir para o leste, então norte, então sul, então leste novamente e assim por diante (leste, norte, sul, leste, norte, sul, leste...).\n Para fazer isso, crie uma variável em ai.init(), a chame \"dir\". Então adicione 1 para dir (dir = dir + 1) toda vez que o jogo chama ai.chooseDirection. Então retorne \"E\", \"N\" or \"S\" se dir for 1, 2 ou 3. Não se esqueça de definir dir de volta para 0 ou 1 quando for ele for maior que 3!", CODE_moreIdeas), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Go directly to the next tutorial or return to the menu."
+	tutorialSteps[k].message = "Vá diretamente para o próximo tutorial ou retorne para o menu."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
-	tutorialSteps[k].buttons[3] = {name = "Next Tutorial", event = nextTutorial}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Sair", event = endTutorial}
+	tutorialSteps[k].buttons[3] = {name = "Próximo Tutorial", event = nextTutorial}
 	k = k + 1
 end
 
@@ -757,7 +757,7 @@ function eventChooseEastThenSouth(k)
 							else
 								if currentStep == k then
 									if currentTutBox then
-										currentTutBox.text = "You were supposed to go east first, then go south! Modify your code, then reload."
+										currentTutBox.text = "Você deveria ir para o leste primeiro, então ir para o sul! Modifique seu código, então recarregue."
 									end
 								end
 							end
@@ -792,7 +792,7 @@ function tutorial.roundStats()
 	y = 20
 	love.graphics.draw(roundStats, x, y)
 	
-	love.graphics.print("Tutorial 2: Left or Right?", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 2: Left or Right?")/2, y+10)
+	love.graphics.print("Tutorial 2: Esquerda ou Direita?", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 2: Esquerda ou Direita?")/2, y+10)
 	love.graphics.print(currentStepTitle, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(currentStepTitle)/2, y+30)
 end
 

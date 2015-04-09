@@ -252,7 +252,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
 	if love.filesystem.getWorkingDirectory() then
-		tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("Se você não consegue encontrar a pasta, ela pode estar oculta. Digite o caminho da pasta no seu gerenciador de arquivos ou pesquise na internet por 'mostrar arquivos ocultos [nome do seu sistema operacional]'. Por exemplo: 'mostrar arquivos ocultos Windows 7'\nAlém disso, qualquer editor de texto normal deve fazer isso, mas há alguns que irão lhe ajudar a escrever o código.\n\nAlguns editores gratuitos:\nGedit, Vim (Linux)\nNotepad++ (Windows)"), inBetweenSteps = true}
+		tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Se você não consegue encontrar a pasta, ela pode estar oculta. Digite o caminho da pasta no seu gerenciador de arquivos ou pesquise na internet por 'mostrar arquivos ocultos [nome do seu sistema operacional]'. Por exemplo: 'mostrar arquivos ocultos Windows 7'\nAlém disso, qualquer editor de texto normal deve fazer isso, mas há alguns que irão lhe ajudar a escrever o código.\n\nAlguns editores gratuitos:\nGedit, Vim (Linux)\nNotepad++ (Windows)"), inBetweenSteps = true}
 		tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	else
 		tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
@@ -265,7 +265,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].event = firstPrint(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("A função print permite imprimir qualquer texto na tela (imprime tudo que está dentro das aspas) ou variáveis do console do jogo. Isso permite que você depure facilmente seu código mais tarde. Experimente e você verá o que eu quero dizer."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("A função print permite imprimir qualquer texto na tela (imprime tudo que está dentro das aspas) ou variáveis do console do jogo. Isso permite que você depure facilmente seu código mais tarde. Experimente e você verá o que eu quero dizer."), inBetweenSteps = true}
 	--tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
@@ -291,7 +291,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].event = setTrainPlacingEvent(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("Nota:\n-As coordenadas (X e Y) vão de 1 para a largura do mapa (or altura). Você vai aprender mais sobre a largura e altura máxima do mapa mais tarde.\n-Se você chamar buyTrain com coordenadas que não condizem com os trilhos, o jogo vai colocar o trem no trilho mais próximo que ele encontrar."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Nota:\n-As coordenadas (X e Y) vão de 1 para a largura do mapa (or altura). Você vai aprender mais sobre a largura e altura máxima do mapa mais tarde.\n-Se você chamar buyTrain com coordenadas que não condizem com os trilhos, o jogo vai colocar o trem no trilho mais próximo que ele encontrar."), inBetweenSteps = true}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
@@ -305,7 +305,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].message = "Você programou a simples função ai.init\nA função 'ai.init()' é a função em seu script que será sempre chamada quando da rodada começar. Nesta função, você será capaz de planejar o movimento de seus trens e - assim como você fez - comprar seus primeiros trens e colocá-los no mapa."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("A função ai.init() geralmente é chamada com 2 argumentos, tipo assim:\nfunction ai.init( map, money )\nO primeiro contém o mapa atual (mais sobre isso mais tarde) e o segundo tem a quantidade de dinheiro que você possui. Dessa forma, você pode verificar quantos trens você pode comprar. Você sempre terá dinheiro suficiente para comprar pelo menos um trem no início rodada.\nPor enquanto, podemos simplesmente ignorar esses argumentos."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("A função ai.init() geralmente é chamada com 2 argumentos, tipo assim:\nfunction ai.init( map, money )\nO primeiro contém o mapa atual (mais sobre isso mais tarde) e o segundo tem a quantidade de dinheiro que você possui. Dessa forma, você pode verificar quantos trens você pode comprar. Você sempre terá dinheiro suficiente para comprar pelo menos um trem no início rodada.\nPor enquanto, podemos simplesmente ignorar esses argumentos."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
@@ -315,7 +315,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].event = setPassengerStart(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("GLaDOS quer ir para a loja de tortas. Ela prometeu um bolo à alguém muito especial.\n\n...\nE ela quer manter essa promessa."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("GLaDOS quer ir para a loja de tortas. Ela prometeu um bolo à alguém muito especial.\n\n...\nE ela quer manter essa promessa."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
@@ -346,7 +346,7 @@ function tutorial.createTutBoxes()
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = pickUpPassengerStep1
 	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Mais Informações", event = additionalInformation("Isso significa que o passageiro SÓ vai ser pego se o trem não possuir um outro passageiro."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Isso significa que o passageiro SÓ vai ser pego se o trem não possuir um outro passageiro."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	

@@ -157,10 +157,10 @@ function tutorial.start()
 	map.print()
 	
 	loadingScreen.reset()
-	loadingScreen.addSection("New Map")
-	loadingScreen.addSubSection("New Map", "Size: " .. tutMap.width .. "x" .. tutMap.height)
-	loadingScreen.addSubSection("New Map", "Time: Day")
-	loadingScreen.addSubSection("New Map", "Tutorial 4: Close is good")
+	loadingScreen.addSection("Novo Mapa")
+	loadingScreen.addSubSection("Novo Mapa", "Tamanho: " .. tutMap.width .. "x" .. tutMap.height)
+	loadingScreen.addSubSection("Novo Mapa", "Tempo: Dia")
+	loadingScreen.addSubSection("Novo Mapa", "Tutorial 4: Perto é bom")
 
 	train.init()
 	train.resetImages()
@@ -208,89 +208,89 @@ function tutorial.createTutBoxes()
 	
 	local k = 1
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Smarter Choice"
-	tutorialSteps[k].message = "This tutorial will teach you:\n\nHow to choose which passenger to pick up."
+	tutorialSteps[k].stepTitle = "Escolha mais inteligente"
+	tutorialSteps[k].message = "Esse tutorial irá lhe ensinar:\n\nComo escolher qual passageiro pegar."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Start Tutorial", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Começar Tutorial", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "There is a group of people on this map. All of them want to go to different places. (Hold down Space to see where they want to go). However, not all of these places are nearby. To be efficient and transport as many passengers as possible (in as little time as possible), we'll learn how to choose the passenger with the shortest travel distance (meaning the distance between his start and destination points)."
+	tutorialSteps[k].message = "Há um grupo de pessoas nesse mapa. Todos eles querem ir a um lugar diferente. (Mantenha pressionado Espaço para ver onde eles querem ir). Entretanto, nem todos esses lugares são próximos. Para ser eficiente e transportar o maior número possível de passageiros (no menor tempo possível), iremos aprender como escolher passageiros com a menor distância de viagem (que significa a distância entre o ponto de partida e o destino)."
 	tutorialSteps[k].event = startCreatingPassengers(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "First, we need a way to decide which distance is the shortest. To do this, let's define a function called 'distance'.\nWe'll use the well-known pythagorian theorem:\na²+b² = c² or c = sqrt(a²+b²) in our case.\nType the code on the right into TutorialAI4.lua, then press Next."
+	tutorialSteps[k].message = "Primeiramente, precisamos uma maneira de decidir a menor distância. Para fazer isso, vamos definir uma função chamada 'distance'.\nNós iremos usar o famoso teorema de pitágoras:\na²+b² = c² ou c = sqrt(a²+b²) em nosso caso.\nDigite o código da direita no arquivo TutorialAI4.lua, e então pressione Próximo."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_eucledianDist)
 		end
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Now whenever we enter a square with passengers on it (ai.foundPassengers is called) we will go through the list of passengers which are on the square and compare the distance between their starting coordinates and their end coordinates."
+	tutorialSteps[k].message = "Agora, sempre que entrarmos num quadrado com passageiros dentro dele (ai.foundPassengers é chamada) iremos percorrer a lista de passageiros que estão dentro do quadrado e comparar a distância entre as coordenadas de partida e as coordenadas do destino."
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The code shown here will first create a variable 'dist' with a very high value (100). This is larger than any distance we'll encounter on this map (because the map is only 7 tiles high and 7 tiles wide). Then we start going through the list of passengers one by one. For each passenger, we calculate the distance to their destination. If it is the smallest distance so far, we save the passenger (in 'pass') and the distance (in 'dist')."
+	tutorialSteps[k].message = "O código mostrado aqui irá primeiro criar a variável 'dist' com um valor muito alto (100). Isso é maior que qualquer distância que iremos encontrar nesse mapa (porque o mapa só tem 7 tiles de altura e 7 tiles de largura). Então começamos a ir entre a lista de passageiros um por um. Para cada passageiro, nós calculamos a distância para seus destinos. Se for a menor distância até agora, salvamos o passageiro (em 'pass') e a distância (em 'dist')."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_foundPassengers1)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("For advanced users: This code could of course be written more beautifully with a 'for-loop'. To keep the tutorial short, I won't cover for-loops here - there's plenty of examples online. If you have no idea what a for-loop is, ignore this message."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Para usuários avançados: Esse código pode ser escrito de forma mais bonita com um 'for-loop'. Para mantar esse tutorial curto, Eu não vou falar sobre for-loops aqui - há bastante exemplos online. Se você não faz ideia do que um for-loop é, ignore essa mensagem."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "At the end of the loop, the passenger with the shortest distance has been stored in 'pass'. This is the passenger we want to pick up, so add the line of code shown in the code box to the end of your function ai.foundPassengers (after the while loop)."
+	tutorialSteps[k].message = "No final do loop, o passageiro com a menor distância foi armazenado em 'pass'. Esse é o passageiro que queremos pegar, então adicione a linha de código mostrada nessa caixa no fim da sua função ai.foundPassengers (depois do while loop)."
 	tutorialSteps[k].event =  function()
 			cBox = codeBox.new(CODE_BOX_X, CODE_BOX_Y, CODE_foundPassengers2)
 		end
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Of course, this method is still far from perfect. For example, the distance to a passenger's destination might be short, but if the train is headding in the wrong direction and can't turn around, it might still be wiser to transport another passenger.\nBut I'll leave this for you to figure out - later."), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("De fato, esse método está longe de ser perfeito. Por exemplo, a distância para o destino do passageiro pode ser curta, mas se o trem está direcionado na direção oposta e não pode virar, pode ser mais inteligente transportar outro passageiro.\nMas eu vou deixar isso para você descobrir - depois."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Of course, we still need to drop off passengers when've reached the destination.\nAdd this final piece of code, then reload."
+	tutorialSteps[k].message = "De fato, nós ainda precisamos deixar passageiros quando chegarmos no destino.\nAdicione esse pedaço de código, então recarregue."
 	tutorialSteps[k].event = handleDropOff(k)
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("The tutorial will continue when you've transported 4 passengers correctly.\nWhen you transport the wrong passenger, the next set of passengers won't be created -> so make sure to always pick up the one with the shortes traveling distance.\nIf something doesn't work yet, just go back and fix it, then reload."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("O tutorial irá continuar quando você transportar 4 passageiros corretamente.\nQuando você transporta o passageiro errado, o próximo conjunto de passageiros não será criado -> então certifique-se de sempre pegar o passageiro com menor distância de viagem.\nSe algo não funcionar, é só voltar e consertar, depois recarregue."), inBetweenSteps = true}
 	k = k + 1
 	
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Done!"
-	tutorialSteps[k].message = "You've completed the fourth tutorial! Now you should be ready to start the challenges.\nYou can also let specific AIs compete using the 'New Match' entry in the main menu.\nIf you're stuck, check out the wiki and the full documentation on " .. MAIN_SERVER_IP .. "!\n"
+	tutorialSteps[k].stepTitle = "Completo!"
+	tutorialSteps[k].message = "Você concluiu o quarto tutorial! Agora deve estar pronto para começar os desafios.\nVocê também pode deixar AIs competindo entrando na opção 'Nova Partida' no menu principal.\nSe você estiver emperrado, confira a wiki e a documentação completa em " .. MAIN_SERVER_IP .. "!\n"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "When you think you're ready, make sure to upload the AI to the website (" .. MAIN_SERVER_IP .. ") and watch it compete in live, online matches! Make sure to get to the top of the highscore list!"
+	tutorialSteps[k].message = "Quando você achar que estiver preparado, faça o upload da AI para o website (" .. MAIN_SERVER_IP .. ") e assista-o competir ao vivo, partidas online! Tente chegar ao topo do highscore!"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "More Info", event = additionalInformation("Before you go on to the challenges, here's some advice:\n1) Many maps can be played with the most basic AI. However, only more advanced AIs will stand a chance against competition.\n2) Try to beat maps with AIs you already coded. Only change them if they don't win.\n3) NEVER pick up zombies.", CODE_moreIdeas), inBetweenSteps = true}
-	tutorialSteps[k].buttons[3] = {name = "Next", event = nextTutorialStep}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Mais Info", event = additionalInformation("Antes de você ir aos desafios, aqui estão alguns conselhos:\n1) Muitos mapas podem ser jogados com a AI mais básica. Entretanto, somente AIs mais avançadas irão ter alguma chance numa competição.\n2) Tente não completar mapas com AIs que você já escreveu. Só mude elas se não vencerem.\n3) NUNCA pegue zumbis.", CODE_moreIdeas), inBetweenSteps = true}
+	tutorialSteps[k].buttons[3] = {name = "Próximo", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Exit to the menu ... ?"
+	tutorialSteps[k].message = "Sair para o menu ... ?"
 	tutorialSteps[k].buttons = {}
-	tutorialSteps[k].buttons[1] = {name = "Back", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Quit", event = endTutorial}
+	tutorialSteps[k].buttons[1] = {name = "Voltar", event = prevTutorialStep}
+	tutorialSteps[k].buttons[2] = {name = "Sair", event = endTutorial}
 	--tutorialSteps[k].buttons[3] = {name = "Next Tutorial", event = nextTutorial}
 	k = k + 1
 end
@@ -390,7 +390,7 @@ function tutorial.roundStats()
 	y = 20
 	love.graphics.draw(roundStats, x, y)
 	
-	love.graphics.print("Tutorial 4: Choose wisely!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 4: Choose wisely!")/2, y+10)
+	love.graphics.print("Tutorial 4: Escolha sabiamente!", x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth("Tutorial 4: Choose wisely!")/2, y+10)
 	love.graphics.print(currentStepTitle, x + roundStats:getWidth()/2 - FONT_STAT_MSGBOX:getWidth(currentStepTitle)/2, y+30)
 end
 

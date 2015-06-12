@@ -406,11 +406,19 @@ function ai.foundPassengers(train, p)		-- called when the train enters a tile wh
 	
 	-- if a passenger name was returned, then try to let this passenger board the train:
 	if result and not train.curPassenger then		-- ... but only if the train does not currently carry a passenger.
-		for k, pass in pairs(p) do
-			if result.name and pass.name == result.name then
-				passenger.boardTrain(train, pass.name)
-				--print("boarded")
-				break
+		if type(result) == 'table' then
+			for k, pass in pairs(p) do
+				if result.name and pass.name == result.name then
+					passenger.boardTrain(train, pass.name)
+					--print("boarded")
+					break
+				end
+			end
+		else
+			console.add(aiList[train.aiID].name .. ": Error in function: ai.foundPassengers(). Your function must return a passenger or nil.", {r = 255,g=50,b=50})
+			--print("\tCoroutine stopped prematurely: " .. aiList[i].name .. ".foundDestination()")
+			if PAUSE_ON_ERROR then
+				pauseGame()
 			end
 		end
 	end
@@ -422,12 +430,12 @@ function ai.passengerBoarded(train, passenger)		-- called when another player's 
 		if i ~= train.aiID and aiList[i] then
 			if aiList[i].passengerBoarded then
 				local cr = coroutine.create(runAiFunctionCoroutine)
-			
+
 				tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 				if train.curPassenger then
 					tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 				end
-			
+
 				ok, result = coroutine.resume(cr, aiList[i].passengerBoarded, MAX_LINES_EXECUTING, tr, passenger)
 				if not ok or coroutine.status(cr) ~= "dead" then		
 					console.add(aiList[i].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
@@ -446,12 +454,12 @@ function ai.foundDestination(train)		-- called when the train enters a field tha
 	if aiList[train.aiID] then
 		if aiList[train.aiID].foundDestination then
 			local cr = coroutine.create(runAiFunctionCoroutine)
-			
+
 			tr = {ID=train.ID, name=train.name, x=train.tileX, y=train.tileY, dir=train.dir}		-- don't give the original data to the ai!
 			if train.curPassenger then
 				tr.passenger = {name = train.curPassenger.name, destX = train.curPassenger.destX, destY = train.curPassenger.destY}
 			end
-			
+
 			ok, result = coroutine.resume(cr, aiList[train.aiID].foundDestination, MAX_LINES_EXECUTING, tr)
 			if not ok or coroutine.status(cr) ~= "dead" then		
 				console.add(aiList[train.aiID].name .. ": Stopped function: ai.foundDestination()", {r = 255,g=50,b=50})
@@ -469,7 +477,7 @@ function ai.mapEvent(aiID, ... )		-- called when the map script wants to.
 	if aiList[aiID] then
 		if aiList[aiID].mapEvent then
 			local cr = coroutine.create(runAiFunctionCoroutine)
-			
+
 			args = {...}
 			ok, result = coroutine.resume(cr, aiList[aiID].mapEvent, MAX_LINES_EXECUTING, unpack(args))
 			if not ok or coroutine.status(cr) ~= "dead" then		
@@ -488,7 +496,7 @@ function ai.enoughMoney(aiID, cash)
 	if aiList[aiID] then
 		if aiList[aiID].enoughMoney then
 			local cr = coroutine.create(runAiFunctionCoroutine)
-			
+
 			ok, result = coroutine.resume(cr, aiList[aiID].enoughMoney, MAX_LINES_EXECUTING, cash)
 			if not ok or coroutine.status(cr) ~= "dead" then
 				console.add(aiList[aiID].name .. ": Stopped function: ai.enoughMoney()", {r = 255,g=50,b=50})

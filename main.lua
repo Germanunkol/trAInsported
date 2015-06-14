@@ -339,7 +339,6 @@ else
 	-- Check Löve version:
 	
 	if love._version ~= "0.9.1" then
-		print("You are using the wrong löve version! 0.9.1 is needed to run this game!")
 		return
 	end
 	-------------------------------

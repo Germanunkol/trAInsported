@@ -220,7 +220,11 @@ if not DEDICATED then
 		--t.screen.width = 800
 		--t.screen.height = 600
 		--t.screen.fullscreen = false
-		t.title = "trAInsported"        -- The title of the window the game is in (string)
+		if love._version ~= "0.9.1" then
+			t.title = "You are using the wrong löve version! 0.9.1 is needed to run this game!"
+		else
+			t.title = "trAInsported"        -- The title of the window the game is in (string)
+		end
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
 	end
@@ -232,7 +236,11 @@ else
 		--t.screen.width = 50
 		--t.screen.height = 25
 		--t.screen.fullscreen = false
-		t.title = "trAInsported"        -- The title of the window the game is in (string)
+		if love._version ~= "0.9.1" then
+			t.title = "You are using the wrong löve version! 0.9.1 is needed to run this game!"
+		else
+			t.title = "trAInsported"        -- The title of the window the game is in (string)
+		end
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
 	

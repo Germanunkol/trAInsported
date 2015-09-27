@@ -221,6 +221,7 @@ if not DEDICATED then
 		--t.screen.height = 600
 		--t.screen.fullscreen = false
 		t.title = "trAInsported"        -- The title of the window the game is in (string)
+		t.version = "0.9.1"
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
 	end
@@ -233,6 +234,7 @@ else
 		--t.screen.height = 25
 		--t.screen.fullscreen = false
 		t.title = "trAInsported"        -- The title of the window the game is in (string)
+		t.version = "0.9.1"
 		t.author = "Germanunkol"        -- The author of the game (string)
 		t.url = "http://www.indiedb.com/members/germanunkol"
 	

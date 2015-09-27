@@ -335,6 +335,12 @@ else
 	------------------------------------------
 	-- Client (graphical):
 	
+	----------------------
+	-- Check Löve version:
+	
+	if love._version ~= "0.9.1" then
+		return
+	end
 	-------------------------------
 	-- HANDLE COMMAND LINE OPTIONS
 	

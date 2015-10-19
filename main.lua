@@ -396,9 +396,9 @@ else
 	-- Main function, runs at startup:
 	function love.load(args)
 
-		for k, v in pairs(args) do
+		--[[for k, v in pairs(args) do
 			print("---", k, v)
-		end
+		end]]
 	
 		love.filesystem.setIdentity("trAInsported")
 	
@@ -459,7 +459,6 @@ else
 		tbl = love.filesystem.getDirectoryItems("Languages")
 		for k, file in pairs(tbl) do
 			if not file:find("_") and file:find(".lua") and #file - file:find(".lua") == 3 then
-				print(file, file:find(".lua"), #file - file:find(".lua"))
 				table.insert(LANGUAGES, file:sub(1, #file-4))
 			end
 		end

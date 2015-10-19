@@ -32,6 +32,8 @@ function connection.startClient(ip, port)
 	if not port then port = PORT end
 	if not ip then return end
 
+	print("Connecting to " .. ip .. " @ " .. port)
+
 	if connectionThread then
 		connectionThreadChannelIn:push({key="command", "quit"})
 

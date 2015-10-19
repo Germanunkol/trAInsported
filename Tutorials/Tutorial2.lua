@@ -740,7 +740,6 @@ function eventChooseEastThenSouth(k)
 	
 			tutorial.restartEvent = function()
 					junctionCount = 1
-					beenEast = true
 					tutorial.reachedNewTileEvent = function(x, y)
 						if x == 3 and y == 2 and beenEast == false and beenSouth == false then
 							beenEast = true
@@ -758,6 +757,8 @@ function eventChooseEastThenSouth(k)
 								if currentStep == k then
 									if currentTutBox then
 										currentTutBox.text = "You were supposed to go east first, then go south! Modify your code, then reload."
+										beenSouth = false
+										beenEast = false
 									end
 								end
 							end

@@ -70,19 +70,9 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 		for i = 1, #sendPacketsList do
 			--print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
-			if type(sendPacketsList[i].ID) == "string" and sendPacketsList[i].ID:find("U:") then
-				error("sendPacketsList[i].ID", sendPacketsList[i].ID)
-			end
-			if type(sendPacketsList[i].time) == "string" and sendPacketsList[i].time:find("U:") then
-				error("sendPacketsList[i].time", sendPacketsList[i].time)
-			end
-			if type(sendPacketsList[i].event) == "string" and sendPacketsList[i].event:find("U:") then
-				error("sendPacketsList[i].event", sendPacketsList[i].event)
-			end
-			s = "U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n"
-			if s:find(".U:") then
-				print("ERROR!", s)
-			end
+			local f = io.open("synch_log.txt", "a")
+			f:write("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")
+			f:close()
 		end
 		
 		if serverTime then
@@ -101,7 +91,8 @@ function connection.handleServer()
 			table.insert(clientList, newClient)
 			newClient:settimeout(.0001)
 			print("new client!")
-			clientSynchronize(newClient)	-- send everything to the client that has been sent before
+			-- send everything to the new client that has been sent to others already
+			clientSynchronize(newClient)
 		end
 		
 		for k, cl in pairs(clientList) do

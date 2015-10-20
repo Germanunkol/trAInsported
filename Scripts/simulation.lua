@@ -365,7 +365,6 @@ function runUpdate(event, t1, t2)
 			yEnd = tonumber(yEnd)
 			vipTime = tonumber(vipTime)
 			if vip == "true" then 
-				print("CREATING VIP!")
 				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, vip=true, vipTime=vipTime, maxVipTime=vipTime, speach=speach, markZ = love.timer.getDelta()}
 			else
 				p = {name=name, tileX=tileX, tileY=tileY, x=x, y=y, image=passengerImage, xEnd=xEnd, yEnd=yEnd, destX=destX, destY=destY, speach=speach}

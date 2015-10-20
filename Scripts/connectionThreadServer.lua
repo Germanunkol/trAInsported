@@ -43,6 +43,16 @@ print = function( ... )
 	channelOut:push({key="print", str})
 end
 
+-- Sends a string fully. If a timeout is reached, it will try again until there's
+-- no more timeout.
+function sendReliable( client, msg )
+	local num, err, lastByte = client:send( msg )
+	while num == nil and err == 'timeout' do
+		msg = msg:sub( lastByte + 1 )
+		num, err, lastByte = client:send( msg )
+	end
+end
+
 function connection.startServer()
 	ok, server = pcall(socket.bind, "*", PORT)
 	if not ok then
@@ -66,13 +76,10 @@ end
 
 function clientSynchronize(client)		-- called on new clients. Will get them up to date
 	if curMapStr then
-		client:send("MAP: " .. curMapStr .. "\n")
+		sendReliable( client, "MAP: " .. curMapStr .. "\n")
 		for i = 1, #sendPacketsList do
 			--print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
-			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
-			local f = io.open("synch_log.txt", "a")
-			f:write("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")
-			f:close()
+			sendReliable( client, "U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
 		end
 		
 		if serverTime then
@@ -90,7 +97,7 @@ function connection.handleServer()
 		if newClient then
 			table.insert(clientList, newClient)
 			newClient:settimeout(.0001)
-			print("new client!")
+			print("New client!")
 			-- send everything to the new client that has been sent to others already
 			clientSynchronize(newClient)
 		end
@@ -105,7 +112,7 @@ function connection.handleServer()
 				if msg == "closed" then
 					cl:shutdown()
 					clientList[k] = nil
-					print("client left.")
+					print("Client left.")
 				end
 			end
 		end

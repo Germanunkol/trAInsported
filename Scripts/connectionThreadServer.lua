@@ -70,9 +70,6 @@ function clientSynchronize(client)		-- called on new clients. Will get them up t
 		for i = 1, #sendPacketsList do
 			--print(client[1], "SENT:","U:" .. sendPacketsList[i].ID .. "|".. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event)
 			client:send("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")		-- send all events to client that have already happened (in the right order)
-			local f = io.open("synch_log.txt", "a")
-			f:write("U:" .. sendPacketsList[i].ID .. "|" .. sendPacketsList[i].time .. "|" .. sendPacketsList[i].event .. "\n")
-			f:close()
 		end
 		
 		if serverTime then
@@ -158,10 +155,6 @@ while true do
 			local msg = packet[1]
 
 			newPacketID = sendPackets.getPacketNum() + 1
-
-			if msg:find("U:") then
-				print("PANIC!!", msg)
-			end
 
 			for k, cl in pairs(clientList) do
 				ok, err = cl:send("U:" .. newPacketID .. "|" .. msg .. "\n")		-- send update to clients.

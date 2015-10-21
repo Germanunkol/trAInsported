@@ -68,6 +68,7 @@ function connection.handleConnection()
 			if packet[1]:find("closed") then
 				lostConnection = true
 			end
+			print( "[CONNECTION] " .. packet[1] )
 		end
 
 		if packet.key == "newMap" then

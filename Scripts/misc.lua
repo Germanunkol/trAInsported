@@ -49,11 +49,11 @@ end
 -- Attempt to open a file browser with the AI folder.
 function openAIFolder()
 	if love._os == "OS X" then
-		os.execute("open " .. AI_DIRECTORY)
+		os.execute("open '" .. AI_DIRECTORY .. "'")
 	elseif love._os == "Windows" then
 		os.execute("explorer  %appdata%\\LOVE\\trAInsported\\AI")
 	else
-		os.execute("xdg-open " .. AI_DIRECTORY)
+		os.execute("xdg-open '" .. AI_DIRECTORY .. "'")
 	end
 end
 ---------------------------------------

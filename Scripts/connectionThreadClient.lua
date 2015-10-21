@@ -33,14 +33,14 @@ print = function( ... )
 	channelOut:push({key="print", str})
 end
 
-function newPacket(text)
+--[[function newPacket(text)
 	channelOut:push({key="packet", text})
-end
+end]]
 
 print("Attempting to connect to:", ip .. ":" .. port)
 ok, client = pcall(socket.connect, ip, port)
 if not ok or not client then
-	channelOu:push({key="statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance."})
+	channelOut:push({key="statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance."})
 	error("Could not connect!")
 	return
 else
@@ -49,6 +49,19 @@ else
 end
 
 local packet
+
+function receiveReliable( client )
+	local result = ""
+	local ok, msg, part = client:receive()
+	print("ok: " ..ok .. "\n")
+	while not ok and msg == "timeout" do
+		print("ok: " ..ok .. " msg " .. msg .. "\n");
+		result = result .. part
+		ok, msg, part = client:receive()
+	end
+	result = result .. ok
+	return ok, msg
+end
 
 startTime = os.time()
 while true do
@@ -62,9 +75,11 @@ while true do
 			return
 		end
 	end
-	data, msg = client:receive()
+	data, msg = receiveReliable( client );
+	if msg == "timeout" then print( "ERROR: timeout!\n" ); end
 	if data and not msg then
 
+		print( "RECEIVED: " .. data )
 		if data:find(".U:") and not data:find("MAP:") == 1 then
 			print("RECEIVED: faulty packet")
 		end

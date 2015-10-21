@@ -68,7 +68,6 @@ function connection.handleConnection()
 			if packet[1]:find("closed") then
 				lostConnection = true
 			end
-			print( "[CONNECTION] " .. packet[1] )
 		end
 
 		if packet.key == "newMap" then
@@ -97,10 +96,10 @@ function connection.handleConnection()
 
 		if packet.key == "serverTime" then
 			serverTime = packet[1]
-			print("Received new server time: " .. serverTime)
+			--[[print("Received new server time: " .. serverTime)
 			if simulationMap then
 				print("My time: " .. simulationMap.time, "Delta:", serverTime - simulationMap.time .. " seconds" )
-			end
+			end]]
 		end
 
 		if packet.key == "statusErr" then

@@ -48,24 +48,34 @@ end
 ---------------------------------------
 -- Attempt to open a file browser with the AI folder.
 function openAIFolder()
-	if love._os == "OS X" then
+	--[[if love._os == "OS X" then
 		os.execute("open '" .. AI_DIRECTORY .. "'")
 	elseif love._os == "Windows" then
-		os.execute("explorer  %appdata%\\LOVE\\trAInsported\\AI")
+		os.execute("explorer  '%appdata%\\LOVE\\trAInsported\\AI'")
 	else
 		os.execute("xdg-open '" .. AI_DIRECTORY .. "'")
+	end]]
+	success = love.system.openURL( "file://" .. AI_DIRECTORY )
+	if not success then
+		statusMsg.new("Could not open folder. Try going to " .. AI_DIRECTORY .. " manually.", true)
 	end
 end
 ---------------------------------------
 -- Attempt to open browser:
 function openIssuesPage()
-	if love._os == "OS X" then
+	--[[if love._os == "OS X" then
 		os.execute("open https://github.com/Germanunkol/trAInsported/issues")
 	elseif love._os == "Windows" then
 		os.execute("start https://github.com/Germanunkol/trAInsported/issues")
 	else
 		os.execute("xdg-open https://github.com/Germanunkol/trAInsported/issues")
-	end
+	end]]
+	love.system.openURL("https://github.com/Germanunkol/trAInsported/issues")
+end
+---------------------------------------
+-- Attempt to open browser:
+function openWebsite()
+	love.system.openURL("http://trainsportedgame.no-ip.org")
 end
 ---------------------------------------
 -- 

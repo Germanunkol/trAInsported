@@ -94,6 +94,8 @@ LNG.confirm_leave = [[Leave the current match and return to menu?]]
 
 LNG.open_folder = [[Open Folder]]
 LNG.open_folder_tooltip = [[Opens the folder: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+LNG.open_website = [[WWW]]
+LNG.open_website_tooltip = [[Visit us on the web!]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 
 LNG.reload = [[Reload]]
 LNG.reload_confirm = [[Reload the AIs?]]

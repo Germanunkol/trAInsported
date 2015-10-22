@@ -96,6 +96,8 @@ LNG.confirm_leave = [[Momentanes Match verlassen?]]
 
 LNG.open_folder = [[Ordner öffnen]]
 LNG.open_folder_tooltip = [[Öffnet den Ordner: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+LNG.open_website = [[WWW]]
+LNG.open_website_tooltip = [[Offizielle trAInsported website]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 
 LNG.reload = [[Neu Laden]]
 LNG.reload_confirm = [[Runde neu starten?]]

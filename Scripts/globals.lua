@@ -10,6 +10,9 @@ DEFAULT_RES_X = 1024
 DEFAULT_RES_Y = 600
 AI_DIRECTORY = "AI/" -- fallback
 
+LOVE_VERSION_MAJOR = 0
+LOVE_VERSION_MINOR = 9
+
 -- Connections:
 FALLBACK_SERVER_IP = "127.0.0.1"
 MAIN_SERVER_IP = "trainsportedgame.no-ip.org"

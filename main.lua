@@ -10,10 +10,6 @@ package.path = "Scripts/?.lua;" .. package.path
 
 DEBUG = false
 
-loveReqVersionMajor = 0
-loveReqVersionMinor = 9
-versionMismatch = false
-
 -- Add Scripts used by both client and server:
 --require("globals")
 require("Scripts/globals")
@@ -343,12 +339,11 @@ else
 	
 	----------------------
 	-- Check Löve version:
-	if love._version_major ~= loveReqVersionMajor or love._version_minor ~= loveReqVersionMinor then
-		versionMismatch = true
+	if love._version_major ~= LOVE_VERSION_MAJOR or love._version_minor ~= LOVE_VERSION_MINOR then
 	
 		error( "Wrong version of the Löve engine detected. " ..
 				"TrAInsported was programmed for version '" ..
-				loveReqVersionMajor .. "." .. loveReqVersionMinor .. "'.\n" ..
+				LOVE_VERSION_MAJOR .. "." .. LOVE_VERSION_MINOR .. "'.\n" ..
 				"Get the engine at https://love2d.org/.")
 	end
 	-------------------------------

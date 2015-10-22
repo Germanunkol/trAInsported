@@ -169,7 +169,7 @@ function menu.init(menuX, menuY)
 	y = y + 60
 	menuButtons.buttonOpenFolder = button:new(x, y, LNG.open_folder, openAIFolder, nil, nil, nil, nil, LNG.open_folder_tooltip:gsub("AI_FOLDER_DIRECTORY", AI_DIRECTORY))
 	y = y + 45
-	menuButtons.buttonOpenFolder = button:new(x, y, LNG.open_website, openWebsite, nil, nil, nil, nil, LNG.open_website_tooltip )
+	menuButtons.buttonOpenWWW = button:new(x, y, LNG.open_website, openWebsite, nil, nil, nil, nil, LNG.open_website_tooltip )
 	y = y + 45
 	menuButtons.buttonSettings = button:new(x, y, LNG.menu_settings, menu.settings, nil, nil, nil, nil, LNG.menu_settings_tooltip)
 	y = y + 60

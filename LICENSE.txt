@@ -1,4 +1,8 @@
 Copyright © 2013 Micha 'Germanunkol' Pfeiffer
+
+The fonts used in this project have their own license (see UbuntuFont subfolder).
+For the rest of the trAInsported project is placed under the following license.
+
 This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING.txt file or http://www.wtfpl.net/ for more details.

@@ -256,7 +256,27 @@ function sandbox.createNew(aiID, scriptName)
 	end
 	
 	sb.require = sb.dofile
+	
+	sb.setmetatable = setmetatable
+	sb.getmetatable = getmetatable
+	
+	protectMetatables(sb)
+	
 	return sb
+end
+
+function protectMetatables(t)
+	if type(t) ~= "table" then
+		return
+	end
+	
+	local metatable = getmetatable(t) or {}
+	metatable.__metatable=false -- Protect metatable, cannot be modified anymore
+	setmetatable(t, metatable)
+	
+	for _, v in pairs(t) do
+		protectMetatables(v)
+	end
 end
 
 return sandbox

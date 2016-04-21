@@ -339,7 +339,7 @@ else
 	
 	----------------------
 	-- Check Löve version:
-	if love._version_major ~= LOVE_VERSION_MAJOR or love._version_minor ~= LOVE_VERSION_MINOR then
+	if love._version_major < LOVE_VERSION_MAJOR or ( love._version_major == LOVE_VERSION_MAJOR and love._version_minor < LOVE_VERSION_MINOR) then
 	
 		error( "Wrong version of the Löve engine detected. " ..
 				"TrAInsported was programmed for version '" ..

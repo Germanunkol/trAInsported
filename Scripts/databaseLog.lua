@@ -450,7 +450,7 @@ function log.findTable()
 					found = true
 					print("Found table 'ais'. Success!")
 				else
-					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, cash INT, scriptName VARCHAR(40), timeCreated DATETIME);")		-- see if the "ais" table exists. if not, attempt to create it:
+					cursor = conn:execute("CREATE TABLE ais (name VARCHAR(30), owner VARCHAR(30), matches INT, wins INT, points INT, scriptName VARCHAR(40), timeCreated DATETIME);")		-- see if the "ais" table exists. if not, attempt to create it:
 					if cursor then
 						found = true
 						print("Created table 'ais' in " .. MYSQL_DATABASE .. ".")

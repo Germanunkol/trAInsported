@@ -38,12 +38,12 @@ LNG.menu_choose_dimensions_tooltip1 = [[Select width]]
 LNG.menu_choose_dimensions_tooltip2 = [[Select height]]
 
 LNG.menu_choose_timemode = [[Time and Mode:]]
-LNG.menu_time_name[1] = [[Day]]
-LNG.menu_time_name[2] = [[Rushhour]]
+LNG.menu_time_name[1] = [[Jour]]
+LNG.menu_time_name[2] = [[Heure de pointe]]
 LNG.menu_time_tooltip[1] = [[Normal setup, average amount of passengers]]
-LNG.menu_time_tooltip[2] = [[More VIPs!]]
-LNG.menu_mode_name[1] = [[Time Limit]]
-LNG.menu_mode_name[2] = [[Passengers]]
+LNG.menu_time_tooltip[2] = [[Plus de VIPs!]]
+LNG.menu_mode_name[1] = [[Limite de temps]]
+LNG.menu_mode_name[2] = [[Passagers]]
 LNG.menu_mode_tooltip[1] = [[Transport the most passengers in a set amount of time.]]
 LNG.menu_mode_tooltip[2] = [[Fixed amount of passengers. You have to try to transport more than any other AI.]]
 
@@ -56,7 +56,7 @@ LNG.menu_region_tooltip[2] = [[Twice as many passengers as rural setting has.]]
 LNG.menu_start = [[Start]]
 LNG.menu_start_tooltip = [[Start the match with these settings]]
 
-LNG.menu_main_server = [[Main server]]
+LNG.menu_main_server = [[Serveur principal]]
 LNG.menu_main_server_tooltip = [[Connect to the main server. Must be connected to the internet!]]
 LNG.menu_local_server = [[Localhost]]
 LNG.menu_local_server_tooltip = [[Connect to a server running on this machine.]]
@@ -82,7 +82,7 @@ LNG.menu_err_min_ai = [[Need to choose at least one AI!]]
 LNG.menu_err_dimensions = [[Invalid map dimensions!]]
 LNG.menu_err_mode = [[Invalid game mode!]]
 LNG.menu_err_time = [[Invalid game time!]]
-LNG.menu_err_resolution = [[Failed to set resolution!]]
+LNG.menu_err_resolution = [[Impossible de définir la résolution !]]
 
 
 -------------------------------------------------
@@ -92,12 +92,12 @@ LNG.menu_err_resolution = [[Failed to set resolution!]]
 LNG.fast_forward = [[FAST FORWARD TO CATCH UP WITH SERVER]]
 LNG.confirm_leave = [[Leave the current match and return to menu?]]
 
-LNG.open_folder = [[Open Folder]]
+LNG.open_folder = [[Dossier ouvert]]
 LNG.open_folder_tooltip = [[Opens the folder: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 LNG.open_website = [[WWW]]
 LNG.open_website_tooltip = [[Visit us on the web!]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 
-LNG.reload = [[Reload]]
+LNG.reload = [[Recharger]]
 LNG.reload_confirm = [[Reload the AIs?]]
 LNG.reload_tooltip = [[Reloads the AI scripts and restarts the round.]]
 LNG.disconnect = [[Disconnect]]
@@ -107,7 +107,7 @@ LNG.speed_up = [[Speeds game up]]
 LNG.slow_down = [[Slows game down]]
 LNG.pause = [[Pauses game]]
 
-LNG.by = [[by]]
+LNG.by = [[par]]
 LNG.transported = [[Transported]]
 -- the following three strings are for the string "X of Y passengers"
 LNG.transported1 = [[]]		-- before X

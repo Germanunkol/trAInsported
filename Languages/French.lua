@@ -14,21 +14,21 @@ LNG.load_generation = {}
 -- Menu:
 -------------------------------------------------
 LNG.menu_live = [[Vie]]
-LNG.menu_live_tooltip = [[Watch the live online matches!]]
+LNG.menu_live_tooltip = [[Regardez les matchs directement en ligne !]]
 LNG.menu_tutorial = [[Tutoriels]]
-LNG.menu_tutorial_tooltip = [[Get to know the game!]]
+LNG.menu_tutorial_tooltip = [[Apprenez à connaître le jeu !]]
 LNG.menu_challenge = [[Challenge]]
 LNG.menu_challenge_tooltip = [[Beat the challenge maps! Get more maps online on the game's website.]]
-LNG.menu_compete = [[Compete]]
-LNG.menu_compete_tooltip = [[Set up a test match for your AI]]
-LNG.menu_random = [[Random]]
+LNG.menu_compete = [[Rivaliser]]
+LNG.menu_compete_tooltip = [[Mettre en place un test match pour votre IA]]
+LNG.menu_random = [[Aléatoire]]
 LNG.menu_random_tooltip = [[Start a random match on a random map using random AIs from your 'AI' folder]]
 LNG.menu_settings = [[Paramètres]]
 LNG.menu_settings_tooltip = [[Change le language, la résolution etc.]]
 LNG.menu_exit = [[Quitter]]
 
-LNG.menu_return = [[Return]]
-LNG.menu_return_to_main_menu_tooltip = [[Go back to main menu]]
+LNG.menu_return = [[Retour]]
+LNG.menu_return_to_main_menu_tooltip = [[Retourner au menu principal]]
 
 LNG.menu_choose_ai = [[Choose AIs for Match:]]
 LNG.menu_choose_ai_tooltip = [[Choose this AI for the match?]]

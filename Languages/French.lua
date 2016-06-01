@@ -89,8 +89,8 @@ LNG.menu_err_resolution = [[Impossible de définir la résolution !]]
 -- INGAME:
 -------------------------------------------------
 -- Fast forward message:
-LNG.fast_forward = [[FAST FORWARD TO CATCH UP WITH SERVER]]
-LNG.confirm_leave = [[Leave the current match and return to menu?]]
+LNG.fast_forward = [[AVANCE RAPIDE pour rattraper SERVEUR]]
+LNG.confirm_leave = [[Laissez le match en cours et revenir au menu ?]]
 
 LNG.open_folder = [[Dossier ouvert]]
 LNG.open_folder_tooltip = [[Ouvre le dossier: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
@@ -146,42 +146,42 @@ LNG.load_generation["hotspots"] = [[Point chaud]]
 -------------------------------------------------
 -- The round statistics here are placed together using these strings as base. Some have versions in plural and in singular forms. If there's no difference in your language, please just copy the one version into both strings - do NOT delete the singular form!
 -- In these strings, _AINAME_ and _NUMBER_ will be replaced by the appropriate values, so make sure to include them!
-LNG.stat_most_picked_up_title = [[Hospitality]]
-LNG.stat_most_picked_up = [[AI _AINAME_ picked up _NUMBER_ passengers.]]
-LNG.stat_most_picked_up_sing = [[AI _AINAME_ picked up _NUMBER_ passenger.]]
+LNG.stat_most_picked_up_title = [[Hospitalité]]
+LNG.stat_most_picked_up = [[IA _AINAME_ ramassé _NUMBER_ passagers.]]
+LNG.stat_most_picked_up_sing = [[IA _AINAME_ ramassé _NUMBER_ passagers.]]
 
 LNG.stat_most_trains_title = [[Fleetus Maximus]]
-LNG.stat_most_trains = [[AI _AINAME_ owned _NUMBER_ trains.]]
-LNG.stat_most_trains_sing = [[AI _AINAME_ owned _NUMBER_ trains]]
+LNG.stat_most_trains = [[IA _AINAME_ en propriété _NUMBER_ trains.]]
+LNG.stat_most_trains_sing = [[IA _AINAME_ en propriété _NUMBER_ trains]]
 
-LNG.stat_most_transported_title = [[Earned Your Pay]]
-LNG.stat_most_transported = [[AI _AINAME_ brought _NUMBER_ passengers to their destinations.]]
-LNG.stat_most_transported_sing = [[AI _AINAME_ brought _NUMBER_ passenger to her/his destination.]]
+LNG.stat_most_transported_title = [[Gagné votre salaire]]
+LNG.stat_most_transported = [[IA _AINAME_ apporté _NUMBER_ les passagers à leurs destinations.]]
+LNG.stat_most_transported_sing = [[IA _AINAME_ apporté _NUMBER_ passager à son / sa destination.]]
 
-LNG.stat_most_normal_transported_title = [[Socialist]]
-LNG.stat_most_normal_transported = [[AI _AINAME_ brought _NUMBER_ non-VIP passengers to their destinations.]]
-LNG.stat_most_normal_transported_sing = [[AI _AINAME_ brought _NUMBER_ non-VIP passenger to her/his destination.]]
+LNG.stat_most_normal_transported_title = [[Socialiste]]
+LNG.stat_most_normal_transported = [[IA _AINAME_ apporté _NUMBER_ les passagers non-VIP à leurs destinations.]]
+LNG.stat_most_normal_transported_sing = [[IA _AINAME_ apporté _NUMBER_ non-VIP passager à son / sa destination.]]
 
-LNG.stat_dropped_title = [[Get lost...]]
-LNG.stat_dropped = [[AI _AINAME_ dropped off _NUMBER_ passengers where they didn't want to go.]]
-LNG.stat_dropped_sing = [[AI _AINAME_ brought _NUMBER_ passenger where he/she didn't want to go.]]
+LNG.stat_dropped_title = [[Se perdre...]]
+LNG.stat_dropped = [[IA _AINAME_ déposé _NUMBER_ les passagers étaient ils ne veulent pas aller.]]
+LNG.stat_dropped_sing = [[IA _AINAME_ apporté _NUMBER_ passagers où il / elle ne voulait pas y aller.]]
 
-LNG.stat_most_money_title = [[Capitalist]]
-LNG.stat_most_money = [[AI _AINAME_ earned _NUMBER_ credits.]]
+LNG.stat_most_money_title = [[Capitaliste]]
+LNG.stat_most_money = [[IA _AINAME_ gagné _NUMBER_ crédits.]]
 
 -- Some of the following can take up to three arguments: _NUMBER_, _AINAME_ and _TRAINNAME_:
-LNG.stat_tr_most_picked_up_title = [[Busy little Bee!]]
-LNG.stat_tr_most_picked_up = [[_TRAINNAME_ [_AINAME_] picked up more passengers than any other train.]]
+LNG.stat_tr_most_picked_up_title = [[Occupé petite abeille !]]
+LNG.stat_tr_most_picked_up = [[_TRAINNAME_ [_AINAME_] ramassé plus de passagers que tout autre train.]]
 
-LNG.stat_tr_most_transported_title = [[Home sweet Home]]
-LNG.stat_tr_most_transported = [[_TRAINNAME_ [_AINAME_] brought more passengers to their destinations than any other train.]]
+LNG.stat_tr_most_transported_title = [[La douceur du foyer]]
+LNG.stat_tr_most_transported = [[_TRAINNAME_ [_AINAME_] Apportez le plus de passagers à leurs destinations avant les autres trains.]]
 
-LNG.stat_tr_dropped_title = [[Why don't you walk?]]
-LNG.stat_tr_dropped = [[_TRAINNAME_ [_AINAME_] left _NUMBER_ passengers in the middle of nowhere!]]
-LNG.stat_tr_dropped_sing = [[_TRAINNAME_ [_AINAME_] left _NUMBER_ passenger in the middle of nowhere!]]
+LNG.stat_tr_dropped_title = [[Pourquoi ne marchez-vous pas ?]]
+LNG.stat_tr_dropped = [[_TRAINNAME_ [_AINAME_] à gauche _NUMBER_ passagers au milieu de nulle part !]]
+LNG.stat_tr_dropped_sing = [[_TRAINNAME_ [_AINAME_] à gauche _NUMBER_ passager dans le milieu de nulle part !]]
 
-LNG.stat_tr_blocked_title = [[Line is busy...]]
-LNG.stat_tr_blocked = [[_TRAINNAME_ [_AINAME_] was blocked for a total of _NUMBER_ seconds.]]
+LNG.stat_tr_blocked_title = [[La ligne est occupée...]]
+LNG.stat_tr_blocked = [[_TRAINNAME_ [_AINAME_] a été bloqué pour un total de _NUMBER_ secondes.]]
 
 -------------------------------------------------
 -- MESSAGE BOX:

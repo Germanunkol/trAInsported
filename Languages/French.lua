@@ -18,19 +18,19 @@ LNG.menu_live_tooltip = [[Regardez les matchs directement en ligne !]]
 LNG.menu_tutorial = [[Tutoriels]]
 LNG.menu_tutorial_tooltip = [[Apprenez à connaître le jeu !]]
 LNG.menu_challenge = [[Défis]]
-LNG.menu_challenge_tooltip = [[Battre les cartes de défi! Obtenez plus de cartes en ligne sur le site du jeu.]]
-LNG.menu_compete = [[Rivaliser]]
-LNG.menu_compete_tooltip = [[Mettre en place un test match pour votre IA]]
+LNG.menu_challenge_tooltip = [[Jouez les cartes défis ! Obtenez plus de cartes en ligne sur le site du jeu.]]
+LNG.menu_compete = [[Rivalisez]]
+LNG.menu_compete_tooltip = [[Mettre en place un match teste pour votre IA]]
 LNG.menu_random = [[Aléatoire]]
-LNG.menu_random_tooltip = [[Commencer un match aléatoire sur une carte aléatoire en utilisant aléatoire AIs de votre dossier AI]]
+LNG.menu_random_tooltip = [[Commencez un match aléatoire grâce à votre dossier 'IA']]
 LNG.menu_settings = [[Paramètres]]
-LNG.menu_settings_tooltip = [[Change le language, la résolution etc.]]
+LNG.menu_settings_tooltip = [[Changez la langue, la résolution etc.]]
 LNG.menu_exit = [[Quitter]]
 
 LNG.menu_return = [[Retour]]
 LNG.menu_return_to_main_menu_tooltip = [[Retourner au menu principal]]
 
-LNG.menu_choose_ai = [[Choisissez IA pour Match:]]
+LNG.menu_choose_ai = [[Choisissez une IA pour un match:]]
 LNG.menu_choose_ai_tooltip = [[Choisissez cette IA pour le match ?]]
 
 LNG.menu_choose_dimensions = [[Largeur et Hauteur:]]
@@ -39,19 +39,19 @@ LNG.menu_choose_dimensions_tooltip2 = [[Sélectionnez la Hauteur]]
 
 LNG.menu_choose_timemode = [[Heure et Mode:]]
 LNG.menu_time_name[1] = [[Jour]]
-LNG.menu_time_name[2] = [[Heure de pointe]]
-LNG.menu_time_tooltip[1] = [[Configuration normale, le montant moyen des passagers]]
-LNG.menu_time_tooltip[2] = [[Plus de VIPs!]]
+LNG.menu_time_name[2] = [[Heure]]
+LNG.menu_time_tooltip[1] = [[Configuration normale, la moyenne du nombre des passagers]]
+LNG.menu_time_tooltip[2] = [[Plus de VIPs !]]
 LNG.menu_mode_name[1] = [[Limite de temps]]
 LNG.menu_mode_name[2] = [[Passagers]]
-LNG.menu_mode_tooltip[1] = [[Transporter les la plupart des passagers dans un laps de temps.]]
-LNG.menu_mode_tooltip[2] = [[Montant fixe des passagers. Vous devez essayer de transporter plus que tout autre IA.]]
+LNG.menu_mode_tooltip[1] = [[Transportez la plupart des passagers dans un laps de temps.]]
+LNG.menu_mode_tooltip[2] = [[Nombre fixe des passagers. Vous devez essayez d'en transportez le plus possible avant toute les autres IA.]]
 
 LNG.menu_choose_region = [[Région:]]
 LNG.menu_region_name[1] = [[Rural]]
 LNG.menu_region_name[2] = [[Urbain]]
-LNG.menu_region_tooltip[1] = [[village paisible.]]
-LNG.menu_region_tooltip[2] = [[Deux fois plus de passagers que milieu rural a.]]
+LNG.menu_region_tooltip[1] = [[Reglage village paisible.]]
+LNG.menu_region_tooltip[2] = [[Deux fois plus de passagers quand milieu rural.]]
 
 LNG.menu_start = [[Démarrer]]
 LNG.menu_start_tooltip = [[Démarrer le match avec ces paramètres]]
@@ -65,23 +65,23 @@ LNG.menu_local_server_tooltip = [[Se connecter à un serveur fonctionnant sur ce
 LNG.menu_settings_resolution = [[Taille de l'écran:]]
 LNG.menu_resolution_tooltip = [[Nouvelle résolution d'écran]]
 LNG.menu_settings_options = [[Options:]]
-LNG.menu_clouds_on = [[Clouds: On]]
-LNG.menu_clouds_off = [[Clouds: Off]]
-LNG.menu_clouds_on_tooltip = [[Cliquez pour activer le cloud rendu.]]
-LNG.menu_clouds_off_tooltip = [[Cliquez pour désactiver le cloud rendu.]]
-LNG.menu_fullscreen_on = [[Fullscreen: On]]
-LNG.menu_fullscreen_off = [[Fullscreen: Off]]
-LNG.menu_fullscreen_on_tooltip = [[Click to enable fullscreen]]
-LNG.menu_fullscreen_off_tooltip = [[Click to disable fullscreen]]
-LNG.menu_settings_language = [[Language:]]
-LNG.menu_settings_language_tooltip1 = [[Click to switch game language to]]	-- before lang name
+LNG.menu_clouds_on = [[Nuages: Activer]]
+LNG.menu_clouds_off = [[Nuages: Désactiver]]
+LNG.menu_clouds_on_tooltip = [[Cliquez pour activer le rendu des nuages.]]
+LNG.menu_clouds_off_tooltip = [[Cliquez pour désactiver le rendu des nuages.]]
+LNG.menu_fullscreen_on = [[Plein écran: Activer]]
+LNG.menu_fullscreen_off = [[Plein écran: Désactiver]]
+LNG.menu_fullscreen_on_tooltip = [[Cliquez pour activer plein écran]]
+LNG.menu_fullscreen_off_tooltip = [[Cliquez pour désactiver plein écran]]
+LNG.menu_settings_language = [[La langue:]]
+LNG.menu_settings_language_tooltip1 = [[Cliquez pour changer la langue du jeu]]	-- before lang name
 LNG.menu_settings_language_tooltip2 = [[]]	-- after lang name
 
 -- Menu errors:
-LNG.menu_err_min_ai = [[Need to choose at least one AI!]]
-LNG.menu_err_dimensions = [[Invalid map dimensions!]]
-LNG.menu_err_mode = [[Invalid game mode!]]
-LNG.menu_err_time = [[Invalid game time!]]
+LNG.menu_err_min_ai = [[Vous devez choisir au moins une IA !]]
+LNG.menu_err_dimensions = [[Dimension de la carte non valide !]]
+LNG.menu_err_mode = [[mode de jeu non valide !]]
+LNG.menu_err_time = [[Temps de jeu non valide !]]
 LNG.menu_err_resolution = [[Impossible de définir la résolution !]]
 
 
@@ -93,36 +93,36 @@ LNG.fast_forward = [[FAST FORWARD TO CATCH UP WITH SERVER]]
 LNG.confirm_leave = [[Leave the current match and return to menu?]]
 
 LNG.open_folder = [[Dossier ouvert]]
-LNG.open_folder_tooltip = [[Opens the folder: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+LNG.open_folder_tooltip = [[Ouvre le dossier: AI_FOLDER_DIRECTORY]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 LNG.open_website = [[WWW]]
-LNG.open_website_tooltip = [[Visit us on the web!]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
+LNG.open_website_tooltip = [[Visitez-nous sur le web !]] -- AI_FOLDER_DIRECTORY will be replaced by the game with the correct directory.
 
 LNG.reload = [[Recharger]]
-LNG.reload_confirm = [[Reload the AIs?]]
-LNG.reload_tooltip = [[Reloads the AI scripts and restarts the round.]]
-LNG.disconnect = [[Disconnect]]
-LNG.end_match = [[End Match]]
+LNG.reload_confirm = [[Recharger les IA ?]]
+LNG.reload_tooltip = [[Recharge les scripts d'IA et redémarre le tour.]]
+LNG.disconnect = [[Déconnecter]]
+LNG.end_match = [[Fin du match]]
 
-LNG.speed_up = [[Speeds game up]]
-LNG.slow_down = [[Slows game down]]
-LNG.pause = [[Pauses game]]
+LNG.speed_up = [[Accelerez]]
+LNG.slow_down = [[Ralentissez]]
+LNG.pause = [[Jeu en pause]]
 
 LNG.by = [[par]]
-LNG.transported = [[Transported]]
+LNG.transported = [[Transportés]]
 -- the following three strings are for the string "X of Y passengers"
 LNG.transported1 = [[]]		-- before X
-LNG.transported2 = [[ of ]]		-- between X and Y
-LNG.transported3 = [[ passengers]]		-- after Y
+LNG.transported2 = [[ de ]]		-- between X and Y
+LNG.transported3 = [[ passagers]]		-- after Y
 
-LNG.round_ends = [[Round ends in]]
+LNG.round_ends = [[Tour prend fin dans]]
 LNG.seconds = [[secs]]
 LNG.minutes = [[min]]
 LNG.hours = [[h]]
-LNG.days = [[Jours]]
-LNG.end_of_match = [[Match is over!]]
+LNG.days = [[jours]]
+LNG.end_of_match = [[Le match est terminée !]]
 
-LNG.live_match = [[LIVE MATCH]]
-LNG.lost_connection = [[LOST CONNECTION]]
+LNG.live_match = [[MATCH EN DIRECT]]
+LNG.lost_connection = [[CONNEXION PERDUE]]
 
 -------------------------------------------------
 -- LOADING SCREEN:
@@ -130,16 +130,16 @@ LNG.lost_connection = [[LOST CONNECTION]]
 LNG.load_new_map = [[Nouvelle Carte]]
 LNG.load_map_size = [[Taille: ]]
 LNG.load_map_time = [[Temps: ]]
-LNG.load_map_mode_time = [[Mode: Round time: ]]
-LNG.load_map_mode_passengers = [[Mode: Transport enough Passengers]]
-LNG.load_generating_map = [[Generating Map]]
-LNG.load_rendering_map = [[Rendering Map]]
-LNG.load_connecting = [[Connecting]]
-LNG.load_failed = [[Failed!]]
+LNG.load_map_mode_time = [[Mode: Le temps par tours: ]]
+LNG.load_map_mode_passengers = [[Mode: Transportez assez de passagers]]
+LNG.load_generating_map = [[Générez une carte]]
+LNG.load_rendering_map = [[Rendu de la carte]]
+LNG.load_connecting = [[Connexion]]
+LNG.load_failed = [[Échoué !]]
 -- leave ["rails"] etc, just translate the right part of the equal sign:
 LNG.load_generation["rails"] = [[Rails]]
-LNG.load_generation["houses"] = [[Houses]]
-LNG.load_generation["hotspots"] = [[Hotspots]]
+LNG.load_generation["houses"] = [[Maisons]]
+LNG.load_generation["hotspots"] = [[Point chaud]]
 
 -------------------------------------------------
 -- ROUND END STATISTICS:
@@ -195,8 +195,8 @@ LNG.cancel = [[Annuler]]
 -------------------------------------------------
 -- ERRORS:
 -------------------------------------------------
-LNG.err_already_generating_map = [[Déjà la génération nouvelle carte! Attendez processus se termine ...]]
-LNG.err_wait_for_rendering = [[Attendez que le rendu à la fin ...]]
+LNG.err_already_generating_map = [[Commence la génération d'une nouvelle carte ! Attendez que le processus se termine ...]]
+LNG.err_wait_for_rendering = [[Attendez que le rendu prenne fin ...]]
 LNG.err_rendering = [[Quelque chose a mal tourné dans un fil tout en générant la carte. Désolé à ce sujet, s'il vous plaît redémarrer le jeu et essayez à nouveau.]]
 LNG.err_already_connecting = [[Déjà tenter de démarrer la connexion.]]
 

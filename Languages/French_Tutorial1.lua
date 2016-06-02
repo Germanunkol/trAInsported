@@ -302,39 +302,39 @@ function tutorial.createTutBoxes()
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "You have programmed a simple ai.init function.\nThe function 'ai.init()' is the function in your script which will always be called when the round starts. In this function, you will be able to plan your train movement and - as you just did - buy your first trains and place them on the map."
+	tutorialSteps[k].message = "Vous avez programmé une fonction de ai.init simple.\nLa fonction 'ai.init() est la fonction dans votre script qui sera toujours appelé quand le tour commence. Dans cette fonction, vous serez en mesure de planifier vos déplacements en train et- Comme vous venez de le faire - Achetez vos premiers trains et les placer sur la carte."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Retour", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Plus d'informations", event = additionalInformation("The function ai.init() is usually called with 2 argument, like so:\nfunction ai.init( map, money )\nThe first one holds the current map (more on that later) and the second one holds the amount of money you currently own. This way, you can check how many trains you can buy. You will always have enough money to buy at least one train at round start.\nFor now, we can just ignore these arguments, though."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Plus d'informations", event = additionalInformation("La fonction ai.init() est généralement appelé avec l'argument 2, comme suit:\nfunction ai.init( map, money )\nLe premier tient la carte actuelle (plus tard) et le second contient le montant d'argent que vous possédez actuellement. De cette façon, vous pouvez vérifier combien de trains vous pouvez acheter. Vous aurez toujours assez d'argent pour acheter au moins un train au démarrage tour.\nPour l'instant, nous ne pouvons ignorer ces arguments, cependant."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Suivant", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].stepTitle = "Picking up a passenger"
-	tutorialSteps[k].message = "I've just placed a passenger on the map. Her name is GLaDOS. Hold down the Space bar on your keyboard to see a line showing where she wants to go!\n\nPassengers will always be spawned near a rail. Their destination is also always near a rail."
+	tutorialSteps[k].stepTitle = "Ramassez un passager"
+	tutorialSteps[k].message = "Je viens de placer un passager sur la carte, son nom est GLaDOS. Maintenez la barre d'espace de votre clavier pour voir une ligne indiquant où elle veut aller !\n\nLes passagers seront toujours engendré près d'un rail. Leur destination est également toujours à proximité d'un rail."
 	tutorialSteps[k].event = setPassengerStart(k)
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Retour", event = prevTutorialStep}
-	tutorialSteps[k].buttons[2] = {name = "Plus d'informations", event = additionalInformation("GLaDOS wants to go to the pie-store. She once promised a very special someone a cake.\n\n...\nAnd she wants to hold that promise."), inBetweenSteps = true}
+	tutorialSteps[k].buttons[2] = {name = "Plus d'informations", event = additionalInformation("GLaDOS veut aller au magasin de tartes. Elle a promis à quelqu'un de très spécial, un gâteau.\n\n...\nEt elle veut tenir cette promesse."), inBetweenSteps = true}
 	tutorialSteps[k].buttons[3] = {name = "Suivant", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "Your job now is to pick up the passenger and take her where she wants to go. For this, we need to define a function 'ai.foundPassengers' for our TutorialAI1. This function is started whenever one of your trains reaches a square on which one or more passengers are standing."
+	tutorialSteps[k].message = "Votre travail est maintenant de ramasser le passager et l'emmener où elle veut aller. Pour cela, nous avons besoin de définir une fonction 'ai.foundPassengers' pour le TutorialAI1. Cette fonction est déclenchée dès que l'un de vos trains atteint un carré sur lequel un ou plusieurs passagers sont debout."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Retour", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Suivant", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "The function ai.foundPassengers will have two arguments: The first one, 'train', tells you which of your trains found the passenger. The second one, 'passengers', tells you about the passengers who are on the train's current position and could be picked up. Using these, you can tell the train which passenger to pick up."
+	tutorialSteps[k].message = "La fonction ai.foundPassengers aura deux arguments: La première, 'train', vous dit qu'un de vos trains ont trouvé le passager. Le second, 'passengers', vous dit sur les passagers qui sont sur la position actuelle du train et pourrait être ramassés. En utilisant ceux-ci, vous pouvez dire qu'elle train utilisez pour ramassez un passager."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].buttons[1] = {name = "Retour", event = prevTutorialStep}
 	tutorialSteps[k].buttons[2] = {name = "Suivant", event = nextTutorialStep}
 	k = k + 1
 	
 	tutorialSteps[k] = {}
-	tutorialSteps[k].message = "First, let's define our function. Type the code shown in the code box into your .lua file. You don't need to copy the comments (everything after the '- -'), they're just there to clarify things but are ignored by the game."
+	tutorialSteps[k].message = "Tout d'abord, nous allons définir notre fonction. Tapez le code affiché dans la zone de code dans votre fichier.lua. Vous ne devez pas copiez les commentaires (tout ce qui suit le '--'), ils sont juste là pour clarifier les choses, mais sont ignorées par le jeu."
 	tutorialSteps[k].buttons = {}
 	tutorialSteps[k].event = pickUpPassengerStep1
 	tutorialSteps[k].buttons[1] = {name = "Retour", event = prevTutorialStep}

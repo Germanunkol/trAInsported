@@ -2,7 +2,7 @@ local tutorialBox = {}
 
 local tutorialBoxList = {}
 
-local succeedSound = love.audio.newSource("Sound/echo_affirm1.wav")
+local succeedSound = love.audio.newSource("Sound/echo_affirm1.wav", "stream")
 
 -- remove tutorialBox box before quitting!
 function tutorialBoxEvent(box, eventToCall)
@@ -69,7 +69,7 @@ function tutorialBox.show()
 			love.graphics.draw(tutorialBoxCheckMark, m.x + m.bg:getWidth() - tutorialBoxCheckMark:getWidth()/2, m.y - tutorialBoxCheckMark:getHeight()/2 +20)
 			love.graphics.draw(checkmarkImage, m.x + m.bg:getWidth() - checkmarkImage:getWidth()/2, m.y - checkmarkImage:getHeight()/2 + 20)
 			if tutorialBox.playSound then
-				succeedSound:rewind()
+				succeedSound:seek(0)
 				succeedSound:play()
 				tutorialBox.playSound = false
 			end

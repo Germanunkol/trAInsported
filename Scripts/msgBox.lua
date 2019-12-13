@@ -9,7 +9,7 @@ local msgBox_mt = { __index = msgBox }
 
 local msgBoxBG
 
-msgBoxSound = love.audio.newSource("Sound/melodic1_affirm.wav")
+msgBoxSound = love.audio.newSource("Sound/melodic1_affirm.wav", "stream")
 
 function wrap(str, limit, font)
 	indent = indent or ""
@@ -43,7 +43,7 @@ function msgBox:new(x, y, msg, ... )
 	for i=1,#msgBoxList+1,1 do
 		if not msgBoxList[i] then
 			
-			msgBoxSound:rewind()
+			msgBoxSound:seek(0)
 			msgBoxSound:play()
 			
 			msgBoxList[i] = setmetatable({x=x, y=y, width=msgBoxBG:getWidth(), height=msgBoxBG:getHeight(), bg=msgBoxBG, index = i, buttons={}, text=text}, msgBox_mt)

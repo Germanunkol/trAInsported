@@ -1,4 +1,4 @@
-trainRailSound = love.audio.newSource("TrainOnTracks.wav")
+trainRailSound = love.audio.newSource("TrainOnTracks.wav", "stream")
 
 
 function playTrainSound()

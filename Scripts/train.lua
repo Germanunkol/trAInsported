@@ -268,7 +268,7 @@ function train:new( aiID, x, y, dir )
 				sendStr = sendStr .. dir .. ","
 				sendMapUpdate(sendStr)
 			--else
-				--trainList[aiID][i].sound = love.audio.newSource("Sound/TrainOnTracks.wav")
+				--trainList[aiID][i].sound = love.audio.newSource("Sound/TrainOnTracks.wav", "stream")
 				--trainList[aiID][i].sound:setLooping(true)
 				--trainList[aiID][i].sound:play()
 			end

@@ -2,13 +2,14 @@
 
 --package.path = "Scripts/?.lua;" .. package.path
 require("love.filesystem")
+local socket = require("socket")
+
 
 pcall(require,"mapUtils")
 pcall(require,"Scripts/mapUtils")
 pcall(require,"TSerial")
 pcall(require,"Scripts/TSerial")
 pcall(require,"misc")
-pcall(require,"socket")
 
 require("Scripts/misc")
 
@@ -41,7 +42,7 @@ print("Attempting to connect to:", ip .. ":" .. port)
 ok, client = pcall(socket.connect, ip, port)
 if not ok or not client then
 	channelOut:push({key="statusErr", "Could not connect to server. Either your internet connection is not active or the server is down for maintainance."})
-	error("Could not connect!")
+	--error("Could not connect!")
 	return
 else
 	channelOut:push({key="statusMsg", "Connected to server."})

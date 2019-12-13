@@ -1,23 +1,27 @@
 
 
+function love.wheelmoved(wx, wy)
+	if wy > 0 then
+		camZ = clamp(camZ - 0.05, 0.1, 1)
+		camX = clamp(camX, -MAX_PAN, MAX_PAN)
+		camY = clamp(camY, -MAX_PAN, MAX_PAN)
+		return
+	end
+	if wy < 0 then
+		camZ = clamp(camZ + 0.05, 0.1, 1)
+		camX = clamp(camX, -MAX_PAN, MAX_PAN)
+		camY = clamp(camY, -MAX_PAN, MAX_PAN)
+		return
+	end
+end
+
 function love.mousepressed(x, y, b)
 	--if curMap and mapImage then
 		--if b == "l" then
 		--	train.checkSelection()
 		--end
 	--end
-	if b == "wd" then
-		camZ = clamp(camZ - 0.05, 0.1, 1)
-		camX = clamp(camX, -MAX_PAN, MAX_PAN)
-		camY = clamp(camY, -MAX_PAN, MAX_PAN)
-		return
-	end
-	if b == "wu" then
-		camZ = clamp(camZ + 0.05, 0.1, 1)
-		camX = clamp(camX, -MAX_PAN, MAX_PAN)
-		camY = clamp(camY, -MAX_PAN, MAX_PAN)
-		return
-	end
+
 	
 	-- if already moving something, continue doing so:
 	

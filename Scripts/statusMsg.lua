@@ -4,7 +4,7 @@ local currentMsg = ""
 local currentErr = nil
 local currentTime = 0
 
-errorSound = love.audio.newSource("Sound/wobble_alert.wav")
+errorSound = love.audio.newSource("Sound/wobble_alert.wav", "stream")
 
 
 function statusMsg.init( )
@@ -18,7 +18,7 @@ function statusMsg.new(txt, err)
 	currentMsg = txt
 	currentTime = 6
 	if err then
-		errorSound:rewind()
+		errorSound:seek(0)
 		errorSound:play()
 	end
 end

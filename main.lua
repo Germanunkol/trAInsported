@@ -5,6 +5,16 @@
 -- Created by Germanunkol (http://www.indiedb.com/members/Germanunkol)
 ----------------------------------------------------------------------
 
+local setcolor = love.graphics.setColor
+love.graphics.setColor =  function(r, g, b, a)
+	setcolor(r / 255, g / 255, b / 255, a and a / 255)
+end
+
+local setbgcolor = love.graphics.setBackgroundColor
+love.graphics.setBackgroundColor =  function(r, g, b, a)
+	setbgcolor(r / 255, g / 255, b / 255, a and a / 255)
+end
+
 -- Add path to all other Scripts:
 package.path = "Scripts/?.lua;" .. package.path
 

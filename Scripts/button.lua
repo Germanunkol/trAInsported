@@ -100,7 +100,7 @@ function button.handleClick()
 	for k, b in pairs(buttonList) do
 		if b.mouseHover and b.event and not b.invisible then
 			b.event(b.eventArgs)
-			buttonClickSound:rewind()
+			buttonClickSound:seek(0)
 			buttonClickSound:play()
 			hit = true
 		end
